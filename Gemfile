@@ -65,16 +65,16 @@ group :test do
 end
 
 # Admin dashboard
-gem "avo", '>= 3.0'
+gem "avo", ">= 3.0"
 
 # Authentication
 gem "devise"
 
 # Soft Delete
-gem 'discard'
+gem "discard"
 
 # IA Integration
 gem "langchainrb"
 
 # Manejo de Iconos
-gem 'heroicon'
+gem "heroicon"
