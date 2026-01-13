@@ -13,8 +13,25 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
 
-  # Associations (will be added later as per EPIC 2)
-  # has_many :daily_metrics
-  # has_one :nutrition_plan
-  # has_many :routines
+  # Associations
+  # Callbacks
+  before_validation :set_temporary_password, on: :create
+  after_create :send_welcome_email
+
+  # Associations
+  has_many :routines, dependent: :destroy
+
+  def name
+    "#{first_name} #{last_name}"
+  end
+
+  private
+
+  def set_temporary_password
+    self.password = SecureRandom.hex(8) if password.blank?
+  end
+
+  def send_welcome_email
+    send_reset_password_instructions
+  end
 end
