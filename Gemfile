@@ -78,3 +78,6 @@ gem "langchainrb"
 
 # Manejo de Iconos
 gem "heroicon"
+
+# Variables de Entorno
+gem "dotenv-rails"
