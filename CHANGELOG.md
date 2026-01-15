@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **AI Integration (Epic 3)**:
+    - `GeminiService`: Interacts with Google Gemini (via `langchainrb`) to parse metrics and generate feedback.
+    - `verify_epic_3.rb`: Manual verification script for AI service.
+    - `dotenv-rails` for managing environment variables.
 - Core Domain Models: `Exercise`, `Routine`, `RoutineItem` with associations and validations.
 - Avo Resources: Configuration for `Exercise`, `Routine`, `RoutineItem`.
 - User Invitation Flow: Admins can create users without passwords; system generates temp password and triggers welcome email.

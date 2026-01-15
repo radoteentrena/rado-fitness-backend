@@ -81,3 +81,6 @@ gem "heroicon"
 
 # Variables de Entorno
 gem "dotenv-rails"
+
+gem "faker", "~> 3.5", group: :development
+gem "test", "~> 1.0", group: :development
