@@ -6,9 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - **AI Integration (Epic 3)**:
+    - `DailyMetric` model with `before_save` AI parsing callback.
+    - `Avo::Resources::DailyMetric` with JSON highlighting and textarea inputs.
     - `GeminiService`: Interacts with Google Gemini (via `langchainrb`) to parse metrics and generate feedback.
-    - `verify_epic_3.rb`: Manual verification script for AI service.
+    - `verify_epic_3_integration.rb` for End-to-End verification.
     - `dotenv-rails` for managing environment variables.
+- **Data & UI**:
+    - Seeded database with 50+ users, real exercises, and 10 routine templates.
+    - Themed Avo Admin with "Shadcn" aesthetic (Slate colors, Inter font).
 - Core Domain Models: `Exercise`, `Routine`, `RoutineItem` with associations and validations.
 - Avo Resources: Configuration for `Exercise`, `Routine`, `RoutineItem`.
 - User Invitation Flow: Admins can create users without passwords; system generates temp password and triggers welcome email.

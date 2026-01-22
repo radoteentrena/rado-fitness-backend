@@ -1,7 +1,8 @@
 class Routine < ApplicationRecord
   belongs_to :user, optional: true
-  has_many :routine_items, dependent: :destroy
-  has_many :exercises, through: :routine_items
+  belongs_to :program, optional: true
+  has_many :routine_exercises, dependent: :destroy
+  has_many :exercises, through: :routine_exercises
 
   scope :templates, -> { where(is_template: true) }
 

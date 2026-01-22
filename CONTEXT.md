@@ -19,31 +19,85 @@
 * **HTTP Client:** `faraday`
 
 ## 3. Business Logic & Tiers
-The app supports three tiers of service, determining the level of AI vs. Human interaction:
+The app supports three tiers of service:
 
 | Tier | Price | Key Features | AI Role |
 | :--- | :--- | :--- | :--- |
 | **Basic** | $10 | Standard Monthly Routine, Macro Targets. | None / Minimal. |
 | **Medium** | $50 | Personalized Routine, Bi-weekly updates, Group Calls. | Routine drafting assistance. |
-| **High Ticket** | $100 | Weekly Dynamic Planning, Priority Chat, Video Form Analysis, Biofeedback Audit. | Proactive analysis of daily metrics, draft generation for weekly feedback, parsing user WhatsApp messages. |
+| **High Ticket** | $100 | Weekly Dynamic Planning, Priority Chat, Video Form Analysis, Biofeedback Audit. | Proactive analysis metrics, draft generation, WhatsApp parsing. |
+
+### User Categorization (Internal)
+Rado classifies clients to determine follow-up intensity:
+*   **Soldado**: High activity, high compliance, needs close observation.
+*   **Civil**: Maintenance mode, steady, less follow-up needed.
+*   **Pelele**: Low activity/compliance, "just paying".
+
+## 4. Workflows & Happy Paths
+
+### Client Happy Path
+1.  **Funnel**: Form -> Plan Selection -> Payment -> **User Created** (Admin Notified).
+2.  **Onboarding**: "Alta de cliente" appears in Dashboard.
+3.  **Scheduling (Medium/High)**: User books a call via **Google Calendar** integration.
+4.  **Program Assignment**:
+    *   Rado assigns a "Program" (duration + routines) using Templates.
+    *   *Dietary Plan*: Tracked internally, user sees only Targets.
+    *   **Delivery (MVP Phase)**: Program is delivered via **Google Sheets** (Bi-directional sync required for updates).
+    *   User sees only the *Active Week* to ensure focus/progression.
+5.  **Execution**:
+    *   User logs weights/reps in the Sheet (or App view syncing to sheet).
+    *   User sends Daily Macros via **WhatsApp Bot** -> Populates Admin Panel.
+
+### Admin (Rado) Happy Path
+1.  **Dashboard**:
+    *   **Recent Activity**: Altas (New) / Bajas (Churn).
+    *   **Calendar**: Upcoming calls/events.
+    *   **Subs**: Active subscription monitoring.
+2.  **Follow-up (Seguimiento)**:
+    *   List users ordered by Category (Soldado > Civil > Pelele).
+3.  **Client Profile**:
+    *   Visual Progress Metrics (Week-over-Week).
+    *   Routine Completion (from Sheet/App).
+    *   Macro Compliance (from WhatsApp).
+    *   Adjustments made here reflect in Client's Sheet/View.
 
 ## 4. Database Schema & Data Models
 
 ### User (Clients & Leads)
-* **Fields:** `first_name`, `last_name`, `email`, `phone`, `status` (enum), `plan_tier` (enum), `discarded_at`.
+* **Fields:** `first_name`, `last_name`, `email`, `phone`, `status` (enum), `plan_tier` (enum), `category` (enum), `discarded_at`.
 * **Enums:**
     * `status`: `{ lead: 0, active: 1, churned: 2, archived: 3 }`
     * `plan_tier`: `{ basic: 0, medium: 1, high_ticket: 2 }`
-* **Relationships:** `has_many :daily_metrics`, `has_one :nutrition_plan`, `has_many :routines`.
+    * `category`: `{ pelele: 0, civil: 1, soldado: 2 }` (Ordered by priority)
+* **Relationships:** `has_many :daily_metrics`, `has_one :nutrition_plan`, `has_many :programs`.
 
 ### DailyMetric (The Heart of Tracking)
 * **Fields:** `date_logged`, `calories_consumed`, `protein_consumed`, `steps`, `weight`, `raw_message_content` (WhatsApp text), `compliant` (boolean), `ai_parsed_json`.
 * **Logic:** Stores unstructured text from users; AI processes this to fill structured fields.
 
-### Core Training Models
-* **Exercise:** Library of movements (Name, Video Link, Muscle Group).
-* **Routine:** Assigned to User (or Template).
-* **RoutineItem:** Join table (Routine <-> Exercise) with `sets`, `reps`, `rir`, `rest`.
+### Core Training Models (Refined by Mockup)
+*   **Program**: Long-term goal (Macrocycle). Tracks progress (weeks).
+    *   *Templates*: Base definitions.
+    *   *Instances* (`user_program`): Assigned to user, has "current week" pointer.
+*   **Routine** (Training Block/Mesocycle):
+    *   Has `duration` (n weeks).
+    *   Belongs to a Program.
+*   **Workout** (Training Day):
+    *   Belongs to a Routine.
+    *   Has a `name` (e.g., "Leg Day").
+*   **Exercise**: Library of movements (`muscle_group`, `video_url`).
+*   **RoutineItem** (WorkoutExercise):
+    *   Belongs to a Workout.
+    *   Fields: `sets`, `reps`, `load`, `rir`, `rest`, `warmup` (bool), `sub_option` (variant).
+
+### Nutrition & Progress
+*   **DietaryPlan**: Template for nutrition targets.
+*   **UserDietaryPlan**: Assigned instance.
+    *   Fields: `calories_target`, `protein_target`, `notes`.
+*   **DailyMetric**:
+    *   Input: `raw_content` (WhatsApp).
+    *   Parsed: `calories`, `protein`, `weight`.
+    *   *Goal*: Normalize user input into this structured data.
 
 ## 5. Implementation Roadmap (Kanban)
 

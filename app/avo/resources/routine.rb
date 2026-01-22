@@ -10,8 +10,10 @@ class Avo::Resources::Routine < Avo::BaseResource
     field :id, as: :id
     field :name, as: :text
     field :description, as: :textarea
+    field :duration_weeks, as: :number
+    field :program, as: :belongs_to
     field :user, as: :belongs_to
     field :is_template, as: :boolean
-    field :routine_items, as: :has_many
+    field :routine_exercises, as: :has_many
   end
 end

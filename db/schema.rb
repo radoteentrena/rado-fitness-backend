@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_14_155028) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_22_160837) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,6 +29,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_14_155028) do
     t.index ["user_id"], name: "index_daily_metrics_on_user_id"
   end
 
+  create_table "dietary_plans", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "exercises", force: :cascade do |t|
     t.string "name"
     t.string "video_link"
@@ -38,7 +45,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_14_155028) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "routine_items", force: :cascade do |t|
+  create_table "programs", force: :cascade do |t|
+    t.string "name"
+    t.integer "duration_weeks"
+    t.text "description"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "google_sheet_link"
+    t.index ["user_id"], name: "index_programs_on_user_id"
+  end
+
+  create_table "routine_exercises", force: :cascade do |t|
     t.bigint "routine_id", null: false
     t.bigint "exercise_id", null: false
     t.integer "sets"
@@ -48,8 +66,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_14_155028) do
     t.integer "order_index"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["exercise_id"], name: "index_routine_items_on_exercise_id"
-    t.index ["routine_id"], name: "index_routine_items_on_routine_id"
+    t.integer "day_number"
+    t.string "day_name"
+    t.boolean "warmup"
+    t.string "load"
+    t.integer "sub_option"
+    t.text "instructions"
+    t.index ["exercise_id"], name: "index_routine_exercises_on_exercise_id"
+    t.index ["routine_id"], name: "index_routine_exercises_on_routine_id"
   end
 
   create_table "routines", force: :cascade do |t|
@@ -59,7 +83,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_14_155028) do
     t.boolean "is_template", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "program_id"
+    t.integer "duration_weeks"
+    t.index ["program_id"], name: "index_routines_on_program_id"
     t.index ["user_id"], name: "index_routines_on_user_id"
+  end
+
+  create_table "user_dietary_plans", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "calories_target"
+    t.integer "protein_target"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_dietary_plans_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -76,13 +113,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_14_155028) do
     t.datetime "discarded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "category"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "daily_metrics", "users"
-  add_foreign_key "routine_items", "exercises"
-  add_foreign_key "routine_items", "routines"
+  add_foreign_key "programs", "users"
+  add_foreign_key "routine_exercises", "exercises"
+  add_foreign_key "routine_exercises", "routines"
+  add_foreign_key "routines", "programs"
   add_foreign_key "routines", "users"
+  add_foreign_key "user_dietary_plans", "users"
 end

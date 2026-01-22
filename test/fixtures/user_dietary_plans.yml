@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  calories_target: 1
+  protein_target: 1
+  notes: MyText
+
+two:
+  user: two
+  calories_target: 1
+  protein_target: 1
+  notes: MyText
