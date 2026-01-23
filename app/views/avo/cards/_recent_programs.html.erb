@@ -1,0 +1,19 @@
+<div class="p-4 bg-white rounded shadow">
+  <h3 class="font-bold text-lg mb-4 text-slate-800">Recent Programs</h3>
+  <ul>
+    <% Program.order(created_at: :desc).limit(5).each do |program| %>
+      <li class="border-b last:border-b-0 py-2">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="font-medium text-slate-900"><%= program.name %></span>
+            <span class="text-xs text-slate-500 block"><%= program.user&.name || "Template" %></span>
+          </div>
+          <span class="text-xs text-slate-400"><%= time_ago_in_words(program.created_at) %> ago</span>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+  <% if Program.count == 0 %>
+    <p class="text-slate-500 text-sm">No programs yet.</p>
+  <% end %>
+</div>

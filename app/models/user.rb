@@ -22,6 +22,8 @@ class User < ApplicationRecord
   # Associations
   has_many :routines, dependent: :destroy
   has_many :programs, dependent: :destroy
+  has_many :user_dietary_plans, dependent: :destroy
+  has_many :daily_metrics, dependent: :destroy
 
   def name
     "#{first_name} #{last_name}"

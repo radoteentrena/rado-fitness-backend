@@ -158,4 +158,30 @@ Avo.configure do |config|
   # config.profile_menu = -> {
   #   link "Profile", path: "/avo/profile", icon: "heroicons/outline/user-circle"
   # }
+  config.main_menu = -> {
+    section "Dashboards", icon: "avo/dashboards" do
+      all_dashboards
+    end
+
+    section "Training", icon: "heroicons/outline/lightning-bolt" do
+      resource :programs
+      resource :routines
+      resource :exercises
+      resource :routine_exercises
+    end
+
+    section "Nutrition", icon: "heroicons/outline/cake" do
+      resource :dietary_plans
+      resource :user_dietary_plans
+    end
+
+    section "Clients", icon: "heroicons/outline/users" do
+      resource :users
+      resource :daily_metrics
+    end
+
+    section "Tools", icon: "avo/tools" do
+      all_tools
+    end
+  }
 end

@@ -13,4 +13,8 @@ class Avo::Resources::Program < Avo::BaseResource
     field :user, as: :belongs_to
     field :routines, as: :has_many
   end
+
+  def actions
+    action Avo::Actions::AssignProgramToUser
+  end
 end

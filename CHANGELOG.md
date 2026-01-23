@@ -3,7 +3,34 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+## [Unreleased]
 
+### Added
+- **Deep Training Hierarchy (Epic 4)**:
+    - `Program` model for Macrocycles (Template/Instance).
+    - `RoutineExercise` (was `RoutineItem`) with daily attributes (`day_number`, `warmup`, `load`).
+    - `DietaryPlan` and `UserDietaryPlan` for nutrition tracking.
+- **Client Management**:
+    - `User` categories (`soldado`, `civil`, `pelele`) and prioritized sorting in Avo.
+- **Integrations (Skeleton)**:
+    - Mock `Google::SheetsService` for program delivery.
+    - Mock `Google::CalendarService` for scheduling.
+
+### Added
+- **Deep Training Hierarchy (Epic 4)**:
+    - `Program#assign_to_user`: Logic to deep-clone Programs and Routines to clients.
+    - Fixed `Routine#clone_to_user` to correctly copy `routine_exercises`.
+    - Avo Action: `AssignProgramToUser` for easy assignment from Admin Panel.
+- **Dietary Architecture (Epic 4.1)**:
+    - `DietaryPlan` as Templates (with targets).
+    - `UserDietaryPlan` as Active Instances (with dates and computed stats).
+    - `DailyMetric` auto-linking to the active plan.
+    - Automated Averages & Progress calculation in Avo.
+
+### Changed
+- `Routine` model now represents a specific **Block** (Mesocycle) with `duration_weeks`.
+- Renamed `routine_items` table to `routine_exercises`.
+- Updated Seeds to provide a full "Hypertrophy Masterclass" example.
 ### Added
 - **AI Integration (Epic 3)**:
     - `DailyMetric` model with `before_save` AI parsing callback.

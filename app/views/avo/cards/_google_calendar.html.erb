@@ -1,0 +1,24 @@
+<div class="p-4 bg-white rounded shadow">
+  <h3 class="font-bold text-lg mb-4 text-slate-800">Google Calendar Availability</h3>
+  <%
+    service = Google::CalendarService.new(current_user)
+    slots = service.list_availability(Date.today, Date.today + 5.days)
+  %>
+
+  <div class="space-y-4">
+    <% slots.first(3).each do |day| %>
+      <div>
+        <h4 class="font-semibold text-sm text-slate-700"><%= Date.parse(day[:date]).strftime("%A, %b %d") %></h4>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <% day[:slots].each do |slot| %>
+            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full"><%= slot %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-4 text-center">
+    <a href="#" class="text-xs text-blue-600 hover:underline">View full calendar</a>
+  </div>
+</div>

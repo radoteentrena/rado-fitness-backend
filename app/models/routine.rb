@@ -14,7 +14,7 @@ class Routine < ApplicationRecord
       new_routine.name = "#{name} (Copy)"
       new_routine.save!
 
-      routine_items.each do |item|
+      routine_exercises.each do |item|
         new_item = item.dup
         new_item.routine = new_routine
         new_item.save!

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_22_160837) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_23_141002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,6 +26,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_160837) do
     t.jsonb "ai_parsed_json"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_dietary_plan_id"
+    t.index ["user_dietary_plan_id"], name: "index_daily_metrics_on_user_dietary_plan_id"
     t.index ["user_id"], name: "index_daily_metrics_on_user_id"
   end
 
@@ -34,6 +36,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_160837) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "calories_target"
+    t.integer "protein_target"
+    t.text "notes"
   end
 
   create_table "exercises", force: :cascade do |t|
@@ -96,6 +101,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_160837) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "dietary_plan_id"
+    t.date "start_date"
+    t.date "end_date"
+    t.boolean "active", default: true
+    t.index ["dietary_plan_id"], name: "index_user_dietary_plans_on_dietary_plan_id"
     t.index ["user_id"], name: "index_user_dietary_plans_on_user_id"
   end
 
@@ -119,11 +129,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_22_160837) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
   add_foreign_key "programs", "users"
   add_foreign_key "routine_exercises", "exercises"
   add_foreign_key "routine_exercises", "routines"
   add_foreign_key "routines", "programs"
   add_foreign_key "routines", "users"
+  add_foreign_key "user_dietary_plans", "dietary_plans"
   add_foreign_key "user_dietary_plans", "users"
 end
