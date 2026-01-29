@@ -84,3 +84,8 @@ gem "dotenv-rails"
 
 gem "faker", "~> 3.5", group: :development
 gem "test", "~> 1.0", group: :development
+
+gem "twilio-ruby", "~> 7.10"
+
+gem "google-apis-sheets_v4", "~> 0.46.0"
+gem "googleauth", "~> 1.16"

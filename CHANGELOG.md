@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ## [Unreleased]
+### Added
+- **WhatsApp Ingestion (Integrations)**:
+    - `Webhooks::WhatsappController` handling inbound messages from Twilio.
+    - Natural Language Parsing: Messages are saved as `DailyMetric`, and AI extracts stats (Protein, Calories, etc.).
+    - **Robust AI Service**: Refactored `GeminiService` to use `Net::HTTP` with SSL bypass (fixes local dev CRL errors).
+- **Google Sheets Sync (Skeleton)**:
+    - `Google::SheetsService` structure for writing programs to spreadsheets.
+    - `ProvisionProgramSheetJob` for background creation.
+    - Auto-provisioning callback on `Program` assignment.
+- **Tech Stack**:
+    - Added `twilio-ruby`, `google-apis-sheets_v4`, `googleauth`.
+    - Generated `db/schema.sql` for Postgres DDL reference.
 
 ### Added
 - **Deep Training Hierarchy (Epic 4)**:

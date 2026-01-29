@@ -1,29 +1,60 @@
+require "google/apis/sheets_v4"
+require "googleauth"
+
 module Google
   class SheetsService
+    APPLICATION_NAME = "Rado Fitness".freeze
+    SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS
+
     def initialize(program)
       @program = program
+      @service = Google::Apis::SheetsV4::SheetsService.new
+      @service.client_options.application_name = APPLICATION_NAME
+      @service.authorization = authorize
     end
 
     def create_program_sheet
-      # Mock implementation for MVP
-      # In future, this will use Google Drive API to create a sheet
-      mock_url = "https://docs.google.com/spreadsheets/d/mock_sheet_id_#{SecureRandom.hex(4)}"
+      return unless @service.authorization
 
-      # Update program with the link
-      @program.update!(google_sheet_link: mock_url)
+      spreadsheet = Google::Apis::SheetsV4::Spreadsheet.new(
+        properties: {
+          title: "Rado Fitness - #{@program.name} - #{@program.user&.name}",
+          locale: "es_ES"
+        }
+      )
 
-      Rails.logger.info "Created Google Sheet for Program #{@program.name}: #{mock_url}"
-      mock_url
+      file = @service.create_spreadsheet(spreadsheet)
+
+      @program.update!(google_sheet_link: file.spreadsheet_url)
+
+      # Prepare headers
+      setup_headers(file.spreadsheet_id)
+
+      file.spreadsheet_url
+    rescue => e
+      Rails.logger.error "Google::SheetsService Error: #{e.message}"
+      nil
     end
 
-    def sync_routine(routine)
-      # Mock sync
-      Rails.logger.info "Syncing routine #{routine.name} to Google Sheet..."
+    private
+
+    def authorize
+      # Check for credentials in ENV or file
+      if ENV["GOOGLE_APPLICATION_CREDENTIALS"].present? || File.exist?("config/google_credentials.json")
+        Google::Auth.get_application_default(SCOPE)
+      else
+        Rails.logger.warn "Google Credentials not found. Sheets integration skipped."
+        nil
+      end
     end
 
-    def read_compliance_data
-      # TODO: Read data from client input cells
-      # Return struct/hash of compliance data
+    def setup_headers(spreadsheet_id)
+      # Setup basic structure
+      range = "Sheet1!A1:E1"
+      values = [ [ "Week", "Day", "Exercise", "Sets x Reps", "Log (Weight)" ] ]
+
+      value_range = Google::Apis::SheetsV4::ValueRange.new(values: values)
+      @service.update_spreadsheet_value(spreadsheet_id, range, value_range, value_input_option: "RAW")
     end
   end
 end

@@ -1,8 +1,11 @@
-require "langchain"
+require "net/http"
+require "uri"
+require "json"
 
 class GeminiService
   def initialize
-    @llm = Langchain::LLM::GoogleGemini.new(api_key: ENV["GEMINI_API_KEY"])
+    @api_key = ENV["GEMINI_API_KEY"]
+    @base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
   end
 
   def parse_metrics(text)
@@ -20,10 +23,10 @@ class GeminiService
       Input: "#{text}"
     PROMPT
 
-    response = @llm.chat(messages: [{ role: "user", content: prompt }])
+    response_body = call_gemini(prompt)
+    return {} unless response_body
 
-    # Clean up response if it contains markdown code blocks
-    clean_json = response.completion.gsub(/```json/, "").gsub(/```/, "").strip
+    clean_json = response_body.gsub(/```json/, "").gsub(/```/, "").strip
     JSON.parse(clean_json)
   rescue JSON::ParserError => e
     Rails.logger.error("GeminiService JSON Error: #{e.message}")
@@ -34,7 +37,6 @@ class GeminiService
   end
 
   def generate_weekly_feedback(metrics_data, user_name)
-    # metrics_data is expected to be an array of hashes or a summary string
     prompt = <<~PROMPT
       You are Rado, a high-performance fitness coach.
       Analyze the following weekly metrics for your client, #{user_name}.
@@ -47,10 +49,34 @@ class GeminiService
       Highlight wins and call out missed targets.
     PROMPT
 
-    response = @llm.chat(messages: [{ role: "user", content: prompt }])
-    response.completion
-  rescue => e
-    Rails.logger.error("GeminiService Cleanup Error: #{e.message}")
-    "Error generating feedback. Please try again."
+    call_gemini(prompt) || "Error generating feedback."
+  end
+
+  private
+
+  def call_gemini(prompt)
+    uri = URI("#{@base_url}?key=#{@api_key}")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+
+    if Rails.env.development?
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+
+    request = Net::HTTP::Post.new(uri)
+    request["Content-Type"] = "application/json"
+    request.body = {
+      contents: [ { parts: [ { text: prompt } ] } ]
+    }.to_json
+
+    response = http.request(request)
+
+    if response.code == "200"
+      json = JSON.parse(response.body)
+      json.dig("candidates", 0, "content", "parts", 0, "text")
+    else
+      Rails.logger.error("Gemini API Error: #{response.code} - #{response.body}")
+      nil
+    end
   end
 end

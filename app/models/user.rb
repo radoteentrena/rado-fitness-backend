@@ -14,7 +14,6 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
 
-  # Associations
   # Callbacks
   before_validation :set_temporary_password, on: :create
   after_create :send_welcome_email
