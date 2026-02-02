@@ -21,6 +21,8 @@ class Avo::Resources::User < Avo::BaseResource
     field :plan_tier, as: :select, enum: ::User.plan_tiers
     field :category, as: :select, enum: ::User.categories
     field :discarded_at, as: :date_time
+    field :consistency_score, as: :progress_bar, max: 100, step: 1
+    field :accuracy_score, as: :progress_bar, max: 100, step: 1
 
     field :programs, as: :has_many
     field :routines, as: :has_many

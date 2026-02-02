@@ -4,8 +4,27 @@ class DailyMetric < ApplicationRecord
 
   before_validation :assign_to_active_plan, on: :create
   before_save :parse_content_with_ai, if: :should_parse_ai?
+  before_save :calculate_compliance
 
   private
+
+  def calculate_compliance
+    # Consistency Logic: Did they log anything?
+    self.compliant = (calories_consumed.to_i > 0 || protein_consumed.to_i > 0)
+
+    # Accuracy Logic: Did they hit the targets? (+/- 10%)
+    if user_dietary_plan.present? && compliant
+      c_target = user_dietary_plan.calories_target
+      p_target = user_dietary_plan.protein_target
+
+      c_range = (c_target * 0.9)..(c_target * 1.1)
+      p_range = (p_target * 0.9)..(p_target * 1.1)
+
+      self.on_target = c_range.cover?(calories_consumed) && p_range.cover?(protein_consumed)
+    else
+      self.on_target = false
+    end
+  end
 
   def assign_to_active_plan
     self.user_dietary_plan ||= user.user_dietary_plans.active.last

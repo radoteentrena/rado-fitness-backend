@@ -14,7 +14,9 @@ class UserDietaryPlan < ApplicationRecord
   end
 
   def weight_progress
-    return 0 unless daily_metrics.any?
-    (daily_metrics.last.weight - daily_metrics.first.weight).round(1)
+    weights = daily_metrics.where.not(weight: nil).order(date_logged: :asc).pluck(:weight)
+    return 0 if weights.empty?
+
+    (weights.last - weights.first).round(1)
   end
 end

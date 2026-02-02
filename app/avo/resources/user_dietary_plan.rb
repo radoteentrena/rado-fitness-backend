@@ -10,17 +10,17 @@ class Avo::Resources::UserDietaryPlan < Avo::BaseResource
     field :user, as: :belongs_to
     field :dietary_plan, as: :belongs_to, name: "Template"
 
-    heading "Status"
+    field "Status", as: :heading
     field :active, as: :boolean
     field :start_date, as: :date
     field :end_date, as: :date
 
-    heading "Targets"
+    field "Targets", as: :heading
     field :calories_target, as: :number
     field :protein_target, as: :number
     field :notes, as: :textarea
 
-    heading "Progress (Computed)"
+    field "Progress (Computed)", as: :heading
     field :average_calories, as: :number, readonly: true
     field :average_weight, as: :number, readonly: true
     field :weight_progress, as: :number, readonly: true

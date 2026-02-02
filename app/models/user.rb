@@ -28,6 +28,20 @@ class User < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def consistency_score
+    last_30_metrics = daily_metrics.order(date_logged: :desc).limit(30)
+    return 0 if last_30_metrics.empty?
+
+    (last_30_metrics.count { |m| m.compliant? } / 30.0 * 100).round
+  end
+
+  def accuracy_score
+    last_30_metrics = daily_metrics.order(date_logged: :desc).limit(30)
+    return 0 if last_30_metrics.empty?
+
+    (last_30_metrics.count { |m| m.on_target? } / 30.0 * 100).round
+  end
+
   private
 
   def set_temporary_password

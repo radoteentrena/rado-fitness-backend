@@ -15,6 +15,7 @@ class Avo::Resources::DailyMetric < Avo::BaseResource
     field :weight, as: :number
     field :raw_message_content, as: :textarea, rows: 5
     field :compliant, as: :boolean
+    field :on_target, as: :boolean
     field :ai_parsed_json, as: :code, language: "json"
   end
 end
