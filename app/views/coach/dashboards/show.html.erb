@@ -1,0 +1,121 @@
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="flex justify-between items-end border-b border-gray-200 pb-5">
+    <div>
+      <p class="text-sm font-medium text-gray-500"><%= Date.today.strftime("%A, %B %d, %Y") %></p>
+      <h1 class="text-3xl font-bold text-gray-900">Coach Dashboard</h1>
+    </div>
+    <div class="flex space-x-3">
+       <%= link_to "Admin Panel", "/avo", class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <dl class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+    <!-- Active Clients -->
+    <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
+      <dt class="text-sm font-medium text-gray-500 truncate">Active Clients</dt>
+      <dd class="mt-1 text-3xl font-semibold text-gray-900"><%= @active_clients_count %></dd>
+    </div>
+
+    <!-- Low Compliance Users -->
+    <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
+      <dt class="text-sm font-medium text-gray-500 truncate">Low Compliance (< 50%)</dt>
+      <dd class="mt-1 text-3xl font-semibold text-rose-600"><%= @low_compliance_users %></dd>
+    </div>
+
+    <!-- Total Users -->
+    <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6">
+      <dt class="text-sm font-medium text-gray-500 truncate">Total Members</dt>
+      <dd class="mt-1 text-3xl font-semibold text-gray-900"><%= @total_users %></dd>
+    </div>
+  </dl>
+
+  <!-- Priority Inbox -->
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Priority Inbox</h3>
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+        <%= @pending_alerts.count %> Pending
+      </span>
+    </div>
+    <div class="border-t border-gray-200">
+      <% if @pending_alerts.any? %>
+        <ul role="list" class="divide-y divide-gray-200">
+          <% @pending_alerts.each do |alert| %>
+            <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 transition duration-150 ease-in-out">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <!-- Icon based on type -->
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center <%= alert.weight_spike? ? 'bg-rose-100 text-rose-600' : 'bg-yellow-100 text-yellow-600' %>">
+                    <% if alert.weight_spike? %>
+                      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      </svg>
+                    <% else %>
+                      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                    <% end %>
+                  </div>
+                  <div class="ml-4">
+                    <p class="text-sm font-medium text-indigo-600 truncate"><%= alert.user.name %></p>
+                    <p class="text-sm text-gray-500"><%= alert.message %></p>
+                  </div>
+                </div>
+                <div class="flex items-center">
+                  <span class="text-sm text-gray-500 mr-4">
+                    <%= time_ago_in_words(alert.created_at) %> ago
+                  </span>
+                  <%= link_to "View", "/avo/resources/coach_alerts/#{alert.id}", class: "text-sm font-medium text-indigo-600 hover:text-indigo-500" %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="text-center py-10">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">All caught up!</h3>
+          <p class="mt-1 text-sm text-gray-500">No pending alerts requiring attention.</p>
+        </div>
+      <% end %>
+    </div>
+    <div class="bg-gray-50 px-4 py-4 sm:px-6 rounded-b-lg">
+      <div class="text-sm">
+        <%= link_to "View all alerts", "/avo/resources/coach_alerts", class: "font-medium text-indigo-600 hover:text-indigo-500" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions Grid -->
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+     <%= link_to "/avo/resources/users", class: "group relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500" do %>
+        <div class="flex-shrink-0">
+          <span class="h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center ring-8 ring-white group-hover:bg-indigo-100">
+             <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          </span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <span class="absolute inset-0" aria-hidden="true"></span>
+          <p class="text-sm font-medium text-gray-900">Manage Users</p>
+          <p class="text-sm text-gray-500">Add or edit clients</p>
+        </div>
+     <% end %>
+
+     <%= link_to "/avo/resources/user_dietary_plans", class: "group relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500" do %>
+        <div class="flex-shrink-0">
+          <span class="h-10 w-10 rounded-full bg-green-50 flex items-center justify-center ring-8 ring-white group-hover:bg-green-100">
+             <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+          </span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <span class="absolute inset-0" aria-hidden="true"></span>
+          <p class="text-sm font-medium text-gray-900">Nutrition Plans</p>
+          <p class="text-sm text-gray-500">Manage targets</p>
+        </div>
+     <% end %>
+  </div>
+</div>

@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  namespace :coach do
+    get "dashboards/show"
+  end
   devise_for :users
   mount_avo
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -7,6 +10,12 @@ Rails.application.routes.draw do
   namespace :webhooks do
     post "whatsapp/incoming", to: "whatsapp#incoming"
   end
+
+  namespace :coach do
+    resource :dashboard, only: [:show]
+  end
+  # Shortcut
+  get "dashboard", to: "coach/dashboards#show", as: :dashboard
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
@@ -18,4 +27,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+end
+
+if defined? ::Avo
+  Avo::Engine.routes.draw do
+    # This route is not protected, secure it with authentication if needed.
+    get "coach_dashboard", to: "tools#coach_dashboard", as: :coach_dashboard
+  end
 end
