@@ -5,6 +5,7 @@ class DailyMetric < ApplicationRecord
   before_validation :assign_to_active_plan, on: :create
   before_save :parse_content_with_ai, if: :should_parse_ai?
   before_save :calculate_compliance
+  after_save :check_weight_spike, if: :saved_change_to_weight?
 
   private
 
@@ -50,5 +51,22 @@ class DailyMetric < ApplicationRecord
     self.weight            ||= parsed_data["weight"]
   rescue => e
     Rails.logger.error("DailyMetric AI Parse Error: #{e.message}")
+  end
+
+  def check_weight_spike
+    return unless weight.present?
+
+    previous_weight = user.daily_metrics.where("date_logged < ?", date_logged).order(date_logged: :desc).pick(:weight)
+    return unless previous_weight.present?
+
+    weight_diff = weight - previous_weight
+    if weight_diff > 2.0
+      CoachAlert.create!(
+        user: user,
+        category: :weight_spike,
+        message: "Weight Spike Detected: +#{weight_diff.round(1)}kg (prev: #{previous_weight}kg, now: #{weight}kg) on #{date_logged}",
+        status: :pending
+      )
+    end
   end
 end

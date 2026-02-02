@@ -8,8 +8,6 @@ class Avo::Dashboards::Main < Avo::Dashboards::BaseDashboard
   # end
 
   def cards
-    card Avo::Cards::UsersMetric
-    card Avo::Cards::RecentPrograms
-    card Avo::Cards::GoogleCalendar
+    card Avo::Cards::PendingAlerts
   end
 end

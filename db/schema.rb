@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_02_141454) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_02_143427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "coach_alerts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "category", null: false
+    t.text "message"
+    t.integer "status", default: 0
+    t.text "action_taken"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_coach_alerts_on_user_id"
+  end
 
   create_table "daily_metrics", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -28,6 +39,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_141454) do
     t.datetime "updated_at", null: false
     t.bigint "user_dietary_plan_id"
     t.boolean "on_target", default: false
+    t.boolean "workout_completed", default: false
     t.index ["user_dietary_plan_id"], name: "index_daily_metrics_on_user_dietary_plan_id"
     t.index ["user_id"], name: "index_daily_metrics_on_user_id"
   end
@@ -130,6 +142,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_02_141454) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "coach_alerts", "users"
   add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
   add_foreign_key "programs", "users"

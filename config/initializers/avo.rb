@@ -7,6 +7,7 @@ Avo.configure do |config|
   # config.prefix_path = "/internal"
 
   # Where should the user be redirected when visiting the `/avo` url
+  # Where should the user be redirected when visiting the `/avo` url
   # config.home_path = nil
 
   ## == Licensing ==

@@ -3,8 +3,16 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
-## [Unreleased]
+
 ### Added
+- **Nutrition Compliance**:
+    - `DailyMetric` dual compliance: `compliant` (Consistency) and `on_target` (Accuracy).
+    - `User` scores: `consistency_score` and `accuracy_score`.
+- **Coach Alerts**:
+    - `CoachAlert` model to track `weight_spike` and `workout_missed`.
+    - `UserAlertJob` running daily to generate alerts.
+- **Admin**:
+    - `CoachAlert` Avo resource (Priority Inbox).
 - **WhatsApp Ingestion (Integrations)**:
     - `Webhooks::WhatsappController` handling inbound messages from Twilio.
     - Natural Language Parsing: Messages are saved as `DailyMetric`, and AI extracts stats (Protein, Calories, etc.).
