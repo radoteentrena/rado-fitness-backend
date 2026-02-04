@@ -12,10 +12,20 @@ This partial renders flash messages on every page.
 %>
 
 <% if flash.any? %>
-  <div class="flashes">
+  <div class="flashes space-y-2 mb-6">
     <% flash.each do |key, value| -%>
       <% next unless value.respond_to?(:html_safe) %>
-      <div class="flash flash-<%= key %>"><%= value.html_safe %></div>
+      <%
+        border_color = key.to_s == 'alert' ? 'border-blackish dark:border-whiteish' : 'border-primary'
+        text_color = 'text-blackish dark:text-whiteish'
+        bg_color = 'bg-whiteish dark:bg-shadow'
+      %>
+      <div class="flex items-center p-4 mb-4 text-sm <%= text_color %> rounded-r-lg shadow-sm <%= bg_color %> border-l-4 <%= border_color %>" role="alert">
+         <span class="sr-only"><%= key.to_s.titleize %></span>
+         <div>
+             <%= value.html_safe %>
+         </div>
+      </div>
     <% end -%>
   </div>
 <% end %>

@@ -7,7 +7,7 @@ export default class extends Controller {
     // Create backdrop element if it doesn't exist
     if (!this.hasBackdropTarget) {
       const backdrop = document.createElement("div")
-      backdrop.className = "fixed inset-0 z-30 bg-gray-900/50 dark:bg-gray-900/80 hidden transition-opacity"
+      backdrop.className = "fixed inset-0 z-30 bg-blackish/50 dark:bg-blackish/80 hidden transition-opacity"
       backdrop.setAttribute("data-sidebar-target", "backdrop")
       backdrop.setAttribute("data-action", "click->sidebar#close")
       document.body.appendChild(backdrop)

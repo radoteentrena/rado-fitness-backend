@@ -1,0 +1,66 @@
+<%# app/views/admin/users/_collection.html.erb %>
+<div id="users_collection" class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
+    <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
+        <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
+            <tr>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Name
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Phone
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Category
+                </th>
+                 <th scope="col" class="px-6 py-3 font-medium">
+                    Status
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Plan Tier
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    <span class="sr-only">Edit</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <% resources.each do |resource| %>
+            <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50">
+                <th scope="row" class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+                    <%= link_to resource.name, admin_user_path(resource), data: { turbo_frame: "admin_main_content", turbo_action: "advance" }, class: "hover:text-primary dark:hover:text-primary" %>
+                </th>
+                <td class="px-6 py-4">
+                     <%= resource.phone %>
+                </td>
+                <td class="px-6 py-4">
+                    <% category_colors = {
+                        "pelele" => "bg-graphite text-whiteish dark:bg-graphite dark:text-whiteish",
+                        "civil" => "bg-shadow text-whiteish dark:bg-shadow dark:text-whiteish",
+                        "soldado" => "bg-primary text-blackish dark:bg-primary dark:text-blackish"
+                    } %>
+                    <span class="<%= category_colors[resource.category] || 'bg-background-light text-graphite dark:bg-graphite dark:text-whiteish' %> text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">
+                        <%= resource.category&.titleize %>
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <% status_colors = {
+                        "active" => "bg-primary text-blackish dark:bg-primary dark:text-blackish",
+                        "lead" => "bg-background-light text-graphite dark:bg-graphite dark:text-whiteish",
+                        "churned" => "bg-blackish text-whiteish dark:bg-blackish dark:text-whiteish",
+                        "archived" => "bg-blackish text-whiteish dark:bg-blackish dark:text-whiteish"
+                    } %>
+                    <span class="<%= status_colors[resource.status] || 'bg-background-light text-graphite' %> text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">
+                       <%= resource.status.titleize %>
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <%= resource.plan_tier&.titleize %>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <%= link_to "Edit", edit_admin_user_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>
+                </td>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>

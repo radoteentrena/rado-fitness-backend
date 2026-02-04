@@ -2,20 +2,20 @@
   <label for="search" class="sr-only"><%= t("administrate.search.label", resource: resource_name) %></label>
   <div class="relative w-full">
       <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+          <svg class="w-4 h-4 text-graphite dark:text-muted" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
           </svg>
       </div>
       <input type="text"
              id="search"
              name="search"
-             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+             class="bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full ps-10 p-2.5  dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary"
              placeholder="<%= t("administrate.search.label", resource: resource_name) %>"
              value="<%= search_term %>"
              required>
   </div>
   <% if search_term.present? %>
-    <%= link_to clear_search_params, class: "p-2.5 ms-2 text-sm font-medium text-white bg-red-700 rounded-lg border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800" do %>
+    <%= link_to clear_search_params, class: "p-2.5 ms-2 text-sm font-medium text-whiteish bg-graphite rounded-lg border border-graphite hover:bg-blackish focus:ring-4 focus:outline-none focus:ring-graphite/20 dark:bg-graphite dark:hover:bg-whiteish dark:hover:text-blackish dark:focus:ring-graphite" do %>
         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
         </svg>

@@ -3,20 +3,31 @@
 
 @theme {
   /* Saffron Primary Palette */
-  --color-primary-50: #fffbeb;
-  --color-primary-100: #fef3c7;
-  --color-primary-200: #fde68a;
-  --color-primary-300: #fcd34d;
-  --color-primary-400: #fbbf24;
-  --color-primary-500: #f59e0b;
-  --color-primary-600: #d97706;
-  --color-primary-700: #b45309;
-  --color-primary-800: #92400e;
-  --color-primary-900: #78350f;
-  --color-primary-950: #261b02;
+  --color-primary-50: #fef8e7;
+  --color-primary-100: #fcf1cf;
+  --color-primary-200: #fae39e;
+  --color-primary-300: #f7d56e;
+  --color-primary-400: #f5c73d;
+  --color-primary-500: #f2b90d;
+  --color-primary-600: #c2940a;
+  --color-primary-700: #916f08;
+  --color-primary-800: #614a05;
+  --color-primary-900: #302503;
+  --color-primary-950: #221a02;
+
 
   /* Alias commonly used primary */
-  --color-primary: var(--color-primary-500);
+  --color-primary: #F5C228;
+
+  --color-graphite: #2F2F2F;
+
+  --color-shadow: #282828;
+
+  --color-blackish: #040307;
+
+  --color-whiteish: #F5F5F5;
+  --color-muted: #94A3B8;
+  --color-muted-dark: #64748B;
 
   /* Custom Brand Colors from Stitch's Template */
   --color-background-light: #F8F9FA;
@@ -38,11 +49,11 @@
   input[type='number'],
   textarea,
   select {
-    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500;
+    @apply bg-whiteish border border-shadow text-blackish text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-whiteish dark:text-whiteish dark:focus:ring-primary-500 dark:focus:border-primary-500;
   }
 
   label {
-    @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
+    @apply block mb-2 text-sm font-medium text-blackish dark:text-whiteish;
   }
 
   /* Pagination (Kaminari) */
@@ -50,9 +61,51 @@
     @apply flex items-center -space-x-px h-8 text-sm mt-4 justify-center;
   }
   .pagination .page, .pagination .first, .pagination .prev, .pagination .next, .pagination .last, .pagination .gap {
-    @apply flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white;
+    @apply flex items-center justify-center px-3 h-8 leading-tight text-graphite bg-whiteish border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-whiteish dark:hover:bg-graphite dark:hover:text-whiteish;
   }
   .pagination .current {
-    @apply z-10 flex items-center justify-center px-3 h-8 leading-tight text-primary-600 border border-primary-300 bg-primary-50 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white;
+    @apply z-10 flex items-center justify-center px-3 h-8 leading-tight text-blackish border border-primary bg-primary hover:bg-primary-600 hover:text-blackish dark:border-primary dark:bg-primary/20 dark:text-primary;
+  }
+}
+
+@layer components {
+  .button {
+    @apply text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all inline-flex items-center dark:bg-primary dark:hover:bg-primary/90 dark:focus:ring-primary/20 cursor-pointer border-0;
+  }
+
+  .button--danger {
+    @apply text-whiteish bg-graphite hover:bg-blackish focus:ring-4 focus:ring-primary/20 dark:bg-graphite dark:hover:bg-whiteish dark:hover:text-blackish;
+  }
+
+  .button--link {
+    @apply bg-transparent border border-shadow text-blackish hover:bg-background-light dark:border-graphite dark:text-muted dark:hover:bg-graphite dark:hover:text-whiteish transition-colors;
+  }
+
+  .stat-card {
+    @apply bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-graphite transition-all;
+  }
+
+  .admin-header {
+    @apply flex items-center justify-between pb-4 mb-4 border-b border-shadow dark:border-graphite bg-whiteish/80 dark:bg-shadow/80 backdrop-blur-sm sticky top-0 z-10;
+  }
+
+  .admin-title {
+    @apply text-2xl font-bold text-blackish dark:text-whiteish;
+  }
+
+  .badge {
+    @apply inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full;
+  }
+
+  .badge-primary {
+    @apply bg-primary text-blackish;
+  }
+
+  .badge-neutral {
+    @apply bg-background-light text-graphite dark:bg-graphite dark:text-whiteish;
+  }
+
+  .badge-danger {
+    @apply bg-blackish text-whiteish dark:bg-red-900/30 dark:text-red-400;
   }
 }

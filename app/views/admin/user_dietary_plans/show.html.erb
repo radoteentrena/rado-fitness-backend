@@ -1,72 +1,96 @@
 <%# Custom Sheet View %>
 <% content_for(:title) { "#{page.resource.user.name} - #{page.resource.dietary_plan&.name || 'Custom Plan'}" } %>
 
-<header class="main-content__header">
-  <h1 class="main-content__page-title">
+<header class="admin-header">
+  <h1 class="admin-title">
     <%= content_for(:title) %>
     <% if page.resource.active? %>
-      <span style="display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; color: #047857; background-color: #d1fae5; border-radius: 9999px;">Active</span>
+      <span class="badge badge-primary ms-2 transition-transform hover:scale-105">Active</span>
     <% else %>
-      <span style="display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; color: #6b7280; background-color: #f3f4f6; border-radius: 9999px;">Inactive</span>
+      <span class="badge badge-neutral ms-2">Inactive</span>
     <% end %>
   </h1>
 
-  <div>
-    <%= link_to t("administrate.actions.edit_resource", name: "Plan"), [:edit, namespace, page.resource], class: "button" %>
+  <div class="flex gap-2">
+    <%= link_to t("administrate.actions.edit_resource", name: "Plan"), [:edit, namespace, page.resource], class: "button button--link" %>
   </div>
 </header>
 
 <section class="main-content__body">
-  <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     <%# Calories Card %>
-    <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <h3 style="margin: 0; color: #6b7280; font-size: 0.875rem;">Average Calories</h3>
-      <p style="margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 600;">
-        <%= page.resource.average_calories %>
-        <span style="font-size: 0.875rem; color: #9ca3af;">/ <%= page.resource.calories_target %></span>
-      </p>
+    <div class="stat-card">
+      <h3 class="text-graphite dark:text-muted text-sm font-medium uppercase tracking-wider mb-2">Average Calories</h3>
+      <div class="flex items-baseline gap-2">
+        <span class="text-3xl font-bold text-blackish dark:text-whiteish"><%= page.resource.average_calories %></span>
+        <span class="text-sm text-graphite dark:text-muted">/ <%= page.resource.calories_target %> kcal</span>
+      </div>
+      <div class="mt-4 w-full bg-shadow dark:bg-graphite rounded-full h-1.5 overflow-hidden">
+        <% progress = [((page.resource.average_calories.to_f / page.resource.calories_target.to_f) * 100), 100].min %>
+        <div class="bg-primary h-full transition-all duration-500" style="width: <%= progress %>%"></div>
+      </div>
     </div>
 
     <%# Weight Card %>
-    <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <h3 style="margin: 0; color: #6b7280; font-size: 0.875rem;">Average Weight</h3>
-      <p style="margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 600;">
-        <%= page.resource.average_weight %> kg
-      </p>
-       <p style="margin: 0; font-size: 0.875rem; color: <%= page.resource.weight_progress.positive? ? '#ef4444' : '#10b981' %>;">
-        <%= page.resource.weight_progress > 0 ? "+#{page.resource.weight_progress}" : page.resource.weight_progress %> kg
-      </p>
+    <div class="stat-card">
+      <h3 class="text-graphite dark:text-muted text-sm font-medium uppercase tracking-wider mb-2">Average Weight</h3>
+      <div class="flex items-baseline gap-2">
+        <span class="text-3xl font-bold text-blackish dark:text-whiteish"><%= page.resource.average_weight %></span>
+        <span class="text-sm text-graphite dark:text-muted">kg</span>
+      </div>
+      <div class="mt-2 flex items-center gap-1">
+        <% if page.resource.weight_progress > 0 %>
+          <span class="text-sm font-medium text-blackish dark:text-whiteish">+<%= page.resource.weight_progress %> kg</span>
+          <svg class="w-4 h-4 text-blackish dark:text-whiteish" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+        <% else %>
+          <span class="text-sm font-medium text-primary"><%= page.resource.weight_progress %> kg</span>
+          <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>
+        <% end %>
+      </div>
     </div>
 
     <%# Protein Card %>
-    <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-      <h3 style="margin: 0; color: #6b7280; font-size: 0.875rem;">Protein Target</h3>
-      <p style="margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 600;">
-        <%= page.resource.protein_target %> g
-      </p>
+    <div class="stat-card">
+      <h3 class="text-graphite dark:text-muted text-sm font-medium uppercase tracking-wider mb-2">Protein Target</h3>
+      <div class="flex items-baseline gap-2">
+        <span class="text-3xl font-bold text-blackish dark:text-whiteish"><%= page.resource.protein_target %></span>
+        <span class="text-sm text-graphite dark:text-muted">g</span>
+      </div>
+      <p class="mt-2 text-xs text-graphite dark:text-muted font-medium">Daily nutritional requirement</p>
     </div>
   </div>
 
-  <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-    <h3 style="margin-top: 0;">Plan Details</h3>
-    <dl>
-        <dt class="attribute-label">Start Date</dt>
-        <dd class="attribute-data"><%= page.resource.start_date %></dd>
+  <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl border border-shadow dark:border-graphite shadow-sm mb-8">
+    <h3 class="text-xl font-bold text-blackish dark:text-whiteish mb-4">Plan Details</h3>
+    <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <dt class="text-sm font-medium text-graphite dark:text-muted uppercase tracking-wider">Start Date</dt>
+        <dd class="mt-1 text-blackish dark:text-whiteish font-medium"><%= page.resource.start_date %></dd>
+      </div>
 
-        <dt class="attribute-label">End Date</dt>
-        <dd class="attribute-data"><%= page.resource.end_date %></dd>
+      <div>
+        <dt class="text-sm font-medium text-graphite dark:text-muted uppercase tracking-wider">End Date</dt>
+        <dd class="mt-1 text-blackish dark:text-whiteish font-medium"><%= page.resource.end_date %></dd>
+      </div>
 
-        <dt class="attribute-label">Notes</dt>
-        <dd class="attribute-data"><%= page.resource.notes %></dd>
+      <div class="md:col-span-2">
+        <dt class="text-sm font-medium text-graphite dark:text-muted uppercase tracking-wider">Notes</dt>
+        <dd class="mt-1 text-blackish dark:text-whiteish italic"><%= page.resource.notes %></dd>
+      </div>
     </dl>
   </div>
 
   <%# Render Daily Metrics Table %>
-  <h2 style="margin-top: 2rem;">Daily Metrics</h2>
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-2xl font-bold text-blackish dark:text-whiteish">Daily Metrics</h2>
+  </div>
   <% if page.attributes[:daily_metrics] %>
-    <%= render_field page.attributes[:daily_metrics], page: page %>
+    <div class="overflow-hidden">
+      <%= render_field page.attributes[:daily_metrics], page: page %>
+    </div>
   <% else %>
-    <p>No daily metrics configured.</p>
+    <div class="bg-background-light dark:bg-graphite/20 p-8 rounded-xl border border-dashed border-shadow dark:border-graphite text-center">
+      <p class="text-graphite dark:text-muted">No daily metrics configured for this plan.</p>
+    </div>
   <% end %>
-
 </section>

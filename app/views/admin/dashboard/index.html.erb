@@ -3,8 +3,8 @@
   <div class="grid grid-cols-1 gap-4 mb-4">
       <div class="flex justify-between items-end">
         <div>
-           <p class="text-sm font-medium text-slate-500 dark:text-slate-400"><%= Date.today.strftime("%A, %B %d, %Y") %></p>
-           <h1 class="text-2xl font-semibold text-black dark:text-white">Admin Dashboard</h1>
+           <p class="text-sm font-medium text-graphite dark:text-muted"><%= Date.today.strftime("%A, %B %d, %Y") %></p>
+           <h1 class="text-2xl font-semibold text-blackish dark:text-whiteish">Admin Dashboard</h1>
         </div>
       </div>
   </div>
@@ -12,53 +12,53 @@
   <!-- Stats Grid -->
   <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2 lg:grid-cols-4">
     <!-- Total Users -->
-    <div class="border border-slate-100 rounded-2xl shadow-sm dark:border-slate-700 p-4 bg-white dark:bg-slate-800">
+    <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
        <div class="flex items-center">
-          <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-slate-600 bg-slate-100 rounded-xl dark:bg-slate-700 dark:text-slate-300">
+          <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-graphite bg-background-light rounded-xl dark:bg-graphite dark:text-whiteish">
              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
           </div>
           <div class="ml-4">
-             <h3 class="mb-2 text-xl font-bold text-black dark:text-white"><%= @total_users %></h3>
-             <p class="font-light text-slate-500 dark:text-slate-400">Total Users</p>
+             <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @total_users %></h3>
+             <p class="font-light text-graphite dark:text-slate-200">Total Users</p>
           </div>
        </div>
     </div>
 
     <!-- Active Clients -->
-    <div class="border border-slate-100 rounded-2xl shadow-sm dark:border-slate-700 p-4 bg-white dark:bg-slate-800">
+    <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
         <div class="flex items-center">
             <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-primary bg-primary/10 rounded-xl">
                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
             </div>
             <div class="ml-4">
-               <h3 class="mb-2 text-xl font-bold text-black dark:text-white"><%= @active_clients_count %></h3>
-               <p class="font-light text-slate-500 dark:text-slate-400">Active Clients</p>
+               <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @active_clients_count %></h3>
+               <p class="font-light text-graphite dark:text-slate-200">Active Clients</p>
             </div>
          </div>
     </div>
 
     <!-- Low Compliance -->
-    <div class="border border-slate-100 rounded-2xl shadow-sm dark:border-slate-700 p-4 bg-white dark:bg-slate-800">
+    <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
          <div class="flex items-center">
-             <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-red-500 bg-red-50 rounded-xl dark:bg-red-900/20">
+             <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-primary bg-background-light rounded-xl dark:bg-graphite">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
              </div>
              <div class="ml-4">
-                <h3 class="mb-2 text-xl font-bold text-black dark:text-white"><%= @low_compliance_users_count %></h3>
-                <p class="font-light text-slate-500 dark:text-slate-400">Low Compliance</p>
+                <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @low_compliance_users_count %></h3>
+                <p class="font-light text-graphite dark:text-slate-200">Low Compliance</p>
              </div>
           </div>
      </div>
 
      <!-- Pending Alerts -->
-     <div class="border border-slate-100 rounded-2xl shadow-sm dark:border-slate-700 p-4 bg-white dark:bg-slate-800">
+     <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
           <div class="flex items-center">
-              <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-orange-500 bg-orange-50 rounded-xl dark:bg-orange-900/20">
+              <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-primary bg-background-light rounded-xl dark:bg-graphite">
                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
               </div>
               <div class="ml-4">
-                 <h3 class="mb-2 text-xl font-bold text-black dark:text-white"><%= @pending_alerts.count %></h3>
-                 <p class="font-light text-slate-500 dark:text-slate-400">Pending Alerts</p>
+                 <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @pending_alerts.count %></h3>
+                 <p class="font-light text-graphite dark:text-slate-200">Pending Alerts</p>
               </div>
            </div>
       </div>
@@ -69,15 +69,15 @@
     <!-- Left Column -->
     <div class="xl:col-span-2 space-y-4">
         <!-- Priority Inbox -->
-        <div class="bg-white border border-slate-100 rounded-3xl shadow-sm dark:border-slate-700 p-4 dark:bg-slate-800">
+        <div class="bg-whiteish border border-shadow rounded-3xl shadow-sm dark:border-graphite p-4 dark:bg-shadow">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Priority Inbox</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-whiteish">Priority Inbox</h3>
                 <span class="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold"><%= @pending_alerts.count %> PENDING</span>
             </div>
             <% if @pending_alerts.any? %>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <table class="w-full text-sm text-left text-graphite dark:text-slate-200">
+                        <thead class="text-xs text-graphite uppercase bg-background-light dark:bg-graphite dark:text-whiteish">
                             <tr>
                                 <th scope="col" class="px-4 py-3">Type</th>
                                 <th scope="col" class="px-4 py-3">User</th>
@@ -88,16 +88,16 @@
                         </thead>
                         <tbody>
                             <% @pending_alerts.each do |alert| %>
-                            <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <tr class="border-b dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50">
                                 <td class="px-4 py-3">
-                                    <% color_class = alert.weight_spike? ? 'text-red-600 dark:text-red-500' : 'text-yellow-600 dark:text-yellow-500' %>
+                                    <% color_class = alert.weight_spike? ? 'text-primary dark:text-primary' : 'text-primary dark:text-primary' %>
                                     <span class="font-medium <%= color_class %>"><%= alert.category.humanize %></span>
                                 </td>
-                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap"><%= alert.user.email %></td>
+                                <td class="px-4 py-3 font-medium text-blackish dark:text-whiteish whitespace-nowrap"><%= alert.user.email %></td>
                                 <td class="px-4 py-3 truncate max-w-xs"><%= alert.message %></td>
                                 <td class="px-4 py-3"><%= time_ago_in_words(alert.created_at) %> ago</td>
                                 <td class="px-4 py-3">
-                                    <%= link_to "View", "/avo/resources/coach_alerts/#{alert.id}", class: "font-medium text-primary-600 hover:underline dark:text-primary-500" %>
+                                    <%= link_to "View", "/avo/resources/coach_alerts/#{alert.id}", class: "font-medium text-primary hover:underline" %>
                                 </td>
                             </tr>
                             <% end %>
@@ -106,21 +106,21 @@
                 </div>
             <% else %>
                 <div class="flex flex-col items-center justify-center py-8 text-center">
-                    <div class="w-16 h-16 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center mb-4 border border-slate-100 dark:border-slate-800">
-                        <span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-4xl">check_circle</span>
+                    <div class="w-16 h-16 rounded-full bg-background-light dark:bg-graphite flex items-center justify-center mb-4 border border-shadow dark:border-graphite">
+                        <span class="material-symbols-outlined text-graphite dark:text-whiteish text-4xl">check_circle</span>
                     </div>
-                    <p class="text-slate-400 dark:text-slate-500 font-medium">All caught up!</p>
-                    <p class="text-xs text-slate-300 dark:text-slate-600 mt-1">No pending alerts to review.</p>
+                    <p class="text-graphite dark:text-slate-200 font-medium">All caught up!</p>
+                    <p class="text-xs text-graphite dark:text-slate-200 mt-1">No pending alerts to review.</p>
                 </div>
             <% end %>
         </div>
 
         <!-- User Growth Chart -->
-        <div class="bg-white border border-slate-100 rounded-3xl shadow-sm dark:border-slate-700 p-4 dark:bg-slate-800">
+        <div class="bg-whiteish border border-shadow rounded-3xl shadow-sm dark:border-graphite p-4 dark:bg-shadow">
           <div class="flex items-center justify-between mb-4">
             <div class="flex-shrink-0">
-               <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">User Growth</h3>
-               <span class="text-[10px] text-slate-400 font-medium">LAST 7 DAYS</span>
+               <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-whiteish">User Growth</h3>
+               <span class="text-[10px] text-graphite font-medium dark:text-whiteish">LAST 7 DAYS</span>
             </div>
           </div>
           <div id="main-chart" data-controller="admin--charts" data-admin--charts-target="chart"></div>
@@ -131,13 +131,13 @@
     <div class="space-y-4">
         <!-- Quick Actions -->
         <div class="bg-transparent dark:bg-transparent p-0">
-             <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">Quick Actions</h3>
+             <h3 class="text-sm font-bold uppercase tracking-wider text-graphite mb-3 dark:text-whiteish">Quick Actions</h3>
              <div class="grid grid-cols-2 gap-3">
-                 <%= link_to "/avo/resources/users/new", class: "flex items-center justify-center gap-2 bg-black text-white py-3 rounded-2xl font-semibold text-sm shadow-lg hover:bg-gray-800 transition" do %>
+                 <%= link_to "/avo/resources/users/new", class: "flex items-center justify-center gap-2 bg-blackish text-whiteish py-3 rounded-2xl font-semibold text-sm shadow-lg hover:bg-shadow transition dark:bg-primary dark:text-blackish dark:hover:bg-primary/90 dark:hover:text-blackish" do %>
                     <span class="material-symbols-outlined text-base">person_add</span>
                     Add New Client
                  <% end %>
-                 <%= link_to "/avo/resources/user_dietary_plans", class: "flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 py-3 rounded-2xl font-semibold text-sm shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition dark:text-white" do %>
+                 <%= link_to "/avo/resources/user_dietary_plans", class: "flex items-center justify-center gap-2 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite py-3 rounded-2xl font-semibold text-sm shadow-sm hover:bg-background-light dark:hover:bg-shadow/50 transition dark:text-whiteish" do %>
                     <span class="material-symbols-outlined text-base">restaurant_menu</span>
                     Nutrition Plans
                  <% end %>
@@ -145,25 +145,25 @@
         </div>
 
         <!-- Recent Users -->
-        <div class="bg-white border border-slate-100 rounded-3xl shadow-sm dark:border-slate-700 dark:bg-slate-800">
-            <div class="p-4 flex items-center justify-between border-b border-slate-50 dark:border-slate-700/50">
-               <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Recent Users</h3>
+        <div class="bg-whiteish border border-shadow rounded-3xl shadow-sm dark:border-graphite dark:bg-shadow">
+            <div class="p-4 flex items-center justify-between border-b border-shadow dark:border-graphite/50">
+               <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-whiteish">Recent Users</h3>
                <%= link_to "VIEW ALL", admin_users_path, class: "text-xs font-bold text-primary hover:underline" %>
             </div>
-            <ul role="list" class="divide-y divide-slate-50 dark:divide-slate-700/50">
+            <ul role="list" class="divide-y divide-blackish/50 dark:divide-primary">
                 <% @recent_users.each do |user| %>
-                <li class="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
+                <li class="p-4">
                     <div class="flex items-center justify-between">
                          <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-600 dark:text-slate-300">
+                            <div class="w-10 h-10 rounded-full bg-background-light dark:bg-graphite hover:bg-primary/50 flex items-center justify-center font-bold text-graphite dark:text-whiteish">
                                 <%= user.email[0].upcase rescue "?" %>
                             </div>
                             <div>
-                                <p class="text-sm font-bold text-slate-900 dark:text-white"><%= user.email %></p>
-                                <p class="text-[10px] text-slate-500">Joined <%= time_ago_in_words(user.created_at) %> ago</p>
+                                <p class="text-sm font-bold text-blackish dark:text-whiteish"><%= user.email %></p>
+                                <p class="text-[10px] text-graphite dark:text-whiteish/70">Joined <%= time_ago_in_words(user.created_at) %> ago</p>
                             </div>
                         </div>
-                        <span class="material-symbols-outlined text-slate-300">chevron_right</span>
+                        <span class="material-symbols-outlined text-shadow dark:text-muted">chevron_right</span>
                     </div>
                 </li>
                 <% end %>

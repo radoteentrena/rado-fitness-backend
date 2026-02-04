@@ -1,0 +1,126 @@
+<%# app/views/admin/users/show.html.erb %>
+<% user = page.resource %>
+
+<div class="space-y-6">
+  <%# Header with Back and Edit %>
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <%= link_to admin_users_path, class: "p-2 text-graphite bg-whiteish rounded-lg border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish" do %>
+         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+         </svg>
+         <span class="sr-only">Back</span>
+      <% end %>
+      <h1 class="text-2xl font-bold tracking-tight text-blackish dark:text-whiteish">
+        <%= user.name %>
+      </h1>
+    </div>
+
+    <div class="flex space-x-3">
+        <%= link_to "Edit User", edit_admin_user_path(user), data: { turbo_frame: "modal_frame" }, class: "button" %>
+    </div>
+  </div>
+
+  <%# Main Content Grid %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <%# Left Column: User Details %>
+    <div class="lg:col-span-1 space-y-6">
+      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+         <div class="flex flex-col items-center pb-6 border-b border-shadow dark:border-graphite">
+            <div class="w-24 h-24 mb-3 rounded-full bg-primary/20 text-primary flex items-center justify-center text-3xl font-bold">
+                <%= user.first_name[0] %><%= user.last_name[0] %>
+            </div>
+            <h5 class="mb-1 text-xl font-medium text-blackish dark:text-whiteish"><%= user.name %></h5>
+            <span class="text-sm text-graphite dark:text-muted"><%= user.email %></span>
+
+            <div class="flex mt-4 space-x-3 md:mt-6">
+                 <% category_colors = {
+                        "pelele" => "bg-graphite text-whiteish dark:bg-graphite dark:text-whiteish",
+                        "civil" => "bg-shadow text-whiteish dark:bg-shadow dark:text-whiteish",
+                        "soldado" => "bg-primary text-blackish dark:bg-primary dark:text-blackish"
+                    } %>
+                <span class="px-3 py-1 text-sm font-medium rounded-full <%= category_colors[user.category] || 'bg-background-light text-graphite' %>">
+                   <%= user.category&.titleize %>
+                </span>
+                 <% status_colors = {
+                        "active" => "bg-primary text-blackish dark:bg-primary dark:text-blackish",
+                        "lead" => "bg-background-light text-graphite dark:bg-graphite dark:text-whiteish",
+                        "churned" => "bg-blackish text-whiteish dark:bg-blackish dark:text-whiteish",
+                        "archived" => "bg-blackish text-whiteish dark:bg-blackish dark:text-whiteish"
+                    } %>
+                <span class="px-3 py-1 text-sm font-medium rounded-full <%= status_colors[user.status] || 'badge-neutral' %>">
+                   <%= user.status.titleize %>
+                </span>
+            </div>
+         </div>
+
+         <div class="pt-6 space-y-4">
+             <div>
+                <dt class="text-sm font-medium text-graphite dark:text-muted">Phone</dt>
+                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= user.phone.presence || "N/A" %></dd>
+             </div>
+             <div>
+                <dt class="text-sm font-medium text-graphite dark:text-muted">Plan Tier</dt>
+                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= user.plan_tier&.titleize %></dd>
+             </div>
+             <div>
+                <dt class="text-sm font-medium text-graphite dark:text-muted">Member Since</dt>
+                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= user.created_at.strftime("%B %d, %Y") %></dd>
+             </div>
+         </div>
+      </div>
+    </div>
+
+    <%# Right Column: Stats & Activity %>
+    <div class="lg:col-span-2 space-y-6">
+        <%# Stats Grid %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-graphite">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-primary/20 dark:bg-graphite text-primary dark:text-primary">
+                         <span class="material-symbols-outlined text-2xl">check_circle</span>
+                    </div>
+                    <div class="ml-4">
+                        <dt class="text-sm font-medium text-graphite dark:text-muted">Consistency Score</dt>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.consistency_score %>%</dd>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-graphite">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-primary/10 dark:bg-graphite text-primary dark:text-primary">
+                         <span class="material-symbols-outlined text-2xl">target</span>
+                    </div>
+                    <div class="ml-4">
+                        <dt class="text-sm font-medium text-graphite dark:text-muted">Accuracy Score</dt>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.accuracy_score %>%</dd>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%# Placeholder for future sections %>
+        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+            <h3 class="text-lg font-bold text-blackish dark:text-whiteish mb-4">Assigned Programs</h3>
+            <% if user.programs.any? %>
+                <ul class="space-y-4">
+                    <% user.programs.each do |program| %>
+                        <li class="flex items-center justify-between p-4 bg-background-light dark:bg-graphite rounded-lg">
+                            <div>
+                                <h4 class="font-medium text-blackish dark:text-whiteish"><%= program.name %></h4>
+                                <p class="text-sm text-graphite dark:text-graphite"><%= program.description %></p>
+                            </div>
+                            <span class="text-xs px-2 py-1 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded text-graphite dark:text-whiteish">Active</span>
+                        </li>
+                    <% end %>
+                </ul>
+            <% else %>
+                <p class="text-graphite dark:text-graphite text-sm">No programs assigned yet.</p>
+            <% end %>
+        </div>
+    </div>
+  </div>
+</div>
+
+<%= turbo_frame_tag "modal_frame" %>

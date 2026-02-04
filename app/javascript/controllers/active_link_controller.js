@@ -32,11 +32,11 @@ export default class extends Controller {
   }
 
   get activeClasses() {
-    return ["bg-white", "text-black", "shadow-sm", "dark:bg-slate-800", "dark:text-white"]
+    return ["bg-whiteish", "text-blackish", "shadow-sm", "dark:bg-shadow", "dark:text-whiteish"]
   }
 
   get inactiveClasses() {
-    return ["text-slate-600", "hover:bg-slate-200", "dark:text-slate-400", "dark:hover:bg-slate-700"]
+    return ["text-graphite", "hover:bg-background-light", "dark:text-muted", "dark:hover:bg-shadow/50", "dark:hover:text-whiteish"]
   }
 
   initialize() {

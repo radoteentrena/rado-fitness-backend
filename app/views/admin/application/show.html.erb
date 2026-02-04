@@ -18,8 +18,8 @@ as well as a link to its edit page.
 
 <% content_for(:title) { t("administrate.actions.show_resource", name: page.page_title) } %>
 
-<header class="flex items-center justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
-  <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+<header class="flex items-center justify-between pb-4 mb-4 border-b border-shadow dark:border-graphite">
+  <h1 class="text-2xl font-bold text-blackish dark:text-whiteish">
     <%= content_for(:title) %>
   </h1>
 
@@ -29,13 +29,13 @@ as well as a link to its edit page.
     <%= link_to(
       t("administrate.actions.edit_resource", name: page.page_title),
       [:edit, namespace, page.resource],
-      class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800",
+      class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20",
     ) if accessible_action?(page.resource, :edit) %>
 
     <%= button_to(
       t("administrate.actions.destroy"),
       [namespace, page.resource],
-      class: "focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900",
+      class: "focus:outline-none text-whiteish bg-graphite hover:bg-blackish focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-graphite dark:hover:bg-whiteish dark:hover:text-blackish dark:focus:ring-graphite",
       method: :delete,
       data: { turbo_confirm: t("administrate.actions.confirm") }
     ) if accessible_action?(page.resource, :destroy) %>
@@ -49,25 +49,25 @@ as well as a link to its edit page.
 <% if content_for?(:main) %>
   <%= content_for(:main) %>
 <% else %>
-  <section class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+  <section class="bg-whiteish dark:bg-shadow shadow rounded-lg p-6">
     <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
       <% page.attributes.each do |title, attributes| %>
         <% if title.present? %>
-           <div class="sm:col-span-2 border-b border-gray-200 dark:border-gray-700 pb-2 mb-2">
-             <legend class="text-lg font-medium leading-6 text-gray-900 dark:text-white"><%= t "helpers.label.#{page.resource_name}.#{title}", default: title %></legend>
+           <div class="sm:col-span-2 border-b border-shadow dark:border-graphite pb-2 mb-2">
+             <legend class="text-lg font-medium leading-6 text-blackish dark:text-whiteish"><%= t "helpers.label.#{page.resource_name}.#{title}", default: title %></legend>
            </div>
         <% end %>
 
         <% attributes.each do |attribute| %>
           <div class="sm:col-span-1">
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400" id="<%= attribute.name %>">
+            <dt class="text-sm font-medium text-graphite dark:text-muted" id="<%= attribute.name %>">
             <%= t(
               "helpers.label.#{resource_name}.#{attribute.name}",
               default: page.resource.class.human_attribute_name(attribute.name),
             ) %>
             </dt>
 
-            <dd class="mt-1 text-sm text-gray-900 dark:text-white break-words"
+            <dd class="mt-1 text-sm text-blackish dark:text-whiteish break-words"
                 ><%= render_field attribute, page: page %></dd>
           </div>
         <% end %>

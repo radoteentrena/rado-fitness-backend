@@ -2,8 +2,8 @@
   <%= display_resource_name(page.resource_name) %>
 <% end %>
 
-<header class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900">
-  <h1 class="text-2xl font-bold text-gray-900 dark:text-white" id="page-title">
+<header class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 pb-4 bg-whiteish dark:bg-shadow">
+  <h1 class="text-2xl font-bold text-blackish dark:text-whiteish" id="page-title">
     <%= content_for(:title) %>
   </h1>
 
@@ -25,7 +25,7 @@
           name: display_resource_name(page.resource_name, singular: true).downcase
         ),
         [:new, namespace, page.resource_path.to_sym],
-        class: "text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800",
+        class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20",
       ) if accessible_action?(new_resource, :new) %>
     </div>
   </div>
