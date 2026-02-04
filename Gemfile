@@ -65,7 +65,7 @@ group :test do
 end
 
 # Admin dashboard
-gem "avo", ">= 3.0"
+gem "administrate"
 
 # Authentication
 gem "devise"

@@ -1,0 +1,4 @@
+// @alpinejs/persist@3.15.5 downloaded from https://ga.jspm.io/npm:@alpinejs/persist@3.15.5/dist/module.esm.js
+
+function e(e){let s=()=>{let s;let i;try{i=localStorage}catch(e){console.error(e);console.warn("Alpine: $persist is using temporary storage since localStorage is unavailable.");let t=new Map;i={getItem:t.get.bind(t),setItem:t.set.bind(t)}}return e.interceptor(((l,a,o,c,u)=>{let g=s||`_x_${c}`;let f=t(g,i)?r(g,i):l;o(f);e.effect((()=>{let e=a();n(g,e,i);o(e)}));return f}),(e=>{e.as=t=>{s=t;return e},e.using=t=>{i=t;return e}}))};Object.defineProperty(e,"$persist",{get:()=>s()});e.magic("persist",s);e.persist=(s,{get:i,set:l},a=localStorage)=>{let o=t(s,a)?r(s,a):i();l(o);e.effect((()=>{let e=i();n(s,e,a);l(e)}))}}function t(e,t){return t.getItem(e)!==null}function r(e,t){let r=t.getItem(e);if(r!==void 0)return JSON.parse(r)}function n(e,t,r){r.setItem(e,JSON.stringify(t))}var s=e;export{s as default,e as persist};
+

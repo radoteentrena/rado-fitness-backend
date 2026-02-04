@@ -1,0 +1,102 @@
+<%#
+# Collection
+
+This partial is used on the `index` and `show` pages
+to display a collection of resources in an HTML table.
+
+## Local variables:
+
+- `collection_presenter`:
+  An instance of [Administrate::Page::Collection][1].
+  The table presenter uses `ResourceDashboard::COLLECTION_ATTRIBUTES` to determine
+  the columns displayed in the table
+- `resources`:
+  An ActiveModel::Relation collection of resources to be displayed in the table.
+  By default, the number of resources is limited by pagination
+  or by a hard limit to prevent excessive page load times
+
+[1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Collection
+%>
+
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" aria-labelledby="<%= table_title %>">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <% collection_presenter.attribute_types.each do |attr_name, attr_type| %>
+            <th scope="col" class="px-6 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
+              <% if attr_type.sortable? %>
+                <%= link_to(params: sanitized_order_params(page, collection_field_name).merge(
+                  collection_presenter.order_params_for(attr_name, key: collection_field_name)
+                ), class: "flex items-center gap-1") do %>
+                  <%= t(
+                    "helpers.label.#{collection_presenter.resource_name}.#{attr_name}",
+                    default: resource_class.human_attribute_name(attr_name).titleize,
+                  ) %>
+                  <% if collection_presenter.ordered_by?(attr_name) %>
+                    <span class="inline-block">
+                        <% if collection_presenter.ordered_html_class(attr_name) == "asc" %>
+                          <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+                          </svg>
+                        <% else %>
+                          <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                          </svg>
+                        <% end %>
+                    </span>
+                  <% end %>
+                <% end %>
+              <% else %>
+                <%= t(
+                  "helpers.label.#{collection_presenter.resource_name}.#{attr_name}",
+                  default: resource_class.human_attribute_name(attr_name).titleize,
+                ) %>
+              <% end %>
+            </th>
+          <% end %>
+          <%= render(
+            "collection_header_actions",
+            collection_presenter: collection_presenter,
+            page: page,
+            resources: resources,
+            table_title: "page-title"
+          ) %>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% resources.each do |resource| %>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 js-table-row"
+              <% if accessible_action?(resource, :show) %>
+                <%= %(tabindex=0 data-url=#{polymorphic_path([namespace, resource])}) %>
+              <% end %>
+              >
+            <% collection_presenter.attributes_for(resource).each do |attribute| %>
+              <td class="px-6 py-4">
+                <% if accessible_action?(resource, :show) -%>
+                  <a href="<%= polymorphic_path([namespace, resource]) -%>"
+                     tabindex="-1"
+                     class="font-medium text-gray-900 whitespace-nowrap dark:text-white hover:underline"
+                     >
+                    <%= render_field attribute %>
+                  </a>
+                <% else %>
+                  <%= render_field attribute %>
+                <% end -%>
+              </td>
+            <% end %>
+
+            <%= render(
+              "collection_item_actions",
+              collection_presenter: collection_presenter,
+              collection_field_name: collection_field_name,
+              page: page,
+              namespace: namespace,
+              resource: resource,
+              table_title: "page-title"
+            ) %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+</div>

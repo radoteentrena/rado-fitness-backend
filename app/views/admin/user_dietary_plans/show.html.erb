@@ -1,0 +1,72 @@
+<%# Custom Sheet View %>
+<% content_for(:title) { "#{page.resource.user.name} - #{page.resource.dietary_plan&.name || 'Custom Plan'}" } %>
+
+<header class="main-content__header">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+    <% if page.resource.active? %>
+      <span style="display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; color: #047857; background-color: #d1fae5; border-radius: 9999px;">Active</span>
+    <% else %>
+      <span style="display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; color: #6b7280; background-color: #f3f4f6; border-radius: 9999px;">Inactive</span>
+    <% end %>
+  </h1>
+
+  <div>
+    <%= link_to t("administrate.actions.edit_resource", name: "Plan"), [:edit, namespace, page.resource], class: "button" %>
+  </div>
+</header>
+
+<section class="main-content__body">
+  <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+    <%# Calories Card %>
+    <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <h3 style="margin: 0; color: #6b7280; font-size: 0.875rem;">Average Calories</h3>
+      <p style="margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 600;">
+        <%= page.resource.average_calories %>
+        <span style="font-size: 0.875rem; color: #9ca3af;">/ <%= page.resource.calories_target %></span>
+      </p>
+    </div>
+
+    <%# Weight Card %>
+    <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <h3 style="margin: 0; color: #6b7280; font-size: 0.875rem;">Average Weight</h3>
+      <p style="margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 600;">
+        <%= page.resource.average_weight %> kg
+      </p>
+       <p style="margin: 0; font-size: 0.875rem; color: <%= page.resource.weight_progress.positive? ? '#ef4444' : '#10b981' %>;">
+        <%= page.resource.weight_progress > 0 ? "+#{page.resource.weight_progress}" : page.resource.weight_progress %> kg
+      </p>
+    </div>
+
+    <%# Protein Card %>
+    <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <h3 style="margin: 0; color: #6b7280; font-size: 0.875rem;">Protein Target</h3>
+      <p style="margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 600;">
+        <%= page.resource.protein_target %> g
+      </p>
+    </div>
+  </div>
+
+  <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+    <h3 style="margin-top: 0;">Plan Details</h3>
+    <dl>
+        <dt class="attribute-label">Start Date</dt>
+        <dd class="attribute-data"><%= page.resource.start_date %></dd>
+
+        <dt class="attribute-label">End Date</dt>
+        <dd class="attribute-data"><%= page.resource.end_date %></dd>
+
+        <dt class="attribute-label">Notes</dt>
+        <dd class="attribute-data"><%= page.resource.notes %></dd>
+    </dl>
+  </div>
+
+  <%# Render Daily Metrics Table %>
+  <h2 style="margin-top: 2rem;">Daily Metrics</h2>
+  <% if page.attributes[:daily_metrics] %>
+    <%= render_field page.attributes[:daily_metrics], page: page %>
+  <% else %>
+    <p>No daily metrics configured.</p>
+  <% end %>
+
+</section>

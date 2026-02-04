@@ -1,0 +1,29 @@
+<% content_for(:title) do %>
+  Assign <%= @dietary_plan.name %>
+<% end %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    Assign <%= @dietary_plan.name %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <%= form_with url: admin_assignments_path, local: true, class: "form" do |f| %>
+    <%= hidden_field_tag :dietary_plan_id, @dietary_plan.id %>
+
+    <div class="field-unit">
+      <div class="field-unit__label">
+        <%= f.label :user_id, "Select User" %>
+      </div>
+      <div class="field-unit__field">
+        <%= f.select :user_id, @users.map { |u| [u.name, u.id] }, {}, class: "select", style: "padding: 8px; font-size: 16px; width: 100%; max_width: 400px;" %>
+      </div>
+    </div>
+
+    <div class="form-actions" style: "margin-top: 20px;">
+      <%= f.submit "Assign Plan", class: "button" %>
+      <%= link_to "Cancel", admin_dietary_plan_path(@dietary_plan), class: "button button--link" %>
+    </div>
+  <% end %>
+</section>

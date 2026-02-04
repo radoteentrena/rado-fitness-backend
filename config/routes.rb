@@ -1,9 +1,24 @@
 Rails.application.routes.draw do
+  namespace :admin do
+      resources :coach_alerts
+      resources :daily_metrics
+      resources :dietary_plans
+      resources :exercises
+      resources :programs
+      resources :routines
+      resources :routine_exercises
+      resources :users
+      resources :user_dietary_plans
+      resources :assignments, only: [:new, :create]
+
+      root to: "dashboard#index"
+      get "dashboard", to: "dashboard#index"
+    end
   namespace :coach do
     get "dashboards/show"
   end
   devise_for :users
-  mount_avo
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Webhooks
@@ -27,11 +42,4 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-end
-
-if defined? ::Avo
-  Avo::Engine.routes.draw do
-    # This route is not protected, secure it with authentication if needed.
-    get "coach_dashboard", to: "tools#coach_dashboard", as: :coach_dashboard
-  end
 end

@@ -117,7 +117,9 @@ RoutineExercise.create!([
 puts "Creating Dietary Plans..."
 diet_template = DietaryPlan.create!(
   name: "Standard Cut",
-  description: "High protein, moderate carb deficit."
+  description: "High protein, moderate carb deficit.",
+  calories_target: 2400,
+  protein_target: 200
 )
 
 # 5. Sample Client
@@ -135,8 +137,6 @@ client = User.create!(
 
 # Assign Program Instance
 puts "Assigning Program to Client..."
-# In a real app, we'd clone the template. For seed simplicity, we verify association.
-# Here we represent the "assigned" program. In future, we clone Protocol.
 user_program = Program.create!(
   name: "Juan's Hypertrophy",
   description: "Customized instantiation.",
