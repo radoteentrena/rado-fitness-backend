@@ -1,1 +1,58 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Saffron Primary Palette */
+  --color-primary-50: #fffbeb;
+  --color-primary-100: #fef3c7;
+  --color-primary-200: #fde68a;
+  --color-primary-300: #fcd34d;
+  --color-primary-400: #fbbf24;
+  --color-primary-500: #f59e0b;
+  --color-primary-600: #d97706;
+  --color-primary-700: #b45309;
+  --color-primary-800: #92400e;
+  --color-primary-900: #78350f;
+  --color-primary-950: #261b02;
+
+  /* Alias commonly used primary */
+  --color-primary: var(--color-primary-500);
+
+  /* Custom Brand Colors from Stitch's Template */
+  --color-background-light: #F8F9FA;
+  --color-background-dark: #0F172A;
+  --color-sidebar-bg: #F2F2F2;
+
+  /* Fonts */
+  --font-display: "Inter", "sans-serif";
+
+  /* Border Radius */
+  --radius-default: 12px;
+}
+
+@layer base {
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='search'],
+  input[type='number'],
+  textarea,
+  select {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500;
+  }
+
+  label {
+    @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
+  }
+
+  /* Pagination (Kaminari) */
+  .pagination {
+    @apply flex items-center -space-x-px h-8 text-sm mt-4 justify-center;
+  }
+  .pagination .page, .pagination .first, .pagination .prev, .pagination .next, .pagination .last, .pagination .gap {
+    @apply flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white;
+  }
+  .pagination .current {
+    @apply z-10 flex items-center justify-center px-3 h-8 leading-tight text-primary-600 border border-primary-300 bg-primary-50 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white;
+  }
+}
