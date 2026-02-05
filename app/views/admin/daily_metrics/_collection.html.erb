@@ -1,0 +1,66 @@
+<div id="daily_metrics_collection" class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
+    <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
+        <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
+            <tr>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Date
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Client
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Weight
+                </th>
+                 <th scope="col" class="px-6 py-3 font-medium">
+                    Calories
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Protein
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    Steps
+                </th>
+                 <th scope="col" class="px-6 py-3 font-medium">
+                    Compliance
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium">
+                    <span class="sr-only">Edit</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <% resources.each do |resource| %>
+            <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-whiteish/50 hover:bg-background-light dark:hover:bg-shadow/50">
+                <th scope="row" class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+                   <%= resource.date_logged.strftime("%b %d, %Y") %>
+                </th>
+                <td class="px-6 py-4">
+                     <%= link_to resource.user.name, admin_user_path(resource.user), class: "hover:text-primary dark:hover:text-primary" %>
+                </td>
+                <td class="px-6 py-4">
+                    <%= resource.weight %> kg
+                </td>
+                <td class="px-6 py-4">
+                    <%= resource.calories_consumed %>
+                </td>
+                 <td class="px-6 py-4">
+                    <%= resource.protein_consumed %> g
+                </td>
+                 <td class="px-6 py-4">
+                    <%= resource.steps %>
+                </td>
+                <td class="px-6 py-4">
+                    <% if resource.compliant? %>
+                        <span class="bg-primary text-blackish text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-primary dark:text-blackish">Compliant</span>
+                    <% else %>
+                         <span class="bg-background-light text-graphite text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-graphite dark:text-whiteish">Missing</span>
+                    <% end %>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <%= link_to "Edit", edit_admin_daily_metric_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>
+                </td>
+            </tr>
+            <% end %>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,51 @@
+<div class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
+  <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
+    <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
+      <tr>
+        <th scope="col" class="px-6 py-3 font-medium">ID</th>
+        <th scope="col" class="px-6 py-3 font-medium">Name</th>
+        <th scope="col" class="px-6 py-3 font-medium">Duration (Weeks)</th>
+        <th scope="col" class="px-6 py-3 font-medium">Assigned To</th>
+        <th scope="col" class="px-6 py-3 font-medium">Google Sheet</th>
+        <th scope="col" class="px-6 py-3 font-medium">
+          <span class="sr-only">Edit</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% resources.each do |resource| %>
+        <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-whiteish/50 hover:bg-background-light dark:hover:bg-shadow/50">
+          <th scope="row" class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+            <%= resource.id %>
+          </th>
+          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+            <%= link_to resource.name, admin_program_path(resource), class: "hover:text-primary transition-colors" %>
+          </td>
+          <td class="px-6 py-4">
+            <%= resource.duration_weeks %>
+          </td>
+          <td class="px-6 py-4">
+             <% if resource.user.present? %>
+                <%= link_to resource.user.name, admin_user_path(resource.user), class: "hover:text-primary transition-colors dark:text-primary" %>
+             <% else %>
+                <span class="bg-primary/20 text-primary text-xs font-medium px-2.5 py-0.5 rounded border border-primary/20">Template</span>
+             <% end %>
+          </td>
+          <td class="px-6 py-4">
+            <% if resource.google_sheet_link.present? %>
+                <a href="<%= resource.google_sheet_link %>" target="_blank" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">
+                    <span class="material-symbols-outlined">table_view</span>
+                </a>
+            <% else %>
+                <span class="text-muted">–</span>
+            <% end %>
+          </td>
+
+          <td class="px-6 py-4 text-right">
+            <%= link_to "Edit", edit_admin_program_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

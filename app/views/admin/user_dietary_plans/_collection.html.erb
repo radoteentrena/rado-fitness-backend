@@ -1,0 +1,53 @@
+<%# app/views/admin/user_dietary_plans/_collection.html.erb %>
+<div class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
+  <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
+    <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
+      <tr>
+        <th scope="col" class="px-6 py-3 font-medium">User</th>
+        <th scope="col" class="px-6 py-3 font-medium">Status / Template</th>
+        <th scope="col" class="px-6 py-3 font-medium">Targets</th>
+        <th scope="col" class="px-6 py-3 font-medium">Dates</th>
+        <th scope="col" class="px-6 py-3 font-medium">
+          <span class="sr-only">Edit</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% resources.each do |resource| %>
+        <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-whiteish/50 hover:bg-background-light dark:hover:bg-shadow/50">
+          <th scope="row" class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+            <%= link_to resource.user.email, admin_user_dietary_plan_path(resource), class: "hover:text-primary transition-colors" %>
+          </th>
+          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+            <div class="flex flex-col">
+              <% if resource.active %>
+                <span class="w-fit bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300 mb-1">Active</span>
+              <% else %>
+                <span class="w-fit bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300 mb-1">Inactive</span>
+              <% end %>
+              <% if resource.dietary_plan %>
+                 <span class="text-xs text-graphite dark:text-muted">Template: <%= resource.dietary_plan.name %></span>
+              <% end %>
+            </div>
+          </td>
+          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+             <div class="flex flex-col">
+                <span><%= resource.calories_target %> kcal</span>
+                <span class="text-xs text-graphite dark:text-muted"><%= resource.protein_target %>g protein</span>
+             </div>
+          </td>
+          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+             <div class="flex flex-col">
+                <span class="text-xs">Start: <%= resource.start_date&.strftime("%b %d, %Y") || "-" %></span>
+                <span class="text-xs text-graphite dark:text-muted">End: <%= resource.end_date&.strftime("%b %d, %Y") || "-" %></span>
+             </div>
+          </td>
+
+          <td class="px-6 py-4 text-right">
+            <%= link_to "Edit", edit_admin_user_dietary_plan_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -25,7 +25,7 @@
         </thead>
         <tbody>
             <% resources.each do |resource| %>
-            <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50">
+            <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-whiteish/50 hover:bg-background-light dark:hover:bg-shadow/50">
                 <th scope="row" class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
                     <%= link_to resource.name, admin_user_path(resource), data: { turbo_frame: "admin_main_content", turbo_action: "advance" }, class: "hover:text-primary dark:hover:text-primary" %>
                 </th>
@@ -34,8 +34,8 @@
                 </td>
                 <td class="px-6 py-4">
                     <% category_colors = {
-                        "pelele" => "bg-graphite text-whiteish dark:bg-graphite dark:text-whiteish",
-                        "civil" => "bg-shadow text-whiteish dark:bg-shadow dark:text-whiteish",
+                        "pelele" => "bg-blackish text-blackish dark:bg-background-light dark:text-blackish",
+                        "civil" => "bg-background-light border border-2 border-primary text-blackish dark:bg-primary dark:text-blackish",
                         "soldado" => "bg-primary text-blackish dark:bg-primary dark:text-blackish"
                     } %>
                     <span class="<%= category_colors[resource.category] || 'bg-background-light text-graphite dark:bg-graphite dark:text-whiteish' %> text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">
@@ -45,7 +45,7 @@
                 <td class="px-6 py-4">
                     <% status_colors = {
                         "active" => "bg-primary text-blackish dark:bg-primary dark:text-blackish",
-                        "lead" => "bg-background-light text-graphite dark:bg-graphite dark:text-whiteish",
+                        "lead" => "bg-background-light border border-primary border-2 text-graphite dark:bg-graphite dark:text-whiteish",
                         "churned" => "bg-blackish text-whiteish dark:bg-blackish dark:text-whiteish",
                         "archived" => "bg-blackish text-whiteish dark:bg-blackish dark:text-whiteish"
                     } %>

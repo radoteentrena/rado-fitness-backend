@@ -1,2 +1,0 @@
-module Coach::DashboardsHelper
-end

@@ -8,14 +8,6 @@
       <span class="ms-3 font-semibold text-sm">Dashboard</span>
     <% end %>
   </li>
-  <li>
-    <%= link_to main_app.dashboard_path, class: "flex items-center p-3 rounded-xl text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish group transition-colors" do %>
-      <svg class="w-5 h-5 transition duration-75 text-inherit" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"/>
-      </svg>
-      <span class="ms-3 font-semibold text-sm"><%= t("administrate.navigation.back_to_app") %></span>
-    <% end %>
-  </li>
 
   <% Administrate::Namespace.new(namespace).resources_with_index_route.reject { |r| r.to_s == "dashboard" }.each do |resource| %>
     <li>

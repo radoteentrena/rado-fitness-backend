@@ -1,0 +1,45 @@
+<div data-controller="modal" data-modal-target="backdrop">
+  <!-- Main modal -->
+  <div data-modal-target="modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-blackish/50 backdrop-blur-sm" data-action="click->modal#closeBackground">
+      <div class="relative p-4 w-full max-w-2xl max-h-full">
+          <!-- Modal content -->
+          <div class="relative p-4 bg-whiteish rounded-xl shadow-xl dark:bg-shadow sm:p-5 border border-shadow dark:border-graphite">
+              <!-- Modal header -->
+              <div class="flex justify-between items-center pb-4 mb-4 rounded-t border-b border-shadow dark:border-graphite">
+                  <h3 class="text-lg font-semibold text-blackish dark:text-whiteish">
+                      <%= title %>
+                  </h3>
+                  <%= link_to admin_exercises_path, class: "text-graphite bg-transparent hover:bg-background-light hover:text-blackish rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-shadow/50 dark:hover:text-whiteish", data: { action: "click->modal#close" } do %>
+                      <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                      <span class="sr-only">Close modal</span>
+                  <% end %>
+              </div>
+              <!-- Modal body -->
+              <%= form_for([:admin, resource], html: { class: "space-y-4" }) do |f| %>
+                  <div class="grid gap-4 mb-4 sm:grid-cols-2">
+                      <div class="sm:col-span-2">
+                          <%= f.label :name, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+                          <%= f.text_field :name, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "e.g. Bench Press" %>
+                      </div>
+                      <div>
+                          <%= f.label :muscle_group, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+                           <%= f.text_field :muscle_group, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "e.g. Chest" %>
+                      </div>
+                      <div class="sm:col-span-2">
+                          <%= f.label :video_link, "Video URL", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+                          <%= f.url_field :video_link, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "https://youtube.com/..." %>
+                      </div>
+                      <div class="sm:col-span-2">
+                          <%= f.label :description, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+                          <%= f.text_area :description, rows: 4, class: "block p-2.5 w-full text-sm text-blackish bg-background-light rounded-lg border border-shadow focus:ring-primary focus:border-primary dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "Exercise instructions and tips..." %>
+                      </div>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                      <%= f.submit class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary/90 dark:focus:ring-primary/20" %>
+                      <%= link_to "Cancel", admin_exercises_path, class: "text-blackish inline-flex items-center border border-shadow hover:bg-blackish hover:text-whiteish focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-graphite dark:text-whiteish dark:hover:text-blackish dark:hover:bg-whiteish dark:focus:ring-graphite" %>
+                  </div>
+              <% end %>
+          </div>
+      </div>
+  </div>
+</div>

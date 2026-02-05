@@ -53,9 +53,6 @@
               </div>
               <ul class="py-1" role="none">
                 <li>
-                  <%= link_to "Back to App", main_app.dashboard_path, class: "block px-4 py-2 text-sm text-graphite hover:bg-background-light dark:text-whiteish dark:hover:bg-shadow/50 dark:hover:text-whiteish", role: "menuitem" %>
-                </li>
-                <li>
                   <%= link_to "Sign out", main_app.destroy_user_session_path, data: { turbo_method: :delete }, class: "block px-4 py-2 text-sm text-graphite hover:bg-background-light dark:text-whiteish dark:hover:bg-shadow/50 dark:hover:text-whiteish", role: "menuitem" %>
                 </li>
               </ul>
@@ -70,7 +67,6 @@
      <div class="h-full px-3 pb-4 overflow-y-auto bg-whiteish dark:bg-shadow">
         <%= render "navigation" -%>
      </div>
-
   </aside>
 
   <div class="p-4 sm:ml-64">

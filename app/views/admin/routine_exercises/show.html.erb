@@ -1,0 +1,101 @@
+<%# app/views/admin/routine_exercises/show.html.erb %>
+<% routine_exercise = page.resource %>
+
+<div class="space-y-6">
+  <%# Header with Back and Edit %>
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <%= link_to admin_routine_exercises_path, class: "p-2 text-graphite bg-whiteish rounded-lg border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish" do %>
+         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+         </svg>
+         <span class="sr-only">Back</span>
+      <% end %>
+      <h1 class="text-2xl font-bold tracking-tight text-blackish dark:text-whiteish">
+        Detail: <%= routine_exercise.exercise.name rescue "Exercise ##{routine_exercise.exercise_id}" %>
+      </h1>
+      <% if routine_exercise.warmup %>
+        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Warmup</span>
+      <% end %>
+    </div>
+
+    <div class="flex space-x-3">
+        <%= link_to "Edit Info", edit_admin_routine_exercise_path(routine_exercise), data: { turbo_frame: "modal_frame" }, class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20" %>
+    </div>
+  </div>
+
+  <%# Main Content Grid %>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <%# Left Column: Context %>
+    <div class="space-y-6">
+      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+         <h5 class="mb-4 text-xl font-medium text-blackish dark:text-whiteish border-b border-shadow dark:border-graphite pb-2">Context</h5>
+
+         <div class="space-y-4">
+             <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
+                <span class="text-sm font-medium text-graphite dark:text-muted">Routine</span>
+                <% if routine_exercise.routine %>
+                    <%= link_to routine_exercise.routine.name, admin_routine_path(routine_exercise.routine), class: "text-sm font-bold text-primary hover:underline" %>
+                <% else %>
+                    <span class="text-sm font-bold text-graphite dark:text-muted">–</span>
+                <% end %>
+             </div>
+
+             <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
+                <span class="text-sm font-medium text-graphite dark:text-muted">Day</span>
+                <span class="text-sm font-bold text-blackish dark:text-whiteish">
+                    #<%= routine_exercise.day_number %> (<%= routine_exercise.day_name %>)
+                </span>
+             </div>
+
+              <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
+                <span class="text-sm font-medium text-graphite dark:text-muted">Order Index</span>
+                <span class="text-sm font-bold text-blackish dark:text-whiteish"><%= routine_exercise.order_index %></span>
+             </div>
+
+              <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
+                <span class="text-sm font-medium text-graphite dark:text-muted">Exercise ID</span>
+                <span class="text-sm font-bold text-blackish dark:text-whiteish"><%= routine_exercise.exercise_id %></span>
+             </div>
+         </div>
+      </div>
+    </div>
+
+    <%# Right Column: Protocol %>
+    <div class="space-y-6">
+        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+            <h3 class="text-lg font-bold text-blackish dark:text-whiteish mb-4">Protocol Details</h3>
+
+            <dl class="grid grid-cols-2 gap-x-4 gap-y-6 text-sm">
+                <div>
+                     <dt class="text-graphite dark:text-muted mb-1">Sets</dt>
+                     <dd class="text-lg font-semibold text-blackish dark:text-whiteish"><%= routine_exercise.sets %></dd>
+                </div>
+                 <div>
+                     <dt class="text-graphite dark:text-muted mb-1">Reps</dt>
+                     <dd class="text-lg font-semibold text-blackish dark:text-whiteish"><%= routine_exercise.reps %></dd>
+                </div>
+                 <div>
+                     <dt class="text-graphite dark:text-muted mb-1">RIR (Reps In Reserve)</dt>
+                     <dd class="text-lg font-semibold text-blackish dark:text-whiteish"><%= routine_exercise.rir.presence || "-" %></dd>
+                </div>
+                 <div>
+                     <dt class="text-graphite dark:text-muted mb-1">Rest Period</dt>
+                     <dd class="text-lg font-semibold text-blackish dark:text-whiteish"><%= routine_exercise.rest_seconds %>s</dd>
+                </div>
+                 <div class="col-span-2">
+                     <dt class="text-graphite dark:text-muted mb-1">Load / Weight Instructions</dt>
+                     <dd class="font-semibold text-blackish dark:text-whiteish"><%= routine_exercise.load.presence || "No specific load instructions" %></dd>
+                </div>
+                 <div class="col-span-2">
+                     <dt class="text-graphite dark:text-muted mb-1">Notes / Instructions</dt>
+                     <dd class="text-blackish dark:text-whiteish leading-relaxed"><%= routine_exercise.instructions.presence || "None" %></dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+  </div>
+</div>
+
+<%= turbo_frame_tag "modal_frame" %>

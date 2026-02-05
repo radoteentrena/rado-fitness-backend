@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+### Added
+- **Admin UI:** Comprehensive UI revamp for Daily Metrics, Dietary Plans, Exercises, Programs, Routines, Routine Exercises, and User Dietary Plans used consistently styled card tables.
+- **Admin UI:** Implemented Turbo Frame-based modals for all CRUD operations (`new` and `edit` actions).
+- **Admin UI:** Detailed `show` views for all core resources with context and stats.
+
+### Changed
+- **Admin UI:** Standardized design using Saffron/Graphite theme across all admin sections.
+- **Refactor:** Removed legacy Coach Dashboard controller and views in favor of the unified Admin Panel.
 - **Admin Dashboard**:
     - Migrated functionality from `Coach::DashboardsController` to `Admin::DashboardController`.
     - Integrated Flowbite Admin Dashboard with real-time stats (Active Clients, Low Compliance).

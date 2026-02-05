@@ -1,0 +1,58 @@
+<%# app/views/admin/routine_exercises/_collection.html.erb %>
+<div class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
+  <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
+    <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
+      <tr>
+        <th scope="col" class="px-6 py-3 font-medium">ID</th>
+        <th scope="col" class="px-6 py-3 font-medium">Ordering</th>
+        <th scope="col" class="px-6 py-3 font-medium">Routine</th>
+        <th scope="col" class="px-6 py-3 font-medium">Exercise</th>
+        <th scope="col" class="px-6 py-3 font-medium">Protocol</th>
+        <th scope="col" class="px-6 py-3 font-medium">
+          <span class="sr-only">Edit</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% resources.each do |resource| %>
+        <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-whiteish/50 hover:bg-background-light dark:hover:bg-shadow/50">
+          <th scope="row" class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+            <%= resource.id %>
+          </th>
+          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+             <div class="flex flex-col">
+                <span class="text-xs text-graphite dark:text-muted">Day <%= resource.day_number %> (<%= resource.day_name %>)</span>
+                <span>Order: <%= resource.order_index %></span>
+             </div>
+          </td>
+          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+             <% if resource.routine %>
+                <%= link_to resource.routine.name, admin_routine_path(resource.routine), class: "hover:text-primary transition-colors dark:text-primary" %>
+             <% else %>
+                <span class="text-muted">–</span>
+             <% end %>
+          </td>
+          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+             <% if resource.exercise %>
+                <%= link_to resource.exercise.name, admin_exercise_path(resource.exercise), class: "hover:text-primary transition-colors" %>
+             <% else %>
+                <span class="text-muted">–</span>
+             <% end %>
+          </td>
+          <td class="px-6 py-4">
+             <span class="bg-background-light text-graphite text-xs font-medium px-2.5 py-0.5 rounded dark:bg-graphite dark:text-whiteish border border-shadow dark:border-graphite">
+                <%= resource.sets %> x <%= resource.reps %>
+             </span>
+             <% if resource.rir.present? %>
+                 <span class="ml-1 text-xs text-graphite dark:text-muted">@ RIR <%= resource.rir %></span>
+             <% end %>
+          </td>
+
+          <td class="px-6 py-4 text-right">
+            <%= link_to "Edit", edit_admin_routine_exercise_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

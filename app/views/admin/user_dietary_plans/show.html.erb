@@ -1,96 +1,105 @@
-<%# Custom Sheet View %>
-<% content_for(:title) { "#{page.resource.user.name} - #{page.resource.dietary_plan&.name || 'Custom Plan'}" } %>
+<%# app/views/admin/user_dietary_plans/show.html.erb %>
+<% plan = page.resource %>
 
-<header class="admin-header">
-  <h1 class="admin-title">
-    <%= content_for(:title) %>
-    <% if page.resource.active? %>
-      <span class="badge badge-primary ms-2 transition-transform hover:scale-105">Active</span>
-    <% else %>
-      <span class="badge badge-neutral ms-2">Inactive</span>
-    <% end %>
-  </h1>
-
-  <div class="flex gap-2">
-    <%= link_to t("administrate.actions.edit_resource", name: "Plan"), [:edit, namespace, page.resource], class: "button button--link" %>
-  </div>
-</header>
-
-<section class="main-content__body">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <%# Calories Card %>
-    <div class="stat-card">
-      <h3 class="text-graphite dark:text-muted text-sm font-medium uppercase tracking-wider mb-2">Average Calories</h3>
-      <div class="flex items-baseline gap-2">
-        <span class="text-3xl font-bold text-blackish dark:text-whiteish"><%= page.resource.average_calories %></span>
-        <span class="text-sm text-graphite dark:text-muted">/ <%= page.resource.calories_target %> kcal</span>
-      </div>
-      <div class="mt-4 w-full bg-shadow dark:bg-graphite rounded-full h-1.5 overflow-hidden">
-        <% progress = [((page.resource.average_calories.to_f / page.resource.calories_target.to_f) * 100), 100].min %>
-        <div class="bg-primary h-full transition-all duration-500" style="width: <%= progress %>%"></div>
-      </div>
+<div class="space-y-6">
+  <%# Header %>
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <%= link_to admin_user_dietary_plans_path, class: "p-2 text-graphite bg-whiteish rounded-lg border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish" do %>
+         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+         </svg>
+         <span class="sr-only">Back</span>
+      <% end %>
+      <h1 class="text-2xl font-bold tracking-tight text-blackish dark:text-whiteish">
+        Assigned Plan: <%= plan.user.email %>
+      </h1>
+      <% if plan.active %>
+        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Active</span>
+      <% else %>
+         <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Inactive</span>
+      <% end %>
     </div>
 
-    <%# Weight Card %>
-    <div class="stat-card">
-      <h3 class="text-graphite dark:text-muted text-sm font-medium uppercase tracking-wider mb-2">Average Weight</h3>
-      <div class="flex items-baseline gap-2">
-        <span class="text-3xl font-bold text-blackish dark:text-whiteish"><%= page.resource.average_weight %></span>
-        <span class="text-sm text-graphite dark:text-muted">kg</span>
-      </div>
-      <div class="mt-2 flex items-center gap-1">
-        <% if page.resource.weight_progress > 0 %>
-          <span class="text-sm font-medium text-blackish dark:text-whiteish">+<%= page.resource.weight_progress %> kg</span>
-          <svg class="w-4 h-4 text-blackish dark:text-whiteish" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-        <% else %>
-          <span class="text-sm font-medium text-primary"><%= page.resource.weight_progress %> kg</span>
-          <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>
-        <% end %>
-      </div>
-    </div>
-
-    <%# Protein Card %>
-    <div class="stat-card">
-      <h3 class="text-graphite dark:text-muted text-sm font-medium uppercase tracking-wider mb-2">Protein Target</h3>
-      <div class="flex items-baseline gap-2">
-        <span class="text-3xl font-bold text-blackish dark:text-whiteish"><%= page.resource.protein_target %></span>
-        <span class="text-sm text-graphite dark:text-muted">g</span>
-      </div>
-      <p class="mt-2 text-xs text-graphite dark:text-muted font-medium">Daily nutritional requirement</p>
+    <div class="flex space-x-3">
+        <%= link_to "Edit Plan", edit_admin_user_dietary_plan_path(plan), data: { turbo_frame: "modal_frame" }, class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20" %>
     </div>
   </div>
 
-  <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl border border-shadow dark:border-graphite shadow-sm mb-8">
-    <h3 class="text-xl font-bold text-blackish dark:text-whiteish mb-4">Plan Details</h3>
-    <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <dt class="text-sm font-medium text-graphite dark:text-muted uppercase tracking-wider">Start Date</dt>
-        <dd class="mt-1 text-blackish dark:text-whiteish font-medium"><%= page.resource.start_date %></dd>
+  <%# Content Grid %>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <%# Stats / Overview %>
+      <div class="space-y-6">
+           <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+               <h5 class="mb-4 text-xl font-medium text-blackish dark:text-whiteish border-b border-shadow dark:border-graphite pb-2">Plan Overview</h5>
+                <dl class="grid grid-cols-2 gap-x-4 gap-y-6 text-sm">
+                    <div>
+                        <dt class="text-graphite dark:text-muted mb-1">Calories Target</dt>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= plan.calories_target %> <span class="text-sm font-normal text-graphite dark:text-muted">kcal</span></dd>
+                    </div>
+                     <div>
+                        <dt class="text-graphite dark:text-muted mb-1">Protein Target</dt>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= plan.protein_target %> <span class="text-sm font-normal text-graphite dark:text-muted">g</span></dd>
+                    </div>
+
+                    <div class="col-span-2 border-t border-shadow dark:border-graphite pt-4"></div>
+
+                    <div>
+                         <dt class="text-graphite dark:text-muted mb-1">Avg Calories Consumed</dt>
+                         <dd class="text-lg font-semibold text-blackish dark:text-whiteish"><%= plan.average_calories %> kcal</dd>
+                    </div>
+                     <div>
+                         <dt class="text-graphite dark:text-muted mb-1">Weight Progress</dt>
+                         <dd class="text-lg font-semibold <%= plan.weight_progress.positive? ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' %>">
+                            <%= plan.weight_progress > 0 ? "+" : "" %><%= plan.weight_progress %> kg
+                         </dd>
+                    </div>
+                </dl>
+           </div>
       </div>
 
-      <div>
-        <dt class="text-sm font-medium text-graphite dark:text-muted uppercase tracking-wider">End Date</dt>
-        <dd class="mt-1 text-blackish dark:text-whiteish font-medium"><%= page.resource.end_date %></dd>
+       <%# Details & Context %>
+      <div class="space-y-6">
+          <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+               <h5 class="mb-4 text-xl font-medium text-blackish dark:text-whiteish border-b border-shadow dark:border-graphite pb-2">Context</h5>
+
+               <div class="space-y-4">
+                  <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
+                    <span class="text-sm font-medium text-graphite dark:text-muted">User</span>
+                    <%= link_to plan.user.email, admin_user_path(plan.user), class: "text-sm font-bold text-primary hover:underline" %>
+                  </div>
+
+                   <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
+                    <span class="text-sm font-medium text-graphite dark:text-muted">Base Template</span>
+                     <% if plan.dietary_plan %>
+                        <%= link_to plan.dietary_plan.title, admin_dietary_plan_path(plan.dietary_plan), class: "text-sm font-bold text-primary hover:underline" %>
+                    <% else %>
+                        <span class="text-sm text-muted">Custom Plan</span>
+                    <% end %>
+                  </div>
+
+                   <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
+                    <span class="text-sm font-medium text-graphite dark:text-muted">Start Date</span>
+                    <span class="text-sm font-bold text-blackish dark:text-whiteish"><%= plan.start_date&.strftime("%B %d, %Y") || "-" %></span>
+                  </div>
+
+                   <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
+                    <span class="text-sm font-medium text-graphite dark:text-muted">End Date</span>
+                    <span class="text-sm font-bold text-blackish dark:text-whiteish"><%= plan.end_date&.strftime("%B %d, %Y") || "-" %></span>
+                  </div>
+               </div>
+
+               <% if plan.notes.present? %>
+                 <div class="mt-6 pt-4 border-t border-shadow dark:border-graphite">
+                    <h6 class="text-sm font-bold text-blackish dark:text-whiteish mb-2">Notes</h6>
+                    <p class="text-sm text-graphite dark:text-muted leading-relaxed whitespace-pre-wrap"><%= plan.notes %></p>
+                 </div>
+               <% end %>
+          </div>
       </div>
 
-      <div class="md:col-span-2">
-        <dt class="text-sm font-medium text-graphite dark:text-muted uppercase tracking-wider">Notes</dt>
-        <dd class="mt-1 text-blackish dark:text-whiteish italic"><%= page.resource.notes %></dd>
-      </div>
-    </dl>
   </div>
+</div>
 
-  <%# Render Daily Metrics Table %>
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-2xl font-bold text-blackish dark:text-whiteish">Daily Metrics</h2>
-  </div>
-  <% if page.attributes[:daily_metrics] %>
-    <div class="overflow-hidden">
-      <%= render_field page.attributes[:daily_metrics], page: page %>
-    </div>
-  <% else %>
-    <div class="bg-background-light dark:bg-graphite/20 p-8 rounded-xl border border-dashed border-shadow dark:border-graphite text-center">
-      <p class="text-graphite dark:text-muted">No daily metrics configured for this plan.</p>
-    </div>
-  <% end %>
-</section>
+<%= turbo_frame_tag "modal_frame" %>

@@ -1,0 +1,86 @@
+<%# app/views/admin/exercises/show.html.erb %>
+<% exercise = page.resource %>
+
+<div class="space-y-6">
+  <%# Header with Back and Edit %>
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <%= link_to admin_exercises_path, class: "p-2 text-graphite bg-whiteish rounded-lg border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish" do %>
+         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+         </svg>
+         <span class="sr-only">Back</span>
+      <% end %>
+      <h1 class="text-2xl font-bold tracking-tight text-blackish dark:text-whiteish">
+        <%= exercise.name %>
+      </h1>
+    </div>
+
+    <div class="flex space-x-3">
+        <%= link_to "Edit Exercise", edit_admin_exercise_path(exercise), data: { turbo_frame: "modal_frame" }, class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20" %>
+    </div>
+  </div>
+
+  <%# Main Content Grid %>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <%# Left Column: Video & Media %>
+    <div class="lg:col-span-1 space-y-6">
+      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite overflow-hidden">
+        <% if exercise.video_link.present? && (exercise.video_link.include?("youtube.com") || exercise.video_link.include?("youtu.be")) %>
+             <%# Simple YouTube Embed Helper %>
+             <% video_id = exercise.video_link.split("v=").last&.split("&")&.first %>
+             <% video_id ||= exercise.video_link.split("/").last if exercise.video_link.include?("youtu.be") %>
+
+             <% if video_id %>
+                <div class="aspect-w-16 aspect-h-9">
+                    <iframe src="https://www.youtube.com/embed/<%= video_id %>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen class="w-full h-full min-h-[300px]"></iframe>
+                </div>
+             <% else %>
+                 <div class="p-10 text-center text-graphite dark:text-muted bg-background-light dark:bg-shadow/50">
+                    <span class="material-symbols-outlined text-4xl mb-2">smart_display</span>
+                    <p>Invalid YouTube URL</p>
+                    <a href="<%= exercise.video_link %>" target="_blank" class="text-primary hover:underline mt-2 inline-block">Open Link</a>
+                 </div>
+             <% end %>
+        <% elsif exercise.video_link.present? %>
+             <div class="p-10 text-center text-graphite dark:text-muted bg-background-light dark:bg-shadow/50">
+                <span class="material-symbols-outlined text-4xl mb-2">link</span>
+                <p>Video Preview Not Available</p>
+                <a href="<%= exercise.video_link %>" target="_blank" class="text-primary hover:underline mt-2 inline-block">Open Video Link</a>
+             </div>
+        <% else %>
+            <div class="p-10 text-center text-graphite dark:text-muted bg-background-light dark:bg-shadow/50">
+                <span class="material-symbols-outlined text-4xl mb-2">videocam_off</span>
+                <p>No video link provided</p>
+            </div>
+        <% end %>
+      </div>
+
+       <%# Key Stats Grid %>
+       <div class="grid grid-cols-1 gap-4">
+            <div class="p-4 bg-whiteish dark:bg-shadow rounded-xl border border-shadow dark:border-graphite">
+                <dt class="text-sm font-medium text-graphite dark:text-muted mb-1">Muscle Group</dt>
+                <dd class="text-lg font-semibold text-blackish dark:text-whiteish">
+                    <%= exercise.muscle_group.presence || "General" %>
+                </dd>
+            </div>
+       </div>
+    </div>
+
+    <%# Right Column: Details %>
+    <div class="lg:col-span-1 space-y-6">
+        <%# Description Card %>
+        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+            <h3 class="text-lg font-bold text-blackish dark:text-whiteish mb-4">Instructions & Tips</h3>
+            <div class="prose prose-sm dark:prose-invert max-w-none text-graphite dark:text-muted">
+                <%= exercise.description.presence ? simple_format(exercise.description) : "No description available." %>
+            </div>
+        </div>
+
+        <%# Relationships (e.g. Routines used in - placeholders for now or future) %>
+    </div>
+  </div>
+</div>
+
+<%= turbo_frame_tag "modal_frame" %>

@@ -1,0 +1,114 @@
+<%# app/views/admin/daily_metrics/show.html.erb %>
+<% metric = page.resource %>
+
+<div class="space-y-6">
+  <%# Header with Back and Edit %>
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <%= link_to admin_daily_metrics_path, class: "p-2 text-graphite bg-whiteish rounded-lg border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish" do %>
+         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+         </svg>
+         <span class="sr-only">Back</span>
+      <% end %>
+      <h1 class="text-2xl font-bold tracking-tight text-blackish dark:text-whiteish">
+        Metric for <%= metric.date_logged.strftime("%B %d, %Y") %>
+      </h1>
+    </div>
+
+    <div class="flex space-x-3">
+        <%= link_to "Edit Metric", edit_admin_daily_metric_path(metric), data: { turbo_frame: "modal_frame" }, class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20" %>
+    </div>
+  </div>
+
+  <%# Main Content Grid %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <%# Left Column: User Context & Meta %>
+    <div class="lg:col-span-1 space-y-6">
+      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+         <div class="flex flex-col items-center pb-6 border-b border-shadow dark:border-graphite">
+            <div class="w-20 h-20 mb-3 rounded-full bg-primary/20 text-primary flex items-center justify-center text-2xl font-bold">
+                <%= metric.user.first_name[0] %><%= metric.user.last_name[0] %>
+            </div>
+            <%= link_to metric.user.name, admin_user_path(metric.user), class: "mb-1 text-xl font-medium text-blackish dark:text-whiteish hover:underline hover:text-primary dark:hover:text-primary" %>
+            <span class="text-sm text-graphite dark:text-muted"><%= metric.user.email %></span>
+         </div>
+
+         <div class="pt-6 space-y-4">
+             <div>
+                <dt class="text-sm font-medium text-graphite dark:text-muted">Compliance</dt>
+                <dd class="mt-1">
+                    <% if metric.compliant? %>
+                        <span class="bg-primary text-blackish text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-primary dark:text-blackish">Compliant</span>
+                    <% else %>
+                         <span class="bg-background-light text-graphite text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-graphite dark:text-whiteish">Missing</span>
+                    <% end %>
+                </dd>
+             </div>
+             <div>
+                <dt class="text-sm font-medium text-graphite dark:text-muted">Log Date</dt>
+                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= metric.date_logged.strftime("%A, %b %d") %></dd>
+             </div>
+              <div>
+                <dt class="text-sm font-medium text-graphite dark:text-muted">Created At</dt>
+                <dd class="text-sm text-blackish dark:text-whiteish"><%= metric.created_at.strftime("%b %d, %H:%M") %></dd>
+             </div>
+         </div>
+      </div>
+    </div>
+
+    <%# Right Column: The Stats %>
+    <div class="lg:col-span-2 space-y-6">
+        <%# Stats Grid %>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <%# Weight %>
+            <div class="bg-whiteish dark:bg-shadow p-4 rounded-xl shadow-sm border border-shadow dark:border-graphite text-center">
+                 <dt class="text-xs font-medium text-graphite dark:text-muted uppercase tracking-wider mb-1">Weight</dt>
+                 <dd class="text-xl font-bold text-blackish dark:text-whiteish"><%= metric.weight.present? ? "#{metric.weight} kg" : "-" %></dd>
+            </div>
+             <%# Calories %>
+            <div class="bg-whiteish dark:bg-shadow p-4 rounded-xl shadow-sm border border-shadow dark:border-graphite text-center">
+                 <dt class="text-xs font-medium text-graphite dark:text-muted uppercase tracking-wider mb-1">Calories</dt>
+                 <dd class="text-xl font-bold text-blackish dark:text-whiteish"><%= metric.calories_consumed.present? ? metric.calories_consumed : "-" %></dd>
+            </div>
+             <%# Protein %>
+            <div class="bg-whiteish dark:bg-shadow p-4 rounded-xl shadow-sm border border-shadow dark:border-graphite text-center">
+                 <dt class="text-xs font-medium text-graphite dark:text-muted uppercase tracking-wider mb-1">Protein</dt>
+                 <dd class="text-xl font-bold text-blackish dark:text-whiteish"><%= metric.protein_consumed.present? ? "#{metric.protein_consumed}g" : "-" %></dd>
+            </div>
+             <%# Steps %>
+            <div class="bg-whiteish dark:bg-shadow p-4 rounded-xl shadow-sm border border-shadow dark:border-graphite text-center">
+                 <dt class="text-xs font-medium text-graphite dark:text-muted uppercase tracking-wider mb-1">Steps</dt>
+                 <dd class="text-xl font-bold text-blackish dark:text-whiteish"><%= metric.steps.present? ? metric.steps : "-" %></dd>
+            </div>
+        </div>
+
+        <%# Raw Content %>
+        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+            <h3 class="text-lg font-bold text-blackish dark:text-whiteish mb-4 flex items-center">
+                <span class="material-symbols-outlined mr-2">chat</span>
+                Raw WhatsApp Content
+            </h3>
+            <div class="bg-background-light dark:bg-graphite p-4 rounded-lg font-mono text-sm text-graphite dark:text-muted whitespace-pre-wrap">
+                <%= metric.raw_message_content.presence || "No raw content recorded." %>
+            </div>
+        </div>
+
+        <%# AI Debug %>
+        <% if metric.ai_parsed_json.present? %>
+        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+             <h3 class="text-lg font-bold text-blackish dark:text-whiteish mb-4 flex items-center">
+                <span class="material-symbols-outlined mr-2">smart_toy</span>
+                AI Parsed Data
+            </h3>
+            <pre class="bg-blackish text-whiteish p-4 rounded-lg text-xs overflow-x-auto">
+<%= JSON.pretty_generate(metric.ai_parsed_json) %>
+            </pre>
+        </div>
+        <% end %>
+    </div>
+  </div>
+</div>
+
+<%= turbo_frame_tag "modal_frame" %>
