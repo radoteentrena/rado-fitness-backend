@@ -38,7 +38,7 @@
                      <%= link_to resource.user.name, admin_user_path(resource.user), class: "hover:text-primary dark:hover:text-primary" %>
                 </td>
                 <td class="px-6 py-4">
-                    <%= resource.weight %> kg
+                    <%= resource.weight.truncate(1) %> kg
                 </td>
                 <td class="px-6 py-4">
                     <%= resource.calories_consumed %>

@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- **Admin UI:** Fixed Kaminari pagination rendering and styling across all admin collections.
+- **Admin UI:** Solved `undefined method 'current_page'` errors by properly scoping `@pagy` or `kaminari` objects in controllers.
+- **Styling:** Applied consistent pagination styles compatible with the dark/light theme.
+
 ### Added
 - **Admin UI:** Comprehensive UI revamp for Daily Metrics, Dietary Plans, Exercises, Programs, Routines, Routine Exercises, and User Dietary Plans used consistently styled card tables.
 - **Admin UI:** Implemented Turbo Frame-based modals for all CRUD operations (`new` and `edit` actions).

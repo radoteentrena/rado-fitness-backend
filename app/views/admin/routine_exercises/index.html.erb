@@ -28,8 +28,8 @@
 <%= render "collection", resources: resources %>
 
 <%# Pagination %>
-<div class="p-4">
-  <%= paginate resources %>
-</div>
+  <div class="p-4">
+    <%= paginate resources, total_count: resources.total_count %>
+  </div>
 
 <%= turbo_frame_tag "modal_frame" %>

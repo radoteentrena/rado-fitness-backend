@@ -1,0 +1,15 @@
+<%# Link to the "Last" page
+  - available local variables
+    url:           url to the last page
+    current_page:  a page object for the currently displayed page
+    total_pages:   total number of pages
+    per_page:      number of items to fetch per page
+    remote:        data-remote
+-%>
+<li>
+  <%= link_to url,
+      class: "flex items-center justify-center px-3 h-8 leading-tight text-graphite bg-whiteish border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish rounded-e-lg ms-1 hidden sm:flex",
+      data: { turbo_frame: "admin_main_content", turbo_action: "advance" } do %>
+    Last
+  <% end %>
+</li>

@@ -152,4 +152,118 @@ UserDietaryPlan.create!(
   notes: "Focus on clean sources. 500g kcal deficit."
 )
 
+# 6. Bulk Data Generation
+
+# 6.1 Exercises (50+)
+puts "Generating 50+ Exercises..."
+muscle_groups = ["Chest", "Back", "Legs", "Shoulders", "Arms", "Core", "Cardio"]
+50.times do
+  Exercise.find_or_create_by!(name: "#{Faker::Verb.base.capitalize} #{Faker::Science.element}") do |e|
+    e.muscle_group = muscle_groups.sample
+    e.video_link = "https://youtube.com/shorts/demo_#{Faker::Alphanumeric.alpha(number: 5)}"
+    e.description = Faker::Lorem.sentence
+  end
+end
+
+# 6.2 Programs & Routines
+puts "Generating Programs & Routines..."
+10.times do
+  prog = Program.create!(
+    name: "#{Faker::Marketing.buzzwords.split.map(&:capitalize).join(' ')} Protocol",
+    description: Faker::Lorem.paragraph,
+    duration_weeks: [8, 12, 16].sample
+  )
+
+  # Create 2-3 Routines per Program
+  rand(2..3).times do |i|
+    routine = Routine.create!(
+      name: "Phase #{i + 1}: #{Faker::Science.element} Block",
+      description: Faker::Lorem.sentence,
+      duration_weeks: 4,
+      program: prog,
+      is_template: true
+    )
+
+    # Add random exercises to routine
+    Exercise.all.sample(rand(4..8)).each_with_index do |ex, idx|
+      RoutineExercise.create!(
+        routine: routine,
+        exercise: ex,
+        day_number: rand(1..4),
+        day_name: "Day #{rand(1..4)}",
+        sets: rand(3..5),
+        reps: ["8-12", "5x5", "AMRAP", "15-20"].sample,
+        load: "RPE #{rand(6..9)}",
+        rest_seconds: [60, 90, 120, 180].sample,
+        instructions: Faker::Lorem.sentence
+      )
+    end
+  end
+end
+
+# 6.3 Dietary Plans
+puts "Generating Dietary Plans..."
+5.times do
+  DietaryPlan.create!(
+    name: "#{Faker::Food.dish} Base Plan",
+    description: Faker::Lorem.sentence,
+    calories_target: [2000, 2400, 2800, 3200].sample,
+    protein_target: [150, 180, 200, 220].sample
+  )
+end
+
+# 6.4 Users & Metrics
+puts "Creating Users with Metrics..."
+require 'faker'
+Faker::Config.locale = 'es-AR'
+
+70.times do
+  first_name = Faker::Name.first_name
+  last_name = Faker::Name.last_name
+  email = Faker::Internet.email(name: "#{first_name} #{last_name}", domain: "example.com")
+
+  user = User.create!(
+    email: email,
+    password: "password123",
+    first_name: first_name,
+    last_name: last_name,
+    phone: Faker::PhoneNumber.cell_phone,
+    category: User.categories.keys.sample,
+    plan_tier: User.plan_tiers.keys.sample,
+    status: User.statuses.keys.sample
+  )
+
+  # Assign random active dietary plan to some users
+  if rand < 0.7
+    plan = DietaryPlan.all.sample
+    udp = UserDietaryPlan.create!(
+      user: user,
+      dietary_plan: plan,
+      calories_target: plan.calories_target,
+      protein_target: plan.protein_target,
+      active: true,
+      start_date: Date.today - 30.days
+    )
+
+    # Generate 30 days of metrics
+    (1..30).each do |day|
+      date = Date.today - day.days
+      compliant = rand < 0.8
+
+      cals = compliant ? udp.calories_target + rand(-100..100) : udp.calories_target + rand(200..800)
+      prot = compliant ? udp.protein_target + rand(-10..10) : udp.protein_target - rand(20..50)
+
+      DailyMetric.create!(
+        user: user,
+        user_dietary_plan: udp,
+        date_logged: date,
+        calories_consumed: cals,
+        protein_consumed: prot,
+        steps: rand(5000..12000),
+        weight: 75.0 + rand(-2.0..2.0)
+      )
+    end
+  end
+end
+
 puts "✅ Seeding Complete!"

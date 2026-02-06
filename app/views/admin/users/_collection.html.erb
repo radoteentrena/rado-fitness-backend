@@ -34,7 +34,7 @@
                 </td>
                 <td class="px-6 py-4">
                     <% category_colors = {
-                        "pelele" => "bg-blackish text-blackish dark:bg-background-light dark:text-blackish",
+                        "pelele" => "bg-graphite text-whiteish dark:bg-background-light dark:text-blackish",
                         "civil" => "bg-background-light border border-2 border-primary text-blackish dark:bg-primary dark:text-blackish",
                         "soldado" => "bg-primary text-blackish dark:bg-primary dark:text-blackish"
                     } %>
@@ -44,10 +44,10 @@
                 </td>
                 <td class="px-6 py-4">
                     <% status_colors = {
-                        "active" => "bg-primary text-blackish dark:bg-primary dark:text-blackish",
-                        "lead" => "bg-background-light border border-primary border-2 text-graphite dark:bg-graphite dark:text-whiteish",
-                        "churned" => "bg-blackish text-whiteish dark:bg-blackish dark:text-whiteish",
-                        "archived" => "bg-blackish text-whiteish dark:bg-blackish dark:text-whiteish"
+                        "active" => "bg-primary-100 text-graphite text-xs font-medium px-2.5 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 mb-1",
+                        "lead" => "bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300 mb-1",
+                        "churned" => "bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-900 dark:text-gray-300 mb-1",
+                        "archived" => "bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300 mb-1"
                     } %>
                     <span class="<%= status_colors[resource.status] || 'bg-background-light text-graphite' %> text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">
                        <%= resource.status.titleize %>

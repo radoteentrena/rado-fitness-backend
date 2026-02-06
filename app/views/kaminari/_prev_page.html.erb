@@ -1,0 +1,19 @@
+<%# Link to the "Previous" page
+  - available local variables
+    url:           url to the previous page
+    current_page:  a page object for the currently displayed page
+    total_pages:   total number of pages
+    per_page:      number of items to fetch per page
+    remote:        data-remote
+-%>
+<li>
+  <%= link_to url,
+      class: "flex items-center justify-center px-3 h-8 ms-0 leading-tight text-graphite bg-whiteish border border-e-0 border-shadow rounded-s-lg hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish",
+      data: { turbo_frame: "admin_main_content", turbo_action: "advance" },
+      rel: 'prev' do %>
+    <span class="sr-only">Previous</span>
+    <svg class="w-2.5 h-2.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+    </svg>
+  <% end %>
+</li>
