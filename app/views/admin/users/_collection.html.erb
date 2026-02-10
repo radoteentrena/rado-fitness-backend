@@ -1,5 +1,5 @@
-<%# app/views/admin/users/_collection.html.erb %>
-<div id="users_collection" class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
+<%= turbo_frame_tag "users_collection" do %>
+<div class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
     <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
         <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
             <tr>
@@ -8,6 +8,12 @@
                 </th>
                 <th scope="col" class="px-6 py-3 font-medium">
                     Phone
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium text-center">
+                    S% (Session)
+                </th>
+                <th scope="col" class="px-6 py-3 font-medium text-center">
+                    M% (Diet)
                 </th>
                 <th scope="col" class="px-6 py-3 font-medium">
                     Category
@@ -32,6 +38,31 @@
                 <td class="px-6 py-4">
                      <%= resource.phone %>
                 </td>
+
+                <%# S% - Session Compliance %>
+                <td class="px-6 py-4">
+                    <% s_score = resource.workout_compliance_score %>
+                    <% s_color = s_score >= 80 ? "bg-green-500" : (s_score >= 50 ? "bg-yellow-400" : "bg-red-500") %>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 min-w-[60px]">
+                            <div class="<%= s_color %> h-2.5 rounded-full" style="width: <%= s_score %>%"></div>
+                        </div>
+                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300"><%= s_score %>%</span>
+                    </div>
+                </td>
+
+                <%# M% - Metric Adherence %>
+                <td class="px-6 py-4">
+                    <% m_score = resource.diet_adherence_score %>
+                    <% m_color = m_score >= 80 ? "bg-green-500" : (m_score >= 50 ? "bg-yellow-400" : "bg-red-500") %>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 min-w-[60px]">
+                            <div class="<%= m_color %> h-2.5 rounded-full" style="width: <%= m_score %>%"></div>
+                        </div>
+                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300"><%= m_score %>%</span>
+                    </div>
+                </td>
+
                 <td class="px-6 py-4">
                     <% category_colors = {
                         "pelele" => "bg-graphite text-whiteish dark:bg-background-light dark:text-blackish",
@@ -64,3 +95,9 @@
         </tbody>
     </table>
 </div>
+
+<%# Pagination %>
+<div class="p-4">
+    <%= paginate resources, total_count: resources.total_count %>
+</div>
+<% end %>

@@ -1,0 +1,117 @@
+<%# app/views/admin/users/_weekly_metrics.html.erb %>
+<%
+   days = (@start_date..@start_date.end_of_week).to_a
+   metrics_by_date = @daily_metrics
+
+   # Calculate Averages for the Week
+   total_calories = 0
+   total_protein = 0
+   count_logs = 0
+
+   metrics_by_date.values.each do |metric|
+     if metric.compliant?
+       total_calories += metric.calories_consumed.to_i
+       total_protein += metric.protein_consumed.to_i
+       count_logs += 1
+     end
+   end
+
+   avg_calories = count_logs > 0 ? (total_calories / count_logs).round : 0
+   avg_protein = count_logs > 0 ? (total_protein / count_logs).round : 0
+
+   # Targets (assuming active plan or latest)
+   active_plan = user.user_dietary_plans.active.last
+   target_calories = active_plan&.calories_target || 0
+   target_protein = active_plan&.protein_target || 0
+%>
+
+<div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center space-x-4">
+      <h3 class="text-lg font-bold text-blackish dark:text-whiteish">Weekly Overview</h3>
+      <span class="text-sm text-graphite dark:text-muted">
+        <%= @start_date.strftime("%b %d") %> - <%= @start_date.end_of_week.strftime("%b %d, %Y") %>
+      </span>
+    </div>
+
+    <div class="flex items-center space-x-2">
+       <%= link_to admin_user_path(user, start_date: @start_date - 1.week, view_type: "week"), class: "p-1 rounded hover:bg-background-light dark:hover:bg-graphite text-graphite dark:text-muted" do %>
+         <span class="material-symbols-outlined">chevron_left</span>
+       <% end %>
+
+       <div class="text-sm font-medium text-blackish dark:text-whiteish bg-background-light dark:bg-graphite px-3 py-1 rounded">
+         Today
+       </div>
+
+       <%= link_to admin_user_path(user, start_date: @start_date + 1.week, view_type: "week"), class: "p-1 rounded hover:bg-background-light dark:hover:bg-graphite text-graphite dark:text-muted" do %>
+         <span class="material-symbols-outlined">chevron_right</span>
+       <% end %>
+    </div>
+  </div>
+
+  <%# Averages Summary %>
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="p-4 rounded-lg bg-background-light dark:bg-graphite">
+       <span class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Avg Calories</span>
+       <div class="mt-1 flex items-baseline">
+          <span class="text-2xl font-bold text-blackish dark:text-whiteish"><%= avg_calories %></span>
+          <span class="ml-2 text-sm text-graphite dark:text-muted">/ <%= target_calories %></span>
+       </div>
+    </div>
+    <div class="p-4 rounded-lg bg-background-light dark:bg-graphite">
+       <span class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Avg Protein</span>
+       <div class="mt-1 flex items-baseline">
+          <span class="text-2xl font-bold text-blackish dark:text-whiteish"><%= avg_protein %></span>
+          <span class="ml-2 text-sm text-graphite dark:text-muted">/ <%= target_protein %>g</span>
+       </div>
+    </div>
+  </div>
+
+  <%# Weekly Grid %>
+  <div class="grid grid-cols-7 gap-2">
+    <% days.each do |day| %>
+      <% metric = metrics_by_date[day] %>
+      <% is_today = day == Date.today %>
+
+      <div class="flex flex-col h-full rounded-lg border <%= is_today ? 'border-primary dark:bg-primary/10' : 'border-shadow dark:border-graphite bg-whiteish dark:bg-shadow' %> overflow-hidden">
+        <%# Header %>
+        <div class="px-2 py-1.5 text-center border-b border-shadow dark:border-graphite <%= is_today ? 'bg-primary/10 dark:bg-primary/20' : 'bg-background-light dark:bg-graphite' %>">
+           <span class="text-xs font-medium text-graphite dark:text-muted"><%= day.strftime("%a") %></span>
+           <div class="text-sm font-bold text-blackish dark:text-whiteish"><%= day.day %></div>
+        </div>
+
+        <%# Content %>
+        <div class="p-2 flex-1 flex flex-col justify-between space-y-2 min-h-[100px]">
+           <% if metric %>
+             <div class="space-y-1">
+                <div class="flex justify-between items-center">
+                   <span class="text-[10px] text-graphite dark:text-muted">Wgt</span>
+                   <span class="text-xs font-bold text-blackish dark:text-whiteish"><%= number_with_precision(metric.weight, precision: 2) || "-" %></span>
+                </div>
+                <div class="flex justify-between items-center">
+                   <span class="text-[10px] text-graphite dark:text-muted">Clr</span>
+                   <span class="text-xs font-medium <%= metric.calories_consumed.to_i > target_calories ? 'text-alert' : 'text-blackish dark:text-whiteish' %>">
+                     <%= metric.calories_consumed || "-" %>
+                   </span>
+                </div>
+                <div class="flex justify-between items-center">
+                   <span class="text-[10px] text-graphite dark:text-muted">Ptn</span>
+                   <span class="text-xs font-medium text-blackish dark:text-whiteish"><%= metric.protein_consumed || "-" %></span>
+                </div>
+             </div>
+
+             <%# Status Dot %>
+             <div class="flex justify-center mt-auto pt-2">
+               <% color = metric.on_target? ? "bg-primary" : (metric.compliant? ? "bg-warning" : "bg-alert") %>
+               <div class="w-2 h-2 rounded-full <%= color %>" title="<%= metric.on_target? ? 'On Target' : 'Off Target' %>"></div>
+             </div>
+           <% else %>
+             <div class="flex-1 flex items-center justify-center text-graphite dark:text-muted text-[10px] italic">
+               No Log
+             </div>
+           <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

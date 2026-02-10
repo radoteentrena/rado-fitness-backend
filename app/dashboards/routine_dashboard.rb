@@ -15,7 +15,7 @@ class RoutineDashboard < Administrate::BaseDashboard
     is_template: Field::Boolean,
     name: Field::String,
     program: Field::BelongsTo,
-    routine_exercises: Field::HasMany,
+
     user: Field::BelongsTo,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
@@ -43,7 +43,7 @@ class RoutineDashboard < Administrate::BaseDashboard
     is_template
     name
     program
-    routine_exercises
+
     user
     created_at
     updated_at
@@ -59,7 +59,7 @@ class RoutineDashboard < Administrate::BaseDashboard
     is_template
     name
     program
-    routine_exercises
+
     user
   ].freeze
 

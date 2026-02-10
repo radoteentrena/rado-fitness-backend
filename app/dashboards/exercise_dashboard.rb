@@ -12,8 +12,7 @@ class ExerciseDashboard < Administrate::BaseDashboard
     description: Field::Text,
     muscle_group: Field::String,
     name: Field::String,
-    routine_items: Field::HasMany,
-    routines: Field::HasMany,
+
     video_link: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
@@ -38,8 +37,7 @@ class ExerciseDashboard < Administrate::BaseDashboard
     description
     muscle_group
     name
-    routine_items
-    routines
+
     video_link
     created_at
     updated_at
@@ -52,8 +50,7 @@ class ExerciseDashboard < Administrate::BaseDashboard
     description
     muscle_group
     name
-    routine_items
-    routines
+
     video_link
   ].freeze
 

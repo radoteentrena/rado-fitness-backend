@@ -2,7 +2,6 @@
 <% user = page.resource %>
 
 <div class="space-y-6">
-  <%# Header with Back and Edit %>
   <div class="flex items-center justify-between">
     <div class="flex items-center space-x-4">
       <%= link_to admin_users_path, class: "p-2 text-graphite bg-whiteish rounded-lg border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish" do %>
@@ -70,7 +69,60 @@
              </div>
          </div>
       </div>
+
+      <%# Dietary Plan %>
+      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+          <div class="flex items-center justify-between mb-4">
+              <h3 class="text-lg font-bold text-blackish dark:text-whiteish">Current Dietary Plan</h3>
+              <% unless user.user_dietary_plans.active.any? %>
+                 <%= link_to "Browse Plans", admin_dietary_plans_path, class: "text-sm font-medium text-primary hover:underline" %>
+              <% end %>
+          </div>
+
+          <% if (active_plan = user.user_dietary_plans.active.last) %>
+              <div class="space-y-4">
+                  <div class="flex items-center justify-between p-3 bg-background-light dark:bg-graphite rounded-lg">
+                       <div>
+                          <h4 class="font-medium text-blackish dark:text-whiteish">
+                              <%= active_plan.dietary_plan&.name || "Custom Plan" %>
+                          </h4>
+                          <p class="text-xs text-graphite dark:text-muted mt-1">
+                              Since <%= active_plan.start_date&.strftime("%b %d, %Y") %>
+                          </p>
+                       </div>
+                       <div class="text-right">
+                          <span class="inline-block px-2 py-0.5 text-xs font-bold text-primary bg-primary/10 rounded border border-primary/20">Active</span>
+                       </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4">
+                      <div class="p-4 rounded-lg border border-shadow dark:border-graphite text-center">
+                          <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Calories</span>
+                          <span class="block mt-1 text-2xl font-bold text-blackish dark:text-whiteish"><%= active_plan.calories_target %></span>
+                      </div>
+                       <div class="p-4 rounded-lg border border-shadow dark:border-graphite text-center">
+                          <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Protein</span>
+                          <span class="block mt-1 text-2xl font-bold text-blackish dark:text-whiteish"><%= active_plan.protein_target %>g</span>
+                      </div>
+                  </div>
+
+                  <% if active_plan.notes.present? %>
+                      <div class="text-sm text-graphite dark:text-muted p-3 bg-background-light dark:bg-graphite rounded-lg italic">
+                          "<%= active_plan.notes %>"
+                      </div>
+                  <% end %>
+              </div>
+          <% else %>
+              <div class="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-shadow dark:border-graphite rounded-lg">
+                  <span class="material-symbols-outlined text-3xl text-shadow dark:text-graphite mb-2">restaurant_menu</span>
+                  <p class="text-graphite dark:text-muted text-sm">No active plan.</p>
+              </div>
+          <% end %>
+      </div>
     </div>
+
+
+
 
     <%# Right Column: Stats & Activity %>
     <div class="lg:col-span-2 space-y-6">
@@ -79,26 +131,32 @@
             <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-graphite">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-primary/20 dark:bg-graphite text-primary dark:text-primary">
-                         <span class="material-symbols-outlined text-2xl">check_circle</span>
+                         <span class="material-symbols-outlined text-2xl">fitness_center</span>
                     </div>
                     <div class="ml-4">
-                        <dt class="text-sm font-medium text-graphite dark:text-muted">Consistency Score</dt>
-                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.consistency_score %>%</dd>
+                        <dt class="text-sm font-medium text-graphite dark:text-muted">Workout Compliance (S%)</dt>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.workout_compliance_score %>%</dd>
                     </div>
                 </div>
             </div>
             <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-graphite">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-primary/10 dark:bg-graphite text-primary dark:text-primary">
-                         <span class="material-symbols-outlined text-2xl">target</span>
+                         <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
                     </div>
                     <div class="ml-4">
-                        <dt class="text-sm font-medium text-graphite dark:text-muted">Accuracy Score</dt>
-                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.accuracy_score %>%</dd>
+                        <dt class="text-sm font-medium text-graphite dark:text-muted">Diet Adherence (M%)</dt>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.diet_adherence_score %>%</dd>
                     </div>
                 </div>
             </div>
         </div>
+
+        <%# Metrics Calendar %>
+        <%= render "admin/users/metrics_calendar", user: user %>
+
+
+
 
         <%# Placeholder for future sections %>
         <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">

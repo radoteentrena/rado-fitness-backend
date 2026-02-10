@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  week_start: 2026-02-10
+  week_end: 2026-02-10
+  metrics_summary: 
+  ai_feedback: MyText
+  admin_notes: MyText
+  status: 1
+
+two:
+  user: two
+  week_start: 2026-02-10
+  week_end: 2026-02-10
+  metrics_summary: 
+  ai_feedback: MyText
+  admin_notes: MyText
+  status: 1

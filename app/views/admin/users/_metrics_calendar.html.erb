@@ -1,0 +1,16 @@
+<%# app/views/admin/users/_metrics_calendar.html.erb %>
+<div class="space-y-4">
+  <div class="flex justify-end space-x-2">
+    <%= link_to "Week View", admin_user_path(user, view_type: "week", start_date: @start_date),
+        class: "px-3 py-1 text-sm font-medium rounded-lg #{@view_type == 'week' ? 'bg-primary text-blackish' : 'bg-whiteish dark:bg-shadow text-graphite dark:text-muted border border-shadow dark:border-graphite'}" %>
+
+    <%= link_to "Month View", admin_user_path(user, view_type: "month", start_date: @start_date),
+        class: "px-3 py-1 text-sm font-medium rounded-lg #{@view_type == 'month' ? 'bg-primary text-blackish' : 'bg-whiteish dark:bg-shadow text-graphite dark:text-muted border border-shadow dark:border-graphite'}" %>
+  </div>
+
+  <% if @view_type == "month" %>
+    <%= render "admin/users/monthly_metrics", user: user %>
+  <% else %>
+    <%= render "admin/users/weekly_metrics", user: user %>
+  <% end %>
+</div>

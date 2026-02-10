@@ -23,12 +23,47 @@
   </div>
 </div>
 
+<%# Filter Section %>
+<div class="px-4 pb-4">
+  <div class="bg-whiteish dark:bg-shadow p-4 rounded-lg border border-shadow dark:border-graphite shadow-sm">
+    <%= form_with url: admin_users_path, method: :get, data: { turbo_frame: "users_collection", turbo_action: "advance" }, class: "flex flex-wrap items-end gap-4" do |f| %>
+
+      <%# Preserve Search %>
+      <%= f.hidden_field :search, value: params[:search] if params[:search].present? %>
+
+      <%# Status Filter %>
+      <div class="flex flex-col space-y-1">
+        <%= f.label :status, "Status", class: "text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider" %>
+        <%= f.select :status, User.statuses.keys.map { |k| [k.titleize, k] }, { include_blank: "All Statuses", selected: params[:status] }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-40 p-2.5 dark:bg-graphite dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <%# Plan Tier Filter %>
+      <div class="flex flex-col space-y-1">
+        <%= f.label :plan_tier, "Plan Tier", class: "text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider" %>
+        <%= f.select :plan_tier, User.plan_tiers.keys.map { |k| [k.titleize, k] }, { include_blank: "All Tiers", selected: params[:plan_tier] }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-40 p-2.5 dark:bg-graphite dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <%# S% Filter %>
+      <div class="flex flex-col space-y-1">
+        <%= f.label :s_score, "Session (S%)", class: "text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider" %>
+        <%= f.select :s_score, [["High (>80%)", "high"], ["Medium (50-79%)", "medium"], ["Low (<50%)", "low"]], { include_blank: "All S%", selected: params[:s_score] }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-40 p-2.5 dark:bg-graphite dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <%# M% Filter %>
+      <div class="flex flex-col space-y-1">
+        <%= f.label :m_score, "Metric (M%)", class: "text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider" %>
+        <%= f.select :m_score, [["High (>80%)", "high"], ["Medium (50-79%)", "medium"], ["Low (<50%)", "low"]], { include_blank: "All M%", selected: params[:m_score] }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-40 p-2.5 dark:bg-graphite dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <div class="flex gap-2">
+        <%= f.submit "Filter", class: "cursor-pointer text-whiteish bg-primary hover:bg-primary/90 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none transition-colors" %>
+        <%= link_to "Clear", admin_users_path, class: "flex items-center justify-center text-graphite bg-whiteish border border-shadow hover:bg-background-light font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-shadow dark:text-whiteish dark:border-graphite dark:hover:bg-graphite transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
 <%# Table Section %>
 <%= render "collection", resources: resources %>
-
-<%# Pagination %>
-  <div class="p-4">
-    <%= paginate resources, total_count: resources.total_count %>
-  </div>
 
 <%= turbo_frame_tag "modal_frame" %>

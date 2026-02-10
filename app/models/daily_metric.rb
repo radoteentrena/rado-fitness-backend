@@ -6,6 +6,7 @@ class DailyMetric < ApplicationRecord
   before_save :parse_content_with_ai, if: :should_parse_ai?
   before_save :calculate_compliance
   after_save :check_weight_spike, if: :saved_change_to_weight?
+  after_save :refresh_user_scores
 
   private
 
@@ -68,5 +69,9 @@ class DailyMetric < ApplicationRecord
         status: :pending
       )
     end
+  end
+
+  def refresh_user_scores
+    user.refresh_compliance_scores!
   end
 end

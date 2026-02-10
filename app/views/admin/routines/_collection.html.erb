@@ -6,8 +6,7 @@
         <th scope="col" class="px-6 py-3 font-medium">ID</th>
         <th scope="col" class="px-6 py-3 font-medium">Name</th>
         <th scope="col" class="px-6 py-3 font-medium">Program</th>
-        <th scope="col" class="px-6 py-3 font-medium">Assigned To</th>
-        <th scope="col" class="px-6 py-3 font-medium">Template?</th>
+
         <th scope="col" class="px-6 py-3 font-medium">
           <span class="sr-only">Edit</span>
         </th>
@@ -29,20 +28,7 @@
                 <span class="text-muted">–</span>
              <% end %>
           </td>
-          <td class="px-6 py-4">
-             <% if resource.user.present? %>
-                <%= link_to resource.user.name, admin_user_path(resource.user), class: "hover:text-primary transition-colors dark:text-primary" %>
-             <% else %>
-                <span class="text-muted">Unassigned</span>
-             <% end %>
-          </td>
-          <td class="px-6 py-4">
-            <% if resource.is_template %>
-                 <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Yes</span>
-            <% else %>
-                 <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">No</span>
-            <% end %>
-          </td>
+
 
           <td class="px-6 py-4 text-right">
             <%= link_to "Edit", edit_admin_routine_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>

@@ -1,0 +1,99 @@
+<%# app/views/admin/users/_monthly_metrics.html.erb %>
+<%
+   start_of_month = @start_date.beginning_of_month
+   end_of_month = @start_date.end_of_month
+
+   # Days to display (include padding for calendar grid)
+   start_day = start_of_month.beginning_of_week
+   end_day = end_of_month.end_of_week
+   days = (start_day..end_day).to_a
+
+   metrics_by_date = @daily_metrics
+
+   # Monthly Averages
+   total_calories = 0
+   total_protein = 0
+   count_logs = 0
+
+   days.each do |day|
+     metric = metrics_by_date[day]
+     if metric && metric.compliant?
+       total_calories += metric.calories_consumed.to_i
+       total_protein += metric.protein_consumed.to_i
+       count_logs += 1
+     end
+   end
+
+   avg_calories = count_logs > 0 ? (total_calories / count_logs).round : 0
+   avg_protein = count_logs > 0 ? (total_protein / count_logs).round : 0
+
+   active_plan = user.user_dietary_plans.active.last
+   target_calories = active_plan&.calories_target || 0
+   target_protein = active_plan&.protein_target || 0
+%>
+
+<div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center space-x-4">
+      <h3 class="text-lg font-bold text-blackish dark:text-whiteish">Monthly Overview</h3>
+      <span class="text-sm text-graphite dark:text-muted">
+        <%= start_of_month.strftime("%B %Y") %>
+      </span>
+    </div>
+
+    <div class="flex items-center space-x-2">
+       <%= link_to admin_user_path(user, start_date: @start_date - 1.month, view_type: "month"), class: "p-1 rounded hover:bg-background-light dark:hover:bg-graphite text-graphite dark:text-muted" do %>
+         <span class="material-symbols-outlined">chevron_left</span>
+       <% end %>
+
+       <div class="text-sm font-medium text-blackish dark:text-whiteish bg-background-light dark:bg-graphite px-3 py-1 rounded">
+         Today
+       </div>
+
+       <%= link_to admin_user_path(user, start_date: @start_date + 1.month, view_type: "month"), class: "p-1 rounded hover:bg-background-light dark:hover:bg-graphite text-graphite dark:text-muted" do %>
+         <span class="material-symbols-outlined">chevron_right</span>
+       <% end %>
+    </div>
+  </div>
+
+  <%# Averages Summary %>
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="p-4 rounded-lg bg-background-light dark:bg-graphite">
+       <span class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Avg Calories</span>
+       <div class="mt-1 flex items-baseline">
+          <span class="text-2xl font-bold text-blackish dark:text-whiteish"><%= avg_calories %></span>
+          <span class="ml-2 text-sm text-graphite dark:text-muted">/ <%= target_calories %></span>
+       </div>
+    </div>
+    <div class="p-4 rounded-lg bg-background-light dark:bg-graphite">
+       <span class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Avg Protein</span>
+       <div class="mt-1 flex items-baseline">
+          <span class="text-2xl font-bold text-blackish dark:text-whiteish"><%= avg_protein %></span>
+          <span class="ml-2 text-sm text-graphite dark:text-muted">/ <%= target_protein %>g</span>
+       </div>
+    </div>
+  </div>
+
+  <%# Monthly Grid %>
+  <div class="grid grid-cols-7 gap-1 text-center">
+    <% %w[Mon Tue Wed Thu Fri Sat Sun].each do |day_name| %>
+      <div class="text-xs font-bold text-graphite dark:text-muted py-2"><%= day_name %></div>
+    <% end %>
+
+    <% days.each do |day| %>
+      <% metric = metrics_by_date[day] %>
+      <% is_today = day == Date.today %>
+      <% is_current_month = day.month == start_of_month.month %>
+
+      <div class="aspect-square flex flex-col items-center justify-center rounded-lg border <%= is_today ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent' %> <%= is_current_month ? 'opacity-100' : 'opacity-40' %>">
+        <span class="text-xs font-medium <%= is_today ? 'text-primary font-bold' : 'text-blackish dark:text-whiteish' %>"><%= day.day %></span>
+
+        <% if metric %>
+           <div class="mt-1 flex space-x-0.5">
+             <div class="w-1.5 h-1.5 rounded-full <%= metric.on_target? ? 'bg-primary' : (metric.compliant? ? 'bg-warning' : 'bg-alert') %>"></div>
+           </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

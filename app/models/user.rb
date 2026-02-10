@@ -28,18 +28,61 @@ class User < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
-  def consistency_score
-    last_30_metrics = daily_metrics.order(date_logged: :desc).limit(30)
-    return 0 if last_30_metrics.empty?
+  def target_workouts_per_week
+    return 4 unless programs.exists?
 
-    (last_30_metrics.count { |m| m.compliant? } / 30.0 * 100).round
+    active_routine = programs.last.routines.first
+    return 4 unless active_routine
+
+    days_count = active_routine.routine_exercises.distinct.count(:day_number)
+    days_count.positive? ? days_count : 4
   end
 
-  def accuracy_score
-    last_30_metrics = daily_metrics.order(date_logged: :desc).limit(30)
-    return 0 if last_30_metrics.empty?
+  # S% - Session Compliance (Workouts)
+  # Based on the last 7 days vs Target
+  def calculate_workout_compliance_score
+    last_7_days_metrics = daily_metrics.where(date_logged: 6.days.ago.to_date..Date.today)
+                                       .where(workout_completed: true)
+                                       .count
 
-    (last_30_metrics.count { |m| m.on_target? } / 30.0 * 100).round
+    target = target_workouts_per_week
+    return 0 if target.zero?
+
+    ((last_7_days_metrics.to_f / target) * 100).clamp(0, 100).round
+  end
+
+  # M% - Metric Compliance (Diet Consistency)
+  # Did they log at all? (Last 30 days)
+  def calculate_diet_consistency_score
+    last_30_days_count = daily_metrics.where(date_logged: 29.days.ago.to_date..Date.today)
+                                      .where(compliant: true)
+                                      .count
+
+    (last_30_days_count.to_f / 30 * 100).round
+  end
+
+  # M% - Metric Adherence (Diet Accuracy)
+  # Of the days they logged, how many were on target?
+  def calculate_diet_adherence_score
+    relevant_metrics = daily_metrics.where(date_logged: 29.days.ago.to_date..Date.today)
+                                    .where(compliant: true)
+
+    logged_count = relevant_metrics.count
+    return 0 if logged_count.zero?
+
+    on_target_count = relevant_metrics.where(on_target: true).count
+    (on_target_count.to_f / logged_count * 100).round
+  end
+
+  def refresh_compliance_scores!
+    update_columns(
+      workout_compliance_score: calculate_workout_compliance_score,
+      diet_adherence_score: calculate_diet_adherence_score
+    )
+  end
+
+  def overall_score
+    (calculate_workout_compliance_score * 0.4 + calculate_diet_consistency_score * 0.3 + calculate_diet_adherence_score * 0.3).round
   end
 
   private

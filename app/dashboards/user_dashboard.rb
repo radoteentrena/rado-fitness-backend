@@ -24,7 +24,6 @@ class UserDashboard < Administrate::BaseDashboard
     reset_password_token: Field::String,
     routines: Field::HasMany,
     status: Field::Select.with_options(searchable: false, collection: ->(field) { field.resource.class.send(field.attribute.to_s.pluralize).keys }),
-    user_dietary_plans: Field::HasMany,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze
@@ -37,7 +36,6 @@ class UserDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
     id
     category
-    daily_metrics
     discarded_at
   ].freeze
 
@@ -46,7 +44,6 @@ class UserDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
     id
     category
-    daily_metrics
     discarded_at
     email
     encrypted_password
@@ -60,7 +57,7 @@ class UserDashboard < Administrate::BaseDashboard
     reset_password_token
     routines
     status
-    user_dietary_plans
+    status
     created_at
     updated_at
   ].freeze
@@ -70,7 +67,6 @@ class UserDashboard < Administrate::BaseDashboard
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
     category
-    daily_metrics
     discarded_at
     email
     encrypted_password
@@ -84,7 +80,7 @@ class UserDashboard < Administrate::BaseDashboard
     reset_password_token
     routines
     status
-    user_dietary_plans
+    status
   ].freeze
 
   # COLLECTION_FILTERS

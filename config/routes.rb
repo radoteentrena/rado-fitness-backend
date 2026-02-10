@@ -1,14 +1,14 @@
 Rails.application.routes.draw do
   namespace :admin do
       resources :coach_alerts
-      resources :daily_metrics
+      resources :coach_alerts
       resources :dietary_plans
       resources :exercises
       resources :programs
       resources :routines
-      resources :routine_exercises
+
       resources :users
-      resources :user_dietary_plans
+      resources :users
       resources :assignments, only: [:new, :create]
 
       root to: "dashboard#index"
