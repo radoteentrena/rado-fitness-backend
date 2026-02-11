@@ -12,7 +12,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - **Admin Dashboard:** Implemented dynamic data fetching for the User Growth chart (last 7 days).
 - **Admin Dashboard:** Enhanced chart visualization with data labels, axis labels, and primary color branding.
-- **Accessibility:** Added global keyboard focus rings for better navigation.
+- **Accessibility:** Added global focus rings for keyboard navigation.
+- **Bug Fix:** Resolved `NameError: undefined local variable or method 'filters'` in Admin Index views.
 
 ### Added
 - **Admin UI:** Comprehensive UI revamp for Daily Metrics, Dietary Plans, Exercises, Programs, Routines, Routine Exercises, and User Dietary Plans used consistently styled card tables.
