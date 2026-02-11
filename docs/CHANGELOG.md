@@ -10,6 +10,11 @@ All notable changes to this project will be documented in this file.
 - **Styling:** Applied consistent pagination styles compatible with the dark/light theme.
 
 ### Added
+- **Admin Dashboard:** Implemented dynamic data fetching for the User Growth chart (last 7 days).
+- **Admin Dashboard:** Enhanced chart visualization with data labels, axis labels, and primary color branding.
+- **Accessibility:** Added global keyboard focus rings for better navigation.
+
+### Added
 - **Admin UI:** Comprehensive UI revamp for Daily Metrics, Dietary Plans, Exercises, Programs, Routines, Routine Exercises, and User Dietary Plans used consistently styled card tables.
 - **Admin UI:** Implemented Turbo Frame-based modals for all CRUD operations (`new` and `edit` actions).
 - **Admin UI:** Detailed `show` views for all core resources with context and stats.

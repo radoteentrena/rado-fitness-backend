@@ -42,6 +42,16 @@
 }
 
 @layer base {
+  /* Keyboard focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-whiteish dark:ring-offset-blackish;
+  }
+
+  button:focus-visible,
+  a:focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-whiteish dark:ring-offset-blackish;
+  }
+
   input[type='text'],
   input[type='email'],
   input[type='password'],

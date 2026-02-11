@@ -123,7 +123,12 @@
                <span class="text-[10px] text-graphite font-medium dark:text-whiteish">LAST 7 DAYS</span>
             </div>
           </div>
-          <div id="main-chart" data-controller="admin--charts" data-admin--charts-target="chart"></div>
+          <div id="main-chart"
+               data-controller="admin--charts"
+               data-admin--charts-target="chart"
+               data-admin--charts-series-value="<%= @chart_data[:series].to_json %>"
+               data-admin--charts-categories-value="<%= @chart_data[:categories].to_json %>">
+          </div>
         </div>
     </div>
 
@@ -152,20 +157,22 @@
             </div>
             <ul role="list" class="divide-y divide-blackish/50 dark:divide-primary">
                 <% @recent_users.each do |user| %>
-                <li class="p-4">
-                    <div class="flex items-center justify-between">
-                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-background-light dark:bg-graphite hover:bg-primary/50 flex items-center justify-center font-bold text-graphite dark:text-whiteish">
-                                <%= user.email[0].upcase rescue "?" %>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-blackish dark:text-whiteish"><%= user.email %></p>
-                                <p class="text-[10px] text-graphite dark:text-whiteish/70">Joined <%= time_ago_in_words(user.created_at) %> ago</p>
-                            </div>
-                        </div>
-                        <span class="material-symbols-outlined text-shadow dark:text-muted">chevron_right</span>
-                    </div>
-                </li>
+                <%= link_to [:admin, user], class: "block" do %>
+                  <li class="p-4 hover:bg-background-light dark:hover:bg-shadow/50 transition-colors cursor-pointer">
+                      <div class="flex items-center justify-between">
+                           <div class="flex items-center gap-3">
+                              <div class="w-10 h-10 rounded-full bg-background-light dark:bg-graphite flex items-center justify-center font-bold text-graphite dark:text-whiteish">
+                                  <%= user.email[0].upcase rescue "?" %>
+                              </div>
+                              <div>
+                                  <p class="text-sm font-bold text-blackish dark:text-whiteish"><%= user.email %></p>
+                                  <p class="text-[10px] text-graphite dark:text-whiteish/70">Joined <%= time_ago_in_words(user.created_at) %> ago</p>
+                              </div>
+                          </div>
+                          <span class="material-symbols-outlined text-shadow dark:text-muted">chevron_right</span>
+                      </div>
+                  </li>
+                <% end %>
                 <% end %>
             </ul>
         </div>

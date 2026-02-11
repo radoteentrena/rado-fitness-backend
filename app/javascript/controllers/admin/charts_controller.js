@@ -3,6 +3,10 @@ import ApexCharts from "apexcharts"
 
 export default class extends Controller {
   static targets = ["chart"]
+  static values = {
+    series: Array,
+    categories: Array
+  }
 
   connect() {
     this.renderChart()
@@ -28,10 +32,11 @@ export default class extends Controller {
           show: false,
         },
       },
+      colors: ['#F5C228'], // Primary color for the line
       tooltip: {
         enabled: true,
         x: {
-          show: false,
+          show: true,
         },
       },
       fill: {
@@ -44,31 +49,32 @@ export default class extends Controller {
         },
       },
       dataLabels: {
-        enabled: false,
+        enabled: true,
+        style: {
+          colors: ['#F5C228']
+        }
       },
       stroke: {
         width: 6,
       },
       grid: {
-        show: false,
+        show: true, // Show grid for better readability
         strokeDashArray: 4,
         padding: {
-          left: 2,
-          right: 2,
+          left: 10,
+          right: 10,
           top: 0
         },
       },
-      series: [
-        {
-          name: "New users",
-          data: [6500, 6418, 6456, 6526, 6356, 6456],
-          color: "#F5C228",
-        },
-      ],
+      series: this.seriesValue || [],
       xaxis: {
-        categories: ['01 Feb', '02 Feb', '03 Feb', '04 Feb', '05 Feb', '06 Feb', '07 Feb'],
+        categories: this.categoriesValue || [],
         labels: {
-          show: false,
+          show: true, // Show X-axis labels (Dates)
+          style: {
+            fontFamily: "Inter, sans-serif",
+            cssClass: 'text-xs fill-gray-500 dark:fill-gray-400'
+          }
         },
         axisBorder: {
           show: false,
@@ -78,7 +84,12 @@ export default class extends Controller {
         },
       },
       yaxis: {
-        show: false,
+        show: true, // Show Y-axis labels (Counts)
+        labels: {
+           formatter: function (val) {
+             return val.toFixed(0); // Integers only for user counts
+           }
+        }
       },
     }
   }
