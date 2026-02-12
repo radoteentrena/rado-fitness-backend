@@ -56,8 +56,9 @@
     </div>
   </div>
 
+
   <%# Averages Summary %>
-  <div class="grid grid-cols-2 gap-4 mb-6">
+  <div class="grid grid-cols-3 gap-4 mb-6">
     <div class="p-4 rounded-lg bg-background-light dark:bg-graphite">
        <span class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Avg Calories</span>
        <div class="mt-1 flex items-baseline">
@@ -70,6 +71,17 @@
        <div class="mt-1 flex items-baseline">
           <span class="text-2xl font-bold text-blackish dark:text-whiteish"><%= avg_protein %></span>
           <span class="ml-2 text-sm text-graphite dark:text-muted">/ <%= target_protein %>g</span>
+       </div>
+    </div>
+    <div class="p-4 rounded-lg bg-background-light dark:bg-graphite">
+       <span class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Weight Trend</span>
+       <div class="mt-1 flex items-baseline">
+          <span class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @current_weight || "-" %></span>
+          <% if @weight_trend %>
+            <span class="ml-2 text-sm font-bold <%= @weight_trend > 0 ? 'text-alert' : 'text-primary' %>">
+              <%= @weight_trend > 0 ? "▲" : "▼" %> <%= @weight_trend.abs %>
+            </span>
+          <% end %>
        </div>
     </div>
   </div>
@@ -85,13 +97,37 @@
       <% is_today = day == Date.today %>
       <% is_current_month = day.month == start_of_month.month %>
 
-      <div class="aspect-square flex flex-col items-center justify-center rounded-lg border <%= is_today ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent' %> <%= is_current_month ? 'opacity-100' : 'opacity-40' %>">
-        <span class="text-xs font-medium <%= is_today ? 'text-primary font-bold' : 'text-blackish dark:text-whiteish' %>"><%= day.day %></span>
+      <div class="min-h-[100px] flex flex-col justify-between p-1 rounded-lg border <%= is_today ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'border-transparent hover:bg-background-light dark:hover:bg-graphite' %> <%= is_current_month ? 'opacity-100' : 'opacity-40' %>">
+        <div class="text-right">
+            <span class="text-xs font-medium <%= is_today ? 'text-primary font-bold' : 'text-blackish dark:text-whiteish' %>"><%= day.day %></span>
+        </div>
 
         <% if metric %>
-           <div class="mt-1 flex space-x-0.5">
-             <div class="w-1.5 h-1.5 rounded-full <%= metric.on_target? ? 'bg-primary' : (metric.compliant? ? 'bg-warning' : 'bg-alert') %>"></div>
-           </div>
+           <%= link_to admin_daily_metric_path(metric), data: { turbo_frame: "modal_frame", turbo_prefetch: "false" }, class: "block h-full" do %>
+               <div class="space-y-0.5 mt-1 text-left">
+                 <div class="flex justify-between items-center">
+                    <span class="text-[9px] text-graphite dark:text-muted">W</span>
+                    <span class="text-[10px] font-bold text-blackish dark:text-whiteish"><%= number_with_precision(metric.weight, precision: 1) || "-" %></span>
+                 </div>
+                 <div class="flex justify-between items-center">
+                    <span class="text-[9px] text-graphite dark:text-muted">C</span>
+                    <span class="text-[10px] font-medium <%= metric.calories_consumed.to_i > target_calories ? 'text-alert' : 'text-blackish dark:text-whiteish' %>">
+                      <%= metric.calories_consumed || "-" %>
+                    </span>
+                 </div>
+                 <div class="flex justify-between items-center">
+                    <span class="text-[9px] text-graphite dark:text-muted">P</span>
+                    <span class="text-[10px] font-medium text-blackish dark:text-whiteish"><%= metric.protein_consumed || "-" %></span>
+                 </div>
+               </div>
+
+               <%# Status Dot %>
+               <div class="flex justify-center mt-auto pt-1">
+                 <div class="w-1.5 h-1.5 rounded-full <%= metric.on_target? ? 'bg-primary' : (metric.compliant? ? 'bg-warning' : 'bg-alert') %>"></div>
+               </div>
+           <% end %>
+        <% else %>
+             <div class="flex-1"></div>
         <% end %>
       </div>
     <% end %>

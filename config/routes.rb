@@ -9,7 +9,9 @@ Rails.application.routes.draw do
 
       resources :users
       resources :users
+      resources :users
       resources :assignments, only: [:new, :create]
+      resources :daily_metrics, only: [:show]
 
       root to: "dashboard#index"
       get "dashboard", to: "dashboard#index"

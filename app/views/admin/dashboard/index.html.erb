@@ -91,9 +91,9 @@
                             <tr class="border-b dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50">
                                 <td class="px-4 py-3">
                                     <% color_class = alert.weight_spike? ? 'text-primary dark:text-primary' : 'text-primary dark:text-primary' %>
-                                    <span class="font-medium <%= color_class %>"><%= alert.category.humanize %></span>
+                                    <span class="font-medium <%= color_class %>"><%= alert.initials %></span>
                                 </td>
-                                <td class="px-4 py-3 font-medium text-blackish dark:text-whiteish whitespace-nowrap"><%= alert.user.email %></td>
+                                <td class="px-4 py-3 font-medium text-blackish dark:text-whiteish whitespace-nowrap"><%= alert.user.name %></td>
                                 <td class="px-4 py-3 truncate max-w-xs"><%= alert.message %></td>
                                 <td class="px-4 py-3"><%= time_ago_in_words(alert.created_at) %> ago</td>
                                 <td class="px-4 py-3">

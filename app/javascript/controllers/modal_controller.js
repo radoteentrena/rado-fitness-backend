@@ -2,10 +2,12 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["modal", "backdrop"]
+  static values = {
+    autoOpen: { type: Boolean, default: false }
+  }
 
   connect() {
-    // Open modal automatically if desired, or wait for trigger
-    if (this.hasModalTarget) {
+    if (this.autoOpenValue) {
       this.open()
     }
   }
@@ -28,7 +30,13 @@ export default class extends Controller {
 
   // Action for clicking outside the modal content
   closeBackground(event) {
-    if (event.target === this.modalTarget) {
+    if (this.hasModalTarget && event.target === this.modalTarget) {
+      this.close()
+    }
+  }
+
+  closeWithKeyboard(event) {
+    if (event.key === "Escape") {
       this.close()
     }
   }

@@ -14,6 +14,7 @@ if Rails.env.development?
   DietaryPlan.destroy_all
   User.destroy_all
   Exercise.destroy_all
+  CoachAlert.destroy_all
 end
 
 # 2. Exercises Library
@@ -263,6 +264,33 @@ Faker::Config.locale = 'es-AR'
         weight: 75.0 + rand(-2.0..2.0)
       )
     end
+  end
+  end
+
+# 7. Coach Alerts
+puts "Creating Coach Alerts..."
+users = User.all
+if users.any?
+  20.times do
+    user = users.sample
+    category = CoachAlert.categories.keys.sample
+
+    message = case category
+              when "missed_workout" then "Missed workout on #{Date.yesterday}"
+              when "low_compliance" then "Compliance dropped below 50% this week"
+              when "weight_spike" then "Weight increased by 2kg in 24h"
+              when "check_in" then "Weekly check-in submitted"
+              end
+
+    status = CoachAlert.statuses.keys.sample
+
+    CoachAlert.create!(
+      user: user,
+      category: category,
+      message: message,
+      status: status,
+      created_at: Faker::Time.backward(days: 7)
+    )
   end
 end
 

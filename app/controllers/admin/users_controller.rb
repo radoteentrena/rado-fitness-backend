@@ -67,11 +67,11 @@ module Admin
 
       # Filter by Score (DB)
       if params[:s_score].present?
-        resources = filter_by_score(resources, :workout_compliance_score, params[:s_score])
+        resources = resources.with_workout_compliance(params[:s_score])
       end
 
       if params[:m_score].present?
-        resources = filter_by_score(resources, :diet_adherence_score, params[:m_score])
+        resources = resources.with_diet_adherence(params[:m_score])
       end
 
       resources = resources.page(params[:page]).per(records_per_page)
@@ -96,7 +96,12 @@ module Admin
           @start_date.beginning_of_week..@start_date.end_of_week
         end
 
+
       @daily_metrics = requested_resource.daily_metrics.where(date_logged: range).index_by(&:date_logged)
+
+      @current_weight = requested_resource.latest_weight
+      days_back = @view_type == "month" ? 30 : 7
+      @weight_trend = requested_resource.weight_trend(days_back)
 
       render locals: {
         page: Administrate::Page::Show.new(dashboard, requested_resource),
@@ -104,15 +109,6 @@ module Admin
     end
 
     private
-
-    def filter_by_score(scope, column, filter)
-      case filter
-      when "high"   then scope.where("#{column} >= ?", 80)
-      when "medium" then scope.where("#{column} >= ? AND #{column} < ?", 50, 80)
-      when "low"    then scope.where("#{column} < ?", 50)
-      else scope
-      end
-    end
 
   end
 end

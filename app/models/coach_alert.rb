@@ -8,4 +8,8 @@ class CoachAlert < ApplicationRecord
   validates :message, presence: true
 
   scope :pending, -> { where(status: :pending) }
+
+  def initials
+    self.category.split("_").map(&:first).join("").upcase
+  end
 end

@@ -14,6 +14,23 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
 
+  # Scopes
+  scope :with_workout_compliance, ->(level) {
+    case level
+    when "high"   then where("workout_compliance_score >= ?", 80)
+    when "medium" then where("workout_compliance_score >= ? AND workout_compliance_score < ?", 50, 80)
+    when "low"    then where("workout_compliance_score < ?", 50)
+    end
+  }
+
+  scope :with_diet_adherence, ->(level) {
+    case level
+    when "high"   then where("diet_adherence_score >= ?", 80)
+    when "medium" then where("diet_adherence_score >= ? AND diet_adherence_score < ?", 50, 80)
+    when "low"    then where("diet_adherence_score < ?", 50)
+    end
+  }
+
   # Callbacks
   before_validation :set_temporary_password, on: :create
   after_create :send_welcome_email
@@ -83,6 +100,36 @@ class User < ApplicationRecord
 
   def overall_score
     (calculate_workout_compliance_score * 0.4 + calculate_diet_consistency_score * 0.3 + calculate_diet_adherence_score * 0.3).round
+  end
+
+
+  def latest_weight
+    daily_metrics.where.not(weight: nil).order(date_logged: :desc).pick(:weight).truncate(2) if daily_metrics.exists?
+  end
+
+  def weight_trend(days_ago = 7)
+    current = latest_weight
+    return nil unless current
+
+    previous = daily_metrics.where("date_logged <= ?", days_ago.days.ago.to_date)
+                            .where.not(weight: nil)
+                            .order(date_logged: :desc)
+                            .pick(:weight)
+
+    return nil unless previous
+
+    (current - previous).round(1)
+  end
+
+  def self.recent_growth_data(days = 7)
+    data = where("created_at > ?", days.days.ago).group("DATE(created_at)").count
+    (days.days.ago.to_date..Date.today).each { |date| data[date] ||= 0 }
+    sorted_data = data.sort.to_h
+
+    {
+      categories: sorted_data.keys.map { |d| d.strftime("%d %b") },
+      series: [{ name: "New Users", data: sorted_data.values }]
+    }
   end
 
   private

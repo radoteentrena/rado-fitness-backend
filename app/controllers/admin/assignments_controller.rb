@@ -12,8 +12,10 @@ module Admin
       begin
         dietary_plan.assign_to_user(user)
         redirect_to admin_user_path(user), notice: "Plan assigned successfully!"
+      rescue ActiveRecord::RecordInvalid => e
+        redirect_to new_admin_assignment_path(dietary_plan_id: dietary_plan.id), alert: "Failed to assign plan: #{e.record.errors.full_messages.to_sentence}"
       rescue => e
-        redirect_to new_admin_assignment_path(dietary_plan_id: dietary_plan.id), alert: "Failed: #{e.message}"
+        redirect_to new_admin_assignment_path(dietary_plan_id: dietary_plan.id), alert: "An unexpected error occurred: #{e.message}"
       end
     end
   end

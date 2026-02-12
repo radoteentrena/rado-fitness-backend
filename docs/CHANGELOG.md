@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Admin UI:** Daily Metric Modal for viewing detailed metric information from weekly/monthly calendars.
+- **Admin UI:** Program Progress display showing current week and active routine on User Show page.
+
+### Fixed
+- **Admin UI:** Modal auto-open bug - modals no longer open automatically on page load.
+- **Admin UI:** Modal hover bug - modals no longer open when hovering over metric links (disabled Turbo prefetch).
+- **Admin UI:** Modal close functionality - added Escape key support and improved background click handling.
+
 ### Fixed
 - **Admin UI:** Fixed Kaminari pagination rendering and styling across all admin collections.
 - **Admin UI:** Solved `undefined method 'current_page'` errors by properly scoping `@pagy` or `kaminari` objects in controllers.

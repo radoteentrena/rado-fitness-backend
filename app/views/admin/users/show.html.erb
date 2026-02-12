@@ -163,13 +163,30 @@
             <h3 class="text-lg font-bold text-blackish dark:text-whiteish mb-4">Assigned Programs</h3>
             <% if user.programs.any? %>
                 <ul class="space-y-4">
-                    <% user.programs.each do |program| %>
-                        <li class="flex items-center justify-between p-4 bg-background-light dark:bg-graphite rounded-lg">
-                            <div>
-                                <h4 class="font-medium text-blackish dark:text-whiteish"><%= program.name %></h4>
-                                <p class="text-sm text-graphite dark:text-graphite"><%= program.description %></p>
+                    <% user.programs.order(created_at: :desc).each do |program| %>
+                        <li class="p-4 bg-background-light dark:bg-graphite rounded-lg space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-blackish dark:text-whiteish"><%= program.name %></h4>
+                                    <div class="flex items-center space-x-2 mt-1">
+                                         <span class="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded border border-primary/20">Week <%= program.current_week %></span>
+                                         <span class="text-xs text-graphite dark:text-muted"><%= program.description %></span>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-xs px-2 py-1 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded text-graphite dark:text-whiteish">Active</span>
+
+                            <% if (current_routine = program.current_routine) %>
+                                <div class="mt-3 pt-3 border-t border-shadow dark:border-graphite">
+                                    <p class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider mb-2">Current Routine</p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="material-symbols-outlined text-sm text-primary">fitness_center</span>
+                                            <span class="font-medium text-blackish dark:text-whiteish"><%= current_routine.name %></span>
+                                        </div>
+                                        <span class="text-xs text-graphite dark:text-muted"><%= current_routine.duration_weeks || 4 %> weeks duration</span>
+                                    </div>
+                                </div>
+                            <% end %>
                         </li>
                     <% end %>
                 </ul>
