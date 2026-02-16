@@ -91,3 +91,7 @@ gem "google-apis-sheets_v4", "~> 0.46.0"
 gem "googleauth", "~> 1.16"
 
 gem "hotwire-livereload", "~> 2.1", group: :development
+
+# RAG Infrastructure - AI Coach
+gem "neighbor"      # pgvector ActiveRecord integration
+gem "pdf-reader"    # PDF text extraction for book ingestion

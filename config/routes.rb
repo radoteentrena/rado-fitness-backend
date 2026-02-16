@@ -1,17 +1,19 @@
 Rails.application.routes.draw do
   namespace :admin do
       resources :coach_alerts
-      resources :coach_alerts
       resources :dietary_plans
       resources :exercises
       resources :programs
       resources :routines
-
-      resources :users
-      resources :users
       resources :users
       resources :assignments, only: [:new, :create]
       resources :daily_metrics, only: [:show]
+
+      # AI Coach
+      get  "ai_coach",          to: "ai_coach#new",      as: :new_ai_coach
+      post "ai_coach/generate", to: "ai_coach#generate", as: :generate_ai_coach
+      post "ai_coach/refine",   to: "ai_coach#refine",   as: :refine_ai_coach
+      post "ai_coach/approve",  to: "ai_coach#approve",  as: :approve_ai_coach
 
       root to: "dashboard#index"
       get "dashboard", to: "dashboard#index"

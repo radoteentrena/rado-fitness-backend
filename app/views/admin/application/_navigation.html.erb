@@ -9,6 +9,14 @@
     <% end %>
   </li>
 
+  <!-- AI Coach -->
+  <li>
+    <%= link_to admin_new_ai_coach_path, data: { active_link_target: "link", turbo_frame: "admin_main_content", turbo_action: "advance" }, class: "flex items-center p-3 rounded-xl group transition-colors #{request.path.include?('ai_coach') ? 'bg-whiteish text-blackish shadow-sm dark:bg-shadow dark:text-whiteish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}" do %>
+      <span class="material-symbols-outlined w-5 h-5 transition duration-75 text-inherit">psychology</span>
+      <span class="ms-3 font-semibold text-sm">AI Coach</span>
+    <% end %>
+  </li>
+
   <% Administrate::Namespace.new(namespace).resources_with_index_route.reject { |r| r.to_s == "dashboard" }.each do |resource| %>
     <li>
       <%= link_to(

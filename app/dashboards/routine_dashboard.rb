@@ -28,9 +28,11 @@ class RoutineDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
     id
-    description
+    name
+    user
+    program
+    is_template
     duration_weeks
-    exercises
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES

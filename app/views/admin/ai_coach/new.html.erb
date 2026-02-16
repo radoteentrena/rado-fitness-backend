@@ -1,0 +1,78 @@
+<% content_for(:title) { "AI Coach" } %>
+
+<%= turbo_frame_tag "admin_main_content" do %>
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-blackish dark:text-whiteish flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary text-4xl">psychology</span>
+        AI Coach
+      </h1>
+      <p class="mt-2 text-graphite dark:text-muted">Generate tailored programs and routines from your fitness knowledge base.</p>
+    </div>
+
+    <!-- Wizard Form -->
+    <div id="ai-coach-wizard">
+      <%= form_tag admin_generate_ai_coach_path, method: :post, data: { turbo_frame: "ai_coach_result" } do %>
+        <!-- Step 1: Client Selection -->
+        <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-6">
+          <h2 class="text-lg font-semibold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
+            <span class="bg-primary text-blackish w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">1</span>
+            Select Client
+            <span class="text-sm font-normal text-graphite dark:text-muted">(optional — leave empty for template)</span>
+          </h2>
+
+          <select name="user_id" id="user_id"
+            class="w-full rounded-xl border border-shadow dark:border-graphite bg-background-light dark:bg-blackish text-blackish dark:text-whiteish px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition">
+            <option value="">No client — Generate a Template</option>
+            <% @users.each do |user| %>
+              <option value="<%= user.id %>">
+                <%= user.name %> (<%= user.category %>) — S:<%= user.calculate_workout_compliance_score %>% M:<%= user.calculate_diet_adherence_score %>%
+              </option>
+            <% end %>
+          </select>
+        </div>
+
+        <!-- Step 2: Objectives -->
+        <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-6">
+          <h2 class="text-lg font-semibold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
+            <span class="bg-primary text-blackish w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">2</span>
+            Objectives & Preferences
+          </h2>
+
+          <textarea name="objectives" id="objectives" rows="5" required
+            placeholder="Describe the training goals, e.g.:&#10;- Build muscle mass, focus on upper body&#10;- 4 training days per week&#10;- Intermediate level, 2 years experience&#10;- Client wants to compete in 6 months"
+            class="w-full rounded-xl border border-shadow dark:border-graphite bg-background-light dark:bg-blackish text-blackish dark:text-whiteish px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition resize-y"></textarea>
+
+          <!-- Generation Mode -->
+          <div class="mt-4 flex items-center gap-4">
+            <label class="text-sm font-medium text-graphite dark:text-muted">Generate:</label>
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="mode" value="program" checked
+                class="w-4 h-4 text-primary focus:ring-primary border-shadow dark:border-graphite">
+              <span class="text-sm text-blackish dark:text-whiteish">Full Program</span>
+            </label>
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="mode" value="routine"
+                class="w-4 h-4 text-primary focus:ring-primary border-shadow dark:border-graphite">
+              <span class="text-sm text-blackish dark:text-whiteish">Single Routine</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex justify-end">
+          <button type="submit"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-blackish font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            Generate Program
+          </button>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Result Area (updated via Turbo Frame) -->
+    <%= turbo_frame_tag "ai_coach_result" do %>
+    <% end %>
+  </div>
+<% end %>
