@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- **UI:** Redesigned Sign Up and Log In pages with a responsive split-screen layout (image + form).
+- **UI:** Updated auth forms to match Admin Panel aesthetic (colors, fonts).
+
 ### Added
 - **Admin UI:** Daily Metric Modal for viewing detailed metric information from weekly/monthly calendars.
 - **Admin UI:** Program Progress display showing current week and active routine on User Show page.
