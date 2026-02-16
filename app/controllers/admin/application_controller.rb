@@ -10,7 +10,13 @@ module Admin
     layout "admin/application"
 
     def authenticate_admin
-      # TODO Add authentication logic here.
+      authenticate_user!
+
+      allowed_emails = ENV["ADMIN_EMAILS"]&.split(",")&.map(&:strip) || []
+      unless allowed_emails.include?(current_user.email)
+        flash[:alert] = "You are not authorized to access this page."
+        redirect_to root_path
+      end
     end
 
     def index
