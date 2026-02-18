@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **UI:** New Homepage implementation with `PagesController#home`, featuring improved copy and structure.
+- **UI:** Dedicated `homepage` layout for full-width sections.
+
+### Changed
+- **Routing:** Updated root path to `pages#home`.
+- **Refactor:** Removed legacy `HomeController` and `home/index.html.erb` in favor of new structure.
+
 ### Changed
 - **UI:** Redesigned Sign Up and Log In pages with a responsive split-screen layout (image + form).
 - **UI:** Updated auth forms to match Admin Panel aesthetic (colors, fonts).

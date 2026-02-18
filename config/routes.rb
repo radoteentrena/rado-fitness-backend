@@ -8,8 +8,6 @@ Rails.application.routes.draw do
       resources :routines
 
       resources :users
-      resources :users
-      resources :users
       resources :assignments, only: [:new, :create]
       resources :daily_metrics, only: [:show]
 
@@ -26,8 +24,6 @@ Rails.application.routes.draw do
     post "whatsapp/incoming", to: "whatsapp#incoming"
   end
 
-
-
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
@@ -37,5 +33,5 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "home#index"
+  root "pages#home"
 end
