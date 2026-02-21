@@ -136,15 +136,14 @@ class AiCoachService
             day_name: ex_data["day_name"],
             sets: ex_data["sets"],
             reps: ex_data["reps"].to_s,
-            rir: ex_data["rir"].to_s,
             rest_seconds: ex_data["rest_seconds"],
-            warmup: ex_data["warmup"] || false,
+            intensity_technique: ex_data["intensity_technique"],
             warmup_sets: ex_data["warmup_sets"],
             early_rpe: ex_data["early_rpe"],
             last_rpe: ex_data["last_rpe"],
             time_estimate: ex_data["time_estimate"],
-            substitutions: ex_data["substitutions"],
-            instructions: ex_data["instructions"],
+            sub_option_one: ex_data["sub_option_one"],
+            sub_option_two: ex_data["sub_option_two"],
             order_index: index
           )
         end
@@ -287,10 +286,10 @@ class AiCoachService
                 "early_rpe": "string (e.g. '~7')",
                 "last_rpe": "string (e.g. '~8')",
                 "rest_seconds": integer,
+                "intensity_technique": "string (e.g. 'Lengthened Partials', 'Drop Set') or null",
                 "time_estimate": "string (e.g. '8-10 min')",
-                "substitutions": ["string", "string"],
-                "warmup": boolean,
-                "instructions": "string"
+                "sub_option_one": "string or null",
+                "sub_option_two": "string or null"
               }
             ]
           }
@@ -385,8 +384,8 @@ class AiCoachService
 
     # 4. Fallback: Find first '{' and last '}'
     # This handles "Here is your JSON: { ... } Hope it helps"
-    first_brace = text.index('{')
-    last_brace = text.rindex('}')
+    first_brace = text.index("{")
+    last_brace = text.rindex("}")
 
     if first_brace && last_brace && last_brace > first_brace
       json_candidate = text[first_brace..last_brace]

@@ -10,7 +10,7 @@ namespace :books do
     if (existing_book = Book.find_by(title: args[:title]))
       print "⚠️ Book '#{args[:title]}' already exists. Overwrite? (y/n): "
       input = STDIN.gets.chomp.downcase
-      if input == 'y'
+      if input == "y"
         existing_book.destroy!
         puts "🗑  Existing book removed."
       else

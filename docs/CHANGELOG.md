@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **API:** Google Sheets `sync_to_db` importer functionality for mapping Google Sheet columns directly into `RoutineExercise` records.
+- **Database:** Fields `sub_option_one` and `sub_option_two` added to `RoutineExercise`.
+
+### Changed
+- **Database:** Dropped `rir`, `warmup`, `sub_option`, `instructions`, `substitutions`, and `rest` columns from `RoutineExercise`.
+- **Integrations:** AI Coach Service payload and responses structured to cleanly support the new schema parameters.
+- **Admin UI:** Displays for "Coach Instructions" and JSONB `substitutions` were replaced with strings corresponding to "Sub Option 1" and "Sub Option 2".
+
+### Removed
+- **Features:** Google Sheet `Export` feature, generation button, background Sidekiq jobs, and rendering `iframe` removed in favor of manual linking and automatic importing.
+
+### Added
 - **Admin UI:** Daily Metric Modal for viewing detailed metric information from weekly/monthly calendars.
 - **Admin UI:** Program Progress display showing current week and active routine on User Show page.
 

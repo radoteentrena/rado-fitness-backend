@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_12_170215) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_21_144929) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -116,6 +116,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_12_170215) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "google_sheet_link"
+    t.datetime "last_synced_at"
     t.index ["user_id"], name: "index_programs_on_user_id"
   end
 
@@ -124,22 +125,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_12_170215) do
     t.bigint "exercise_id", null: false
     t.integer "sets"
     t.string "reps"
-    t.string "rir"
     t.integer "rest_seconds"
     t.integer "order_index"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "day_number"
     t.string "day_name"
-    t.boolean "warmup"
     t.string "load"
-    t.integer "sub_option"
-    t.text "instructions"
     t.string "warmup_sets"
     t.string "early_rpe"
     t.string "last_rpe"
     t.string "time_estimate"
-    t.jsonb "substitutions"
+    t.string "intensity_technique"
+    t.string "sub_option_one"
+    t.string "sub_option_two"
     t.index ["exercise_id"], name: "index_routine_exercises_on_exercise_id"
     t.index ["routine_id"], name: "index_routine_exercises_on_routine_id"
   end

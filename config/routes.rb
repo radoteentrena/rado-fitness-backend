@@ -3,13 +3,16 @@ Rails.application.routes.draw do
       resources :coach_alerts
       resources :dietary_plans
       resources :exercises
-      resources :programs
+      resources :programs do
+        member do
+          post :sync_sheet
+        end
+      end
       resources :routines
       resources :users
-      resources :assignments, only: [:new, :create]
-      resources :daily_metrics, only: [:show]
+      resources :assignments, only: [ :new, :create ]
+      resources :daily_metrics, only: [ :show ]
 
-      # AI Coach
       get  "ai_coach",          to: "ai_coach#new",      as: :new_ai_coach
       post "ai_coach/generate", to: "ai_coach#generate", as: :generate_ai_coach
       post "ai_coach/refine",   to: "ai_coach#refine",   as: :refine_ai_coach

@@ -88,6 +88,7 @@ gem "test", "~> 1.0", group: :development
 gem "twilio-ruby", "~> 7.10"
 
 gem "google-apis-sheets_v4", "~> 0.46.0"
+gem "google-apis-drive_v3", "~> 0.46.0"
 gem "googleauth", "~> 1.16"
 
 gem "hotwire-livereload", "~> 2.1", group: :development

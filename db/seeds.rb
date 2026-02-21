@@ -157,7 +157,7 @@ UserDietaryPlan.create!(
 
 # 6.1 Exercises (50+)
 puts "Generating 50+ Exercises..."
-muscle_groups = ["Chest", "Back", "Legs", "Shoulders", "Arms", "Core", "Cardio"]
+muscle_groups = [ "Chest", "Back", "Legs", "Shoulders", "Arms", "Core", "Cardio" ]
 50.times do
   Exercise.find_or_create_by!(name: "#{Faker::Verb.base.capitalize} #{Faker::Science.element}") do |e|
     e.muscle_group = muscle_groups.sample
@@ -172,7 +172,7 @@ puts "Generating Programs & Routines..."
   prog = Program.create!(
     name: "#{Faker::Marketing.buzzwords.split.map(&:capitalize).join(' ')} Protocol",
     description: Faker::Lorem.paragraph,
-    duration_weeks: [8, 12, 16].sample
+    duration_weeks: [ 8, 12, 16 ].sample
   )
 
   # Create 2-3 Routines per Program
@@ -193,9 +193,9 @@ puts "Generating Programs & Routines..."
         day_number: rand(1..4),
         day_name: "Day #{rand(1..4)}",
         sets: rand(3..5),
-        reps: ["8-12", "5x5", "AMRAP", "15-20"].sample,
+        reps: [ "8-12", "5x5", "AMRAP", "15-20" ].sample,
         load: "RPE #{rand(6..9)}",
-        rest_seconds: [60, 90, 120, 180].sample,
+        rest_seconds: [ 60, 90, 120, 180 ].sample,
         instructions: Faker::Lorem.sentence
       )
     end
@@ -208,8 +208,8 @@ puts "Generating Dietary Plans..."
   DietaryPlan.create!(
     name: "#{Faker::Food.dish} Base Plan",
     description: Faker::Lorem.sentence,
-    calories_target: [2000, 2400, 2800, 3200].sample,
-    protein_target: [150, 180, 200, 220].sample
+    calories_target: [ 2000, 2400, 2800, 3200 ].sample,
+    protein_target: [ 150, 180, 200, 220 ].sample
   )
 end
 
@@ -276,11 +276,11 @@ if users.any?
     category = CoachAlert.categories.keys.sample
 
     message = case category
-              when "missed_workout" then "Missed workout on #{Date.yesterday}"
-              when "low_compliance" then "Compliance dropped below 50% this week"
-              when "weight_spike" then "Weight increased by 2kg in 24h"
-              when "check_in" then "Weekly check-in submitted"
-              end
+    when "missed_workout" then "Missed workout on #{Date.yesterday}"
+    when "low_compliance" then "Compliance dropped below 50% this week"
+    when "weight_spike" then "Weight increased by 2kg in 24h"
+    when "check_in" then "Weekly check-in submitted"
+    end
 
     status = CoachAlert.statuses.keys.sample
 

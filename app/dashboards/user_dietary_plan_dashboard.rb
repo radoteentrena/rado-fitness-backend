@@ -19,7 +19,7 @@ class UserDietaryPlanDashboard < Administrate::BaseDashboard
     start_date: Field::Date,
     user: Field::BelongsTo,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
