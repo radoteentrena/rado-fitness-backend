@@ -9,6 +9,7 @@ Rails.application.routes.draw do
         end
       end
       resources :routines
+      resources :routine_exercises, only: [ :edit, :update ]
       resources :users
       resources :assignments, only: [ :new, :create ]
       resources :daily_metrics, only: [ :show ]

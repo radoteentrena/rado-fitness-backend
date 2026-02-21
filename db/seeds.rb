@@ -7,14 +7,17 @@ puts "🌱 Seeding Data..."
 # 1. Cleanup (Development Only)
 if Rails.env.development?
   puts "Cleaning up existing data..."
+  DailyMetric.destroy_all
+  CoachAlert.destroy_all
+  UserDietaryPlan.destroy_all
+  DietaryPlan.destroy_all
+  AiMessage.destroy_all
+  AiConversation.destroy_all
   RoutineExercise.destroy_all
   Routine.destroy_all
   Program.destroy_all
-  UserDietaryPlan.destroy_all
-  DietaryPlan.destroy_all
   User.destroy_all
   Exercise.destroy_all
-  CoachAlert.destroy_all
 end
 
 # 2. Exercises Library
@@ -67,10 +70,10 @@ RoutineExercise.create!([
     sets: 3,
     reps: "8-12",
     load: "RPE 7",
-    rir: "2",
     rest_seconds: 180,
-    warmup: true,
-    instructions: "Focus on depth and control."
+    warmup_sets: "1-2",
+    sub_option_one: "Leg Press",
+    sub_option_two: "Hack Squat"
   },
   {
     routine: block_1,
@@ -80,9 +83,8 @@ RoutineExercise.create!([
     sets: 3,
     reps: "10-15",
     load: "RPE 8",
-    rir: "1",
     rest_seconds: 120,
-    warmup: false
+    warmup_sets: "1"
   }
 ])
 
@@ -96,9 +98,8 @@ RoutineExercise.create!([
     sets: 4,
     reps: "8-12",
     load: "RPE 8",
-    rir: "1",
     rest_seconds: 120,
-    warmup: true
+    intensity_technique: "Pause 1s at bottom"
   },
   {
     routine: block_1,
@@ -108,9 +109,8 @@ RoutineExercise.create!([
     sets: 4,
     reps: "AMRAP",
     load: "Bodyweight",
-    rir: "0",
     rest_seconds: 120,
-    warmup: false
+    sub_option_one: "Lat Pulldown"
   }
 ])
 
@@ -196,7 +196,9 @@ puts "Generating Programs & Routines..."
         reps: [ "8-12", "5x5", "AMRAP", "15-20" ].sample,
         load: "RPE #{rand(6..9)}",
         rest_seconds: [ 60, 90, 120, 180 ].sample,
-        instructions: Faker::Lorem.sentence
+        warmup_sets: rand < 0.3 ? "1-2" : nil,
+        intensity_technique: rand < 0.2 ? "Drop set" : nil,
+        sub_option_one: rand < 0.3 ? Faker::Science.element : nil
       )
     end
   end

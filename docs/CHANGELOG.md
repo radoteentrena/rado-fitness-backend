@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Admin UI:** Implemented inline editing for `RoutineExercise` on the Routine Show page using Hotwire Turbo Frames.
+- **Admin UI:** Added exercise name dropdowns for `sub_option_one` and `sub_option_two`.
+### Added
 - **API:** Google Sheets `sync_to_db` importer functionality for mapping Google Sheet columns directly into `RoutineExercise` records.
 - **Database:** Fields `sub_option_one` and `sub_option_two` added to `RoutineExercise`.
 
