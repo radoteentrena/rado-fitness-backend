@@ -50,7 +50,7 @@
                   <th class="pb-2 pr-3">Exercise</th>
                   <th class="pb-2 pr-3 text-center w-16">Sets</th>
                   <th class="pb-2 pr-3 text-center w-16">Reps</th>
-                  <th class="pb-2 pr-3 text-center w-16">RIR</th>
+                  <th class="pb-2 pr-3 text-center w-24">Load</th>
                   <th class="pb-2 pr-3 text-center w-20">Rest</th>
                   <th class="pb-2">Notes</th>
                 </tr>
@@ -82,10 +82,11 @@
                         data-ai-coach-target="editableField">
                     </td>
                     <td class="py-2.5 pr-3 text-center">
-                      <input type="text" name="structured_data[routines][<%= r_idx %>][exercises][<%= e_idx %>][rir]"
-                        value="<%= ex["rir"] %>"
-                        class="bg-transparent border-0 border-b border-transparent hover:border-shadow dark:hover:border-graphite focus:border-primary focus:ring-0 p-0 text-center text-blackish dark:text-whiteish w-12 transition"
-                        data-ai-coach-target="editableField">
+                      <input type="text" name="structured_data[routines][<%= r_idx %>][exercises][<%= e_idx %>][load]"
+                        value="<%= ex["load"] %>"
+                        class="bg-transparent border-0 border-b border-transparent hover:border-shadow dark:hover:border-graphite focus:border-primary focus:ring-0 p-0 text-center text-blackish dark:text-whiteish w-20 transition"
+                        data-ai-coach-target="editableField"
+                        placeholder="e.g. 50kg">
                     </td>
                     <td class="py-2.5 pr-3 text-center text-graphite dark:text-muted">
                       <%= ex["rest_seconds"] %>s
@@ -166,7 +167,7 @@
       Start Over
     <% end %>
 
-    <%= form_tag admin_approve_ai_coach_path, method: :post do %>
+    <%= form_tag admin_approve_ai_coach_path, method: :post, data: { turbo_frame: "_top" } do %>
       <input type="hidden" name="conversation_id" value="<%= @conversation.id %>">
       <input type="hidden" name="structured_data" value="<%= @conversation.generated_data.to_json %>" id="approval-data">
       <button type="submit"

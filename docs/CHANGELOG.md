@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- **AI Coach:** Resolved viewport freezing on routine generation by appending a `scrollIntoView` hook.
+- **AI Coach:** Fixed "Content Missing" error on routine save by mapping the submission form to the `_top` Turbo frame.
+- **AI Coach:** Corrected `load` parsing from Gemini and mapping to Database, replacing the default "Bodyweight" fallback.
+- **AI Coach:** Prompt-engineered a token explosion fix to prevent Gemini from generating literal 130-day routines, enforcing 1-week microcycle limits for long-duration programs.
+- **AI Coach:** Added flash alerts for JSON parsing failures and corrected path routing helper errors (`admin_new_ai_coach_path`).
+
 ### Added
 - **Admin UI:** Implemented inline editing for `RoutineExercise` on the Routine Show page using Hotwire Turbo Frames.
 - **Admin UI:** Added exercise name dropdowns for `sub_option_one` and `sub_option_two`.

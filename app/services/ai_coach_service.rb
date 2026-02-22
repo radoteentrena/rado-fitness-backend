@@ -141,6 +141,7 @@ class AiCoachService
             warmup_sets: ex_data["warmup_sets"],
             early_rpe: ex_data["early_rpe"],
             last_rpe: ex_data["last_rpe"],
+            load: ex_data["load"],
             time_estimate: ex_data["time_estimate"],
             sub_option_one: ex_data["sub_option_one"],
             sub_option_two: ex_data["sub_option_two"],
@@ -249,6 +250,9 @@ class AiCoachService
       Please generate a #{mode == 'routine' ? 'single routine' : 'complete training program'} based on
       the above information. Use the exact JSON structure below.
 
+      IMPORTANT FORMATTING CONSTRAINT:
+      If the user asks for a long-term program (e.g. 6 months), DO NOT generate individual workout routines for every single day. Instead, generate a typical microcycle (e.g., 1 week of unique workout days mapped into routines) and simply assign the appropriately large number to the `duration_weeks` fields. For example, a 5-day-per-week program should output exactly 5 days representing the recurring weekly split.
+
       For exercises, if an exercise already exists in the database, use its exact name.
       If you need to suggest a new exercise, provide a descriptive name and muscle_group.
       Set "existing_exercise_id" to null for new exercises.
@@ -283,6 +287,7 @@ class AiCoachService
                 "sets": integer,
                 "warmup_sets": "string (e.g. '1-2' or '0')",
                 "reps": "string (e.g. '8-10' or '12')",
+                "load": "string (e.g. 'Bodyweight', '60kg', 'RPE 8', 'AMRAP') or null",
                 "early_rpe": "string (e.g. '~7')",
                 "last_rpe": "string (e.g. '~8')",
                 "rest_seconds": integer,

@@ -21,13 +21,17 @@ module Admin
       @conversation = result[:conversation]
       @structured_data = result[:structured_data]
 
+      if @structured_data.empty?
+        flash.now[:alert] = "The AI failed to generate a valid program format. Please adjust your prompt and try again."
+      end
+
       respond_to do |format|
         format.turbo_stream
         format.html { render :preview }
       end
     rescue => e
       Rails.logger.error("AI Coach Error: #{e.message}")
-      redirect_to new_admin_ai_coach_path, alert: "Error generating program: #{e.message}"
+      redirect_to admin_new_ai_coach_path, alert: "Error generating program: #{e.message}"
     end
 
     # Chat refinement: modify the generated program
@@ -46,7 +50,7 @@ module Admin
       end
     rescue => e
       Rails.logger.error("AI Coach Refine Error: #{e.message}")
-      redirect_to new_admin_ai_coach_path, alert: "Error refining program: #{e.message}"
+      redirect_to admin_new_ai_coach_path, alert: "Error refining program: #{e.message}"
     end
 
     # Step 3: Approve and create actual records
@@ -66,7 +70,7 @@ module Admin
       end
     rescue => e
       Rails.logger.error("AI Coach Approve Error: #{e.message}")
-      redirect_to new_admin_ai_coach_path, alert: "Error creating records: #{e.message}"
+      redirect_to admin_new_ai_coach_path, alert: "Error creating records: #{e.message}"
     end
 
     private
