@@ -13,7 +13,7 @@ class ProgramDashboard < Administrate::BaseDashboard
     duration_weeks: Field::Number,
     google_sheet_link: Field::String,
     name: Field::String,
-    routines: Field::HasMany,
+    phases: Field::HasMany,
     user: Field::BelongsTo,
     created_at: Field::DateTime,
     updated_at: Field::DateTime
@@ -39,7 +39,7 @@ class ProgramDashboard < Administrate::BaseDashboard
     duration_weeks
     google_sheet_link
     name
-    routines
+    phases
     user
     created_at
     updated_at
@@ -53,7 +53,7 @@ class ProgramDashboard < Administrate::BaseDashboard
     duration_weeks
     google_sheet_link
     name
-    routines
+    phases
     user
   ].freeze
 

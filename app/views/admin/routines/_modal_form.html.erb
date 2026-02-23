@@ -35,11 +35,7 @@
           <%= f.number_field :duration_weeks, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish" %>
         </div>
 
-        <%# Program %>
-        <div class="col-span-2 md:col-span-1">
-          <%= f.label :program_id, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-          <%= f.select :program_id, Program.all.map { |u| [u.name, u.id] }, { include_blank: "Select Program" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish" %>
-        </div>
+        <%# Phases (Handled by Administrate has_many field later, or omitted for simple templates) %>
 
         <%# User %>
         <div class="col-span-2 md:col-span-1">
@@ -47,13 +43,6 @@
           <%= f.select :user_id, User.all.map { |u| [u.name, u.id] }, { include_blank: "Unassigned" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish" %>
         </div>
 
-        <%# Is Template %>
-        <div class="col-span-2">
-            <div class="flex items-center">
-                <%= f.check_box :is_template, class: "w-4 h-4 text-primary bg-background-light border-shadow rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-shadow dark:border-graphite" %>
-                <%= f.label :is_template, "Save as Template", class: "ml-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-            </div>
-        </div>
 
         <%# Description %>
         <div class="col-span-2">

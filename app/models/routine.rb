@@ -1,6 +1,7 @@
 class Routine < ApplicationRecord
   belongs_to :user, optional: true
-  belongs_to :program, optional: true
+  has_many :phase_routines, dependent: :destroy
+  has_many :phases, through: :phase_routines
   has_many :routine_exercises, dependent: :destroy
   has_many :exercises, through: :routine_exercises
 

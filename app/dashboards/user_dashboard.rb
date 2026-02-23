@@ -17,6 +17,8 @@ class UserDashboard < Administrate::BaseDashboard
     first_name: Field::String,
     last_name: Field::String,
     phone: Field::String,
+    workout_compliance_score: Field::Number,
+    diet_adherence_score: Field::Number,
     plan_tier: Field::Select.with_options(searchable: false, collection: ->(field) { field.resource.class.send(field.attribute.to_s.pluralize).keys }),
     programs: Field::HasMany,
     remember_created_at: Field::DateTime,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_21_144929) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_23_160009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -108,6 +108,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_144929) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "phase_routines", force: :cascade do |t|
+    t.bigint "phase_id", null: false
+    t.bigint "routine_id", null: false
+    t.integer "order_index"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phase_id"], name: "index_phase_routines_on_phase_id"
+    t.index ["routine_id"], name: "index_phase_routines_on_routine_id"
+  end
+
+  create_table "phases", force: :cascade do |t|
+    t.bigint "program_id", null: false
+    t.string "name"
+    t.text "description"
+    t.integer "order_index"
+    t.integer "duration_weeks"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id"], name: "index_phases_on_program_id"
+  end
+
   create_table "programs", force: :cascade do |t|
     t.string "name"
     t.integer "duration_weeks"
@@ -150,9 +171,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_144929) do
     t.boolean "is_template", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "program_id"
     t.integer "duration_weeks"
-    t.index ["program_id"], name: "index_routines_on_program_id"
     t.index ["user_id"], name: "index_routines_on_user_id"
   end
 
@@ -167,7 +186,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_144929) do
     t.date "start_date"
     t.date "end_date"
     t.boolean "active", default: true
+    t.bigint "phase_id"
     t.index ["dietary_plan_id"], name: "index_user_dietary_plans_on_dietary_plan_id"
+    t.index ["phase_id"], name: "index_user_dietary_plans_on_phase_id"
     t.index ["user_id"], name: "index_user_dietary_plans_on_user_id"
   end
 
@@ -200,11 +221,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_21_144929) do
   add_foreign_key "coach_alerts", "users"
   add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
+  add_foreign_key "phase_routines", "phases"
+  add_foreign_key "phase_routines", "routines"
+  add_foreign_key "phases", "programs"
   add_foreign_key "programs", "users"
   add_foreign_key "routine_exercises", "exercises"
   add_foreign_key "routine_exercises", "routines"
-  add_foreign_key "routines", "programs"
   add_foreign_key "routines", "users"
   add_foreign_key "user_dietary_plans", "dietary_plans"
+  add_foreign_key "user_dietary_plans", "phases"
   add_foreign_key "user_dietary_plans", "users"
 end

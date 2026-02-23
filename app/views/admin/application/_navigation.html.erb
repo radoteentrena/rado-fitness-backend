@@ -17,7 +17,8 @@
     <% end %>
   </li>
 
-  <% Administrate::Namespace.new(namespace).resources_with_index_route.reject { |r| r.to_s == "dashboard" }.each do |resource| %>
+  <% excluded_nav_resources = ["dashboard", "phase_routines", "user_dietary_plans"] %>
+  <% Administrate::Namespace.new(namespace).resources_with_index_route.reject { |r| excluded_nav_resources.include?(r.to_s) }.each do |resource| %>
     <li>
       <%= link_to(
         resource_index_route(resource),

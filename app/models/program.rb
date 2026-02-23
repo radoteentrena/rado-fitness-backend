@@ -1,6 +1,8 @@
 class Program < ApplicationRecord
   belongs_to :user, optional: true # Optional if it's a template
-  has_many :routines, dependent: :nullify
+  has_many :phases, -> { order(order_index: :asc) }, dependent: :destroy
+  has_many :routines, through: :phases
+  has_many :user_dietary_plans, through: :phases
 
   public
 
@@ -26,10 +28,16 @@ class Program < ApplicationRecord
       new_program.user = target_user
       new_program.save!
 
-      routines.templates.each do |routine|
-        new_routine = routine.clone_to_user(target_user)
-        new_routine.program = new_program
-        new_routine.save!
+      phases.each do |phase|
+        new_phase = phase.dup
+        new_phase.program = new_program
+        new_phase.save!
+
+        phase.routines.templates.each do |routine|
+          new_routine = routine.clone_to_user(target_user)
+          new_routine.phase = new_phase
+          new_routine.save!
+        end
       end
 
       new_program

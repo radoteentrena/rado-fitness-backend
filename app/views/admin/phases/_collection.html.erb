@@ -1,0 +1,40 @@
+<div class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
+  <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
+    <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
+      <tr>
+        <th scope="col" class="px-6 py-3 font-medium">Order</th>
+        <th scope="col" class="px-6 py-3 font-medium">Name</th>
+        <th scope="col" class="px-6 py-3 font-medium">Program</th>
+        <th scope="col" class="px-6 py-3 font-medium">Duration (Weeks)</th>
+        <th scope="col" class="px-6 py-3 font-medium">
+          <span class="sr-only">Edit</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% resources.each do |resource| %>
+        <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-whiteish/50 hover:bg-background-light dark:hover:bg-shadow/50">
+          <th scope="row" class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+            <%= resource.order_index %>
+          </th>
+          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
+            <%= link_to resource.name, admin_phase_path(resource), class: "hover:text-primary transition-colors" %>
+          </td>
+          <td class="px-6 py-4">
+             <% if resource.program.present? %>
+                <%= link_to resource.program.name, admin_program_path(resource.program), class: "hover:text-primary transition-colors dark:text-primary" %>
+             <% else %>
+                <span class="text-muted">–</span>
+             <% end %>
+          </td>
+          <td class="px-6 py-4">
+            <%= resource.duration_weeks %>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <%= link_to "Edit", edit_admin_phase_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

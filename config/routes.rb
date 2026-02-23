@@ -3,14 +3,18 @@ Rails.application.routes.draw do
       resources :coach_alerts
       resources :dietary_plans
       resources :exercises
+      resources :phases
       resources :programs do
+        resource :builder, only: [:show], controller: 'program_builders'
         member do
           post :sync_sheet
         end
       end
       resources :routines
+      resources :phase_routines, except: [:index, :show]
       resources :routine_exercises, only: [ :edit, :update ]
       resources :users
+      resources :user_dietary_plans, except: [:index, :show]
       resources :assignments, only: [ :new, :create ]
       resources :daily_metrics, only: [ :show ]
 
