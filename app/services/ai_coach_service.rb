@@ -11,22 +11,11 @@ class AiCoachService
     @base_url = "https://generativelanguage.googleapis.com/v1beta/models/#{GENERATION_MODEL}:generateContent"
   end
 
-  # Generate a program/routine from objectives with RAG context
-  # Returns { conversation: AiConversation, structured_data: Hash }
   def generate_program(objectives:, user: nil, mode: "program")
-    # 1. Retrieve relevant book knowledge
     book_context = retrieve_context(objectives)
-
-    # 2. Build the client profile (if user provided)
     client_profile = build_client_profile(user)
-
-    # 3. Build available exercises
     exercises_list = Exercise.all.pluck(:name, :muscle_group).map { |n, mg| "#{n} (#{mg})" }.join(", ")
-
-    # 4. Construct system prompt
     system_prompt = build_system_prompt(mode)
-
-    # 5. Construct user prompt
     user_prompt = build_generation_prompt(
       objectives: objectives,
       book_context: book_context,
@@ -35,11 +24,9 @@ class AiCoachService
       mode: mode
     )
 
-    # 6. Call Gemini
     response_text = call_gemini(system_prompt, user_prompt)
     structured_data = parse_json_response(response_text)
 
-    # 7. Create conversation record
     conversation = AiConversation.create!(
       user: user,
       title: structured_data.dig("program", "name") || "AI Generated #{mode.capitalize}",
@@ -57,7 +44,6 @@ class AiCoachService
     { conversation: conversation, structured_data: structured_data }
   end
 
-  # Refine an existing conversation with a new message
   def refine(conversation:, message:)
     book_context = retrieve_context(message)
 
@@ -96,7 +82,6 @@ class AiCoachService
     { conversation: conversation, structured_data: structured_data }
   end
 
-  # Create actual database records from the structured data
   def create_records!(conversation)
     data = conversation.generated_data
     user = conversation.user
@@ -104,7 +89,6 @@ class AiCoachService
     ActiveRecord::Base.transaction do
       program = nil
 
-      # Create Program if present
       if data["program"]
         program = Program.create!(
           name: data["program"]["name"],
@@ -112,20 +96,31 @@ class AiCoachService
           duration_weeks: data["program"]["duration_weeks"],
           user: user
         )
+
+        phase = Phase.create!(
+          name: "Phase 1",
+          description: "Initial phase for #{program.name}",
+          duration_weeks: program.duration_weeks,
+          program: program,
+          order_index: 1
+        )
+      else
+        phase = nil
       end
 
-      # Create Routines
-      data["routines"]&.each do |routine_data|
+      data["routines"]&.each_with_index do |routine_data, r_index|
         routine = Routine.create!(
           name: routine_data["name"],
           description: routine_data["description"],
           duration_weeks: routine_data["duration_weeks"],
           is_template: user.nil?,
-          user: user,
-          program: program
+          user: user
         )
 
-        # Create Exercises and RoutineExercises
+        if phase
+          PhaseRoutine.create!(phase: phase, routine: routine, order_index: r_index)
+        end
+
         routine_data["exercises"]&.each_with_index do |ex_data, index|
           exercise = find_or_create_exercise(ex_data)
 
@@ -150,7 +145,6 @@ class AiCoachService
         end
       end
 
-      # Create DietaryPlan if suggested
       if data["dietary_plan"]
         dietary_plan = DietaryPlan.create!(
           name: data["dietary_plan"]["name"],
@@ -159,7 +153,6 @@ class AiCoachService
           protein_target: data["dietary_plan"]["protein_target"]
         )
 
-        # Assign to user if present
         if user
           UserDietaryPlan.create!(
             user: user,
@@ -170,7 +163,6 @@ class AiCoachService
         end
       end
 
-      # Update conversation status
       conversation.update!(status: "completed", program: program)
 
       program || Routine.where(user: user).last
@@ -179,7 +171,6 @@ class AiCoachService
 
   private
 
-  # RAG: embed query and retrieve relevant book chunks
   def retrieve_context(query)
     query_embedding = @embedding_service.embed(query)
     return "No book knowledge available." unless query_embedding
@@ -309,7 +300,6 @@ class AiCoachService
     JSON
   end
 
-  # Find existing exercise by name or create a new one
   def find_or_create_exercise(ex_data)
     if ex_data["existing_exercise_id"]
       Exercise.find_by(id: ex_data["existing_exercise_id"]) ||
@@ -329,10 +319,8 @@ class AiCoachService
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE if Rails.env.development?
 
-    # Build contents array with optional history
     contents = []
 
-    # Add conversation history for refinements
     history.each do |msg|
       contents << {
         role: msg[:role] == "assistant" ? "model" : "user",
@@ -340,7 +328,6 @@ class AiCoachService
       }
     end
 
-    # Add current user prompt
     contents << { role: "user", parts: [ { text: user_prompt } ] }
 
     request = Net::HTTP::Post.new(uri)
@@ -368,27 +355,19 @@ class AiCoachService
   def parse_json_response(text)
     return {} unless text
 
-    # 1. Attempt to parse clean text first
     begin
       return JSON.parse(text)
     rescue JSON::ParserError
-      # Continue to extraction strategies
     end
-
-    # 2. Extract from markdown code fences
     if text.include?("```json")
       match = text.match(/```json\s*(.*?)\s*```/m)
       return JSON.parse(match[1]) if match
     end
 
-    # 3. Handle generic fences
     if text.include?("```")
       match = text.match(/```\s*(.*?)\s*```/m)
       return JSON.parse(match[1]) if match
     end
-
-    # 4. Fallback: Find first '{' and last '}'
-    # This handles "Here is your JSON: { ... } Hope it helps"
     first_brace = text.index("{")
     last_brace = text.rindex("}")
 
