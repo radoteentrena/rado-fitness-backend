@@ -10,9 +10,54 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_23_160009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "vector"
+
+  create_table "ai_conversations", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "title"
+    t.text "objectives"
+    t.string "status", default: "active"
+    t.jsonb "generated_data"
+    t.bigint "program_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id"], name: "index_ai_conversations_on_program_id"
+    t.index ["user_id"], name: "index_ai_conversations_on_user_id"
+  end
+
+  create_table "ai_messages", force: :cascade do |t|
+    t.bigint "ai_conversation_id", null: false
+    t.string "role", null: false
+    t.text "content", null: false
+    t.jsonb "structured_data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ai_conversation_id"], name: "index_ai_messages_on_ai_conversation_id"
+  end
+
+  create_table "book_chunks", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.text "content", null: false
+    t.integer "page_number"
+    t.integer "chunk_index"
+    t.vector "embedding", limit: 768
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_book_chunks_on_book_id"
+    t.index ["embedding"], name: "index_book_chunks_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
+  end
+
+  create_table "books", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "author"
+    t.string "file_path"
+    t.integer "chunks_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "coach_alerts", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -63,6 +108,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "phase_routines", force: :cascade do |t|
+    t.bigint "phase_id", null: false
+    t.bigint "routine_id", null: false
+    t.integer "order_index"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phase_id"], name: "index_phase_routines_on_phase_id"
+    t.index ["routine_id"], name: "index_phase_routines_on_routine_id"
+  end
+
+  create_table "phases", force: :cascade do |t|
+    t.bigint "program_id", null: false
+    t.string "name"
+    t.text "description"
+    t.integer "order_index"
+    t.integer "duration_weeks"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id"], name: "index_phases_on_program_id"
+  end
+
   create_table "programs", force: :cascade do |t|
     t.string "name"
     t.integer "duration_weeks"
@@ -71,6 +137,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "google_sheet_link"
+    t.datetime "last_synced_at"
     t.index ["user_id"], name: "index_programs_on_user_id"
   end
 
@@ -79,17 +146,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.bigint "exercise_id", null: false
     t.integer "sets"
     t.string "reps"
-    t.string "rir"
     t.integer "rest_seconds"
     t.integer "order_index"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "day_number"
     t.string "day_name"
-    t.boolean "warmup"
     t.string "load"
-    t.integer "sub_option"
-    t.text "instructions"
+    t.string "warmup_sets"
+    t.string "early_rpe"
+    t.string "last_rpe"
+    t.string "time_estimate"
+    t.string "intensity_technique"
+    t.string "sub_option_one"
+    t.string "sub_option_two"
     t.index ["exercise_id"], name: "index_routine_exercises_on_exercise_id"
     t.index ["routine_id"], name: "index_routine_exercises_on_routine_id"
   end
@@ -101,9 +171,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.boolean "is_template", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "program_id"
     t.integer "duration_weeks"
-    t.index ["program_id"], name: "index_routines_on_program_id"
     t.index ["user_id"], name: "index_routines_on_user_id"
   end
 
@@ -118,7 +186,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.date "start_date"
     t.date "end_date"
     t.boolean "active", default: true
+    t.bigint "phase_id"
     t.index ["dietary_plan_id"], name: "index_user_dietary_plans_on_dietary_plan_id"
+    t.index ["phase_id"], name: "index_user_dietary_plans_on_phase_id"
     t.index ["user_id"], name: "index_user_dietary_plans_on_user_id"
   end
 
@@ -144,14 +214,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "ai_conversations", "programs"
+  add_foreign_key "ai_conversations", "users"
+  add_foreign_key "ai_messages", "ai_conversations"
+  add_foreign_key "book_chunks", "books"
   add_foreign_key "coach_alerts", "users"
   add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
+  add_foreign_key "phase_routines", "phases"
+  add_foreign_key "phase_routines", "routines"
+  add_foreign_key "phases", "programs"
   add_foreign_key "programs", "users"
   add_foreign_key "routine_exercises", "exercises"
   add_foreign_key "routine_exercises", "routines"
-  add_foreign_key "routines", "programs"
   add_foreign_key "routines", "users"
   add_foreign_key "user_dietary_plans", "dietary_plans"
+  add_foreign_key "user_dietary_plans", "phases"
   add_foreign_key "user_dietary_plans", "users"
 end

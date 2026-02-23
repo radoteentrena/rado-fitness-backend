@@ -1,0 +1,76 @@
+<%# app/views/admin/phases/_phase_block.html.erb %>
+
+<%= turbo_frame_tag dom_id(phase) do %>
+  <div class="relative pl-8 before:absolute before:inset-y-0 before:left-[15px] before:w-[2px] before:bg-shadow dark:before:bg-graphite">
+
+    <%# Phase Timeline Dot %>
+    <div class="absolute w-8 h-8 rounded-full bg-whiteish dark:bg-shadow border-4 border-primary left-0 top-0 flex items-center justify-center z-10 shadow-sm">
+      <span class="text-xs font-bold text-blackish dark:text-whiteish"><%= phase.order_index %></span>
+    </div>
+
+    <%# Phase Card %>
+    <div class="bg-background-light dark:bg-blackish/50 border border-shadow dark:border-graphite rounded-xl p-5 ml-4 mt-[-4px] shadow-xs hover:border-primary/50 transition-colors">
+
+      <%# Phase Header %>
+      <div class="flex items-center justify-between mb-4 pb-4 border-b border-shadow dark:border-graphite/50">
+        <div>
+          <h3 class="text-lg font-bold text-blackish dark:text-whiteish"><%= phase.name %></h3>
+          <p class="text-sm text-graphite dark:text-muted mt-0.5">Duration: <%= phase.duration_weeks %> Weeks</p>
+        </div>
+        <div class="flex space-x-2">
+          <%= link_to edit_admin_phase_path(phase), data: { turbo_frame: "modal_frame" }, class: "inline-flex items-center p-2 text-sm font-medium text-graphite rounded-lg hover:text-primary hover:bg-whiteish dark:text-muted dark:hover:bg-shadow dark:hover:text-primary transition-colors", title: "Edit Phase" do %>
+            <span class="material-symbols-outlined text-xl">edit</span>
+          <% end %>
+          <%# Note: Deleting a phase needs to remove this block via Turbo Stream %>
+        </div>
+      </div>
+
+      <%# Content Grid (Routines & Nutrition) %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <%# Routines Column %>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-graphite dark:text-muted flex items-center">
+              <span class="material-symbols-outlined text-base mr-1.5 font-light">fitness_center</span>
+              Routines
+            </h4>
+            <%= link_to new_admin_phase_routine_path(phase_id: phase.id), data: { turbo_frame: "modal_frame" }, class: "text-xs font-medium text-primary hover:underline flex items-center" do %>
+              <span class="material-symbols-outlined text-sm mr-0.5">add</span> Add
+            <% end %>
+          </div>
+
+          <div id="<%= dom_id(phase) %>_routines" class="space-y-2 min-h-[2rem]">
+            <% if phase.routines.any? %>
+              <%= render partial: "admin/routines/routine_card", collection: phase.routines, as: :routine %>
+            <% else %>
+              <p id="<%= dom_id(phase) %>_no_routines" class="text-xs text-graphite dark:text-muted italic border border-dashed border-shadow dark:border-graphite rounded-lg p-2 text-center bg-whiteish/50 dark:bg-shadow/20">No routines assigned.</p>
+            <% end %>
+          </div>
+        </div>
+
+        <%# Dietary Plans Column %>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-semibold uppercase tracking-wider text-graphite dark:text-muted flex items-center">
+              <span class="material-symbols-outlined text-base mr-1.5 font-light">restaurant</span>
+              Dietary Plans
+            </h4>
+            <%= link_to new_admin_user_dietary_plan_path(phase_id: phase.id), data: { turbo_frame: "modal_frame" }, class: "text-xs font-medium text-primary hover:underline flex items-center" do %>
+              <span class="material-symbols-outlined text-sm mr-0.5">add</span> Add
+            <% end %>
+          </div>
+
+          <div id="<%= dom_id(phase) %>_dietary_plans" class="space-y-2 min-h-[2rem]">
+            <% if phase.user_dietary_plans.any? %>
+              <%= render partial: "admin/user_dietary_plans/plan_card", collection: phase.user_dietary_plans, as: :user_dietary_plan %>
+            <% else %>
+              <p id="<%= dom_id(phase) %>_no_dietary_plans" class="text-xs text-graphite dark:text-muted italic border border-dashed border-shadow dark:border-graphite rounded-lg p-2 text-center bg-whiteish/50 dark:bg-shadow/20">No dietary plans assigned.</p>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+<% end %>

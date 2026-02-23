@@ -1,17 +1,27 @@
 Rails.application.routes.draw do
   namespace :admin do
       resources :coach_alerts
-      resources :coach_alerts
       resources :dietary_plans
       resources :exercises
-      resources :programs
+      resources :phases, except: [:index]
+      resources :programs do
+        resource :builder, only: [:show], controller: 'program_builders'
+        member do
+          post :sync_sheet
+        end
+      end
       resources :routines
+      resources :phase_routines, except: [:index, :show]
+      resources :routine_exercises, only: [ :edit, :update ]
+      resources :users
+      resources :user_dietary_plans, except: [:index, :show]
+      resources :assignments, only: [ :new, :create ]
+      resources :daily_metrics, only: [ :show ]
 
-      resources :users
-      resources :users
-      resources :users
-      resources :assignments, only: [:new, :create]
-      resources :daily_metrics, only: [:show]
+      get  "ai_coach",          to: "ai_coach#new",      as: :new_ai_coach
+      post "ai_coach/generate", to: "ai_coach#generate", as: :generate_ai_coach
+      post "ai_coach/refine",   to: "ai_coach#refine",   as: :refine_ai_coach
+      post "ai_coach/approve",  to: "ai_coach#approve",  as: :approve_ai_coach
 
       root to: "dashboard#index"
       get "dashboard", to: "dashboard#index"

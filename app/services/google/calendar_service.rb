@@ -15,7 +15,7 @@ module Google
 
         {
           date: date.to_s,
-          slots: ["10:00", "14:00", "16:00"]
+          slots: [ "10:00", "14:00", "16:00" ]
         }
       end.compact
     end

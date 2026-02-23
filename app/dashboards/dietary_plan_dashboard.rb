@@ -16,7 +16,7 @@ class DietaryPlanDashboard < Administrate::BaseDashboard
     protein_target: Field::Number,
     user_dietary_plans: Field::HasMany,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
