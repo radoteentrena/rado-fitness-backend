@@ -25,6 +25,9 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - **Features:** Google Sheet `Export` feature, generation button, background Sidekiq jobs, and rendering `iframe` removed in favor of manual linking and automatic importing.
+### Changed
+- **UI:** Redesigned Sign Up and Log In pages with a responsive split-screen layout (image + form).
+- **UI:** Updated auth forms to match Admin Panel aesthetic (colors, fonts).
 
 ### Added
 - **Admin UI:** Daily Metric Modal for viewing detailed metric information from weekly/monthly calendars.
