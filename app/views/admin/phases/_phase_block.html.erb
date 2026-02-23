@@ -21,7 +21,9 @@
           <%= link_to edit_admin_phase_path(phase), data: { turbo_frame: "modal_frame" }, class: "inline-flex items-center p-2 text-sm font-medium text-graphite rounded-lg hover:text-primary hover:bg-whiteish dark:text-muted dark:hover:bg-shadow dark:hover:text-primary transition-colors", title: "Edit Phase" do %>
             <span class="material-symbols-outlined text-xl">edit</span>
           <% end %>
-          <%# Note: Deleting a phase needs to remove this block via Turbo Stream %>
+          <%= button_to admin_phase_path(phase), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this phase?" }, class: "inline-flex items-center p-2 text-sm font-medium text-red-500 rounded-lg hover:text-red-700 hover:bg-whiteish dark:text-red-400 dark:hover:bg-shadow dark:hover:text-red-300 transition-colors cursor-pointer", title: "Delete Phase" do %>
+            <span class="material-symbols-outlined text-xl">delete</span>
+          <% end %>
         </div>
       </div>
 

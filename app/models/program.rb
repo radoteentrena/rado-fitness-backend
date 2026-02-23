@@ -33,10 +33,9 @@ class Program < ApplicationRecord
         new_phase.program = new_program
         new_phase.save!
 
-        phase.routines.templates.each do |routine|
-          new_routine = routine.clone_to_user(target_user)
-          new_routine.phase = new_phase
-          new_routine.save!
+        phase.routines.each do |routine|
+          # PhaseRoutine before_validation hook will handle cloning if it's a template
+          PhaseRoutine.create!(phase: new_phase, routine: routine)
         end
       end
 
