@@ -1,0 +1,35 @@
+<%#
+# _sortable_header.html.erb
+#
+# Locals:
+# - collection_presenter
+# - attr_name (Symbol, e.g. :name)
+# - label (String, optional)
+# - page (Administrate::Page::Collection object)
+# - collection_field_name (String, optional)
+%>
+
+<% attr_type = collection_presenter.attribute_types[attr_name] %>
+<% if attr_type && attr_type.sortable? %>
+  <%= link_to(params: sanitized_order_params(page, local_assigns[:collection_field_name]).merge(
+    collection_presenter.order_params_for(attr_name, key: local_assigns[:collection_field_name])
+  ), class: "flex items-center gap-1 hover:text-primary transition-colors") do %>
+    <%= local_assigns[:label] || attr_name.to_s.titleize %>
+
+    <% if collection_presenter.ordered_by?(attr_name) %>
+      <span class="inline-block">
+          <% if collection_presenter.ordered_html_class(attr_name) == "asc" %>
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+            </svg>
+          <% else %>
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+            </svg>
+          <% end %>
+      </span>
+    <% end %>
+  <% end %>
+<% else %>
+  <%= local_assigns[:label] || attr_name.to_s.titleize %>
+<% end %>

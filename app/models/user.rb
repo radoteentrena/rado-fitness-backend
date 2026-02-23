@@ -128,7 +128,7 @@ class User < ApplicationRecord
 
     {
       categories: sorted_data.keys.map { |d| d.strftime("%d %b") },
-      series: [{ name: "New Users", data: sorted_data.values }]
+      series: [ { name: "New Users", data: sorted_data.values } ]
     }
   end
 

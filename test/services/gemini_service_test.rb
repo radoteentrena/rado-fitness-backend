@@ -42,7 +42,7 @@ class GeminiServiceTest < ActiveSupport::TestCase
 
     @service.instance_variable_set(:@llm, mock_llm)
 
-    result = @service.generate_weekly_feedback([{ calories: 2000 }], "Diego")
+    result = @service.generate_weekly_feedback([ { calories: 2000 } ], "Diego")
 
     assert_equal "Great job this week!", result
     assert_equal 1, mock_llm.calls.length

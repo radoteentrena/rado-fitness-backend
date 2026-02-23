@@ -1,0 +1,19 @@
+<%# app/views/admin/phases/create.turbo_stream.erb %>
+
+<%# 1. Close the modal by overriding the frame content with empty string%>
+<%= turbo_stream.update "modal_frame", "" %>
+
+<%# 2. Append the new phase block to the end of the phase list %>
+<%= turbo_stream.append "program_phases_list" do %>
+  <%= render partial: "admin/phases/phase_block", object: resource, as: :phase %>
+<% end %>
+
+<%# 3. Remove the empty state if it exists %>
+<%= turbo_stream.remove "empty_phases_state" %>
+
+<%# 4. Optional: Flash message %>
+<%= turbo_stream.prepend "flash_messages" do %>
+  <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-shadow dark:text-green-400 border border-green-300 dark:border-green-800" role="alert">
+    <span class="font-medium">Success!</span> Phase was successfully created.
+  </div>
+<% end %>

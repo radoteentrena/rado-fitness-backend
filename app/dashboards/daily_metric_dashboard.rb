@@ -22,7 +22,7 @@ class DailyMetricDashboard < Administrate::BaseDashboard
     weight: Field::Number.with_options(decimals: 2),
     workout_completed: Field::Boolean,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES

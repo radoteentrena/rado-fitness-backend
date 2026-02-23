@@ -1,6 +1,8 @@
 class UserDietaryPlan < ApplicationRecord
   belongs_to :user
   belongs_to :dietary_plan, optional: true # The template source
+  belongs_to :phase, optional: true
+  delegate :program, to: :phase, allow_nil: true
   has_many :daily_metrics, dependent: :nullify
 
   scope :active, -> { where(active: true) }
