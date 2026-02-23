@@ -26,8 +26,9 @@ class ProgramDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
     id
-    description
+    name
     duration_weeks
+    user
     google_sheet_link
   ].freeze
 

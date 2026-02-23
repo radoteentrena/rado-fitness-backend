@@ -17,8 +17,8 @@ class UserDashboard < Administrate::BaseDashboard
     first_name: Field::String,
     last_name: Field::String,
     phone: Field::String,
-    workout_compliance_score: Field::Number,
-    diet_adherence_score: Field::Number,
+    workout_compliance_score: Field::Number.with_options(searchable: false, sortable: false),
+    diet_adherence_score: Field::Number.with_options(searchable: false, sortable: false),
     plan_tier: Field::Select.with_options(searchable: false, collection: ->(field) { field.resource.class.send(field.attribute.to_s.pluralize).keys }),
     programs: Field::HasMany,
     remember_created_at: Field::DateTime,
@@ -36,9 +36,13 @@ class UserDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
-    id
+    first_name
+    phone
+    workout_compliance_score
+    diet_adherence_score
     category
-    discarded_at
+    status
+    plan_tier
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
