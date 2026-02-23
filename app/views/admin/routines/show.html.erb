@@ -1,115 +1,96 @@
-<%# app/views/admin/routines/show.html.erb %>
-<% routine = page.resource %>
+<div class="max-w-7xl mx-auto">
+  <!-- Routine Header -->
+  <div class="mb-8 p-6 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-xl shadow-md">
+    <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-blackish dark:text-whiteish mb-2"><%= @routine.name %></h1>
+        <p class="text-lg text-graphite dark:text-muted mb-4 max-w-2xl"><%= @routine.description %></p>
 
-<div class="space-y-6">
-  <%# Header with Back and Edit %>
-  <div class="flex items-center justify-between">
-    <div class="flex items-center space-x-4">
-      <%= link_to admin_routines_path, class: "p-2 text-graphite bg-whiteish rounded-lg border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish" do %>
-         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
-         </svg>
-         <span class="sr-only">Back</span>
-      <% end %>
-      <h1 class="text-2xl font-bold tracking-tight text-blackish dark:text-whiteish">
-        <%= routine.name %>
-      </h1>
-      <% if routine.is_template %>
-        <span class="bg-primary/20 text-primary text-xs font-medium px-2.5 py-0.5 rounded border border-primary/20">Template</span>
-      <% end %>
-    </div>
-
-    <div class="flex space-x-3">
-        <%= link_to "Edit Routine", edit_admin_routine_path(routine), data: { turbo_frame: "modal_frame" }, class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20" %>
-    </div>
-  </div>
-
-  <%# Main Content Grid %>
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-    <%# Left Column: Key Stats %>
-    <div class="lg:col-span-1 space-y-6">
-      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
-         <h5 class="mb-4 text-xl font-medium text-blackish dark:text-whiteish border-b border-shadow dark:border-graphite pb-2">Details</h5>
-
-         <div class="space-y-4">
-             <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
-                <span class="text-sm font-medium text-graphite dark:text-muted">Duration</span>
-                <span class="text-sm font-bold text-blackish dark:text-whiteish"><%= routine.duration_weeks %> Weeks</span>
-             </div>
-
-             <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
-                <span class="text-sm font-medium text-graphite dark:text-muted">Program</span>
-                 <% if routine.program %>
-                    <%= link_to routine.program.name, admin_program_path(routine.program), class: "text-sm font-bold text-primary hover:underline" %>
-                <% else %>
-                    <span class="text-sm font-bold text-graphite dark:text-muted">–</span>
-                <% end %>
-             </div>
-
-             <div class="flex justify-between items-center py-2 border-b border-shadow dark:border-graphite last:border-0">
-                <span class="text-sm font-medium text-graphite dark:text-muted">Assigned To</span>
-                <% if routine.user %>
-                    <%= link_to routine.user.name, admin_user_path(routine.user), class: "text-sm font-bold text-primary hover:underline" %>
-                <% else %>
-                    <span class="text-sm font-bold text-graphite dark:text-muted">Unassigned</span>
-                <% end %>
-             </div>
-         </div>
+        <div class="flex flex-wrap items-center gap-4 text-sm">
+           <span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-1">
+             <span class="material-symbols-outlined text-sm">calendar_today</span>
+             Duration: <%= @routine.duration_weeks || 4 %> Weeks
+           </span>
+           <% if @routine.is_template? %>
+             <span class="px-3 py-1 rounded-full bg-secondary/10 text-secondary font-medium flex items-center gap-1">
+               <span class="material-symbols-outlined text-sm">content_copy</span>
+               Template
+             </span>
+           <% end %>
+           <span class="px-3 py-1 rounded-full bg-background-light dark:bg-graphite text-graphite dark:text-muted font-medium flex items-center gap-1">
+             <span class="material-symbols-outlined text-sm">fitness_center</span>
+             <%= @routine.routine_exercises.count %> Exercises
+           </span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+         <%= link_to "Edit Routine", edit_admin_routine_path(@routine), class: "px-4 py-2 bg-primary text-blackish font-bold rounded-lg hover:bg-primary/90 transition-colors" if accessible_action?(@routine, :edit) %>
       </div>
     </div>
+  </div>
 
-    <%# Right Column: Description & Exercises %>
-    <div class="lg:col-span-2 space-y-6">
-        <%# Description %>
-        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
-            <h3 class="text-lg font-bold text-blackish dark:text-whiteish mb-2">Description</h3>
-            <p class="text-graphite dark:text-muted text-base leading-relaxed">
-                <%= routine.description.presence || "No description provided." %>
-            </p>
-        </div>
-
-        <%# Exercises List %>
-         <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold text-blackish dark:text-whiteish">Exercises</h3>
-                <span class="bg-background-light text-graphite text-xs font-medium px-2.5 py-0.5 rounded dark:bg-graphite dark:text-muted border border-shadow dark:border-graphite">
-                    <%= routine.routine_exercises.count %>
-                </span>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+     <!-- Main Content: Exercises -->
+     <div class="lg:col-span-2 space-y-6">
+         <% grouped_exercises = @routine.routine_exercises.order(:day_number, :order_index).group_by { |re| re.day_name.presence || "Day #{re.day_number || '?'}" } %>
+         <% grouped_exercises.sort_by { |day_string, _| day_string.scan(/\d+/).first.to_i }.each do |day, exercises| %>
+            <div class="mb-8">
+               <h2 class="text-xl font-bold text-blackish dark:text-whiteish mb-4 border-b border-shadow dark:border-graphite pb-2"><%= day %></h2>
+               <div class="space-y-6">
+                  <% exercises.each do |re| %>
+                     <%= render partial: "admin/routine_exercises/routine_exercise", locals: { routine_exercise: re } %>
+                  <% end %>
+               </div>
             </div>
+         <% end %>
+     </div>
 
-            <% if routine.routine_exercises.any? %>
-                <ul class="divide-y divide-shadow dark:divide-graphite">
-                    <% routine.routine_exercises.includes(:exercise).each do |routine_exercise| %>
-                        <li class="py-3 sm:py-4">
-                            <div class="flex items-center space-x-4">
-                                <%# Display order/day if available? For now just list them %>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-blackish truncate dark:text-whiteish">
-                                        <%= link_to routine_exercise.exercise.name, admin_exercise_path(routine_exercise.exercise), class: "hover:text-primary transition-colors" %>
-                                    </p>
-                                    <p class="text-xs text-graphite truncate dark:text-muted">
-                                        <%= routine_exercise.exercise.muscle_group %>
-                                    </p>
-                                </div>
-                                <div class="inline-flex items-center text-sm font-semibold text-graphite dark:text-muted">
-                                    <%# Maybe show sets/reps if available in future %>
-                                    <%# routine_exercise.sets %> x <%# routine_exercise.reps %>
-                                </div>
-                            </div>
-                        </li>
-                    <% end %>
-                </ul>
-            <% else %>
-                <div class="text-center py-4">
-                    <p class="text-sm text-graphite dark:text-muted italic mb-2">No exercises added to this routine yet.</p>
-                    <%# Future: Add quick link to add exercises %>
-                </div>
-            <% end %>
+     <!-- Sidebar: Info Cards -->
+     <div class="space-y-6">
+        <!-- Overview Card -->
+        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm p-6 border border-shadow dark:border-graphite">
+           <h3 class="font-bold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
+             <span class="material-symbols-outlined text-primary">info</span>
+             Program Guide
+           </h3>
+           <div class="text-sm text-graphite dark:text-muted space-y-3">
+              <p>RPE (Rate of Perceived Exertion) scales from 1-10.</p>
+              <ul class="list-disc pl-4 space-y-1 marker:text-primary">
+                 <li><strong>RPE 7:</strong> 3 reps in reserve.</li>
+                 <li><strong>RPE 8:</strong> 2 reps in reserve.</li>
+                 <li><strong>RPE 9:</strong> 1 rep in reserve.</li>
+                 <li><strong>RPE 10:</strong> Max effort.</li>
+              </ul>
+           </div>
         </div>
 
-    </div>
+        <!-- Progress Card -->
+         <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm p-6 border border-shadow dark:border-graphite">
+           <h3 class="font-bold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
+             <span class="material-symbols-outlined text-secondary">trending_up</span>
+             Phase Focus
+           </h3>
+
+           <div class="space-y-4">
+              <div class="flex items-center justify-between text-sm">
+                 <span class="text-muted">Total Volume</span>
+                 <span class="font-bold text-blackish dark:text-whiteish">High</span>
+              </div>
+               <div class="flex items-center justify-between text-sm">
+                 <span class="text-muted">Intensity</span>
+                 <span class="font-bold text-blackish dark:text-whiteish">Moderate</span>
+              </div>
+
+              <div class="pt-4 border-t border-shadow dark:border-graphite">
+                  <h4 class="text-xs font-bold uppercase tracking-wider text-muted mb-2">Suggested Rest Days</h4>
+                  <div class="flex gap-2">
+                     <span class="px-2 py-1 bg-background-light dark:bg-graphite rounded text-xs font-bold">Wed</span>
+                     <span class="px-2 py-1 bg-background-light dark:bg-graphite rounded text-xs font-bold">Sun</span>
+                  </div>
+              </div>
+           </div>
+        </div>
+
+     </div>
   </div>
 </div>
-
-<%= turbo_frame_tag "modal_frame" %>

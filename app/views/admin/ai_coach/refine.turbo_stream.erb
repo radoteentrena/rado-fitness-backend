@@ -1,0 +1,5 @@
+<%= turbo_stream.replace "ai_coach_result" do %>
+  <%= turbo_frame_tag "ai_coach_result" do %>
+    <%= render partial: "admin/ai_coach/program_preview" %>
+  <% end %>
+<% end %>

@@ -38,3 +38,8 @@
 /docs/*
 /tailadmin/*
 /templates/*
+
+# Ignore Google Credentials
+/config/google_credentials.json
+
+/coverage

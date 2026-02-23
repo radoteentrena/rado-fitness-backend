@@ -20,7 +20,8 @@
     </div>
 
     <div class="flex space-x-3">
-        <%= link_to "Edit Program", edit_admin_program_path(program), data: { turbo_frame: "modal_frame" }, class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20" %>
+        <%= link_to "Open Builder", admin_program_builder_path(program), class: "text-blackish bg-background-light border border-shadow hover:bg-whiteish focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-shadow dark:text-whiteish dark:border-graphite dark:hover:bg-shadow/50 focus:outline-none dark:focus:ring-primary/20 transition-colors flex items-center" %>
+        <%= link_to "Edit Program", edit_admin_program_path(program), data: { turbo_frame: "modal_frame" }, class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20 flex items-center" %>
     </div>
   </div>
 
@@ -47,11 +48,28 @@
              </div>
 
              <% if program.google_sheet_link.present? %>
-                 <div class="pt-4">
+                 <div class="pt-4 space-y-3">
                     <a href="<%= program.google_sheet_link %>" target="_blank" class="flex items-center justify-center w-full text-whiteish bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition-colors">
                         <span class="material-symbols-outlined mr-2">table_view</span>
                         Open Google Sheet
                     </a>
+
+                    <%= button_to sync_sheet_admin_program_path(program), method: :post, class: "flex items-center justify-center w-full text-blackish bg-whiteish border border-shadow hover:bg-background-light focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-4 py-2 dark:bg-shadow dark:text-whiteish dark:border-graphite dark:hover:bg-shadow/50 transition-colors" do %>
+                        <span class="material-symbols-outlined mr-2">sync</span>
+                        Sync from Sheet
+                    <% end %>
+
+                    <% if program.last_synced_at %>
+                        <p class="text-xs text-center text-graphite dark:text-muted">
+                            Last synced: <%= time_ago_in_words(program.last_synced_at) %> ago
+                        </p>
+                    <% end %>
+                 </div>
+             <% else %>
+                 <div class="pt-4">
+                    <p class="text-xs text-graphite dark:text-muted italic">
+                      No Google Sheet link attached. You can add a link by editing the program.
+                    </p>
                  </div>
              <% end %>
          </div>
@@ -104,6 +122,8 @@
 
     </div>
   </div>
+  </div>
+
 </div>
 
 <%= turbo_frame_tag "modal_frame" %>
