@@ -102,14 +102,16 @@
                             <div class="flex items-center space-x-4">
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-medium text-blackish truncate dark:text-whiteish">
-                                        <%= routine.name rescue "Routine ##{routine.id}" %>
+                                        <%= link_to (routine.name.presence || "Routine ##{routine.id}"), admin_routine_path(routine), data: { turbo: false }, class: "hover:text-primary transition-colors" %>
                                     </p>
                                     <p class="text-sm text-graphite truncate dark:text-muted">
                                         <%= routine.description rescue "" %>
                                     </p>
                                 </div>
                                 <div class="inline-flex items-center text-base font-semibold text-blackish dark:text-whiteish">
-                                    <%# Link to routine show if/when implemented %>
+                                    <%= link_to admin_routine_path(routine), data: { turbo: false }, class: "text-graphite hover:text-primary dark:text-muted dark:hover:text-primary transition-colors" do %>
+                                        <span class="material-symbols-outlined">chevron_right</span>
+                                    <% end %>
                                 </div>
                             </div>
                         </li>

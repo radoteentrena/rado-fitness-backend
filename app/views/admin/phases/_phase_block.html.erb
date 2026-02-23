@@ -1,7 +1,7 @@
 <%# app/views/admin/phases/_phase_block.html.erb %>
 
 <%= turbo_frame_tag dom_id(phase) do %>
-  <div class="relative pl-8 before:absolute before:inset-y-0 before:left-[15px] before:w-[2px] before:bg-shadow dark:before:bg-graphite">
+  <div class="relative pl-8 before:absolute before:inset-y-0 before:left-[15px] before:w-[2px] before:bg-shadow dark:before:bg-graphite mb-5">
 
     <%# Phase Timeline Dot %>
     <div class="absolute w-8 h-8 rounded-full bg-whiteish dark:bg-shadow border-4 border-primary left-0 top-0 flex items-center justify-center z-10 shadow-sm">
@@ -35,8 +35,8 @@
               <span class="material-symbols-outlined text-base mr-1.5 font-light">fitness_center</span>
               Routines
             </h4>
-            <%= link_to new_admin_phase_routine_path(phase_id: phase.id), data: { turbo_frame: "modal_frame" }, class: "text-xs font-medium text-primary hover:underline flex items-center" do %>
-              <span class="material-symbols-outlined text-sm mr-0.5">add</span> Add
+            <%= link_to new_admin_phase_routine_path(phase_id: phase.id), data: { turbo_frame: "modal_frame" }, class: "text-xs font-medium text-primary flex items-center" do %>
+              <span class="material-symbols-outlined text-sm mr-0.5">add</span>
             <% end %>
           </div>
 
@@ -56,8 +56,8 @@
               <span class="material-symbols-outlined text-base mr-1.5 font-light">restaurant</span>
               Dietary Plans
             </h4>
-            <%= link_to new_admin_user_dietary_plan_path(phase_id: phase.id), data: { turbo_frame: "modal_frame" }, class: "text-xs font-medium text-primary hover:underline flex items-center" do %>
-              <span class="material-symbols-outlined text-sm mr-0.5">add</span> Add
+            <%= link_to new_admin_user_dietary_plan_path(phase_id: phase.id), data: { turbo_frame: "modal_frame" }, class: "text-xs font-medium text-primary flex items-center" do %>
+              <span class="material-symbols-outlined text-sm mr-0.5">add</span>
             <% end %>
           </div>
 

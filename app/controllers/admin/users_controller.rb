@@ -51,7 +51,7 @@ module Admin
     def index
       authorize_resource(resource_class)
       search_term = params[:search].to_s.strip
-      resources = Administrate::Search.new(scoped_resource, dashboard_class, search_term).run
+      resources = Administrate::Search.new(scoped_resource, dashboard, search_term).run
       resources = apply_collection_includes(resources)
       resources = order.apply(resources)
 
