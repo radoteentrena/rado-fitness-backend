@@ -3,7 +3,7 @@ Rails.application.routes.draw do
       resources :coach_alerts
       resources :dietary_plans
       resources :exercises
-      resources :phases
+      resources :phases, except: [:index]
       resources :programs do
         resource :builder, only: [:show], controller: 'program_builders'
         member do

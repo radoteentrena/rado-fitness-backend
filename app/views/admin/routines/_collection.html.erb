@@ -18,7 +18,7 @@ to display a collection of resources in an HTML table.
 [1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Collection
 %>
 
-<div class="relative overflow-x-auto shadow-md border border-graphite sm:rounded-lg scroll-container" data-controller="scroll-indicator">
+<div class="relative overflow-x-auto shadow-md border border-graphite sm:rounded-lg scroll-container mx-4" data-controller="scroll-indicator">
     <!-- Scroll indicator for mobile -->
     <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-whiteish dark:from-shadow to-transparent pointer-events-none opacity-0 transition-opacity z-10 sm:hidden" data-scroll-indicator-target="indicator"></div>
     <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted" aria-labelledby="<%= local_assigns[:table_title] || 'page-title' %>">
