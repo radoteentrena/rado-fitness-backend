@@ -83,7 +83,8 @@ production:
     <<: *default
     database: rado_fitness_production
     username: rado_fitness
-    password: <%= ENV["RADO_FITNESS_DATABASE_PASSWORD"] %>
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
+    host: <%= ENV["DB_HOST"] %>
   cache:
     <<: *primary_production
     database: rado_fitness_production_cache

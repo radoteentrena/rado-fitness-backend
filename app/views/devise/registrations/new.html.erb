@@ -1,0 +1,77 @@
+<div class="min-h-screen flex relative bg-background-light dark:bg-blackish">
+  <!-- Image Section -->
+  <div class="absolute inset-0 lg:static lg:flex-1 lg:w-3/4 lg:order-2">
+    <img src="https://images.unsplash.com/photo-1604233098531-90b71b1b17a6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Fitness Background" class="h-full w-full object-cover">
+    <!-- Overlay for mobile readability if needed, though form has its own bg -->
+    <div class="absolute inset-0 bg-black/40 lg:hidden"></div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="relative z-10 w-full lg:w-1/4 lg:flex-none lg:order-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 bg-white/90 dark:bg-blackish/90 lg:bg-background-light lg:dark:bg-blackish backdrop-blur-sm lg:backdrop-blur-none border-r border-shadow dark:border-graphite h-full overflow-y-auto">
+    <div class="w-full max-w-sm mx-auto">
+      <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 class="mt-6 text-center text-2xl font-extrabold text-blackish dark:text-whiteish">
+          Create your account
+        </h2>
+        <p class="mt-2 text-center text-sm text-graphite dark:text-muted">
+          Or
+          <%= link_to "sign in to your existing account", new_session_path(resource_name), class: "font-medium text-primary hover:text-primary/90 transition-colors" %>
+        </p>
+      </div>
+
+      <div class="mt-8">
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-6" }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+
+          <div>
+            <%= f.label :first_name, class: "block text-sm font-medium text-blackish dark:text-whiteish" %>
+            <div class="mt-1">
+              <%= f.text_field :first_name, autofocus: true, autocomplete: "given-name", class: "appearance-none block w-full px-3 py-2 border border-shadow dark:border-graphite rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-whiteish dark:bg-shadow text-blackish dark:text-whiteish" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :last_name, class: "block text-sm font-medium text-blackish dark:text-whiteish" %>
+            <div class="mt-1">
+              <%= f.text_field :last_name, autocomplete: "family-name", class: "appearance-none block w-full px-3 py-2 border border-shadow dark:border-graphite rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-whiteish dark:bg-shadow text-blackish dark:text-whiteish" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :email, class: "block text-sm font-medium text-blackish dark:text-whiteish" %>
+            <div class="mt-1">
+              <%= f.email_field :email, autocomplete: "email", class: "appearance-none block w-full px-3 py-2 border border-shadow dark:border-graphite rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-whiteish dark:bg-shadow text-blackish dark:text-whiteish" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :password, class: "block text-sm font-medium text-blackish dark:text-whiteish" %>
+            <div class="mt-1">
+              <%= f.password_field :password, autocomplete: "new-password", class: "appearance-none block w-full px-3 py-2 border border-shadow dark:border-graphite rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-whiteish dark:bg-shadow text-blackish dark:text-whiteish" %>
+            </div>
+            <% if @minimum_password_length %>
+              <p class="mt-1 text-xs text-graphite dark:text-muted"><%= @minimum_password_length %> characters minimum</p>
+            <% end %>
+          </div>
+
+          <div>
+            <%= f.label :password_confirmation, class: "block text-sm font-medium text-blackish dark:text-whiteish" %>
+            <div class="mt-1">
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "appearance-none block w-full px-3 py-2 border border-shadow dark:border-graphite rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm bg-whiteish dark:bg-shadow text-blackish dark:text-whiteish" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.submit "Sign up", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-blackish bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" %>
+          </div>
+        <% end %>
+
+        <div class="mt-6">
+           <div class="text-sm text-center">
+             <%= render "devise/shared/links" %>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
