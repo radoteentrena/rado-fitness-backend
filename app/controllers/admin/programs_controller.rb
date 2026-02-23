@@ -42,5 +42,15 @@ module Admin
 
     # See https://administrate-demo.herokuapp.com/customizing_controller_actions
     # for more information
+    def sync_sheet
+      program = Program.find(params[:id])
+      service = Google::SheetsService.new(program)
+
+      if service.sync_to_db
+        redirect_to admin_program_path(program), notice: "Program synced successfully from Google Sheets."
+      else
+        redirect_to admin_program_path(program), alert: "Failed to sync from Google Sheets. Ensure credentials are set."
+      end
+    end
   end
 end

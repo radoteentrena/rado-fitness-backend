@@ -3,26 +3,26 @@
     <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
         <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
             <tr>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Name
+                <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
+                    <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :first_name, label: "Name", page: page, collection_field_name: local_assigns[:collection_field_name] %>
                 </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Phone
+                <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
+                    <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :phone, page: page, collection_field_name: local_assigns[:collection_field_name] %>
                 </th>
-                <th scope="col" class="px-6 py-3 font-medium text-center">
-                    S% (Session)
+                <th scope="col" class="px-6 py-3 font-medium text-center cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
+                    <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :workout_compliance_score, label: "S% (Session)", page: page, collection_field_name: local_assigns[:collection_field_name] %>
                 </th>
-                <th scope="col" class="px-6 py-3 font-medium text-center">
-                    M% (Diet)
+                <th scope="col" class="px-6 py-3 font-medium text-center cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
+                    <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :diet_adherence_score, label: "M% (Diet)", page: page, collection_field_name: local_assigns[:collection_field_name] %>
                 </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Category
+                <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
+                    <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :category, page: page, collection_field_name: local_assigns[:collection_field_name] %>
                 </th>
-                 <th scope="col" class="px-6 py-3 font-medium">
-                    Status
+                 <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
+                    <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :status, page: page, collection_field_name: local_assigns[:collection_field_name] %>
                 </th>
-                <th scope="col" class="px-6 py-3 font-medium">
-                    Plan Tier
+                <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
+                    <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :plan_tier, page: page, collection_field_name: local_assigns[:collection_field_name] %>
                 </th>
                 <th scope="col" class="px-6 py-3 font-medium">
                     <span class="sr-only">Edit</span>
