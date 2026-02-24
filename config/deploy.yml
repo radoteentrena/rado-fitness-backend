@@ -98,7 +98,7 @@ ssh:
 # Use accessory services (secrets come from .kamal/secrets).
 accessories:
   db:
-    image: postgres:15
+    image: pgvector/pgvector:pg15
     host: 200.58.98.116
     port: 5432
     env:
