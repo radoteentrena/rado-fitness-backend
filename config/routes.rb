@@ -17,6 +17,10 @@ Rails.application.routes.draw do
       resources :user_dietary_plans, except: [:index, :show]
       resources :assignments, only: [ :new, :create ]
       resources :daily_metrics, only: [ :show ]
+      resources :messages
+      resources :progress_photos, except: [:index]
+      resources :program_executions, except: [:index]
+      resources :exercise_logs, except: [:index]
 
       get  "ai_coach",          to: "ai_coach#new",      as: :new_ai_coach
       post "ai_coach/generate", to: "ai_coach#generate", as: :generate_ai_coach
@@ -34,6 +38,18 @@ Rails.application.routes.draw do
   # Webhooks
   namespace :webhooks do
     post "whatsapp/incoming", to: "whatsapp#incoming"
+  end
+
+  namespace :api do
+    namespace :v1 do
+      get  "sync", to: "sync#index"
+
+      resources :exercises, only: [:index]
+      resources :messages, only: [:index, :create]
+      resources :daily_metrics, only: [:create]
+      resources :progress_photos, only: [:create]
+      resources :program_executions, only: [:create]
+    end
   end
 
 

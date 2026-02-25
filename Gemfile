@@ -96,3 +96,9 @@ gem "hotwire-livereload", "~> 2.1", group: :development
 # RAG Infrastructure - AI Coach
 gem "neighbor"      # pgvector ActiveRecord integration
 gem "pdf-reader"    # PDF text extraction for book ingestion
+
+gem "rspec-rails", "~> 8.0", groups: [:development, :test]
+
+gem "factory_bot_rails", "~> 6.5", groups: [:development, :test]
+
+gem "administrate-field-active_storage", "~> 1.0"
