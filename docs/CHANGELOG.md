@@ -138,3 +138,5 @@ All notable changes to this project will be documented in this file.
 - Avo admin panel configuration and User resource.
 - Initial project documentation (CONTEXT.md, GEMINI.md).
 - Initial project generation with Rails.
+
+export $(grep -v '^#' .env | xargs) && bin/kamal deploy
