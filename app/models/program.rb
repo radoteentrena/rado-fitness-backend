@@ -1,5 +1,5 @@
 class Program < ApplicationRecord
-  belongs_to :user, optional: true # Optional if it's a template
+  belongs_to :user, optional: true
   has_many :phases, -> { order(order_index: :asc) }, dependent: :destroy
   has_many :routines, through: :phases
   has_many :user_dietary_plans, through: :phases
@@ -14,9 +14,8 @@ class Program < ApplicationRecord
     week = current_week
     cumulative_weeks = 0
 
-    # Assuming routines are executed in order of ID
     routines.order(:id).find do |routine|
-      duration = routine.duration_weeks || 4 # Default to 4 weeks if not specified
+      duration = routine.duration_weeks || 4
       cumulative_weeks += duration
       week <= cumulative_weeks
     end || routines.last
@@ -34,7 +33,6 @@ class Program < ApplicationRecord
         new_phase.save!
 
         phase.routines.each do |routine|
-          # PhaseRoutine before_validation hook will handle cloning if it's a template
           PhaseRoutine.create!(phase: new_phase, routine: routine)
         end
       end
