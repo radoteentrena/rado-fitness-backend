@@ -18,12 +18,13 @@
              </span>
            <% end %>
            <span class="px-3 py-1 rounded-full bg-background-light dark:bg-graphite text-graphite dark:text-muted font-medium flex items-center gap-1">
-             <span class="material-symbols-outlined text-sm">fitness_center</span>
-             <%= @routine.routine_exercises.count %> Exercises
+             <span class="material-symbols-outlined text-sm">view_agenda</span>
+             <%= @routine.workouts.count %> Days
            </span>
         </div>
       </div>
       <div class="flex items-center gap-2">
+         <%= link_to "Add Workout Day", new_admin_routine_workout_path(@routine), class: "px-4 py-2 bg-saffron text-blackish font-bold rounded-lg hover:bg-saffron-dark transition-colors" %>
          <%= link_to "Edit Routine", edit_admin_routine_path(@routine), class: "px-4 py-2 bg-primary text-blackish font-bold rounded-lg hover:bg-primary/90 transition-colors" if accessible_action?(@routine, :edit) %>
       </div>
     </div>
@@ -32,16 +33,43 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
      <!-- Main Content: Exercises -->
      <div class="lg:col-span-2 space-y-6">
-         <% grouped_exercises = @routine.routine_exercises.order(:day_number, :order_index).group_by { |re| re.day_name.presence || "Day #{re.day_number || '?'}" } %>
-         <% grouped_exercises.sort_by { |day_string, _| day_string.scan(/\d+/).first.to_i }.each do |day, exercises| %>
-            <div class="mb-8">
-               <h2 class="text-xl font-bold text-blackish dark:text-whiteish mb-4 border-b border-shadow dark:border-graphite pb-2"><%= day %></h2>
+         <%= turbo_frame_tag "workout_content" do %>
+           <% if @selected_workout %>
+            <% workout = @selected_workout %>
+            <div class="mb-8 p-6 bg-background-light dark:bg-blackish border border-shadow dark:border-graphite rounded-xl">
+               <div class="flex items-center justify-between mb-6 border-b border-shadow dark:border-graphite pb-4">
+                 <div>
+                   <h2 class="text-2xl font-black font-display uppercase tracking-tight text-blackish dark:text-whiteish"><%= workout.name %></h2>
+                   <% if workout.description.present? %>
+                     <p class="text-graphite dark:text-muted mt-1 max-w-xl"><%= workout.description %></p>
+                   <% end %>
+                 </div>
+                 <div class="flex items-center gap-2">
+                   <%= link_to "Edit Day", edit_admin_workout_path(workout), data: { turbo: false }, class: "px-3 py-1.5 text-sm bg-graphite text-whiteish font-medium rounded hover:bg-shadow transition-colors" %>
+                   <%= button_to "Delete", admin_workout_path(workout), method: :delete, class: "px-3 py-1.5 text-sm border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white font-bold rounded transition-colors", form: { data: { turbo_confirm: "Are you sure?", turbo: false } } %>
+                 </div>
+               </div>
+
                <div class="space-y-6">
-                  <% exercises.each do |re| %>
-                     <%= render partial: "admin/routine_exercises/routine_exercise", locals: { routine_exercise: re } %>
+                  <% workout.workout_exercises.order(:order_index).each do |we| %>
+                     <%= render partial: "admin/workout_exercises/workout_exercise", locals: { workout_exercise: we } %>
                   <% end %>
+
+                  <div class="mt-4 flex justify-center border-2 border-dashed border-shadow dark:border-graphite rounded-lg p-4 hover:border-primary transition-colors">
+                    <%= link_to '#', class: "text-graphite dark:text-muted hover:text-primary font-medium flex items-center gap-2" do %>
+                      <span class="material-symbols-outlined">add_circle</span>
+                      Add Exercise
+                    <% end %>
+                  </div>
                </div>
             </div>
+           <% else %>
+             <div class="text-center py-12 p-6 border-2 border-dashed border-shadow dark:border-graphite rounded-xl mb-8">
+               <span class="material-symbols-outlined text-4xl text-graphite mb-2">fitness_center</span>
+               <h3 class="text-lg font-medium text-blackish dark:text-whiteish mb-1">No workout days yet</h3>
+               <p class="text-sm text-graphite dark:text-muted">Add a workout day to get started.</p>
+             </div>
+           <% end %>
          <% end %>
      </div>
 

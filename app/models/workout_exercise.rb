@@ -1,5 +1,5 @@
-class RoutineExercise < ApplicationRecord
-  belongs_to :routine
+class WorkoutExercise < ApplicationRecord
+  belongs_to :workout
   belongs_to :exercise
 
   validates :sets, :reps, presence: true

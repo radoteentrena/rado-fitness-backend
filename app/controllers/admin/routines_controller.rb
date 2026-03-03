@@ -18,12 +18,13 @@ module Admin
 
     def show
       @routine = requested_resource
+      @selected_workout = @routine.workouts.find_by(id: params[:workout_id]) || @routine.workouts.order(:day_number, :order_index).first
       @phase = @routine.phases.find_by(id: params[:phase_id]) || @routine.phases.first
       if @phase
         @program = @phase.program
         @routines = @phase.routines.order('phase_routines.order_index')
       end
-      render layout: "program_viewer"
+      render layout: "routine_viewer"
     end
 
     def create

@@ -11,7 +11,7 @@ class ExerciseLogDashboard < Administrate::BaseDashboard
     id: Field::Number,
     actual_sets: Field::String.with_options(searchable: false),
     program_execution: Field::BelongsTo,
-    routine_exercise: Field::BelongsTo,
+    workout_exercise: Field::BelongsTo,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze
@@ -25,7 +25,7 @@ class ExerciseLogDashboard < Administrate::BaseDashboard
     id
     actual_sets
     program_execution
-    routine_exercise
+    workout_exercise
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -34,7 +34,7 @@ class ExerciseLogDashboard < Administrate::BaseDashboard
     id
     actual_sets
     program_execution
-    routine_exercise
+    workout_exercise
     created_at
     updated_at
   ].freeze
@@ -45,7 +45,7 @@ class ExerciseLogDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = %i[
     actual_sets
     program_execution
-    routine_exercise
+    workout_exercise
   ].freeze
 
   # COLLECTION_FILTERS
