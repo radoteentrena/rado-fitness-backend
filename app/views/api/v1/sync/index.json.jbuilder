@@ -22,19 +22,15 @@ else
 end
 
 json.current_week_workouts do
-  if @current_week_workouts.is_a?(Hash)
-    json.array! @current_week_workouts.keys.sort do |day_number|
-      exercises_for_day = @current_week_workouts[day_number]
+  if @current_week_workouts.any?
+    json.array! @current_week_workouts do |workout|
+      json.extract! workout, :id, :name, :description, :day_number, :order_index
 
-      json.day_number day_number
-      # Infer workout name. For MVP we are grouping by day number.
-      json.workout_name "Day #{day_number}"
-
-      json.exercises exercises_for_day do |routine_exercise|
-        json.extract! routine_exercise, :id, :sets, :reps, :load, :sub_option_one, :sub_option_two
+      json.exercises workout.workout_exercises.order(:order_index) do |workout_exercise|
+        json.extract! workout_exercise, :id, :sets, :reps, :load, :sub_option_one, :sub_option_two
 
         json.exercise do
-          json.extract! routine_exercise.exercise, :id, :name, :muscle_group, :video_link, :description
+          json.extract! workout_exercise.exercise, :id, :name, :muscle_group, :video_link, :description
         end
       end
     end

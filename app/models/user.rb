@@ -56,7 +56,7 @@ class User < ApplicationRecord
     active_routine = programs.last.routines.first
     return 4 unless active_routine
 
-    days_count = active_routine.routine_exercises.distinct.count(:day_number)
+    days_count = active_routine.workouts.count
     days_count.positive? ? days_count : 4
   end
 
