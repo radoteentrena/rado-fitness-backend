@@ -43,10 +43,10 @@ module Google
           # 0: Week, 1: Routine, 2: Exercise, 3: Intensity, 4: Warmup, 5: Sets, 6: Reps
           # 7: Early RPE, 8: Last RPE, 9: Rest, 10: Sub 1, 11: Sub 2, 12: Time, 13: ID
 
-          routine_exercise_id = row[13]
-          next unless routine_exercise_id.present?
+          workout_exercise_id = row[13]
+          next unless workout_exercise_id.present?
 
-          re = RoutineExercise.find_by(id: routine_exercise_id)
+          re = WorkoutExercise.find_by(id: workout_exercise_id)
           next unless re
 
           # Updates

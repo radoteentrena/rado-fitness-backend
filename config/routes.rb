@@ -10,9 +10,12 @@ Rails.application.routes.draw do
           post :sync_sheet
         end
       end
-      resources :routines
+      resources :routines do
+        resources :workouts, only: [ :new, :create ]
+      end
       resources :phase_routines, except: [ :index, :show ]
-      resources :routine_exercises, only: [ :edit, :update ]
+      resources :workouts, except: [ :index, :new, :create ]
+      resources :workout_exercises, only: [ :edit, :update ]
       resources :users
       resources :user_dietary_plans, except: [ :index, :show ]
       resources :assignments, only: [ :new, :create ]

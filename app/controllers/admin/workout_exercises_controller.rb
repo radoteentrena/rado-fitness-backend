@@ -1,16 +1,16 @@
 module Admin
-  class RoutineExercisesController < Admin::ApplicationController
-    before_action :set_routine_exercise, only: %i[edit update]
+  class WorkoutExercisesController < Admin::ApplicationController
+    before_action :set_workout_exercise, only: %i[edit update]
 
     def edit
       # Responds to Turbo Stream / Frame by default based on format in standard Rails
     end
 
     def update
-      if @routine_exercise.update(routine_exercise_params)
+      if @workout_exercise.update(workout_exercise_params)
         respond_to do |format|
-          # Reload inside the frame with the newly updated `routine_exercise` partial
-          format.html { render partial: "admin/routine_exercises/routine_exercise", locals: { routine_exercise: @routine_exercise } }
+          # Reload inside the frame with the newly updated `workout_exercise` partial
+          format.html { render partial: "admin/workout_exercises/workout_exercise", locals: { workout_exercise: @workout_exercise } }
         end
       else
         respond_to do |format|
@@ -22,12 +22,12 @@ module Admin
 
     private
 
-    def set_routine_exercise
-      @routine_exercise = RoutineExercise.find(params[:id])
+    def set_workout_exercise
+      @workout_exercise = WorkoutExercise.find(params[:id])
     end
 
-    def routine_exercise_params
-      params.require(:routine_exercise).permit(
+    def workout_exercise_params
+      params.require(:workout_exercise).permit(
         :sets,
         :reps,
         :warmup_sets,

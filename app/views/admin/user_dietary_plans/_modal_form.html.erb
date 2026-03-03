@@ -26,7 +26,7 @@
         <%# User ID %>
         <div class="col-span-2 md:col-span-1">
           <%= f.label :user_id, "User", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-          <%= f.select :user_id, User.all.map { |u| [u.name, u.id] }, { include_blank: "Select User" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+          <%= f.select :user_id, User.all.map { |u| [u.name, u.id] }, { include_blank: "Select User", selected: params[:user_id] || resource.user_id }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
         </div>
 
         <%# Dietary Plan Template (Optional) %>

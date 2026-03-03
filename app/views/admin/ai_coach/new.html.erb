@@ -45,18 +45,27 @@
             class="w-full rounded-xl border border-shadow dark:border-graphite bg-background-light dark:bg-blackish text-blackish dark:text-whiteish px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition resize-y"></textarea>
 
           <!-- Generation Mode -->
-          <div class="mt-4 flex items-center gap-4">
-            <label class="text-sm font-medium text-graphite dark:text-muted">Generate:</label>
-            <label class="inline-flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="mode" value="program" checked
-                class="w-4 h-4 text-primary focus:ring-primary border-shadow dark:border-graphite">
-              <span class="text-sm text-blackish dark:text-whiteish">Full Program</span>
-            </label>
-            <label class="inline-flex items-center gap-2 cursor-pointer">
-              <input type="radio" name="mode" value="routine"
-                class="w-4 h-4 text-primary focus:ring-primary border-shadow dark:border-graphite">
-              <span class="text-sm text-blackish dark:text-whiteish">Single Routine</span>
-            </label>
+          <div class="mt-4">
+            <label class="text-sm font-medium text-graphite dark:text-muted mb-3 block">Generate:</label>
+            <div class="flex flex-col sm:flex-row gap-6">
+              <label class="flex items-start gap-3 cursor-pointer group">
+                <input type="radio" name="mode" value="program" checked
+                  class="mt-1 w-4 h-4 text-primary focus:ring-primary border-shadow dark:border-graphite">
+                <div>
+                  <span class="block text-sm font-semibold text-blackish dark:text-whiteish group-hover:text-primary transition-colors">Full Program</span>
+                  <span class="block text-xs text-graphite dark:text-muted mt-0.5">Generates a complete multi-phase macrocycle (Program → Phases → Routines → Workouts)</span>
+                </div>
+              </label>
+
+              <label class="flex items-start gap-3 cursor-pointer group">
+                <input type="radio" name="mode" value="routine"
+                  class="mt-1 w-4 h-4 text-primary focus:ring-primary border-shadow dark:border-graphite">
+                <div>
+                  <span class="block text-sm font-semibold text-blackish dark:text-whiteish group-hover:text-primary transition-colors">Single Routine</span>
+                  <span class="block text-xs text-graphite dark:text-muted mt-0.5">Generates a standalone training block (Routine → Workouts) without phases</span>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -65,7 +74,7 @@
           <button type="submit"
             class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-blackish font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
             <span class="material-symbols-outlined">auto_awesome</span>
-            Generate Program
+            Generate
           </button>
         </div>
       <% end %>
