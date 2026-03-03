@@ -14,11 +14,11 @@ class Api::V1::ProgramExecutionsController < Api::V1::BaseController
 
   def execution_params
     params.require(:program_execution).permit(
-      :routine_id,
+      :workout_id,
       :completed_at,
       :duration_minutes,
       exercise_logs_attributes: [
-        :routine_exercise_id,
+        :workout_exercise_id,
         actual_sets: [ :reps, :load, :rir ]
       ]
     )

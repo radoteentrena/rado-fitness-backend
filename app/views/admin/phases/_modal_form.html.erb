@@ -60,6 +60,26 @@
           <%= f.label :description, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
           <%= f.text_area :description, rows: 4, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish" %>
         </div>
+
+        <%# Routines %>
+        <div class="col-span-2">
+          <%= f.label :routine_ids, "Included Routines", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+          <div class="bg-background-light dark:bg-shadow border border-shadow dark:border-graphite rounded-lg max-h-48 overflow-y-auto p-3 space-y-2">
+            <%= f.collection_check_boxes :routine_ids, Routine.order(is_template: :desc, name: :asc, id: :desc), :id, :name do |b| %>
+              <div class="flex items-center">
+                <%= b.check_box class: "w-4 h-4 text-primary bg-whiteish border-shadow rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-shadow dark:bg-blackish dark:border-graphite" %>
+                <%= b.label(class: "ml-2 text-sm font-medium text-blackish dark:text-whiteish cursor-pointer flex items-center") do %>
+                  <%= b.object.name.presence || "Routine ##{b.object.id}" %>
+                  <span class="text-xs text-graphite dark:text-muted ml-1">(<%= b.object.duration_weeks || 0 %> Weeks)</span>
+                  <% if b.object.is_template %>
+                    <span class="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/20 text-primary">Template</span>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+          <p class="mt-1 text-xs text-graphite dark:text-muted">Select existing routines to automatically populate this phase.</p>
+        </div>
       </div>
 
       <%# Footer %>

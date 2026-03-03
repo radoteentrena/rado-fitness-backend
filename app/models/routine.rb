@@ -2,8 +2,9 @@ class Routine < ApplicationRecord
   belongs_to :user, optional: true
   has_many :phase_routines, dependent: :destroy
   has_many :phases, through: :phase_routines
-  has_many :routine_exercises, dependent: :destroy
-  has_many :exercises, through: :routine_exercises
+  has_many :workouts, dependent: :destroy
+  has_many :workout_exercises, through: :workouts
+  has_many :exercises, through: :workout_exercises
 
   scope :templates, -> { where(is_template: true) }
 
@@ -15,10 +16,16 @@ class Routine < ApplicationRecord
       new_routine.name = "#{name} (Copy)"
       new_routine.save!
 
-      routine_exercises.each do |item|
-        new_item = item.dup
-        new_item.routine = new_routine
-        new_item.save!
+      workouts.each do |workout|
+        new_workout = workout.dup
+        new_workout.routine = new_routine
+        new_workout.save!
+
+        workout.workout_exercises.each do |item|
+          new_item = item.dup
+          new_item.workout = new_workout
+          new_item.save!
+        end
       end
 
       new_routine

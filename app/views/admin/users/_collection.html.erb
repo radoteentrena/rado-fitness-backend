@@ -1,3 +1,8 @@
+<%
+  page = local_assigns[:page] if local_assigns.key?(:page)
+  collection_presenter = local_assigns.fetch(:collection_presenter, page)
+  resources = local_assigns[:resources] if local_assigns.key?(:resources)
+%>
 <%= turbo_frame_tag "users_collection" do %>
 <div class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
     <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">

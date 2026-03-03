@@ -22,6 +22,9 @@
       <%= link_to edit_admin_user_dietary_plan_path(user_dietary_plan), data: { turbo_frame: "modal_frame" }, class: "text-graphite hover:text-primary dark:text-muted dark:hover:text-primary p-1 rounded hover:bg-background-light dark:hover:bg-blackish", title: "Edit Dietary Plan" do %>
         <span class="material-symbols-outlined text-sm">edit</span>
       <% end %>
+      <%= button_to admin_user_dietary_plan_path(user_dietary_plan), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this dietary plan?" }, class: "text-graphite hover:text-red-600 dark:text-muted dark:hover:text-red-400 p-1 rounded hover:bg-background-light dark:hover:bg-blackish cursor-pointer", title: "Delete Dietary Plan" do %>
+        <span class="material-symbols-outlined text-sm">delete</span>
+      <% end %>
     </div>
   </div>
 <% end %>

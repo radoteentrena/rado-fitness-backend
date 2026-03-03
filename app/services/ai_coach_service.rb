@@ -121,27 +121,35 @@ class AiCoachService
           PhaseRoutine.create!(phase: phase, routine: routine, order_index: r_index)
         end
 
-        routine_data["exercises"]&.each_with_index do |ex_data, index|
-          exercise = find_or_create_exercise(ex_data)
-
-          RoutineExercise.create!(
+        routine_data["workouts"]&.each_with_index do |workout_data, w_index|
+          workout = Workout.create!(
             routine: routine,
-            exercise: exercise,
-            day_number: ex_data["day_number"],
-            day_name: ex_data["day_name"],
-            sets: ex_data["sets"],
-            reps: ex_data["reps"].to_s,
-            rest_seconds: ex_data["rest_seconds"],
-            intensity_technique: ex_data["intensity_technique"],
-            warmup_sets: ex_data["warmup_sets"],
-            early_rpe: ex_data["early_rpe"],
-            last_rpe: ex_data["last_rpe"],
-            load: ex_data["load"],
-            time_estimate: ex_data["time_estimate"],
-            sub_option_one: ex_data["sub_option_one"],
-            sub_option_two: ex_data["sub_option_two"],
-            order_index: index
+            name: workout_data["name"] || "Workout #{w_index + 1}",
+            description: workout_data["description"],
+            day_number: workout_data["day_number"] || (w_index + 1),
+            order_index: w_index
           )
+
+          workout_data["exercises"]&.each_with_index do |ex_data, index|
+            exercise = find_or_create_exercise(ex_data)
+
+            WorkoutExercise.create!(
+              workout: workout,
+              exercise: exercise,
+              sets: ex_data["sets"],
+              reps: ex_data["reps"].to_s,
+              rest_seconds: ex_data["rest_seconds"],
+              intensity_technique: ex_data["intensity_technique"],
+              warmup_sets: ex_data["warmup_sets"],
+              early_rpe: ex_data["early_rpe"],
+              last_rpe: ex_data["last_rpe"],
+              load: ex_data["load"],
+              time_estimate: ex_data["time_estimate"],
+              sub_option_one: ex_data["sub_option_one"],
+              sub_option_two: ex_data["sub_option_two"],
+              order_index: index
+            )
+          end
         end
       end
 
@@ -242,7 +250,7 @@ class AiCoachService
       the above information. Use the exact JSON structure below.
 
       IMPORTANT FORMATTING CONSTRAINT:
-      If the user asks for a long-term program (e.g. 6 months), DO NOT generate individual workout routines for every single day. Instead, generate a typical microcycle (e.g., 1 week of unique workout days mapped into routines) and simply assign the appropriately large number to the `duration_weeks` fields. For example, a 5-day-per-week program should output exactly 5 days representing the recurring weekly split.
+      If the user asks for a long-term program (e.g. 6 months), DO NOT generate individual workouts for every single day of those 6 months. Instead, generate a typical microcycle (e.g., 1 week of unique workout days mapped into a routine) and simply assign the appropriately large number to the `duration_weeks` fields. For example, a 5-day-per-week program should output exactly 5 workouts inside the routine representing the recurring weekly split.
 
       For exercises, if an exercise already exists in the database, use its exact name.
       If you need to suggest a new exercise, provide a descriptive name and muscle_group.
@@ -256,26 +264,34 @@ class AiCoachService
   end
 
   def generation_json_schema(mode)
-    <<~JSON
-      {
+    program_block = mode == "program" ? <<~PROGRAM
         "program": {
           "name": "string",
           "description": "string (detailed program overview)",
           "duration_weeks": integer
         },
+    PROGRAM
+    : ""
+
+    <<~JSON
+      {
+#{program_block.chomp}
         "routines": [
           {
-            "name": "string (e.g. 'Upper Body Push')",
+            "name": "string (e.g. 'Push/Pull/Legs 1')",
             "description": "string",
             "duration_weeks": integer,
-            "exercises": [
+            "workouts": [
               {
-                "name": "string (exact name if existing, descriptive if new)",
-                "muscle_group": "string (e.g. 'Chest', 'Back', 'Legs')",
-                "existing_exercise_id": integer_or_null,
+                "name": "string (e.g. 'Upper Body Push')",
+                "description": "string or null",
                 "day_number": integer,
-                "day_name": "string (e.g. 'Monday')",
-                "sets": integer,
+                "exercises": [
+                  {
+                    "name": "string (exact name if existing, descriptive if new)",
+                    "muscle_group": "string (e.g. 'Chest', 'Back', 'Legs')",
+                    "existing_exercise_id": integer_or_null,
+                    "sets": integer,
                 "warmup_sets": "string (e.g. '1-2' or '0')",
                 "reps": "string (e.g. '8-10' or '12')",
                 "load": "string (e.g. 'Bodyweight', '60kg', 'RPE 8', 'AMRAP') or null",

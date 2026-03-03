@@ -11,8 +11,14 @@ module Admin
             notice: translate_with_resource("create.success"),
           ) }
           format.turbo_stream {
+             collection_page = Administrate::Page::Collection.new(dashboard, order: order)
              render turbo_stream: [
-               turbo_stream.replace("users_collection", partial: "collection", locals: { resources: scoped_resource.order(created_at: :desc).page(params[:page]).per(records_per_page) }),
+               turbo_stream.replace("users_collection", partial: "admin/users/collection", locals: {
+                 collection_presenter: collection_page,
+                 collection_field_name: resource_name,
+                 page: collection_page,
+                 resources: scoped_resource.order(created_at: :desc).page(params[:page]).per(records_per_page)
+               }),
                turbo_stream.update("modal_frame", ""),
                turbo_stream.prepend("flash_messages", partial: "admin/application/flash", locals: { message: translate_with_resource("create.success") })
              ]
@@ -33,11 +39,17 @@ module Admin
             notice: translate_with_resource("update.success"),
           ) }
           format.turbo_stream {
-            render turbo_stream: [
-               turbo_stream.replace("users_collection", partial: "collection", locals: { resources: scoped_resource.order(created_at: :desc).page(params[:page]).per(records_per_page) }),
+             collection_page = Administrate::Page::Collection.new(dashboard, order: order)
+             render turbo_stream: [
+               turbo_stream.replace("users_collection", partial: "admin/users/collection", locals: {
+                 collection_presenter: collection_page,
+                 collection_field_name: resource_name,
+                 page: collection_page,
+                 resources: scoped_resource.order(created_at: :desc).page(params[:page]).per(records_per_page)
+               }),
                turbo_stream.update("modal_frame", ""),
                turbo_stream.prepend("flash_messages", partial: "admin/application/flash", locals: { message: translate_with_resource("update.success") })
-            ]
+             ]
           }
         end
       else

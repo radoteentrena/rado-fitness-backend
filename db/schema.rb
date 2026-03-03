@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_24_211634) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_27_165347) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -129,12 +129,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_24_211634) do
 
   create_table "exercise_logs", force: :cascade do |t|
     t.bigint "program_execution_id", null: false
-    t.bigint "routine_exercise_id", null: false
+    t.bigint "workout_exercise_id", null: false
     t.jsonb "actual_sets"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["program_execution_id"], name: "index_exercise_logs_on_program_execution_id"
-    t.index ["routine_exercise_id"], name: "index_exercise_logs_on_routine_exercise_id"
+    t.index ["workout_exercise_id"], name: "index_exercise_logs_on_workout_exercise_id"
   end
 
   create_table "exercises", force: :cascade do |t|
@@ -178,13 +178,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_24_211634) do
 
   create_table "program_executions", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "routine_id", null: false
     t.datetime "completed_at"
     t.integer "duration_minutes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["routine_id"], name: "index_program_executions_on_routine_id"
+    t.bigint "workout_id", null: false
     t.index ["user_id"], name: "index_program_executions_on_user_id"
+    t.index ["workout_id"], name: "index_program_executions_on_workout_id"
   end
 
   create_table "programs", force: :cascade do |t|
@@ -206,29 +206,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_24_211634) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_progress_photos_on_user_id"
-  end
-
-  create_table "routine_exercises", force: :cascade do |t|
-    t.bigint "routine_id", null: false
-    t.bigint "exercise_id", null: false
-    t.integer "sets"
-    t.string "reps"
-    t.integer "rest_seconds"
-    t.integer "order_index"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "day_number"
-    t.string "day_name"
-    t.string "load"
-    t.string "warmup_sets"
-    t.string "early_rpe"
-    t.string "last_rpe"
-    t.string "time_estimate"
-    t.string "intensity_technique"
-    t.string "sub_option_one"
-    t.string "sub_option_two"
-    t.index ["exercise_id"], name: "index_routine_exercises_on_exercise_id"
-    t.index ["routine_id"], name: "index_routine_exercises_on_routine_id"
   end
 
   create_table "routines", force: :cascade do |t|
@@ -283,6 +260,38 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_24_211634) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "workout_exercises", force: :cascade do |t|
+    t.bigint "exercise_id", null: false
+    t.integer "sets"
+    t.string "reps"
+    t.integer "rest_seconds"
+    t.integer "order_index"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "load"
+    t.string "warmup_sets"
+    t.string "early_rpe"
+    t.string "last_rpe"
+    t.string "time_estimate"
+    t.string "intensity_technique"
+    t.string "sub_option_one"
+    t.string "sub_option_two"
+    t.bigint "workout_id", null: false
+    t.index ["exercise_id"], name: "index_workout_exercises_on_exercise_id"
+    t.index ["workout_id"], name: "index_workout_exercises_on_workout_id"
+  end
+
+  create_table "workouts", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.integer "day_number"
+    t.integer "order_index"
+    t.bigint "routine_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["routine_id"], name: "index_workouts_on_routine_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "ai_conversations", "programs"
@@ -293,19 +302,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_24_211634) do
   add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
   add_foreign_key "exercise_logs", "program_executions"
-  add_foreign_key "exercise_logs", "routine_exercises"
+  add_foreign_key "exercise_logs", "workout_exercises"
   add_foreign_key "messages", "users"
   add_foreign_key "phase_routines", "phases"
   add_foreign_key "phase_routines", "routines"
   add_foreign_key "phases", "programs"
-  add_foreign_key "program_executions", "routines"
   add_foreign_key "program_executions", "users"
+  add_foreign_key "program_executions", "workouts"
   add_foreign_key "programs", "users"
   add_foreign_key "progress_photos", "users"
-  add_foreign_key "routine_exercises", "exercises"
-  add_foreign_key "routine_exercises", "routines"
   add_foreign_key "routines", "users"
   add_foreign_key "user_dietary_plans", "dietary_plans"
   add_foreign_key "user_dietary_plans", "phases"
   add_foreign_key "user_dietary_plans", "users"
+  add_foreign_key "workout_exercises", "exercises"
+  add_foreign_key "workout_exercises", "workouts"
+  add_foreign_key "workouts", "routines"
 end
