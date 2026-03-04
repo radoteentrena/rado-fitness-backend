@@ -1,0 +1,370 @@
+<div class="bg-black text-white min-h-screen py-16 px-4 sm:px-6 lg:px-8 font-switzer flex flex-col pt-12">
+  <div class="max-w-2xl mx-auto w-full">
+
+    <div data-controller="multi-step-form" class="w-full pb-32">
+      <div class="mb-16">
+        <div class="flex justify-center items-center mb-4">
+          <span class="text-lg font-bold text-gray-400 tracking-widest uppercase" data-multi-step-form-target="progress">Paso 1 de 15</span>
+        </div>
+        <div class="w-full h-4 bg-black border-2 border-primary/50 relative overflow-hidden">
+          <div class="absolute top-0 left-0 h-full bg-saffron transition-all duration-300 ease-out" style="width: 0%" data-multi-step-form-target="progressBar"></div>
+        </div>
+      </div>
+
+      <%= form_with(model: @lead, url: leads_path, local: true, class: "space-y-10", data: { action: "input->multi-step-form#updateButtons change->multi-step-form#updateButtons" }) do |f| %>
+        <% if @lead.errors.any? %>
+          <div class="border-2 border-red-500 bg-black p-6 mb-10 shadow-[6px_6px_0px_0px_#ef4444]">
+            <h2 class="text-xl font-bold text-red-500 uppercase tracking-widest mb-4"><%= pluralize(@lead.errors.count, "error") %> impidieron enviar tu solicitud:</h2>
+            <ul class="list-none space-y-2 text-red-400 font-medium">
+              <% @lead.errors.full_messages.each do |message| %>
+                <li>→ <%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Step 1: Datos Personales 1 -->
+        <div data-multi-step-form-target="step" class="space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Datos Personales</h2>
+          </div>
+
+          <div class="space-y-8">
+            <div>
+              <%= f.label :name, "Nombre", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.text_field :name, required: true, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+
+            <div>
+              <%= f.label :last_name, "Apellidos", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.text_field :last_name, required: true, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Datos Personales 2 -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Más Sobre Ti</h2>
+          </div>
+
+          <div class="space-y-8">
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">¿Con qué sexo te identificas?</label>
+              <div class="space-y-4">
+                <% ['Masculino', 'Femenino', 'Otro'].each do |option| %>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-graphite cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :gender, option, required: true, class: "w-6 h-6 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+
+            <div>
+              <%= f.label :age, "Edad (solo número)", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.number_field :age, required: true, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Body Metrics -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Métricas Corporales</h2>
+          </div>
+
+          <div class="space-y-8">
+            <div>
+              <%= f.label :weight, "Peso (indique preferiblemente en KG)", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.text_field :weight, placeholder: "Ej: 75 kg", required: true, class: "block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+
+            <div>
+              <%= f.label :height, "Estatura (ej. 1,80 cm)", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.text_field :height, placeholder: "Ej: 1,80 cm", required: true, class: "block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Contact Info -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Contacto</h2>
+          </div>
+
+          <div class="space-y-8">
+            <div>
+              <%= f.label :email, "Correo electrónico", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.email_field :email, required: true, class: "block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+
+            <div>
+              <%= f.label :phone, "Celular (Agrega prefijo de país ext. +58)", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.telephone_field :phone, required: true, class: "block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+
+            <div>
+              <%= f.label :instagram, "Cuenta de Instagram", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <div class="flex">
+                <span class="inline-flex items-center border-2 border-primary/50 bg-graphite px-5 text-gray-400 text-xl font-bold">@</span>
+                <%= f.text_field :instagram, required: true, class: "block w-full min-w-0 flex-1 ml-[-2px] appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 relative z-10 transition-all", placeholder: "usuario" %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Goals -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Tus Objetivos</h2>
+          </div>
+
+          <div class="space-y-4">
+             <label class="block text-xl font-bold text-gray-300 mb-6">¿Cuál es tu objetivo principal con el entrenamiento? (Múltiple elección)</label>
+             <div class="checkbox-group space-y-4" data-required="true">
+               <% ['Composicion corporal - masa', 'Composicion corporal - grasa', 'Estilo de vida/salud', 'Rendimiento deportivo', 'Movilidad'].each do |goal| %>
+                 <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.check_box :goals, { multiple: true, class: "w-6 h-6 rounded-none text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" }, goal, nil %>
+                    <span class="text-xl font-medium text-white"><%= goal %></span>
+                 </label>
+               <% end %>
+             </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Experience -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Experiencia</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <%= f.label :experience_level, "Nivel de experiencia (1 = Iniciante, 10 = Avanzado)", class: "block text-xl font-bold text-gray-300 mb-6" %>
+              <div class="flex items-center space-x-6">
+                <span class="text-2xl font-black text-gray-500">1</span>
+                <%= f.range_field :experience_level, in: 1..10, step: 1, class: "w-full h-4 bg-gray-700 appearance-none cursor-pointer accent-saffron" %>
+                <span class="text-2xl font-black text-saffron">10</span>
+              </div>
+            </div>
+
+            <div>
+              <%= f.label :best_lifts, "Tus mejores marcas en básicos (Ej. Sentadilla 100kg)", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.text_area :best_lifts, rows: 4, class: "block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 7: Exigencia -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Exigencia</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">Nivel de exigencia que buscas en el plan</label>
+              <div class="space-y-4">
+                <% ['Alto', 'Moderado', 'Bajo'].each do |option| %>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :commitment_level, option, required: true, class: "w-6 h-6 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 8: Frecuencia -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Frecuencia</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">¿Cuántos días a la semana puedes entrenar?</label>
+               <div class="space-y-4">
+                <% ['2', '3', '4', '+4 veces'].each do |option| %>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :training_frequency, option, required: true, class: "w-6 h-6 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 9: Salud -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Salud Física</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <%= f.label :injuries, "¿Tienes alguna lesión o molestia? (Si no, escribe 'Ninguna')", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.text_area :injuries, rows: 3, required: true, class: "block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">¿Practicas algún otro deporte actualmente?</label>
+               <div class="space-y-4">
+                <% ['Si', 'No'].each do |option| %>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :plays_sports, option, required: true, class: "w-6 h-6 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 10: Deportes Extras y Tiempo -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Más sobre Deporte</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <%= f.label :sport_details, "¿Cuál deporte extra practicas? (Opcional)", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.text_field :sport_details, class: "block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+
+            <div>
+              <%= f.label :time_per_session, "Tiempo disponible por sesión (Ej. 60 min, 90 min)", class: "block text-xl font-bold text-gray-300 mb-3" %>
+              <%= f.text_field :time_per_session, required: true, class: "block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 11: Alimentación -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Hábitos</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">¿Cómo consideras tus hábitos alimenticios?</label>
+               <div class="space-y-4">
+                <% ['Malos', 'Regular', 'Bueno', 'Pro'].each do |option| %>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :diet_quality, option, required: true, class: "w-6 h-6 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 12: Trabajo -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Tu Día a Día</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">Tipo de trabajo diario</label>
+               <div class="space-y-4">
+                <% ['Sentado', 'Levemente activo', 'Activo', 'Muy activo'].each do |option| %>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :activity_level, option, required: true, class: "w-6 h-6 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 13: Descanso -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Detalles Finales</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">Horas de sueño</label>
+              <div class="space-y-4">
+                <% ['<4', '4-6', '6-8', '8-10', '+10'].each do |option| %>
+                  <label class="flex items-center gap-4 p-5 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[4px_4px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :sleep_hours, option, required: true, class: "w-5 h-5 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-lg font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 14: RRSS -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">Redes Sociales</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">¿Permites publicar videos entrenando en redes?</label>
+              <div class="space-y-4">
+                <% ['Si', 'No'].each do |option| %>
+                  <label class="flex items-center gap-4 p-5 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[4px_4px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :social_media_consent, option, required: true, class: "w-5 h-5 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-lg font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Step 15: Referencia -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+             <h2 class="text-3xl font-bold text-saffron">¡Casi listos!</h2>
+          </div>
+
+          <div class="space-y-12">
+            <div>
+              <label class="block text-xl font-bold text-gray-300 mb-4">¿Cómo nos conociste?</label>
+               <div class="space-y-4">
+                <% ['Redes sociales', 'Publicidad', 'Referencia', 'Cercanía'].each do |option| %>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-black cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= f.radio_button :referral_source, option, required: true, class: "w-6 h-6 text-saffron bg-black border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons (Brutalist) -->
+        <div class="pt-10 flex flex-col-reverse sm:flex-row gap-6 mt-12 justify-between items-center w-full">
+          <button type="button" data-action="multi-step-form#previous" data-multi-step-form-target="previousButton" class="w-full sm:w-auto inline-flex justify-center border-2 border-gray-600 bg-transparent py-4 px-10 text-lg font-bold uppercase tracking-widest text-gray-300 transition-all hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-0 active:translate-y-1 active:translate-x-1 active:shadow-none hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#4b5563]">
+            Atrás
+          </button>
+
+          <button type="button" data-action="multi-step-form#next" data-multi-step-form-target="nextButton" class="w-full sm:w-auto inline-flex justify-center border-2 border-saffron bg-saffron py-4 px-12 text-lg font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none">
+            Continuar
+          </button>
+
+          <div data-multi-step-form-target="submitButton" class="hidden w-full sm:w-auto">
+            <%= f.submit "Enviar", class: "w-full inline-flex justify-center border-2 border-saffron bg-saffron py-4 px-12 text-lg font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 focus:outline-none cursor-pointer hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
