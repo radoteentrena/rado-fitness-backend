@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **UI:** New Homepage implementation with `PagesController#home`, featuring improved copy and structure.
+- **UI:** Dedicated `homepage` layout for full-width sections.
+
+### Changed
+- **Routing:** Updated root path to `pages#home`.
+- **Refactor:** Removed legacy `HomeController` and `home/index.html.erb` in favor of new structure.
+
 ### Fixed
 - **UI:** Resolved font-display fallback by importing the `Inter` font in application layouts.
 - **Admin UI:** Fixed horizontal overflow on "Load" text fields by applying appropriate min-width and block display constraints.
