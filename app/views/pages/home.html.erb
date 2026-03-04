@@ -1,4 +1,3 @@
-
 <%# Header %>
 <header class="fixed w-full top-0 z-50 bg-black/95 backdrop-blur-sm border-b border-shadow-grey">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -11,10 +10,10 @@
       <nav class="flex space-x-4 items-center">
         <% if user_signed_in? %>
           <%= link_to "Dashboard", admin_root_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors" %>
-          <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class: "bg-saffron text-black font-display font-bold uppercase px-4 py-2 text-sm hover:bg-yellow-400 transition-colors" %>
+          <%= button_to "CERRAR SESIÓN", destroy_user_session_path, method: :delete, class: "bg-saffron text-black font-display font-bold uppercase px-4 py-2 text-sm hover:bg-yellow-400 transition-colors" %>
         <% else %>
-            <%= link_to "Log In", new_user_session_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors mr-4" %>
-            <%= link_to "Empezar Ahora", new_user_registration_path, class: "bg-saffron text-black font-display font-bold uppercase px-4 py-2 text-sm hover:bg-yellow-400 transition-colors" %>
+            <%= link_to "LOG IN", new_user_session_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors mr-4" %>
+            <%= link_to "COMIENZA", new_user_registration_path, class: "bg-saffron text-black font-display font-bold uppercase px-6 py-2 text-sm hover:bg-yellow-400 transition-colors" %>
         <% end %>
       </nav>
     </div>
@@ -22,107 +21,112 @@
 </header>
 
 <%# Hero Section %>
-<section class="relative pt-24 pb-12 lg:pt-32 lg:pb-24 overflow-hidden bg-black">
+<section class="relative pt-32 pb-16 lg:pt-40 lg:pb-28 overflow-hidden bg-black">
   <div class="absolute inset-0 z-0">
-    <img alt="Gritty gym background with weights" class="w-full h-full object-cover opacity-30 filter grayscale contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADwJ3e2ZHzhT3JWCtOd0xdapE7anbxN0iwOGoRpCVtNCkni8fz8BRBsnU-pXBSeoYx-HgJIQ__kTSMVSqMQdsb59GAUs53YFCyOdgfRVctppASbDSe9fvl7tAyzZSUabgMGegouKKnxkczovfxy8rVXLpg2EmdU5kSXuJMMNlYWFAjHHIZhLYAT02i2TqWJgczXKIl7RnB9v-aPC-0ARlK6Yc_BE8mVfI-XaCRCvNm9CxKcS8CZ18yUn1KxVrUb3OQodCt14vSVAly"/>
+    <img alt="Gritty gym background with weights" class="w-full h-full object-cover opacity-20 filter grayscale contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADwJ3e2ZHzhT3JWCtOd0xdapE7anbxN0iwOGoRpCVtNCkni8fz8BRBsnU-pXBSeoYx-HgJIQ__kTSMVSqMQdsb59GAUs53YFCyOdgfRVctppASbDSe9fvl7tAyzZSUabgMGegouKKnxkczovfxy8rVXLpg2EmdU5kSXuJMMNlYWFAjHHIZhLYAT02i2TqWJgczXKIl7RnB9v-aPC-0ARlK6Yc_BE8mVfI-XaCRCvNm9CxKcS8CZ18yUn1KxVrUb3OQodCt14vSVAly"/>
     <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/80 to-black"></div>
   </div>
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-12 items-center">
     <div class="flex-1 text-center lg:text-left">
-      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-display font-bold uppercase leading-none tracking-tight mb-6 text-saffron">
-        CONSTRUYE UN FÍSICO <br/><span class="text-white">ESTÉTICO Y DOMINANTE</span>
+      <h1 class="text-5xl sm:text-7xl lg:text-[5rem] font-display font-bold uppercase leading-[1.1] tracking-tight mb-6 mt-4">
+        <span class="text-saffron block">FORJA UN</span>
+        <span class="text-white block">FÍSICO IMPONENTE</span>
       </h1>
       <p class="text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mx-0 font-light font-body">
-        Entrenamiento de fuerza inteligente enfocado en hipertrofia y proporciones. <span class="font-bold text-saffron">Sin tonterías, solo resultados.</span>
+        Entrenamiento de élite diseñado para maximizar tu fuerza<br/>
+        y <span class="text-saffron">esculpir tu estética.</span>
       </p>
-      <div class="lg:hidden">
-        <%= link_to "EMPEZAR AHORA", new_user_registration_path, class: "inline-block w-full bg-saffron text-black font-display font-bold uppercase text-lg px-8 py-4 hover:bg-yellow-400 transition-colors text-center shadow-lg shadow-saffron/20" %>
+      <div class="lg:hidden text-center mt-8">
+         <span class="text-gray-400 font-body text-sm">Empieza abajo 👇</span>
       </div>
     </div>
 
     <%# Start Now Form / Call to Action Box %>
-    <div class="w-full lg:w-96 flex-shrink-0 bg-graphite p-6 sm:p-8 shadow-2xl border border-shadow-grey relative" id="hero-form">
+    <div class="w-full lg:w-[400px] flex-shrink-0 bg-graphite p-8 shadow-2xl relative" id="hero-form">
       <div class="absolute top-0 left-0 w-full h-1 bg-saffron"></div>
-      <h3 class="text-2xl font-display font-bold uppercase text-center mb-2 text-white">Sé la mejor versión de vos mismo</h3>
-      <p class="text-center text-sm text-gray-400 mb-6 font-body">Recibe tu plan de transformación hoy.</p>
+      <h3 class="text-2xl font-display font-bold text-center mb-2 text-white">NO ESPERES MÁS</h3>
+      <p class="text-center text-sm text-gray-400 mb-8 font-body">Recibe tu plan de hipertrofia hoy.</p>
 
       <%= form_with url: new_user_registration_path, method: :get, class: "space-y-4" do |f| %>
         <div>
           <label class="sr-only" for="name">Nombre</label>
-          <%= f.text_field :name, placeholder: "Tu Nombre", class: "block w-full bg-shadow-grey border-gray-700 text-white placeholder-gray-500 focus:ring-saffron focus:border-saffron sm:text-sm px-4 py-3" %>
+          <%= f.text_field :name, placeholder: "Tu Nombre", class: "block w-full bg-graphite/50 border border-gray-600 rounded text-white placeholder-gray-500 focus:ring-1 focus:ring-saffron focus:border-saffron sm:text-sm px-4 py-3" %>
         </div>
         <div>
           <label class="sr-only" for="email">Email</label>
-           <%= f.email_field :email, placeholder: "Tu Email", class: "block w-full bg-shadow-grey border-gray-700 text-white placeholder-gray-500 focus:ring-saffron focus:border-saffron sm:text-sm px-4 py-3" %>
+           <%= f.email_field :email, placeholder: "Tu Email", class: "block w-full bg-graphite/50 border border-gray-600 rounded text-white placeholder-gray-500 focus:ring-1 focus:ring-saffron focus:border-saffron sm:text-sm px-4 py-3" %>
         </div>
         <div>
           <label class="sr-only" for="goal">Objetivo Principal</label>
-          <%= f.select :goal, options_for_select([["Tu Objetivo Principal", "", {disabled: true, selected: true}], ["Ganar Músculo (Hipertrofia)", "hypertrophy"], ["Perder Grasa / Definición", "cutting"], ["Recomposición Corporal", "recomp"]]), {}, class: "block w-full bg-shadow-grey border-gray-700 text-white placeholder-gray-500 focus:ring-saffron focus:border-saffron sm:text-sm px-4 py-3" %>
+          <%= f.select :goal, options_for_select([["Tu Objetivo Principal", "", {disabled: true, selected: true}], ["Ganar Músculo", "hypertrophy"], ["Definición", "cutting"], ["Fuerza", "strength"]]), {}, class: "block w-full bg-graphite/50 border border-gray-600 rounded text-gray-400 focus:ring-1 focus:ring-saffron focus:border-saffron sm:text-sm px-4 py-3 appearance-none" %>
         </div>
-        <%= f.submit "EMPEZAR AHORA", class: "w-full bg-saffron text-black font-display font-bold uppercase text-lg px-4 py-3 hover:bg-yellow-400 transition-colors shadow-md cursor-pointer" %>
+        <div class="pt-2">
+            <%= f.submit "EMPIEZA TU CAMBIO", class: "w-full bg-saffron text-black font-display font-bold uppercase text-lg px-4 py-4 hover:bg-yellow-400 transition-colors shadow-md cursor-pointer" %>
+        </div>
         <p class="text-xs text-center text-gray-500 mt-4 font-body">Respetamos tu privacidad. Sin spam.</p>
       <% end %>
     </div>
   </div>
 </section>
 
-<%# Social Proof %>
-<section class="py-12 border-y border-shadow-grey bg-black">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<%# Social Proof / Testimonials %>
+<section class="pb-16 pt-8 border-b border-shadow-grey bg-black">
+  <div class="w-full text-center">
     <div class="flex justify-center items-center space-x-1 mb-4">
       <% 5.times do %>
-        <span class="material-symbols-outlined text-saffron fill-1">star</span>
+        <span class="material-symbols-outlined text-saffron fill-current text-xl">star</span>
       <% end %>
     </div>
-    <p class="text-lg font-medium text-gray-300 mb-8 font-body">
-      Más de <span class="text-saffron font-bold">500+ personas</span> han transformado su físico.
+    <p class="text-lg font-medium text-white mb-10 font-body">
+      Más de <span class="text-saffron font-bold">500+ Alumnos</span> han construido su mejor versión.
     </p>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-      <div class="flex justify-center"><img alt="Client Logo 1" class="h-8 md:h-10 object-contain invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAGkRVo1HhcQMKTKjp_S2kxvbBusUbiGEAlzn41s0WcYPIIKjRVr1_llMV1cFU5692mKbIRdtOgu2mqjJkmso2dD0FQpegf0WKiMxfuEFnX1UYwobJrNcGcoL2nRiMTCE52uIcUblvailitD_NZWPMn-ECWulFElk8WwzXw9zs8n0lMzy0pm0IAxeEkT4rLlzbQlHrCvC1456GGTd0kvYjwJ6_XXoQeQzP7ZTi1rs8uTN4W3JvgCIYyqdyir3NR-21K1w1w_nrzu-1"/></div>
-      <div class="flex justify-center"><img alt="Client Logo 2" class="h-8 md:h-10 object-contain invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqhPfqGmLkLs79JQqzuW147AsuLzQKj17V6lRWlcA_of9lLsklIsCH2NxKWIh7LBl_wckKlaCReOCe2Zwdv-YDZF1EeB2WuhSV9k8FRDKee5Al09j0s87tM3ifK01T-WnClPVdpgjqOGhbv_4cFzoH9JPy-zs9Xj63nTzTD_BrykBrIIHIPDpgvHs-OyoiVo_3qv30-E7G1pfKAVVXBraayqZhrREl6gN8DMJbJhgjigWm8hX4DpyHHQUoqZ1_9-7I1l7xfPTlRAAX"/></div>
-      <div class="flex justify-center"><img alt="Client Logo 3" class="h-6 md:h-8 object-contain invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdGh34DQiwpkO-FPWemlDr-tQFiuNu2vERq80TWShBu5KRiRK7UyvbyR_krinzgQtf4n1_tVS1qSIfYSynv9knhef1uEEsf2zxlpWHvCYi-ESwSt9ev_SV3wbwjVVfqGwwu2-3fXuSDMYVDlRbd0t92U7Eh0jtSpkrVMQm8B_ahjf60OAZcj7zo1XWa-OkP1qT-Ysy9UtM6mJnBYqzAjwIJMTPQYHJqBwwKK8GgqvQOqgRVR6rcqBcDpYmtD3L9Aivr5-5NCe84Bnk"/></div>
-      <div class="flex justify-center"><img alt="Client Logo 4" class="h-8 md:h-10 object-contain invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwibQc01wX7yb7AAMgJyQPyj7mjnSZKQz4_OaeVJiaXzH5FsNt6cII4f4WdTsiJ1zCOGiC89iuzvWoHsa5wOFPm2rqBVRx2oNafOxl5WduA6G_Vi-I5st1RlVV-EC_ih1c5HPDHQ50awKb1kx-2V1ZCY5zkX_yT7LUcT5BUeMZdaPWVitO49yPUSMD2hMkuDEyRPhNrM2nue1nLEkfl5OSkLF4AIQMjHVOioN6LsI5RrxNlwciHHXaT88OWc5X9o_pvLMfrzoLwuD9"/></div>
+
+    <div class="w-full grid grid-cols-2 md:grid-cols-4 aspect-auto">
+      <%= image_tag "testimonial_1.png", alt: "Testimonial 1", class: "w-full h-[400px] object-cover" %>
+      <%= image_tag "testimonial_2.png", alt: "Testimonial 2", class: "w-full h-[400px] object-cover" %>
+      <%= image_tag "testimonial_3.png", alt: "Testimonial 3", class: "w-full h-[400px] object-cover" %>
+      <%= image_tag "testimonial_4.png", alt: "Testimonial 4", class: "w-full h-[400px] object-cover" %>
     </div>
   </div>
 </section>
 
 <%# Features Section %>
-<section class="py-20 bg-black">
+<section class="py-24 bg-black">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-16">
       <h2 class="text-4xl sm:text-5xl font-display font-bold uppercase text-white mb-4">
-        MÉTODO <span class="text-saffron">RADO</span>
+        LOS PILARES DEL <span class="text-saffron">ÉXITO FÍSICO</span>
       </h2>
-      <p class="max-w-2xl mx-auto text-gray-400 font-body">
-        Olvídate de las rutinas de moda y el cardio excesivo. Nos centramos en lo que funciona: biomecánica, intensidad y progresión.
+      <p class="max-w-2xl mx-auto text-gray-400 font-body text-sm sm:text-base">
+        Deja de entrenar sin rumbo. Aplicamos ciencia y esfuerzo brutal para resultados visibles y duraderos.
       </p>
     </div>
     <div class="grid md:grid-cols-3 gap-8">
-      <div class="bg-shadow-grey p-8 border-t-4 border-saffron shadow-lg hover:-translate-y-1 transition-transform duration-300">
-        <div class="w-12 h-12 bg-saffron/10 rounded-full flex items-center justify-center mb-6">
-          <span class="material-symbols-outlined text-saffron text-3xl">fitness_center</span>
+      <div class="bg-shadow-grey p-10 border-t-4 border-saffron shadow-lg">
+        <div class="w-12 h-12 bg-[#2d281a] rounded-full flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-saffron">fitness_center</span>
         </div>
-        <h3 class="text-xl font-display font-bold uppercase mb-3 text-saffron">Hipertrofia Pura</h3>
+        <h3 class="text-lg font-display font-bold uppercase mb-4 text-saffron">FUERZA REAL</h3>
         <p class="text-gray-300 text-sm leading-relaxed font-body">
-          Programación diseñada específicamente para maximizar el crecimiento muscular. Volumen, intensidad y selección de ejercicios optimizada.
+          Levantamiento pesado con técnica perfecta. Incrementa tus cargas progresivamente y construye una base sólida de poder real.
         </p>
       </div>
-      <div class="bg-shadow-grey p-8 border-t-4 border-saffron shadow-lg hover:-translate-y-1 transition-transform duration-300">
-        <div class="w-12 h-12 bg-saffron/10 rounded-full flex items-center justify-center mb-6">
-          <span class="material-symbols-outlined text-saffron text-3xl">monitor_weight</span>
+      <div class="bg-shadow-grey p-10 border-t-4 border-saffron shadow-lg">
+        <div class="w-12 h-12 bg-[#2d281a] rounded-full flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-saffron">accessibility_new</span>
         </div>
-        <h3 class="text-xl font-display font-bold uppercase mb-3 text-saffron">Estética Visual</h3>
+        <h3 class="text-lg font-display font-bold uppercase mb-4 text-saffron">ESTÉTICA SOLDADO</h3>
         <p class="text-gray-300 text-sm leading-relaxed font-body">
-          No solo buscamos tamaño, buscamos proporción. Hombros anchos, cintura estrecha y un físico atlético que destaque.
+          Enfoque en proporciones y simetría. Reduce grasa corporal y maximiza la definición muscular para un look atlético y dominante.
         </p>
       </div>
-      <div class="bg-shadow-grey p-8 border-t-4 border-saffron shadow-lg hover:-translate-y-1 transition-transform duration-300">
-        <div class="w-12 h-12 bg-saffron/10 rounded-full flex items-center justify-center mb-6">
-          <span class="material-symbols-outlined text-saffron text-3xl">trending_up</span>
+      <div class="bg-shadow-grey p-10 border-t-4 border-saffron shadow-lg">
+        <div class="w-12 h-12 bg-[#2d281a] rounded-full flex items-center justify-center mb-6">
+          <span class="material-symbols-outlined text-saffron">psychology</span>
         </div>
-        <h3 class="text-xl font-display font-bold uppercase mb-3 text-saffron">Progreso Constante</h3>
+        <h3 class="text-lg font-display font-bold uppercase mb-4 text-saffron">TRANSFORMACIÓN TOTAL</h3>
         <p class="text-gray-300 text-sm leading-relaxed font-body">
-          Utilizamos datos reales para garantizar que cada semana seas más fuerte y te veas mejor. Sin estancamientos.
+          Más que físico, es mentalidad. Forjamos disciplina de hierro que se transfiere a cada aspecto de tu vida diaria.
         </p>
       </div>
     </div>
@@ -130,28 +134,28 @@
 </section>
 
 <%# About/Evolution Section %>
-<section class="py-20 relative overflow-hidden bg-black border-t border-shadow-grey">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col lg:flex-row gap-12 items-center">
+<section class="py-0 relative overflow-hidden bg-black border-t border-shadow-grey">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <div class="flex flex-col lg:flex-row gap-16 items-center">
       <div class="lg:w-1/2 relative">
-        <div class="absolute -inset-4 bg-saffron/10 blur-xl transform rotate-3"></div>
-        <img alt="Athlete lifting weights" class="relative z-10 w-full shadow-2xl grayscale contrast-125 transform -rotate-2 border-4 border-shadow-grey" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFIWG0fGD4azTkJQq7IZLBd9S-r50bGxw7wJVwwd-kb3dKd2RHoH1zbj3z1ezcZA8SpoR9Ogn6l4krl2x_LBlvLySlUm-V4sS7uhVFA8RtJ4x4enz_Qz5gZ3WxPLW0mgCN5QwOyR9YIdhd9eaLmM5O0ysDUkVqKvCTBQbclqDTurZEZlmc9MMY0WvCA2gApfalLCzSnU4kzVvRppEa6qpAmhQPvvwSK48e1P52tAnq2gQtTwBd2kRuk1YE1fkOSJMtqdZXKlJAT0CT"/>
+        <div class="absolute -inset-10 bg-saffron/5 blur-3xl transform rotate-3"></div>
+        <img alt="Athlete running" class="relative z-10 w-full shadow-2xl grayscale border-4 border-graphite" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFIWG0fGD4azTkJQq7IZLBd9S-r50bGxw7wJVwwd-kb3dKd2RHoH1zbj3z1ezcZA8SpoR9Ogn6l4krl2x_LBlvLySlUm-V4sS7uhVFA8RtJ4x4enz_Qz5gZ3WxPLW0mgCN5QwOyR9YIdhd9eaLmM5O0ysDUkVqKvCTBQbclqDTurZEZlmc9MMY0WvCA2gApfalLCzSnU4kzVvRppEa6qpAmhQPvvwSK48e1P52tAnq2gQtTwBd2kRuk1YE1fkOSJMtqdZXKlJAT0CT"/>
       </div>
       <div class="lg:w-1/2">
-        <h4 class="text-saffron font-bold uppercase tracking-widest text-sm mb-2 font-display">Mi Filosofía</h4>
-        <h2 class="text-4xl sm:text-5xl font-display font-bold uppercase text-white mb-6">
-          FÍSICO DE ALTO IMPACTO
+        <h4 class="text-saffron font-bold uppercase tracking-widest text-xs mb-3 font-display">MI FILOSOFÍA</h4>
+        <h2 class="text-4xl sm:text-5xl lg:text-5xl font-display font-bold uppercase text-white mb-8 border-b border-shadow-grey pb-8">
+          FUERZA + ESTÉTICA
         </h2>
-        <div class="prose prose-lg text-gray-300 font-body">
-          <p class="mb-4">
-            Pasé años corriendo y perdiendo el tiempo con entrenamientos funcionales que no construían nada. Me di cuenta de que para transformar tu cuerpo, necesitas priorizar la fuerza y la hipertrofia.
+        <div class="prose prose-lg text-gray-300 font-body text-[15px] leading-relaxed">
+          <p class="mb-5">
+            Durante años, vi personas fuertes pero sin forma, o estéticas pero débiles. Me negué a aceptar ese compromiso.
           </p>
-          <p class="mb-6">
-            Mi sistema no es para todos. Es para hombres que quieren dejar de verse promedio y empezar a destacar. Entrenamientos intensos, nutrición simple y resultados visibles.
+          <p class="mb-5">
+            Desarrollé un método que fusiona el powerlifting con el culturismo de alta frecuencia. El resultado es un físico que no solo impone presencia, sino que rinde al máximo nivel. No entrenamos para "participar", entrenamos para dominar.
           </p>
         </div>
-        <button class="bg-transparent border-2 border-white text-white font-display font-bold uppercase px-8 py-3 hover:bg-white hover:text-black transition-colors mt-4">
-          CONOCE EL SISTEMA
+        <button class="bg-transparent border border-white text-white font-display font-bold uppercase px-8 py-3 hover:bg-white hover:text-black transition-colors mt-6 text-sm">
+          CONOCE MI MÉTODO
         </button>
       </div>
     </div>
@@ -159,93 +163,87 @@
 </section>
 
 <%# App/Coach Section %>
-<section class="py-20 bg-shadow-grey border-t border-shadow-grey">
+<section class="py-24 bg-shadow-grey">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col-reverse lg:flex-row items-center gap-16">
-      <div class="lg:w-1/2 space-y-12">
+    <div class="flex flex-col-reverse lg:flex-row justify-between items-center gap-16">
+      <div class="lg:w-1/2 space-y-8">
         <div>
-          <h2 class="text-4xl sm:text-5xl font-display font-bold uppercase text-white mb-6">
-            TU ENTRENADOR <br/><span class="text-saffron">EN TU BOLSILLO</span>
+          <h2 class="text-4xl sm:text-5xl lg:text-[2.75rem] leading-tight font-display font-bold uppercase text-white mb-2">
+            COMIENZA CON <br/><span class="text-saffron">MI APP DE<br/>ENTRENAMIENTO</span>
           </h2>
-          <p class="text-gray-300 text-lg font-body">
-            Accede a nuestra aplicación exclusiva. Planificación, registro de progresos y feedback directo. todo optimizado para tu transformación.
-          </p>
         </div>
-        <div class="flex gap-4">
-          <div class="flex-shrink-0 mt-1">
-            <div class="w-10 h-10 rounded-full bg-saffron flex items-center justify-center text-black font-bold font-display">1</div>
-          </div>
-          <div>
-            <h4 class="text-xl font-display font-bold uppercase text-saffron">Rutinas de Hipertrofia</h4>
-            <p class="text-gray-400 font-body">Planes de entrenamiento detallados, con videos y registro de cargas para asegurar la sobrecarga progresiva.</p>
-          </div>
+
+        <div>
+           <h4 class="text-sm font-display font-bold uppercase tracking-widest text-gray-300 mb-6 border-b border-gray-700 pb-2 inline-block">PROGRAMAS DE FUERZA Y ESTÉTICA</h4>
+           <p class="text-gray-400 text-[15px] font-body leading-relaxed mb-8">
+             He volcado toda mi experiencia en powerlifting y culturismo en esta aplicación. Accede a las rutinas exactas de hipertrofia y los ciclos de fuerza que utilizo para construir un físico de élite. Sin rellenos, solo entrenamiento efectivo.
+           </p>
+
+           <ul class="space-y-4 font-body text-[15px] text-gray-300 mb-10">
+             <li class="flex items-center gap-3">
+               <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
+               Periodización para ganancias constantes
+             </li>
+             <li class="flex items-center gap-3">
+               <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
+               Técnica y ejecución detallada
+             </li>
+             <li class="flex items-center gap-3">
+               <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
+               Seguimiento de progreso real
+             </li>
+           </ul>
         </div>
-        <div class="flex gap-4">
-          <div class="flex-shrink-0 mt-1">
-            <div class="w-10 h-10 rounded-full bg-saffron flex items-center justify-center text-black font-bold font-display">2</div>
-          </div>
-          <div>
-            <h4 class="text-xl font-display font-bold uppercase text-saffron">Control Nutricional</h4>
-            <p class="text-gray-400 font-body">Objetivos de calorías y macros ajustados a tu meta: volumen limpio o definición agresiva.</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="flex-shrink-0 mt-1">
-            <div class="w-10 h-10 rounded-full bg-saffron flex items-center justify-center text-black font-bold font-display">3</div>
-          </div>
-          <div>
-            <h4 class="text-xl font-display font-bold uppercase text-saffron">Feedback Semanal</h4>
-            <p class="text-gray-400 font-body">Revisiones de técnica y ajustes de programa basados en tus fotos y medidas.</p>
-          </div>
-        </div>
-        <%= link_to "OBTENER ACCESO A LA APP", new_user_registration_path, class: "inline-block bg-saffron text-black font-display font-bold uppercase px-8 py-4 text-lg hover:bg-yellow-400 transition-colors shadow-lg" %>
+
+        <%= link_to "EMPEZAR ENTRENAMIENTO", new_user_registration_path, class: "inline-block bg-saffron text-black font-display font-bold uppercase px-8 py-4 hover:bg-yellow-400 transition-colors shadow-lg" %>
       </div>
-      <div class="lg:w-1/2 relative">
-        <div class="absolute inset-0 bg-gradient-to-r from-saffron/20 to-transparent rounded-full filter blur-3xl opacity-50"></div>
-        <%= image_tag("app.jpg", alt: "Fitness App Interface on Phone", class: "relative z-10 w-full max-w-sm mx-auto drop-shadow-2xl rounded-3xl border-8 border-graphite")%>
+      <div class="lg:w-5/12 relative flex justify-center lg:justify-end">
+        <%= image_tag("app.jpg", alt: "Fitness App Interface on Phone", class: "relative z-10 w-full max-w-[320px] mx-auto lg:mx-0 drop-shadow-2xl rounded-[2.5rem] shadow-saffron/10 shadow-3xl")%>
       </div>
     </div>
   </div>
 </section>
 
 <%# FAQ Section %>
-<section class="py-20 bg-black">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-4xl font-display font-bold uppercase text-center mb-12 text-white">
+<section class="py-24 bg-black">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl sm:text-4xl font-display font-bold uppercase text-center mb-12 text-white">
       PREGUNTAS <span class="text-saffron">FRECUENTES</span>
     </h2>
     <div class="space-y-4 font-body">
-      <details class="group bg-graphite p-6 rounded-lg cursor-pointer border border-shadow-grey">
-        <summary class="flex justify-between items-center font-bold text-lg text-white list-none">
-          <span>¿Tengo que hacer cardio?</span>
+      <details class="group bg-shadow-grey px-6 py-5 rounded-md cursor-pointer marker:content-['']">
+        <summary class="flex justify-between items-center font-bold text-gray-200">
+          <span>¿Es este programa para principiantes?</span>
           <span class="transition group-open:rotate-180 text-saffron">
-            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+            <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
           </span>
         </summary>
-        <p class="text-gray-400 mt-3 group-open:animate-fadeIn">
-          Solo como herramienta para mejorar tu salud o aumentar el gasto calórico if necesario. Nuestro enfoque principal es levantar pesas para construir músculo. El cardio es secundario.
+        <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
+          Sí. El programa adapta el volumen e intensidad a tu nivel actual. Sin embargo, requiere compromiso y constancia desde el primer día.
         </p>
       </details>
-      <details class="group bg-graphite p-6 rounded-lg cursor-pointer border border-shadow-grey">
-        <summary class="flex justify-between items-center font-bold text-lg text-white list-none">
-          <span>¿Cuánto duran los entrenamientos?</span>
+
+      <details class="group bg-shadow-grey px-6 py-5 rounded-md cursor-pointer marker:content-['']">
+        <summary class="flex justify-between items-center font-bold text-gray-200">
+          <span>¿Cuánto tiempo necesito entrenar al día?</span>
           <span class="transition group-open:rotate-180 text-saffron">
-            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+            <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
           </span>
         </summary>
-        <p class="text-gray-400 mt-3 group-open:animate-fadeIn">
-          Entre 60 y 75 minutos. Nos centramos en calidad, no cantidad. Series efectivas, descansos adecuados y máxima intensidad.
+        <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
+          Entre 60 y 75 minutos. Nos centramos en calidad, no cantidad. Series efectivas, descansos adecuados y máxima intensidad en sesiones de 3 a 5 días por semana según el plan.
         </p>
       </details>
-      <details class="group bg-graphite p-6 rounded-lg cursor-pointer border border-shadow-grey">
-        <summary class="flex justify-between items-center font-bold text-lg text-white list-none">
-          <span>¿Puedo entrenar en casa?</span>
+
+      <details class="group bg-shadow-grey px-6 py-5 rounded-md cursor-pointer marker:content-['']">
+        <summary class="flex justify-between items-center font-bold text-gray-200">
+          <span>¿Necesito suplementos obligatorios?</span>
           <span class="transition group-open:rotate-180 text-saffron">
-            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+            <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
           </span>
         </summary>
-        <p class="text-gray-400 mt-3 group-open:animate-fadeIn">
-          Si tienes equipamiento básico (mancuernas pesadas, banco, barra), sí. Pero para maximizar la estética, recomendamos acceso a un gimnasio comercial para mayor variedad de estímulos.
+        <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
+          No. Los suplementos son opcionales y solo para cubrir déficits. La base del éxito físico radica en un entrenamiento brutal, buena recuperación y nutrición adecuada basada en comida real.
         </p>
       </details>
     </div>
@@ -255,36 +253,38 @@
 <%# Footer CTA %>
 <section class="py-24 bg-saffron text-center">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-4xl sm:text-6xl font-display font-bold uppercase mb-6 text-black">
+    <h2 class="text-4xl sm:text-6xl lg:text-[4rem] font-display font-bold uppercase mb-6 text-black tracking-tight">
       NO ESPERES AL LUNES
     </h2>
-    <p class="text-xl sm:text-2xl text-black/80 font-medium mb-10 max-w-2xl mx-auto font-body">
-      Tu mejor versión te está esperando al otro lado del dolor y la disciplina.
+    <p class="text-lg sm:text-xl text-black font-medium mb-10 max-w-xl mx-auto font-body">
+      El físico que deseas está al otro lado del dolor y la disciplina. Empieza hoy.
     </p>
-    <%= link_to "INICIA TU TRANSFORMACIÓN", new_user_registration_path, class: "inline-block bg-black text-white font-display font-bold uppercase px-12 py-5 text-xl hover:bg-gray-800 transition-transform hover:scale-105 shadow-2xl" %>
+    <%= link_to "EMPIEZA TU CAMBIO", new_user_registration_path, class: "inline-block bg-black text-white font-display font-bold uppercase px-10 py-4 text-center hover:bg-gray-900 transition-colors shadow-lg" %>
   </div>
 </section>
 
 <%# Footer %>
-<footer class="bg-black text-white py-12 border-t border-shadow-grey">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
-    <div class="mb-6 md:mb-0">
-      <span class="font-display font-bold text-2xl uppercase tracking-tighter">RADO<span class="text-saffron">TEENTRENA</span></span>
-      <p class="text-gray-500 text-sm mt-2 font-body">© 2023 Rado Te Entrena. Todos los derechos reservados.</p>
+<footer class="bg-black text-white py-14 border-t border-shadow-grey">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="text-center md:text-left">
+      <span class="font-display font-bold text-xl uppercase tracking-tighter">RADO<span class="text-saffron">TEENTRENA</span></span>
+      <p class="text-gray-500 text-xs mt-3 font-body">© 2026 Rado Te Entrena. Todos los derechos reservados.</p>
     </div>
-    <div class="flex space-x-6 text-sm font-medium text-gray-400 font-body">
-      <a class="hover:text-saffron transition-colors" href="#">Términos</a>
-      <a class="hover:text-saffron transition-colors" href="#">Privacidad</a>
-      <a class="hover:text-saffron transition-colors" href="#">Contacto</a>
+
+    <div class="flex space-x-6 text-xs font-medium text-gray-400 font-body">
+      <a class="hover:text-white transition-colors" href="#">Términos</a>
+      <a class="hover:text-white transition-colors" href="#">Privacidad</a>
+      <a class="hover:text-white transition-colors" href="#">Contacto</a>
     </div>
-    <div class="flex space-x-4 mt-6 md:mt-0">
-      <a class="text-gray-400 hover:text-saffron transition-colors" href="#">
+
+    <div class="flex space-x-4">
+      <a class="text-gray-400 hover:text-white transition-colors" href="#">
         <span class="sr-only">Instagram</span>
-        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.468 2.53c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" fill-rule="evenodd"></path></svg>
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
       </a>
-      <a class="text-gray-400 hover:text-saffron transition-colors" href="#">
+      <a class="text-gray-400 hover:text-white transition-colors" href="#">
         <span class="sr-only">Twitter</span>
-        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
       </a>
     </div>
   </div>
