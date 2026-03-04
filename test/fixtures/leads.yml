@@ -1,0 +1,51 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  last_name: MyString
+  gender: MyString
+  age: 1
+  weight: MyString
+  height: MyString
+  email: MyString
+  phone: MyString
+  instagram: MyString
+  goals: 
+  experience_level: 1
+  best_lifts: MyText
+  commitment_level: MyString
+  training_frequency: MyString
+  injuries: MyText
+  plays_sports: MyString
+  sport_details: MyString
+  time_per_session: MyString
+  diet_quality: MyString
+  activity_level: MyString
+  sleep_hours: MyString
+  social_media_consent: MyString
+  referral_source: MyString
+
+two:
+  name: MyString
+  last_name: MyString
+  gender: MyString
+  age: 1
+  weight: MyString
+  height: MyString
+  email: MyString
+  phone: MyString
+  instagram: MyString
+  goals: 
+  experience_level: 1
+  best_lifts: MyText
+  commitment_level: MyString
+  training_frequency: MyString
+  injuries: MyText
+  plays_sports: MyString
+  sport_details: MyString
+  time_per_session: MyString
+  diet_quality: MyString
+  activity_level: MyString
+  sleep_hours: MyString
+  social_media_consent: MyString
+  referral_source: MyString

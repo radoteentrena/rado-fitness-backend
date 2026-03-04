@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  resources :leads, only: [:new, :create] do
+    collection do
+      get :success
+    end
+  end
+
   namespace :admin do
       resources :coach_alerts
       resources :coach_alerts

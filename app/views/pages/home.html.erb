@@ -13,7 +13,7 @@
           <%= button_to "CERRAR SESIÓN", destroy_user_session_path, method: :delete, class: "bg-saffron text-black font-display font-bold uppercase px-4 py-2 text-sm hover:bg-yellow-400 transition-colors" %>
         <% else %>
             <%= link_to "LOG IN", new_user_session_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors mr-4" %>
-            <%= link_to "COMIENZA", new_user_registration_path, class: "bg-saffron text-black font-display font-bold uppercase px-6 py-2 text-sm hover:bg-yellow-400 transition-colors" %>
+            <%= link_to "COMIENZA", new_lead_path, class: "inline-flex justify-center border-2 border-saffron bg-saffron py-3 px-8 text-sm font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
         <% end %>
       </nav>
     </div>
@@ -61,7 +61,7 @@
           <%= f.select :goal, options_for_select([["Tu Objetivo Principal", "", {disabled: true, selected: true}], ["Ganar Músculo", "hypertrophy"], ["Definición", "cutting"], ["Fuerza", "strength"]]), {}, class: "block w-full bg-graphite/50 border border-gray-600 rounded text-gray-400 focus:ring-1 focus:ring-saffron focus:border-saffron sm:text-sm px-4 py-3 appearance-none" %>
         </div>
         <div class="pt-2">
-            <%= f.submit "EMPIEZA TU CAMBIO", class: "w-full bg-saffron text-black font-display font-bold uppercase text-lg px-4 py-4 hover:bg-yellow-400 transition-colors shadow-md cursor-pointer" %>
+            <%= f.submit "EMPIEZA TU CAMBIO", class: "w-full cursor-pointer inline-flex justify-center border-2 border-saffron bg-saffron py-4 px-4 text-lg font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
         </div>
         <p class="text-xs text-center text-gray-500 mt-4 font-body">Respetamos tu privacidad. Sin spam.</p>
       <% end %>
@@ -154,7 +154,7 @@
             Desarrollé un método que fusiona el powerlifting con el culturismo de alta frecuencia. El resultado es un físico que no solo impone presencia, sino que rinde al máximo nivel. No entrenamos para "participar", entrenamos para dominar.
           </p>
         </div>
-        <button class="bg-transparent border border-white text-white font-display font-bold uppercase px-8 py-3 hover:bg-white hover:text-black transition-colors mt-6 text-sm">
+        <button class="inline-flex justify-center border-2 border-white bg-transparent py-4 px-10 text-sm font-black uppercase tracking-widest text-white transition-all hover:bg-white hover:text-black focus:outline-none focus:ring-0 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none mt-6">
           CONOCE MI MÉTODO
         </button>
       </div>
@@ -195,7 +195,7 @@
            </ul>
         </div>
 
-        <%= link_to "EMPEZAR ENTRENAMIENTO", new_user_registration_path, class: "inline-block bg-saffron text-black font-display font-bold uppercase px-8 py-4 hover:bg-yellow-400 transition-colors shadow-lg" %>
+            <%= link_to "COMIENZA", new_lead_path, class: "inline-flex justify-center border-2 border-saffron bg-saffron py-4 px-12 text-lg font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
       </div>
       <div class="lg:w-5/12 relative flex justify-center lg:justify-end">
         <%= image_tag("app.jpg", alt: "Fitness App Interface on Phone", class: "relative z-10 w-full max-w-[320px] mx-auto lg:mx-0 drop-shadow-2xl rounded-[2.5rem] shadow-saffron/10 shadow-3xl")%>
@@ -259,7 +259,7 @@
     <p class="text-lg sm:text-xl text-black font-medium mb-10 max-w-xl mx-auto font-body">
       El físico que deseas está al otro lado del dolor y la disciplina. Empieza hoy.
     </p>
-    <%= link_to "EMPIEZA TU CAMBIO", new_user_registration_path, class: "inline-block bg-black text-white font-display font-bold uppercase px-10 py-4 text-center hover:bg-gray-900 transition-colors shadow-lg" %>
+      <%= link_to "COMIENZA", new_lead_path, class: "inline-flex justify-center border-2 border-black bg-black py-4 px-12 text-lg font-black uppercase tracking-widest text-white transition-all hover:bg-gray-900 focus:outline-none focus:ring-0 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_#000000] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
   </div>
 </section>
 
