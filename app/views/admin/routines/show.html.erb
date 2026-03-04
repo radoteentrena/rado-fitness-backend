@@ -3,7 +3,7 @@
   <div class="mb-8 p-6 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-xl shadow-md">
     <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
       <div>
-        <h1 class="text-3xl font-bold text-blackish dark:text-whiteish mb-2"><%= @routine.name %></h1>
+        <h1 class="text-3xl font-bold tracking-tight text-blackish dark:text-whiteish mb-2"><%= @routine.name %></h1>
         <p class="text-lg text-graphite dark:text-muted mb-4 max-w-2xl"><%= @routine.description %></p>
 
         <div class="flex flex-wrap items-center gap-4 text-sm">
@@ -12,7 +12,7 @@
              Duration: <%= @routine.duration_weeks || 4 %> Weeks
            </span>
            <% if @routine.is_template? %>
-             <span class="px-3 py-1 rounded-full bg-secondary/10 text-secondary font-medium flex items-center gap-1">
+             <span class="px-3 py-1 rounded-full bg-graphite/10 text-graphite dark:bg-muted/10 dark:text-muted font-medium flex items-center gap-1">
                <span class="material-symbols-outlined text-sm">content_copy</span>
                Template
              </span>
@@ -39,7 +39,7 @@
             <div class="mb-8 p-6 bg-background-light dark:bg-blackish border border-shadow dark:border-graphite rounded-xl">
                <div class="flex items-center justify-between mb-6 border-b border-shadow dark:border-graphite pb-4">
                  <div>
-                   <h2 class="text-2xl font-black font-display uppercase tracking-tight text-blackish dark:text-whiteish"><%= workout.name %></h2>
+                   <h2 class="text-2xl font-black uppercase tracking-tight text-blackish dark:text-whiteish"><%= workout.name %></h2>
                    <% if workout.description.present? %>
                      <p class="text-graphite dark:text-muted mt-1 max-w-xl"><%= workout.description %></p>
                    <% end %>
@@ -95,7 +95,7 @@
         <!-- Progress Card -->
          <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm p-6 border border-shadow dark:border-graphite">
            <h3 class="font-bold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
-             <span class="material-symbols-outlined text-secondary">trending_up</span>
+             <span class="material-symbols-outlined text-primary">trending_up</span>
              Phase Focus
            </h3>
 

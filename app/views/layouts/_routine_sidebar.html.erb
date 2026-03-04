@@ -1,15 +1,8 @@
 <div class="py-4 overflow-y-auto">
     <div class="mb-6 px-2">
-      <% if routine.phases.any? && routine.phases.first.program %>
-        <%= link_to admin_program_builder_path(routine.phases.first.program), data: { turbo: false }, class: "flex items-center text-graphite hover:text-primary mb-4 transition-colors" do %>
-          <span class="material-symbols-outlined mr-2 text-sm">arrow_back</span>
-          <span class="text-xs uppercase tracking-wider font-bold">Back to Program</span>
-        <% end %>
-      <% else %>
-        <%= link_to admin_routines_path, data: { turbo: false }, class: "flex items-center text-graphite hover:text-primary mb-4 transition-colors" do %>
-          <span class="material-symbols-outlined mr-2 text-sm">arrow_back</span>
-          <span class="text-xs uppercase tracking-wider font-bold">Back to Routines</span>
-        <% end %>
+      <%= link_to "javascript:history.back()", data: { turbo: false }, class: "flex items-center text-graphite hover:text-primary mb-4 transition-colors" do %>
+        <span class="material-symbols-outlined mr-2 text-sm">arrow_back</span>
+        <span class="text-xs uppercase tracking-wider font-bold">Back</span>
       <% end %>
 
       <h2 class="text-lg font-bold text-blackish dark:text-whiteish leading-tight">
