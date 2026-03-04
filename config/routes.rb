@@ -1,15 +1,34 @@
 Rails.application.routes.draw do
   namespace :admin do
       resources :coach_alerts
-      resources :coach_alerts
       resources :dietary_plans
       resources :exercises
-      resources :programs
-      resources :routines
-
+      resources :phases, except:  [ :index ]
+      resources :programs do
+        resource :builder, only: [ :show ], controller: "program_builders"
+        member do
+          post :sync_sheet
+        end
+      end
+      resources :routines do
+        resources :workouts, only: [ :new, :create ]
+      end
+      resources :phase_routines, except: [ :index, :show ]
+      resources :workouts, except: [ :index, :new, :create ]
+      resources :workout_exercises, only: [ :edit, :update ]
       resources :users
-      resources :assignments, only: [:new, :create]
-      resources :daily_metrics, only: [:show]
+      resources :user_dietary_plans, except: [ :index, :show ]
+      resources :assignments, only: [ :new, :create ]
+      resources :daily_metrics, only: [ :show ]
+      resources :messages
+      resources :progress_photos, except: [ :index ]
+      resources :program_executions, except: [ :index ]
+      resources :exercise_logs, except: [ :index ]
+
+      get  "ai_coach",          to: "ai_coach#new",      as: :new_ai_coach
+      post "ai_coach/generate", to: "ai_coach#generate", as: :generate_ai_coach
+      post "ai_coach/refine",   to: "ai_coach#refine",   as: :refine_ai_coach
+      post "ai_coach/approve",  to: "ai_coach#approve",  as: :approve_ai_coach
 
       root to: "dashboard#index"
       get "dashboard", to: "dashboard#index"
@@ -23,6 +42,20 @@ Rails.application.routes.draw do
   namespace :webhooks do
     post "whatsapp/incoming", to: "whatsapp#incoming"
   end
+
+  namespace :api do
+    namespace :v1 do
+      get "sync", to: "sync#index"
+
+      resources :exercises, only: [ :index ]
+      resources :messages, only: [ :index, :create ]
+      resources :daily_metrics, only: [ :create ]
+      resources :progress_photos, only: [ :create ]
+      resources :program_executions, only: [ :create ]
+    end
+  end
+
+
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

@@ -13,13 +13,14 @@ class UserDietaryPlanDashboard < Administrate::BaseDashboard
     calories_target: Field::Number,
     daily_metrics: Field::HasMany,
     dietary_plan: Field::BelongsTo,
+    phase: Field::BelongsTo,
     end_date: Field::Date,
     notes: Field::Text,
     protein_target: Field::Number,
     start_date: Field::Date,
     user: Field::BelongsTo,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -31,6 +32,7 @@ class UserDietaryPlanDashboard < Administrate::BaseDashboard
     id
     active
     calories_target
+    phase
     daily_metrics
   ].freeze
 
@@ -41,6 +43,7 @@ class UserDietaryPlanDashboard < Administrate::BaseDashboard
     active
     calories_target
     daily_metrics
+    phase
     dietary_plan
     end_date
     notes
@@ -58,6 +61,7 @@ class UserDietaryPlanDashboard < Administrate::BaseDashboard
     active
     calories_target
     daily_metrics
+    phase
     dietary_plan
     end_date
     notes

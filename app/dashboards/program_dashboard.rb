@@ -13,10 +13,10 @@ class ProgramDashboard < Administrate::BaseDashboard
     duration_weeks: Field::Number,
     google_sheet_link: Field::String,
     name: Field::String,
-    routines: Field::HasMany,
+    phases: Field::HasMany,
     user: Field::BelongsTo,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -26,8 +26,9 @@ class ProgramDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
     id
-    description
+    name
     duration_weeks
+    user
     google_sheet_link
   ].freeze
 
@@ -39,7 +40,7 @@ class ProgramDashboard < Administrate::BaseDashboard
     duration_weeks
     google_sheet_link
     name
-    routines
+    phases
     user
     created_at
     updated_at
@@ -53,7 +54,7 @@ class ProgramDashboard < Administrate::BaseDashboard
     duration_weeks
     google_sheet_link
     name
-    routines
+    phases
     user
   ].freeze
 

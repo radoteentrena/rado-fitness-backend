@@ -14,11 +14,11 @@ class RoutineDashboard < Administrate::BaseDashboard
     exercises: Field::HasMany,
     is_template: Field::Boolean,
     name: Field::String,
-    program: Field::BelongsTo,
+    phases: Field::HasMany,
 
     user: Field::BelongsTo,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -28,9 +28,8 @@ class RoutineDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = %i[
     id
-    description
+    name
     duration_weeks
-    exercises
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -42,7 +41,7 @@ class RoutineDashboard < Administrate::BaseDashboard
     exercises
     is_template
     name
-    program
+    phases
 
     user
     created_at
@@ -58,7 +57,7 @@ class RoutineDashboard < Administrate::BaseDashboard
     exercises
     is_template
     name
-    program
+    phases
 
     user
   ].freeze
