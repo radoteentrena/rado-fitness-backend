@@ -72,11 +72,11 @@
                      <%= f.text_field :intensity_technique, class: "w-full bg-background dark:bg-graphite/50 border border-primary/30 rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
                   </div>
                   <div>
-                     <%= f.label :sub_option_one, "Sub Option 1", class: "block text-xs uppercase tracking-wider text-secondary mb-1 font-bold" %>
+                     <%= f.label :sub_option_one, "Sub Option 1", class: "block text-xs uppercase tracking-wider text-graphite dark:text-muted mb-1 font-bold" %>
                      <%= f.select :sub_option_one, options_for_select(Exercise.order(:name).pluck(:name, :name), workout_exercise.sub_option_one), { include_blank: "Select Exercise..." }, class: "w-full bg-background dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
                   </div>
                    <div>
-                     <%= f.label :sub_option_two, "Sub Option 2", class: "block text-xs uppercase tracking-wider text-secondary mb-1 font-bold" %>
+                     <%= f.label :sub_option_two, "Sub Option 2", class: "block text-xs uppercase tracking-wider text-graphite dark:text-muted mb-1 font-bold" %>
                      <%= f.select :sub_option_two, options_for_select(Exercise.order(:name).pluck(:name, :name), workout_exercise.sub_option_two), { include_blank: "Select Exercise..." }, class: "w-full bg-background dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
                   </div>
                </div>

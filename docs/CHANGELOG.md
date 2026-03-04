@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Fixed
+- **UI:** Resolved font-display fallback by importing the `Inter` font in application layouts.
+- **Admin UI:** Fixed horizontal overflow on "Load" text fields by applying appropriate min-width and block display constraints.
+- **Admin UI:** Updated routine sidebar back button behavior to track browser history.
+- **Admin UI:** Corrected badge and icon styling on Routine Show and Edit pages by mapping missing colors to the primary palette.
+
+### Fixed
 - **AI Coach:** Resolved viewport freezing on routine generation by appending a `scrollIntoView` hook.
 - **AI Coach:** Fixed "Content Missing" error on routine save by mapping the submission form to the `_top` Turbo frame.
 - **AI Coach:** Corrected `load` parsing from Gemini and mapping to Database, replacing the default "Bodyweight" fallback.
