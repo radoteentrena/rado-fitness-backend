@@ -10,9 +10,82 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_27_165347) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "vector"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "ai_conversations", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "title"
+    t.text "objectives"
+    t.string "status", default: "active"
+    t.jsonb "generated_data"
+    t.bigint "program_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id"], name: "index_ai_conversations_on_program_id"
+    t.index ["user_id"], name: "index_ai_conversations_on_user_id"
+  end
+
+  create_table "ai_messages", force: :cascade do |t|
+    t.bigint "ai_conversation_id", null: false
+    t.string "role", null: false
+    t.text "content", null: false
+    t.jsonb "structured_data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ai_conversation_id"], name: "index_ai_messages_on_ai_conversation_id"
+  end
+
+  create_table "book_chunks", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.text "content", null: false
+    t.integer "page_number"
+    t.integer "chunk_index"
+    t.vector "embedding", limit: 768
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_book_chunks_on_book_id"
+    t.index ["embedding"], name: "index_book_chunks_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
+  end
+
+  create_table "books", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "author"
+    t.string "file_path"
+    t.integer "chunks_count", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "coach_alerts", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -54,6 +127,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.text "notes"
   end
 
+  create_table "exercise_logs", force: :cascade do |t|
+    t.bigint "program_execution_id", null: false
+    t.bigint "workout_exercise_id", null: false
+    t.jsonb "actual_sets"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_execution_id"], name: "index_exercise_logs_on_program_execution_id"
+    t.index ["workout_exercise_id"], name: "index_exercise_logs_on_workout_exercise_id"
+  end
+
   create_table "exercises", force: :cascade do |t|
     t.string "name"
     t.string "video_link"
@@ -61,6 +144,47 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "sender_type"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "phase_routines", force: :cascade do |t|
+    t.bigint "phase_id", null: false
+    t.bigint "routine_id", null: false
+    t.integer "order_index"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phase_id"], name: "index_phase_routines_on_phase_id"
+    t.index ["routine_id"], name: "index_phase_routines_on_routine_id"
+  end
+
+  create_table "phases", force: :cascade do |t|
+    t.bigint "program_id", null: false
+    t.string "name"
+    t.text "description"
+    t.integer "order_index"
+    t.integer "duration_weeks"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["program_id"], name: "index_phases_on_program_id"
+  end
+
+  create_table "program_executions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "completed_at"
+    t.integer "duration_minutes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "workout_id", null: false
+    t.index ["user_id"], name: "index_program_executions_on_user_id"
+    t.index ["workout_id"], name: "index_program_executions_on_workout_id"
   end
 
   create_table "programs", force: :cascade do |t|
@@ -71,27 +195,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "google_sheet_link"
+    t.datetime "last_synced_at"
     t.index ["user_id"], name: "index_programs_on_user_id"
   end
 
-  create_table "routine_exercises", force: :cascade do |t|
-    t.bigint "routine_id", null: false
-    t.bigint "exercise_id", null: false
-    t.integer "sets"
-    t.string "reps"
-    t.string "rir"
-    t.integer "rest_seconds"
-    t.integer "order_index"
+  create_table "progress_photos", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "note"
+    t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "day_number"
-    t.string "day_name"
-    t.boolean "warmup"
-    t.string "load"
-    t.integer "sub_option"
-    t.text "instructions"
-    t.index ["exercise_id"], name: "index_routine_exercises_on_exercise_id"
-    t.index ["routine_id"], name: "index_routine_exercises_on_routine_id"
+    t.index ["user_id"], name: "index_progress_photos_on_user_id"
   end
 
   create_table "routines", force: :cascade do |t|
@@ -101,9 +215,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.boolean "is_template", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "program_id"
     t.integer "duration_weeks"
-    t.index ["program_id"], name: "index_routines_on_program_id"
     t.index ["user_id"], name: "index_routines_on_user_id"
   end
 
@@ -118,7 +230,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.date "start_date"
     t.date "end_date"
     t.boolean "active", default: true
+    t.bigint "phase_id"
     t.index ["dietary_plan_id"], name: "index_user_dietary_plans_on_dietary_plan_id"
+    t.index ["phase_id"], name: "index_user_dietary_plans_on_phase_id"
     t.index ["user_id"], name: "index_user_dietary_plans_on_user_id"
   end
 
@@ -139,19 +253,69 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_10_211047) do
     t.integer "category"
     t.integer "workout_compliance_score"
     t.integer "diet_adherence_score"
+    t.string "auth_token"
+    t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "workout_exercises", force: :cascade do |t|
+    t.bigint "exercise_id", null: false
+    t.integer "sets"
+    t.string "reps"
+    t.integer "rest_seconds"
+    t.integer "order_index"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "load"
+    t.string "warmup_sets"
+    t.string "early_rpe"
+    t.string "last_rpe"
+    t.string "time_estimate"
+    t.string "intensity_technique"
+    t.string "sub_option_one"
+    t.string "sub_option_two"
+    t.bigint "workout_id", null: false
+    t.index ["exercise_id"], name: "index_workout_exercises_on_exercise_id"
+    t.index ["workout_id"], name: "index_workout_exercises_on_workout_id"
+  end
+
+  create_table "workouts", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.integer "day_number"
+    t.integer "order_index"
+    t.bigint "routine_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["routine_id"], name: "index_workouts_on_routine_id"
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "ai_conversations", "programs"
+  add_foreign_key "ai_conversations", "users"
+  add_foreign_key "ai_messages", "ai_conversations"
+  add_foreign_key "book_chunks", "books"
   add_foreign_key "coach_alerts", "users"
   add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
+  add_foreign_key "exercise_logs", "program_executions"
+  add_foreign_key "exercise_logs", "workout_exercises"
+  add_foreign_key "messages", "users"
+  add_foreign_key "phase_routines", "phases"
+  add_foreign_key "phase_routines", "routines"
+  add_foreign_key "phases", "programs"
+  add_foreign_key "program_executions", "users"
+  add_foreign_key "program_executions", "workouts"
   add_foreign_key "programs", "users"
-  add_foreign_key "routine_exercises", "exercises"
-  add_foreign_key "routine_exercises", "routines"
-  add_foreign_key "routines", "programs"
+  add_foreign_key "progress_photos", "users"
   add_foreign_key "routines", "users"
   add_foreign_key "user_dietary_plans", "dietary_plans"
+  add_foreign_key "user_dietary_plans", "phases"
   add_foreign_key "user_dietary_plans", "users"
+  add_foreign_key "workout_exercises", "exercises"
+  add_foreign_key "workout_exercises", "workouts"
+  add_foreign_key "workouts", "routines"
 end

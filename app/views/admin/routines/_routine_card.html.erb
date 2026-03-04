@@ -1,0 +1,35 @@
+<%# app/views/admin/routines/_routine_card.html.erb %>
+
+<%= turbo_frame_tag dom_id(routine) do %>
+  <div class="group relative flex items-center justify-between p-3 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-lg shadow-xs hover:border-primary/50 dark:hover:border-primary/50 transition-colors mb-2">
+    <div class="flex items-center space-x-3 w-full min-w-0">
+      <div class="flex-shrink-0 w-8 h-8 rounded bg-background-light dark:bg-blackish flex items-center justify-center text-graphite dark:text-muted">
+        <span class="material-symbols-outlined text-sm">fitness_center</span>
+      </div>
+      <div class="flex-1 min-w-0 pr-4">
+        <p class="text-sm font-medium text-blackish dark:text-whiteish truncate">
+          <%= link_to routine.name.presence || "Routine ##{routine.id}", admin_routine_path(routine), data: { turbo: false }, class: "hover:text-primary transition-colors focus:outline-none focus:underline" %>
+        </p>
+        <p class="text-xs text-graphite dark:text-muted truncate mt-0.5">
+          <%= routine.duration_weeks || 0 %> Weeks
+          <% if routine.is_template %>
+            <span class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/20 text-primary">Template</span>
+          <% end %>
+        </p>
+      </div>
+    </div>
+
+    <%# Action Menu (Hidden by default, visible on hover) %>
+    <div class="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1 bg-whiteish dark:bg-shadow pl-2">
+      <%= link_to admin_routine_path(routine), data: { turbo: false }, class: "text-graphite hover:text-primary dark:text-muted dark:hover:text-primary p-1 rounded hover:bg-background-light dark:hover:bg-blackish", title: "View Routine" do %>
+        <span class="material-symbols-outlined text-sm">visibility</span>
+      <% end %>
+      <%= link_to edit_admin_routine_path(routine), data: { turbo_frame: "modal_frame" }, class: "text-graphite hover:text-primary dark:text-muted dark:hover:text-primary p-1 rounded hover:bg-background-light dark:hover:bg-blackish", title: "Edit Routine" do %>
+        <span class="material-symbols-outlined text-sm">edit</span>
+      <% end %>
+      <%= button_to admin_routine_path(routine), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this routine?" }, class: "text-graphite hover:text-red-600 dark:text-muted dark:hover:text-red-400 p-1 rounded hover:bg-background-light dark:hover:bg-blackish cursor-pointer", title: "Delete Routine" do %>
+        <span class="material-symbols-outlined text-sm">delete</span>
+      <% end %>
+    </div>
+  </div>
+<% end %>

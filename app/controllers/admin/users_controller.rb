@@ -7,12 +7,18 @@ module Admin
       if resource.save
         respond_to do |format|
           format.html { redirect_to(
-            [namespace, resource],
+            [ namespace, resource ],
             notice: translate_with_resource("create.success"),
           ) }
           format.turbo_stream {
+             collection_page = Administrate::Page::Collection.new(dashboard, order: order)
              render turbo_stream: [
-               turbo_stream.replace("users_collection", partial: "collection", locals: { resources: scoped_resource.order(created_at: :desc).page(params[:page]).per(records_per_page) }),
+               turbo_stream.replace("users_collection", partial: "admin/users/collection", locals: {
+                 collection_presenter: collection_page,
+                 collection_field_name: resource_name,
+                 page: collection_page,
+                 resources: scoped_resource.order(created_at: :desc).page(params[:page]).per(records_per_page)
+               }),
                turbo_stream.update("modal_frame", ""),
                turbo_stream.prepend("flash_messages", partial: "admin/application/flash", locals: { message: translate_with_resource("create.success") })
              ]
@@ -20,7 +26,7 @@ module Admin
         end
       else
         render :new, locals: {
-          page: Administrate::Page::Form.new(dashboard, resource),
+          page: Administrate::Page::Form.new(dashboard, resource)
         }, status: :unprocessable_entity
       end
     end
@@ -29,20 +35,26 @@ module Admin
       if requested_resource.update(resource_params)
         respond_to do |format|
           format.html { redirect_to(
-            [namespace, requested_resource],
+            [ namespace, requested_resource ],
             notice: translate_with_resource("update.success"),
           ) }
           format.turbo_stream {
-            render turbo_stream: [
-               turbo_stream.replace("users_collection", partial: "collection", locals: { resources: scoped_resource.order(created_at: :desc).page(params[:page]).per(records_per_page) }),
+             collection_page = Administrate::Page::Collection.new(dashboard, order: order)
+             render turbo_stream: [
+               turbo_stream.replace("users_collection", partial: "admin/users/collection", locals: {
+                 collection_presenter: collection_page,
+                 collection_field_name: resource_name,
+                 page: collection_page,
+                 resources: scoped_resource.order(created_at: :desc).page(params[:page]).per(records_per_page)
+               }),
                turbo_stream.update("modal_frame", ""),
                turbo_stream.prepend("flash_messages", partial: "admin/application/flash", locals: { message: translate_with_resource("update.success") })
-            ]
+             ]
           }
         end
       else
         render :edit, locals: {
-          page: Administrate::Page::Form.new(dashboard, requested_resource),
+          page: Administrate::Page::Form.new(dashboard, requested_resource)
         }, status: :unprocessable_entity
       end
     end
@@ -51,7 +63,7 @@ module Admin
     def index
       authorize_resource(resource_class)
       search_term = params[:search].to_s.strip
-      resources = Administrate::Search.new(scoped_resource, dashboard_class, search_term).run
+      resources = Administrate::Search.new(scoped_resource, dashboard, search_term).run
       resources = apply_collection_includes(resources)
       resources = order.apply(resources)
 
@@ -80,7 +92,7 @@ module Admin
         resources: resources,
         search_term: search_term,
         page: page,
-        show_search_bar: show_search_bar?,
+        show_search_bar: show_search_bar?
       }
     end
 
@@ -92,9 +104,9 @@ module Admin
 
       range = if @view_type == "month"
           @start_date.beginning_of_month..@start_date.end_of_month
-        else
+      else
           @start_date.beginning_of_week..@start_date.end_of_week
-        end
+      end
 
 
       @daily_metrics = requested_resource.daily_metrics.where(date_logged: range).index_by(&:date_logged)
@@ -104,11 +116,10 @@ module Admin
       @weight_trend = requested_resource.weight_trend(days_back)
 
       render locals: {
-        page: Administrate::Page::Show.new(dashboard, requested_resource),
+        page: Administrate::Page::Show.new(dashboard, requested_resource)
       }
     end
 
     private
-
   end
 end

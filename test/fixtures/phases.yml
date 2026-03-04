@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  program: one
+  name: MyString
+  description: MyText
+  order_index: 1
+  duration_weeks: 1
+
+two:
+  program: two
+  name: MyString
+  description: MyText
+  order_index: 1
+  duration_weeks: 1

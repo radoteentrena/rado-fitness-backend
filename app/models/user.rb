@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  has_secure_token :auth_token
+
   include Discard::Model
 
   enum :status, { lead: 0, active: 1, churned: 2, archived: 3 }, default: :lead
@@ -40,6 +42,9 @@ class User < ApplicationRecord
   has_many :programs, dependent: :destroy
   has_many :user_dietary_plans, dependent: :destroy
   has_many :daily_metrics, dependent: :destroy
+  has_many :messages, dependent: :destroy
+  has_many :progress_photos, dependent: :destroy
+  has_many :program_executions, dependent: :destroy
 
   def name
     "#{first_name} #{last_name}"
@@ -51,7 +56,7 @@ class User < ApplicationRecord
     active_routine = programs.last.routines.first
     return 4 unless active_routine
 
-    days_count = active_routine.routine_exercises.distinct.count(:day_number)
+    days_count = active_routine.workouts.count
     days_count.positive? ? days_count : 4
   end
 
@@ -128,7 +133,7 @@ class User < ApplicationRecord
 
     {
       categories: sorted_data.keys.map { |d| d.strftime("%d %b") },
-      series: [{ name: "New Users", data: sorted_data.values }]
+      series: [ { name: "New Users", data: sorted_data.values } ]
     }
   end
 

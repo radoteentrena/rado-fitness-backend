@@ -24,7 +24,14 @@
 </div>
 
 <%# Table Section %>
-<%= render "collection", resources: resources %>
+<%= render(
+  "collection",
+  collection_presenter: page,
+  collection_field_name: resource_name,
+  page: page,
+  resources: resources,
+  table_title: "page-title"
+) %>
 
 <%# Pagination %>
   <div class="p-4">

@@ -3,7 +3,7 @@ class UserAlertJob < ApplicationJob
 
   def perform
     # Focus on 'soldado' or 'civil' users who should be active
-    active_users = User.where(status: :active, category: [:soldado, :civil])
+    active_users = User.where(status: :active, category: [ :soldado, :civil ])
 
     active_users.find_each do |user|
       check_missed_workout(user)
