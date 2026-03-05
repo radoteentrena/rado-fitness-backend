@@ -11,10 +11,13 @@ class User < ApplicationRecord
   enum :category, { pelele: 0, civil: 1, soldado: 2 }
 
   # Validations
-  validates :first_name, presence: true
-  validates :last_name, presence: true
+  validates :first_name, presence: true, length: { maximum: 50 }
+  validates :last_name, presence: true, length: { maximum: 50 }
+  validates :phone, presence: true, format: { with: /\A\+?[\d\s\-()]{7,20}\z/, message: "formato inválido" }
 
   # Scopes
+  scope :leads, -> { where(status: :lead) }
+
   scope :with_workout_compliance, ->(level) {
     case level
     when "high"   then where("workout_compliance_score >= ?", 80)
@@ -36,6 +39,9 @@ class User < ApplicationRecord
   after_create :send_welcome_email
 
   # Associations
+  has_one :onboarding_profile, dependent: :destroy
+  accepts_nested_attributes_for :onboarding_profile
+
   has_many :routines, dependent: :destroy
   has_many :programs, dependent: :destroy
   has_many :user_dietary_plans, dependent: :destroy
@@ -136,6 +142,13 @@ class User < ApplicationRecord
 
   def set_temporary_password
     self.password = SecureRandom.hex(8) if password.blank?
+  end
+
+  def strip_whitespace
+    self.first_name = first_name&.strip
+    self.last_name = last_name&.strip
+    self.phone = phone&.strip
+    self.email = email&.strip&.downcase
   end
 
   def send_welcome_email
