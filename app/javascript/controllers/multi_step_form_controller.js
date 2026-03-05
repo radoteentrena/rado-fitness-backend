@@ -4,14 +4,23 @@ export default class extends Controller {
   static targets = ["step", "progress", "progressBar", "nextButton", "submitButton", "previousButton"]
 
   connect() {
-    this.currentStep = 0
+    this.storageKey = `multi-step-form-${window.location.pathname}`
+    const savedStep = sessionStorage.getItem(this.storageKey)
+    this.currentStep = savedStep ? parseInt(savedStep, 10) : 0
+
+    if (this.currentStep >= this.stepTargets.length) {
+      this.currentStep = 0
+    }
+
     this.showCurrentStep()
   }
 
   next(event) {
     event.preventDefault()
+    if (this.currentStep >= this.stepTargets.length - 1) return
     if (this.validateCurrentStep()) {
       this.currentStep++
+      this.saveStep()
       this.showCurrentStep()
     }
   }
@@ -20,6 +29,7 @@ export default class extends Controller {
     event.preventDefault()
     if (this.currentStep > 0) {
       this.currentStep--
+      this.saveStep()
       this.showCurrentStep()
     }
   }
@@ -59,8 +69,7 @@ export default class extends Controller {
     }
 
     if (this.hasSubmitButtonTarget) {
-        const canSubmit = isLastStep && this.isFormValid()
-        this.submitButtonTarget.classList.toggle("hidden", !canSubmit)
+        this.submitButtonTarget.classList.toggle("hidden", !isLastStep)
     }
   }
 
@@ -95,6 +104,15 @@ export default class extends Controller {
     inputs.forEach(input => {
       if (!input.checkValidity()) {
         input.reportValidity()
+
+        // Add brutalist error styling
+        input.classList.add('border-red-500', 'shadow-[6px_6px_0px_0px_#ef4444]')
+
+        // Remove error styling on next input
+        input.addEventListener('input', () => {
+          input.classList.remove('border-red-500', 'shadow-[6px_6px_0px_0px_#ef4444]')
+        }, { once: true })
+
         isValid = false
       }
     })
@@ -112,5 +130,9 @@ export default class extends Controller {
     })
 
     return isValid
+  }
+
+  saveStep() {
+    sessionStorage.setItem(this.storageKey, this.currentStep)
   }
 }

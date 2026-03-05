@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_04_151339) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_05_153136) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -175,6 +175,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_04_151339) do
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
+  create_table "onboarding_profiles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "gender"
+    t.integer "age"
+    t.string "weight"
+    t.string "height"
+    t.string "instagram"
+    t.jsonb "goals"
+    t.integer "experience_level"
+    t.text "best_lifts"
+    t.string "commitment_level"
+    t.string "training_frequency"
+    t.text "injuries"
+    t.string "plays_sports"
+    t.string "sport_details"
+    t.string "time_per_session"
+    t.string "diet_quality"
+    t.string "activity_level"
+    t.string "sleep_hours"
+    t.string "social_media_consent"
+    t.string "referral_source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_onboarding_profiles_on_user_id"
+  end
+
   create_table "phase_routines", force: :cascade do |t|
     t.bigint "phase_id", null: false
     t.bigint "routine_id", null: false
@@ -324,6 +350,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_04_151339) do
   add_foreign_key "exercise_logs", "program_executions"
   add_foreign_key "exercise_logs", "workout_exercises"
   add_foreign_key "messages", "users"
+  add_foreign_key "onboarding_profiles", "users"
   add_foreign_key "phase_routines", "phases"
   add_foreign_key "phase_routines", "routines"
   add_foreign_key "phases", "programs"

@@ -1,9 +1,6 @@
 Rails.application.routes.draw do
-  resources :leads, only: [:new, :create] do
-    collection do
-      get :success
-    end
-  end
+  resource :onboarding, only: [:new, :create], controller: 'onboarding'
+  get 'onboarding/success', to: 'onboarding#success', as: :onboarding_success
 
   namespace :admin do
       resources :coach_alerts
