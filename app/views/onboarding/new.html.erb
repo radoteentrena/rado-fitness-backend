@@ -304,9 +304,9 @@
               <label class="block text-xl font-bold text-whiteish mb-4">Horas de sueño</label>
               <div class="space-y-4">
                 <% ['<4', '4-6', '6-8', '8-10', '+10'].each do |option| %>
-                  <label class="flex items-center gap-4 p-5 border-2 border-primary/50 bg-graphite cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[4px_4px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
-                    <%= p.radio_button :sleep_hours, option, required: true, class: "w-5 h-5 text-saffron bg-graphite border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
-                    <span class="text-lg font-medium text-white"><%= option %></span>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-graphite cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= p.radio_button :sleep_hours, option, required: true, class: "w-6 h-6 text-saffron bg-graphite border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
                   </label>
                 <% end %>
               </div>
@@ -325,9 +325,9 @@
               <label class="block text-xl font-bold text-whiteish mb-4">¿Permites publicar videos entrenando en redes?</label>
               <div class="space-y-4">
                 <% ['Si', 'No'].each do |option| %>
-                  <label class="flex items-center gap-4 p-5 border-2 border-primary/50 bg-graphite cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[4px_4px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
-                    <%= p.radio_button :social_media_consent, option, required: true, class: "w-5 h-5 text-saffron bg-graphite border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
-                    <span class="text-lg font-medium text-white"><%= option %></span>
+                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-graphite cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
+                    <%= p.radio_button :social_media_consent, option, required: true, class: "w-6 h-6 text-saffron bg-graphite border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" %>
+                    <span class="text-xl font-medium text-white"><%= option %></span>
                   </label>
                 <% end %>
               </div>
