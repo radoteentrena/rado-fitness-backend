@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    <%= content_for(:title) %> - <%= application_title %>
+  </title>
+  <%= render "stylesheet" %>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag if defined?(csp_meta_tag) %>
+  <%= render "javascript" %>
+  <link rel="icon" type="image/png" href="/icon.png">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body class="bg-background-light dark:bg-blackish text-blackish dark:text-whiteish min-h-screen" data-controller="sidebar">
+  <%= render "icons" %>
+
+  <nav id="admin-navbar" class="fixed top-0 z-50 w-full bg-whiteish/80 dark:bg-shadow/80 backdrop-blur-md border-b border-shadow dark:border-graphite">
+    <div class="px-3 py-3 lg:px-5 lg:pl-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center justify-start rtl:justify-end">
+          <button data-action="click->sidebar#toggle" type="button" class="inline-flex items-center p-2 text-sm text-graphite rounded-lg sm:hidden hover:bg-background-light focus:outline-none focus:ring-2 focus:ring-primary/20 dark:text-graphite dark:hover:bg-shadow/50 dark:focus:ring-graphite">
+              <span class="sr-only">Open sidebar</span>
+              <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                 <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+              </svg>
+           </button>
+          <a href="/admin" class="flex ms-2 md:me-24">
+            <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-blackish dark:text-whiteish">RTE</span>
+          </a>
+        </div>
+        <div class="flex items-center">
+          <div class="flex items-center ms-3">
+            <button type="button" data-controller="dark-mode" data-action="click->dark-mode#toggle" class="text-graphite dark:text-muted hover:bg-background-light dark:hover:bg-shadow/50 focus:outline-none focus:ring-4 focus:ring-primary/20 dark:focus:ring-shadow rounded-lg text-sm p-2.5 mr-2" aria-label="Toggle dark mode" title="Toggle dark mode">
+              <span class="material-symbols-outlined" data-dark-mode-target="icon">dark_mode</span>
+            </button>
+            <div class="relative" data-controller="dropdown">
+              <button type="button" data-action="click->dropdown#toggle" class="flex text-sm bg-blackish rounded-full focus:ring-4 focus:ring-primary/20 dark:focus:ring-graphite" aria-expanded="false" aria-label="Open user menu - <%= current_user.email rescue 'Admin User' %>" title="User menu">
+                <span class="sr-only">Open user menu</span>
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-blackish font-bold">
+                  <%= current_user.email[0].upcase rescue "A" %>
+                </div>
+              </button>
+              <div class="z-50 hidden absolute right-0 top-full mt-2 my-4 text-base list-none bg-whiteish divide-y divide-shadow md:divide-shadow rounded-2xl shadow-lg dark:bg-shadow dark:divide-graphite min-w-[200px]" data-dropdown-target="menu">
+                <div class="px-4 py-3" role="none">
+                  <p class="text-sm text-blackish dark:text-whiteish" role="none">
+                    Admin User
+                  </p>
+                  <p class="text-sm font-medium text-graphite truncate dark:text-muted" role="none">
+                    <%= current_user.email rescue "admin@example.com" %>
+                  </p>
+                </div>
+                <ul class="py-1" role="none">
+                  <li>
+                    <%= link_to "Sign out", main_app.destroy_user_session_path, data: { turbo_method: :delete }, class: "block px-4 py-2 text-sm text-graphite hover:bg-background-light dark:text-whiteish dark:hover:bg-shadow/50 dark:hover:text-whiteish", role: "menuitem" %>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <aside id="routine-sidebar" class="fixed top-0 left-0 z-40 w-80 h-screen pt-20 transition-transform -translate-x-full bg-whiteish border-r border-shadow sm:translate-x-0 dark:bg-shadow dark:border-graphite" aria-label="Sidebar">
+     <div class="h-full px-3 pb-4 overflow-y-auto bg-whiteish dark:bg-shadow">
+        <%= render "layouts/routine_sidebar", routine: @routine, selected_workout: @selected_workout rescue nil -%>
+     </div>
+  </aside>
+
+  <div class="p-4 sm:ml-80">
+     <div class="p-6 mt-14 rounded-lg min-h-[calc(100vh-5rem)]">
+       <div id="flash_messages">
+         <%= render "admin/application/flashes" rescue nil -%>
+       </div>
+       <%= yield %>
+     </div>
+  </div>
+</body>
+</html>

@@ -84,12 +84,26 @@
     <% days.each do |day| %>
       <% metric = metrics_by_date[day] %>
       <% is_today = day == Date.today %>
+      <% execution = user.program_executions.where(completed_at: day.beginning_of_day..day.end_of_day).first %>
+      <% workout_done = metric&.workout_completed || execution.present? %>
 
-      <div class="flex flex-col h-full rounded-lg border <%= is_today ? 'border-primary dark:bg-primary/10' : 'border-shadow dark:border-graphite bg-whiteish dark:bg-shadow' %> overflow-hidden">
+      <%
+        border_class = is_today ? 'border-primary' : (workout_done ? 'border-warning' : 'border-shadow dark:border-graphite')
+        bg_class = workout_done ? 'bg-warning/10 dark:bg-warning/10' : (is_today ? 'bg-primary/5 dark:bg-primary/10' : 'bg-whiteish dark:bg-shadow')
+        head_bg_class = workout_done ? 'bg-warning/20 dark:bg-warning/20' : (is_today ? 'bg-primary/10 dark:bg-primary/20' : 'bg-background-light dark:bg-graphite')
+        text_color_class = workout_done ? 'text-warning-dark dark:text-warning' : 'text-graphite dark:text-muted'
+      %>
+
+      <div class="flex flex-col h-full rounded-lg border <%= border_class %> <%= bg_class %> overflow-hidden relative">
         <%# Header %>
-        <div class="px-2 py-1.5 text-center border-b border-shadow dark:border-graphite <%= is_today ? 'bg-primary/10 dark:bg-primary/20' : 'bg-background-light dark:bg-graphite' %>">
-           <span class="text-xs font-medium text-graphite dark:text-muted"><%= day.strftime("%a") %></span>
+        <div class="px-2 py-1.5 text-center border-b border-shadow dark:border-graphite <%= head_bg_class %> relative">
+           <span class="text-xs font-medium <%= text_color_class %>"><%= day.strftime("%a") %></span>
            <div class="text-sm font-bold text-blackish dark:text-whiteish"><%= day.day %></div>
+           <% if workout_done %>
+             <div class="absolute top-1 right-1 text-warning">
+               <span class="material-symbols-outlined text-[16px]">fitness_center</span>
+             </div>
+           <% end %>
         </div>
 
         <%# Content %>
@@ -99,11 +113,11 @@
                  <div class="space-y-1">
                     <div class="flex justify-between items-center">
                        <span class="text-[10px] text-graphite dark:text-muted">Wgt</span>
-                       <span class="text-xs font-bold text-blackish dark:text-whiteish"><%= number_with_precision(metric.weight, precision: 2) || "-" %></span>
+                       <span class="text-xs font-bold text-blackish dark:text-whiteish"><%= metric.weight ? number_with_precision(metric.weight, precision: 2) : "-" %></span>
                     </div>
                     <div class="flex justify-between items-center">
                        <span class="text-[10px] text-graphite dark:text-muted">Clr</span>
-                       <span class="text-xs font-medium <%= metric.calories_consumed.to_i > target_calories ? 'text-alert' : 'text-blackish dark:text-whiteish' %>">
+                       <span class="text-xs font-medium <%= metric.calories_consumed.to_i > target_calories && target_calories > 0 ? 'text-alert' : 'text-blackish dark:text-whiteish' %>">
                          <%= metric.calories_consumed || "-" %>
                        </span>
                     </div>
@@ -111,6 +125,12 @@
                        <span class="text-[10px] text-graphite dark:text-muted">Ptn</span>
                        <span class="text-xs font-medium text-blackish dark:text-whiteish"><%= metric.protein_consumed || "-" %></span>
                     </div>
+                    <% if execution %>
+                      <div class="flex justify-between items-center mt-2 pt-1 border-t border-shadow/50 dark:border-graphite/50">
+                         <span class="text-[10px] text-graphite dark:text-muted">Workout</span>
+                         <span class="text-[10px] font-bold text-warning"><%= execution.duration_minutes || '-' %>m</span>
+                      </div>
+                    <% end %>
                  </div>
 
                  <%# Status Dot %>
@@ -120,8 +140,15 @@
                  </div>
              <% end %>
            <% else %>
-             <div class="flex-1 flex items-center justify-center text-graphite dark:text-muted text-[10px] italic">
-               No Log
+             <div class="flex-1 flex flex-col items-center justify-center space-y-2">
+               <% if execution %>
+                 <%= link_to admin_program_execution_path(execution), class: "text-center hover:opacity-80" do %>
+                   <span class="material-symbols-outlined text-warning text-xl">fitness_center</span>
+                   <span class="block text-[10px] text-warning font-medium"><%= execution.duration_minutes || '-' %>m</span>
+                 <% end %>
+               <% else %>
+                 <span class="text-graphite dark:text-muted text-[10px] italic">No Log</span>
+               <% end %>
              </div>
            <% end %>
         </div>

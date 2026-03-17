@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_05_153136) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_27_165347) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -66,9 +66,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_05_153136) do
     t.index ["ai_conversation_id"], name: "index_ai_messages_on_ai_conversation_id"
   end
 
-# Could not dump table "book_chunks" because of following StandardError
-#   Unknown type 'vector(768)' for column 'embedding'
-
+  create_table "book_chunks", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.text "content", null: false
+    t.integer "page_number"
+    t.integer "chunk_index"
+    t.vector "embedding", limit: 768
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_book_chunks_on_book_id"
+    t.index ["embedding"], name: "index_book_chunks_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
+  end
 
   create_table "books", force: :cascade do |t|
     t.string "title", null: false
@@ -134,34 +142,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_05_153136) do
     t.string "video_link"
     t.string "muscle_group"
     t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "leads", force: :cascade do |t|
-    t.string "name"
-    t.string "last_name"
-    t.string "gender"
-    t.integer "age"
-    t.string "weight"
-    t.string "height"
-    t.string "email"
-    t.string "phone"
-    t.string "instagram"
-    t.jsonb "goals"
-    t.integer "experience_level"
-    t.text "best_lifts"
-    t.string "commitment_level"
-    t.string "training_frequency"
-    t.text "injuries"
-    t.string "plays_sports"
-    t.string "sport_details"
-    t.string "time_per_session"
-    t.string "diet_quality"
-    t.string "activity_level"
-    t.string "sleep_hours"
-    t.string "social_media_consent"
-    t.string "referral_source"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

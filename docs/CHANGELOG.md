@@ -18,6 +18,33 @@ All notable changes to this project will be documented in this file.
 - **Routing:** Updated root path to `pages#home`.
 - **Refactor:** Removed legacy `HomeController` and `home/index.html.erb` in favor of new structure.
 
+### Fixed
+- **UI:** Resolved font-display fallback by importing the `Inter` font in application layouts.
+- **Admin UI:** Fixed horizontal overflow on "Load" text fields by applying appropriate min-width and block display constraints.
+- **Admin UI:** Updated routine sidebar back button behavior to track browser history.
+- **Admin UI:** Corrected badge and icon styling on Routine Show and Edit pages by mapping missing colors to the primary palette.
+
+### Fixed
+- **AI Coach:** Resolved viewport freezing on routine generation by appending a `scrollIntoView` hook.
+- **AI Coach:** Fixed "Content Missing" error on routine save by mapping the submission form to the `_top` Turbo frame.
+- **AI Coach:** Corrected `load` parsing from Gemini and mapping to Database, replacing the default "Bodyweight" fallback.
+- **AI Coach:** Prompt-engineered a token explosion fix to prevent Gemini from generating literal 130-day routines, enforcing 1-week microcycle limits for long-duration programs.
+- **AI Coach:** Added flash alerts for JSON parsing failures and corrected path routing helper errors (`admin_new_ai_coach_path`).
+
+### Added
+- **Admin UI:** Implemented inline editing for `RoutineExercise` on the Routine Show page using Hotwire Turbo Frames.
+- **Admin UI:** Added exercise name dropdowns for `sub_option_one` and `sub_option_two`.
+### Added
+- **API:** Google Sheets `sync_to_db` importer functionality for mapping Google Sheet columns directly into `RoutineExercise` records.
+- **Database:** Fields `sub_option_one` and `sub_option_two` added to `RoutineExercise`.
+
+### Changed
+- **Database:** Dropped `rir`, `warmup`, `sub_option`, `instructions`, `substitutions`, and `rest` columns from `RoutineExercise`.
+- **Integrations:** AI Coach Service payload and responses structured to cleanly support the new schema parameters.
+- **Admin UI:** Displays for "Coach Instructions" and JSONB `substitutions` were replaced with strings corresponding to "Sub Option 1" and "Sub Option 2".
+
+### Removed
+- **Features:** Google Sheet `Export` feature, generation button, background Sidekiq jobs, and rendering `iframe` removed in favor of manual linking and automatic importing.
 ### Changed
 - **UI:** Redesigned Sign Up and Log In pages with a responsive split-screen layout (image + form).
 - **UI:** Updated auth forms to match Admin Panel aesthetic (colors, fonts).
@@ -131,3 +158,5 @@ All notable changes to this project will be documented in this file.
 - Avo admin panel configuration and User resource.
 - Initial project documentation (CONTEXT.md, GEMINI.md).
 - Initial project generation with Rails.
+
+export $(grep -v '^#' .env | xargs) && bin/kamal deploy

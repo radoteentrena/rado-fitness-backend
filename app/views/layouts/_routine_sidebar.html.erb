@@ -1,0 +1,40 @@
+<div class="py-4 overflow-y-auto">
+    <div class="mb-6 px-2">
+      <%= link_to "javascript:history.back()", data: { turbo: false }, class: "flex items-center text-graphite hover:text-primary mb-4 transition-colors" do %>
+        <span class="material-symbols-outlined mr-2 text-sm">arrow_back</span>
+        <span class="text-xs uppercase tracking-wider font-bold">Back</span>
+      <% end %>
+
+      <h2 class="text-lg font-bold text-blackish dark:text-whiteish leading-tight">
+        <%= routine.name %>
+      </h2>
+      <p class="text-xs text-muted mt-1">
+        <%= routine.duration_weeks || 4 %> Weeks | <%= routine.workouts.count %> Days
+      </p>
+    </div>
+
+    <ul class="space-y-2 font-medium border-t border-shadow dark:border-graphite pt-4">
+      <% routine.workouts.order(:day_number, :order_index).each_with_index do |workout, index| %>
+         <li>
+            <%= link_to admin_routine_path(routine, workout_id: workout.id), class: "flex items-center p-2 text-blackish rounded-lg dark:text-whiteish hover:bg-background-light dark:hover:bg-shadow/50 group #{'bg-primary/10 text-primary dark:text-primary' if selected_workout == workout}" do %>
+               <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center text-xs font-bold rounded-full border #{selected_workout == workout ? 'border-primary text-primary' : 'border-muted text-muted'}">
+                 <%= workout.day_number || (index + 1) %>
+               </span>
+               <span class="flex-1 ms-3 whitespace-nowrap">
+                 <%= workout.name %>
+               </span>
+               <% if selected_workout == workout %>
+                  <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+               <% end %>
+            <% end %>
+         </li>
+      <% end %>
+
+      <li class="pt-4 mt-4 border-t border-shadow dark:border-graphite px-2">
+         <%= link_to new_admin_routine_workout_path(routine), data: { turbo: false }, class: "flex items-center text-sm font-bold text-graphite dark:text-muted hover:text-primary dark:hover:text-primary transition-colors" do %>
+            <span class="material-symbols-outlined mr-2 text-lg">add_circle</span>
+            Add Workout Day
+         <% end %>
+      </li>
+    </ul>
+</div>
