@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resource :onboarding, only: [:new, :create], controller: 'onboarding'
+  get 'onboarding/success', to: 'onboarding#success', as: :onboarding_success
+
   namespace :admin do
       resources :coach_alerts
       resources :dietary_plans

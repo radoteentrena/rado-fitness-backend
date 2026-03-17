@@ -51,12 +51,12 @@
 @layer base {
   /* Keyboard focus styles for accessibility */
   *:focus-visible {
-    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-whiteish dark:ring-offset-blackish;
+    @apply outline-none ring-2 ring-primary-500;
   }
 
   button:focus-visible,
   a:focus-visible {
-    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-whiteish dark:ring-offset-blackish;
+    @apply outline-none ring-2 ring-primary-500;
   }
 
   input[type='text'],
@@ -71,6 +71,27 @@
 
   label {
     @apply block mb-2 text-sm font-medium text-blackish dark:text-whiteish;
+  }
+
+  /* Autofill overrides */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: white !important;
+    -webkit-box-shadow: 0 0 0px 1000px #2F2F2F inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+    outline: none !important;
+    border-color: #F5C228 !important;
+    box-shadow: 0 0 0px 1000px #2F2F2F inset !important;
+    --tw-ring-offset-width: 0px !important;
+    --tw-ring-width: 0px !important;
+    caret-color: white !important;
   }
 
   /* Pagination (Kaminari) */
