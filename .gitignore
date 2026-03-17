@@ -38,6 +38,7 @@
 /docs/*
 /tailadmin/*
 /templates/*
+CLAUDE.md
 
 # Ignore Google Credentials
 /config/google_credentials.json
