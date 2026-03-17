@@ -27,11 +27,13 @@ export default class extends Controller {
 
   previous(event) {
     event.preventDefault()
-    if (this.currentStep > 0) {
-      this.currentStep--
-      this.saveStep()
-      this.showCurrentStep()
+    if (this.currentStep === 0) {
+      window.location.href = "/"
+      return
     }
+    this.currentStep--
+    this.saveStep()
+    this.showCurrentStep()
   }
 
   showCurrentStep() {
@@ -57,11 +59,10 @@ export default class extends Controller {
   }
 
   updateButtons() {
-    const isFirstStep = this.currentStep === 0
     const isLastStep = this.currentStep === this.stepTargets.length - 1
 
     if (this.hasPreviousButtonTarget) {
-        this.previousButtonTarget.classList.toggle("hidden", isFirstStep)
+        this.previousButtonTarget.classList.remove("hidden")
     }
 
     if (this.hasNextButtonTarget) {
@@ -100,34 +101,75 @@ export default class extends Controller {
     const currentStepElement = this.stepTargets[this.currentStep]
     const inputs = currentStepElement.querySelectorAll("input[required], select[required], textarea[required]")
     let isValid = true
+    let firstInvalidInput = null
+
+    const addErrorStyling = (errorTarget, triggers) => {
+      if (errorTarget.classList.contains('border-primary/50')) {
+        errorTarget.classList.remove('border-primary/50')
+        errorTarget.dataset.hadPrimaryBorder = 'true'
+      }
+      errorTarget.classList.add('border-red-500', 'shadow-[6px_6px_0px_0px_#ef4444]')
+
+      const removeError = () => {
+        errorTarget.classList.remove('border-red-500', 'shadow-[6px_6px_0px_0px_#ef4444]')
+        if (errorTarget.dataset.hadPrimaryBorder === 'true') {
+          errorTarget.classList.add('border-primary/50')
+          delete errorTarget.dataset.hadPrimaryBorder
+        }
+      }
+
+      triggers.forEach(trigger => {
+        trigger.addEventListener('input', removeError, { once: true })
+        trigger.addEventListener('change', removeError, { once: true })
+      })
+    }
 
     inputs.forEach(input => {
       if (!input.checkValidity()) {
-        input.reportValidity()
+        if (!firstInvalidInput) firstInvalidInput = input
 
-        // Add brutalist error styling
-        input.classList.add('border-red-500', 'shadow-[6px_6px_0px_0px_#ef4444]')
+        let errorTarget = input
+        let triggers = [input]
 
-        // Remove error styling on next input
-        input.addEventListener('input', () => {
-          input.classList.remove('border-red-500', 'shadow-[6px_6px_0px_0px_#ef4444]')
-        }, { once: true })
+        if (input.type === 'radio' || input.type === 'checkbox') {
+          const wrapperLabel = input.closest('label')
+          if (wrapperLabel && wrapperLabel.classList.contains('border-2')) {
+            errorTarget = wrapperLabel
+          }
+          if (input.type === 'radio') {
+            triggers = Array.from(input.closest('form').querySelectorAll(`input[name="${input.name}"]`))
+          }
+        }
 
+        addErrorStyling(errorTarget, triggers)
         isValid = false
       }
     })
 
-    // Check checkboxes if required
+    // Check custom checkbox groups if required
     const checkboxGroups = currentStepElement.querySelectorAll('.checkbox-group[data-required="true"]')
     checkboxGroups.forEach(group => {
-       const checkedBoxes = group.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked')
+       const checkboxes = Array.from(group.querySelectorAll('input[type="checkbox"], input[type="radio"]'))
+       const checkedBoxes = checkboxes.filter(cb => cb.checked)
        if (checkedBoxes.length === 0) {
            isValid = false
-           // Add a brutalist error feedback
-           group.classList.add('border-2', 'border-red-500', 'p-4', 'shadow-[6px_6px_0px_0px_#ef4444]')
-           setTimeout(() => group.classList.remove('border-2', 'border-red-500', 'p-4', 'shadow-[6px_6px_0px_0px_#ef4444]'), 2000)
+           if (!firstInvalidInput && checkboxes.length > 0) firstInvalidInput = checkboxes[0]
+           
+           checkboxes.forEach(cb => {
+              let errorTarget = cb
+              const wrapperLabel = cb.closest('label')
+              if (wrapperLabel && wrapperLabel.classList.contains('border-2')) {
+                errorTarget = wrapperLabel
+              }
+              // Here, ANY checkbox change in the group should remove errors from ALL checkboxes in the group
+              addErrorStyling(errorTarget, checkboxes)
+           })
        }
     })
+
+    if (firstInvalidInput) {
+      firstInvalidInput.reportValidity()
+    }
 
     return isValid
   }

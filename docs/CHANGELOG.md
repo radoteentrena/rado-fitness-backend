@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Feature:** Added comprehensive server-side model validations (`OnboardingProfile`, `User`) and frontend HTML5 constraints for onboarding form.
+- **Feature:** Added data sanitization callbacks to strip whitespace and normalize handles before validation.
+
+### Changed
+- **UI:** Refactored Onboarding form step validation (in JS) to include brutalist error styling for invalid field formats.
+- **Refactor:** Replaced legacy `Leads` flow with new `Onboarding` flow, removing obsolete files and models.
 - **UI:** New Homepage implementation with `PagesController#home`, featuring improved copy and structure.
 - **UI:** Dedicated `homepage` layout for full-width sections.
 
