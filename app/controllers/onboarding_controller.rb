@@ -1,5 +1,6 @@
 class OnboardingController < ApplicationController
   skip_before_action :authenticate_user!, raise: false
+  before_action :redirect_if_signed_in, only: [:new, :create]
   layout "homepage"
 
   def new
@@ -16,6 +17,7 @@ class OnboardingController < ApplicationController
     end
 
     if @user.save
+      sign_in(@user)
       redirect_to onboarding_success_path
     else
       render :new, status: :unprocessable_entity
@@ -26,6 +28,10 @@ class OnboardingController < ApplicationController
   end
 
   private
+
+  def redirect_if_signed_in
+    redirect_to onboarding_success_path if user_signed_in?
+  end
 
   def onboarding_params
     params.require(:user).permit(
