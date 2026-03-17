@@ -1,9 +1,4 @@
 <%# app/views/admin/routines/index.html.erb %>
-<%# Page Title %>
-<header class="px-4 pt-6 pb-4 mb-4 border-b border-shadow dark:border-graphite">
-  <h1 class="text-2xl font-bold text-blackish dark:text-whiteish">Routines Management</h1>
-  <p class="text-sm text-graphite dark:text-muted mt-1">Create and manage training routines for your programs</p>
-</header>
 
 <%# Header Section %>
 <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
@@ -31,7 +26,14 @@
 </div>
 
 <%# Table Section %>
-<%= render "collection", resources: resources %>
+<%= render(
+  "collection",
+  collection_presenter: page,
+  collection_field_name: resource_name,
+  page: page,
+  resources: resources,
+  table_title: "page-title"
+) %>
 
 <%# Pagination %>
   <div class="p-4">

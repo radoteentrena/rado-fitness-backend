@@ -1,0 +1,192 @@
+<div class="mt-8" data-controller="ai-coach">
+  <% is_program = @structured_data["program"].present? %>
+  <% main_title = @structured_data.dig("program", "name") || @structured_data.dig("routines", 0, "name") || "Generated Plan" %>
+  <% duration = @structured_data.dig("program", "duration_weeks") || @structured_data.dig("routines", 0, "duration_weeks") || "N/A" %>
+  <% description = @structured_data.dig("program", "description") || @structured_data.dig("routines", 0, "description") %>
+
+  <!-- Generated Plan Header -->
+  <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-bold text-blackish dark:text-whiteish flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary"><%= is_program ? "description" : "view_week" %></span>
+        <%= main_title %>
+      </h2>
+      <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-semibold">
+        <%= duration %> weeks
+      </span>
+    </div>
+    <% if description.present? %>
+      <p class="mt-2 text-graphite dark:text-muted text-sm">
+        <%= description %>
+      </p>
+    <% end %>
+    <% if @conversation.user %>
+      <div class="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-saffron/10 dark:bg-saffron/5 text-saffron rounded-full text-sm">
+        <span class="material-symbols-outlined text-base">person</span>
+        Assigned to: <strong><%= @conversation.user.name %></strong>
+      </div>
+    <% else %>
+      <div class="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-graphite/10 text-graphite dark:text-muted rounded-full text-sm">
+        <span class="material-symbols-outlined text-base">content_copy</span>
+        Template (no client)
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Routines -->
+  <% @structured_data["routines"]&.each_with_index do |routine, r_idx| %>
+    <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-4">
+      <% if is_program || @structured_data["routines"].length > 1 %>
+        <h3 class="text-lg font-semibold text-blackish dark:text-whiteish mb-1">
+          <span class="text-primary mr-1">▸</span> <%= routine["name"] %>
+        </h3>
+        <p class="text-sm text-graphite dark:text-muted mb-4">
+          <%= routine["description"] %> · <strong><%= routine["duration_weeks"] %> weeks</strong>
+        </p>
+      <% else %>
+        <h3 class="text-lg font-semibold text-blackish dark:text-whiteish mb-4">
+          <span class="text-primary mr-2">📅</span> Workouts
+        </h3>
+      <% end %>
+
+      <!-- Workouts -->
+      <% routine["workouts"]&.each_with_index do |workout, w_idx| %>
+        <div class="mb-4">
+          <h4 class="text-sm font-semibold text-primary uppercase tracking-wide mb-2">
+            Day <%= workout["day_number"] || (w_idx + 1) %> — <%= workout["name"] %>
+          </h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-graphite dark:text-muted border-b border-shadow dark:border-graphite">
+                  <th class="pb-2 pr-3">Exercise</th>
+                  <th class="pb-2 pr-3 text-center w-16">Sets</th>
+                  <th class="pb-2 pr-3 text-center w-16">Reps</th>
+                  <th class="pb-2 pr-3 text-center w-24">Load</th>
+                  <th class="pb-2 pr-3 text-center w-20">Rest</th>
+                  <th class="pb-2">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% workout["exercises"]&.each_with_index do |ex, e_idx| %>
+                  <tr class="border-b border-shadow/50 dark:border-graphite/50 hover:bg-background-light dark:hover:bg-blackish/30 transition">
+                    <td class="py-2.5 pr-3">
+                      <div class="flex items-center gap-2">
+                        <% if ex["warmup"] || ex["warmup_sets"].to_i > 0 %>
+                          <span class="text-xs px-1.5 py-0.5 bg-saffron/20 text-saffron rounded">W</span>
+                        <% end %>
+                        <input type="text" name="structured_data[routines][<%= r_idx %>][workouts][<%= w_idx %>][exercises][<%= e_idx %>][name]"
+                          value="<%= ex["name"] %>"
+                          class="bg-transparent border-0 border-b border-transparent hover:border-shadow dark:hover:border-graphite focus:border-primary focus:ring-0 p-0 text-blackish dark:text-whiteish font-medium w-full transition"
+                          data-ai-coach-target="editableField">
+                      </div>
+                    </td>
+                    <td class="py-2.5 pr-3 text-center">
+                      <input type="number" name="structured_data[routines][<%= r_idx %>][workouts][<%= w_idx %>][exercises][<%= e_idx %>][sets]"
+                        value="<%= ex["sets"] %>"
+                        class="bg-transparent border-0 border-b border-transparent hover:border-shadow dark:hover:border-graphite focus:border-primary focus:ring-0 p-0 text-center text-blackish dark:text-whiteish w-12 transition"
+                        data-ai-coach-target="editableField">
+                    </td>
+                    <td class="py-2.5 pr-3 text-center">
+                      <input type="text" name="structured_data[routines][<%= r_idx %>][workouts][<%= w_idx %>][exercises][<%= e_idx %>][reps]"
+                        value="<%= ex["reps"] %>"
+                        class="bg-transparent border-0 border-b border-transparent hover:border-shadow dark:hover:border-graphite focus:border-primary focus:ring-0 p-0 text-center text-blackish dark:text-whiteish w-12 transition"
+                        data-ai-coach-target="editableField">
+                    </td>
+                    <td class="py-2.5 pr-3 text-center">
+                      <input type="text" name="structured_data[routines][<%= r_idx %>][workouts][<%= w_idx %>][exercises][<%= e_idx %>][load]"
+                        value="<%= ex["load"] %>"
+                        class="bg-transparent border-0 border-b border-transparent hover:border-shadow dark:hover:border-graphite focus:border-primary focus:ring-0 p-0 text-center text-blackish dark:text-whiteish w-20 transition"
+                        data-ai-coach-target="editableField"
+                        placeholder="e.g. 50kg">
+                    </td>
+                    <td class="py-2.5 pr-3 text-center text-graphite dark:text-muted">
+                      <%= ex["rest_seconds"] %>s
+                    </td>
+                    <td class="py-2.5 text-graphite dark:text-muted text-xs">
+                      <%= ex["instructions"] %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Dietary Plan (if suggested) -->
+  <% if @structured_data["dietary_plan"] %>
+    <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-6">
+      <h3 class="text-lg font-semibold text-blackish dark:text-whiteish mb-2 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">restaurant</span>
+        <%= @structured_data.dig("dietary_plan", "name") %>
+      </h3>
+      <p class="text-sm text-graphite dark:text-muted mb-3"><%= @structured_data.dig("dietary_plan", "description") %></p>
+      <div class="flex gap-6">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @structured_data.dig("dietary_plan", "calories_target") %></div>
+          <div class="text-xs text-graphite dark:text-muted">kcal/day</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @structured_data.dig("dietary_plan", "protein_target") %>g</div>
+          <div class="text-xs text-graphite dark:text-muted">protein</div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Chat Refinement -->
+  <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-6">
+    <h3 class="text-sm font-semibold text-graphite dark:text-muted uppercase tracking-wide mb-3">
+      💬 Refine with AI
+    </h3>
+
+    <!-- Message History -->
+    <div id="chat-messages" class="space-y-3 mb-4 max-h-48 overflow-y-auto">
+      <% @conversation.ai_messages.each do |msg| %>
+        <% if msg.role == "user" %>
+          <div class="flex justify-end">
+            <div class="bg-primary/10 text-blackish dark:text-whiteish rounded-xl px-4 py-2 max-w-[80%] text-sm">
+              <%= msg.content.truncate(200) %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%= form_tag admin_refine_ai_coach_path, method: :post, data: { turbo_frame: "ai_coach_result" } do %>
+      <input type="hidden" name="conversation_id" value="<%= @conversation.id %>">
+      <div class="flex gap-3">
+        <input type="text" name="message" placeholder="e.g. 'Change day 3 to legs' or 'Add more back exercises'"
+          class="flex-1 rounded-xl border border-shadow dark:border-graphite bg-background-light dark:bg-blackish text-blackish dark:text-whiteish px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-primary transition"
+          required>
+        <button type="submit"
+          class="inline-flex items-center gap-1 px-4 py-2.5 bg-graphite hover:bg-blackish text-whiteish font-semibold rounded-xl transition">
+          <span class="material-symbols-outlined text-base">send</span>
+          Send
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex items-center justify-between">
+    <%= link_to admin_new_ai_coach_path, data: { turbo_frame: "admin_main_content" },
+      class: "inline-flex items-center gap-2 px-4 py-2.5 text-graphite hover:text-blackish dark:text-muted dark:hover:text-whiteish transition" do %>
+      <span class="material-symbols-outlined text-base">arrow_back</span>
+      Start Over
+    <% end %>
+
+    <%= form_tag admin_approve_ai_coach_path, method: :post, data: { turbo_frame: "_top" } do %>
+      <input type="hidden" name="conversation_id" value="<%= @conversation.id %>">
+      <input type="hidden" name="structured_data" value="<%= @conversation.generated_data.to_json %>" id="approval-data">
+      <button type="submit"
+        class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-whiteish font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+        <span class="material-symbols-outlined">check_circle</span>
+        Approve & Create
+      </button>
+    <% end %>
+  </div>
+</div>

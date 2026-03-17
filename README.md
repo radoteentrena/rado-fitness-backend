@@ -23,3 +23,25 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+## AI Coach Feature
+
+This project includes an AI Coach feature that uses RAG (Retrieval-Augmented Generation) to create personalized training programs.
+
+### Requirements
+
+- **PostgreSQL with pgvector extension**: The database must support vector operations.
+- **OpenAI API Key**: Required for generating embeddings and chat completions.
+
+### Architecture
+
+- **Books & Chunks**: PDF books are ingested and split into chunks with vector embeddings.
+- **AI Conversation**: Handles the chat interaction with the user.
+- **AI Coach Service**: Orchestrates the program generation.
+
+## React Native API
+
+The Rails backend serves as an API for the accompanying React Native app.
+- **Namespace:** `/api/v1`
+- **Authentication:** Stateless token-based (`Authorization: Bearer <user_auth_token>`).
+- **Endpoints:** The API enables mobile clients to read schedules/exercises, log workouts, save daily metrics, and upload progress photos.

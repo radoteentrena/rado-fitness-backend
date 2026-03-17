@@ -15,7 +15,7 @@ class ExerciseDashboard < Administrate::BaseDashboard
 
     video_link: Field::String,
     created_at: Field::DateTime,
-    updated_at: Field::DateTime,
+    updated_at: Field::DateTime
   }.freeze
 
   # COLLECTION_ATTRIBUTES
