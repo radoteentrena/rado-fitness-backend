@@ -43,3 +43,6 @@ CLAUDE.md
 /config/google_credentials.json
 
 /coverage
+
+# Git worktrees
+/.worktrees
