@@ -9,6 +9,7 @@ class OnboardingProfile < ApplicationRecord
   validates :experience_level, :commitment_level, :training_frequency, presence: true
   validates :injuries, :diet_quality, :activity_level, presence: true
   validates :sleep_hours, :social_media_consent, :referral_source, presence: true
+  validates :country, presence: true
 
   # Format & Range
   validates :age, numericality: { only_integer: true, greater_than: 13, less_than: 100 }
@@ -25,6 +26,10 @@ class OnboardingProfile < ApplicationRecord
   validates :instagram, length: { maximum: 50 }
   validates :weight, length: { maximum: 20 }
   validates :height, length: { maximum: 20 }
+
+  def argentina?
+    country == "AR"
+  end
 
   private
 
