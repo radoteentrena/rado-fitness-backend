@@ -50,7 +50,6 @@ Rails.application.routes.draw do
   # Webhooks
   namespace :webhooks do
     post "whatsapp/incoming", to: "whatsapp#incoming"
-    post "stripe",            to: "stripe#create"
     post "mercadopago",       to: "mercadopago#create"
   end
 

@@ -4,7 +4,9 @@ class SubscriptionsController < ApplicationController
 
   VALID_PLAN_TIERS = %w[basic medium high_ticket].freeze
 
-  def new; end
+  def new
+    @argentina = current_user.onboarding_profile&.argentina?
+  end
 
   def create
     plan = validated_plan_tier
@@ -13,7 +15,7 @@ class SubscriptionsController < ApplicationController
       return
     end
 
-    result = checkout(plan).call
+    result = Subscriptions::MercadoPagoCheckout.new(current_user, plan).call
     if result[:success]
       redirect_to result[:redirect_url], allow_other_host: true
     else
@@ -28,13 +30,5 @@ class SubscriptionsController < ApplicationController
   def validated_plan_tier
     tier = params[:plan_tier]
     VALID_PLAN_TIERS.include?(tier) ? tier : nil
-  end
-
-  def checkout(plan)
-    if current_user.onboarding_profile&.argentina?
-      Subscriptions::MercadoPagoCheckout.new(current_user, plan)
-    else
-      Subscriptions::StripeCheckout.new(current_user, plan)
-    end
   end
 end

@@ -88,7 +88,6 @@ gem "test", "~> 1.0", group: :development
 gem "twilio-ruby", "~> 7.10"
 
 # Payments
-gem "stripe", "~> 13.0"
 gem "mercadopago-sdk", "~> 2.3"
 
 gem "google-apis-sheets_v4", "~> 0.46.0"
