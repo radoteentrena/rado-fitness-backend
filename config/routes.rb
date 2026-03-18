@@ -31,6 +31,8 @@ Rails.application.routes.draw do
       resources :progress_photos, except: [ :index ]
       resources :program_executions, except: [ :index ]
       resources :exercise_logs, except: [ :index ]
+      resources :subscription_cancellations, only: [:create]
+      resources :subscriptions, only: [:index, :show]
 
       get  "ai_coach",          to: "ai_coach#new",      as: :new_ai_coach
       post "ai_coach/generate", to: "ai_coach#generate", as: :generate_ai_coach
