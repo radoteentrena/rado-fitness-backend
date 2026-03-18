@@ -34,6 +34,10 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+# Force route loading so Devise mappings are registered before tests run.
+# Rails uses a LazyRouteSet; calling recognize_path forces full evaluation.
+Rails.application.routes.recognize_path("/users/sign_in") rescue nil
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
@@ -45,6 +49,11 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
   config.include FactoryBot::Syntax::Methods
+  config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Warden::Test::Helpers, type: :request
+
+  config.before(:each, type: :request) { Warden.test_mode! }
+  config.after(:each, type: :request)  { Warden.test_reset! }
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
 

@@ -1,0 +1,24 @@
+<div class="min-h-screen bg-background flex items-center justify-center px-4">
+  <div class="max-w-md w-full space-y-8">
+    <div>
+      <h1 class="text-3xl font-bold uppercase tracking-tight text-whiteish">
+        Elegí tu plan
+      </h1>
+      <p class="mt-2 text-muted">Suscripción mensual. Cancelá cuando quieras.</p>
+    </div>
+
+    <div class="border-2 border-graphite p-6 space-y-4">
+      <div class="flex justify-between items-center">
+        <span class="text-whiteish font-bold uppercase"><%= current_user.plan_tier&.humanize %></span>
+        <span class="text-primary font-bold text-xl">
+          <%= current_user.basic? ? "$10" : current_user.medium? ? "$50" : "$100" %>/mes
+        </span>
+      </div>
+
+      <%= button_to subscriptions_path, method: :post,
+            class: "w-full button mt-4" do %>
+        Continuar al pago
+      <% end %>
+    </div>
+  </div>
+</div>
