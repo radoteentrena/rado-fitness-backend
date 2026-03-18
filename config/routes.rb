@@ -55,6 +55,14 @@ Rails.application.routes.draw do
       resources :daily_metrics, only: [ :create ]
       resources :progress_photos, only: [ :create ]
       resources :program_executions, only: [ :create ]
+
+      namespace :training do
+        get :current
+        post :start
+        post :complete
+        post :skip
+        get :history
+      end
     end
   end
 

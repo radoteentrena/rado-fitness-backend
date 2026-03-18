@@ -51,6 +51,7 @@ class User < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :progress_photos, dependent: :destroy
   has_many :program_executions, dependent: :destroy
+  has_many :training_sessions, dependent: :destroy
 
   def name
     "#{first_name} #{last_name}"
