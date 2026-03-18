@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_27_165347) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_17_100001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -146,6 +146,34 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_165347) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "leads", force: :cascade do |t|
+    t.string "name"
+    t.string "last_name"
+    t.string "gender"
+    t.integer "age"
+    t.string "weight"
+    t.string "height"
+    t.string "email"
+    t.string "phone"
+    t.string "instagram"
+    t.jsonb "goals"
+    t.integer "experience_level"
+    t.text "best_lifts"
+    t.string "commitment_level"
+    t.string "training_frequency"
+    t.text "injuries"
+    t.string "plays_sports"
+    t.string "sport_details"
+    t.string "time_per_session"
+    t.string "diet_quality"
+    t.string "activity_level"
+    t.string "sleep_hours"
+    t.string "social_media_consent"
+    t.string "referral_source"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "messages", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "sender_type"
@@ -209,6 +237,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_165347) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "workout_id", null: false
+    t.bigint "training_session_id"
+    t.index ["training_session_id"], name: "index_program_executions_on_training_session_id"
     t.index ["user_id"], name: "index_program_executions_on_user_id"
     t.index ["workout_id"], name: "index_program_executions_on_workout_id"
   end
@@ -243,6 +273,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_165347) do
     t.datetime "updated_at", null: false
     t.integer "duration_weeks"
     t.index ["user_id"], name: "index_routines_on_user_id"
+  end
+
+  create_table "training_sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "program_id", null: false
+    t.bigint "phase_id", null: false
+    t.bigint "routine_id", null: false
+    t.bigint "workout_id", null: false
+    t.integer "cycle_number", null: false
+    t.integer "session_number", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "skipped_at"
+    t.string "skip_reason"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phase_id"], name: "index_training_sessions_on_phase_id"
+    t.index ["program_id"], name: "index_training_sessions_on_program_id"
+    t.index ["user_id", "session_number"], name: "index_training_sessions_on_user_id_and_session_number"
+    t.index ["user_id", "status"], name: "index_training_sessions_on_user_id_and_status"
+    t.index ["workout_id"], name: "index_training_sessions_on_workout_id"
   end
 
   create_table "user_dietary_plans", force: :cascade do |t|
@@ -334,11 +387,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_27_165347) do
   add_foreign_key "phase_routines", "phases"
   add_foreign_key "phase_routines", "routines"
   add_foreign_key "phases", "programs"
+  add_foreign_key "program_executions", "training_sessions"
   add_foreign_key "program_executions", "users"
   add_foreign_key "program_executions", "workouts"
   add_foreign_key "programs", "users"
   add_foreign_key "progress_photos", "users"
   add_foreign_key "routines", "users"
+  add_foreign_key "training_sessions", "phases"
+  add_foreign_key "training_sessions", "programs"
+  add_foreign_key "training_sessions", "routines"
+  add_foreign_key "training_sessions", "users"
+  add_foreign_key "training_sessions", "workouts"
   add_foreign_key "user_dietary_plans", "dietary_plans"
   add_foreign_key "user_dietary_plans", "phases"
   add_foreign_key "user_dietary_plans", "users"
