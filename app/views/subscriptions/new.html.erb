@@ -33,9 +33,9 @@
           <p class="text-[11px] font-bold tracking-[0.18em] uppercase text-[#888] mb-4">Basic</p>
           <div class="mb-1">
             <span class="text-[52px] font-black text-whiteish leading-none">
-              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span>10
+              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span><%= @argentina ? "14.000" : "10" %>
             </span>
-            <p class="text-[13px] text-[#555] font-medium mt-1">USD / mes</p>
+            <p class="text-[13px] text-[#555] font-medium mt-1"><%= @argentina ? "ARS" : "USD" %> / mes</p>
           </div>
           <div class="w-8 h-0.5 bg-graphite my-5"></div>
           <ul class="flex-1 flex flex-col gap-2.5 mb-7 list-none p-0">
@@ -75,9 +75,9 @@
           <p class="text-[11px] font-bold tracking-[0.18em] uppercase text-saffron mb-4">Medium</p>
           <div class="mb-1">
             <span class="text-[52px] font-black text-whiteish leading-none">
-              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span>50
+              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span><%= @argentina ? "70.000" : "50" %>
             </span>
-            <p class="text-[13px] text-[#555] font-medium mt-1">USD / mes</p>
+            <p class="text-[13px] text-[#555] font-medium mt-1"><%= @argentina ? "ARS" : "USD" %> / mes</p>
           </div>
           <div class="w-8 h-0.5 bg-saffron opacity-40 my-5"></div>
           <ul class="flex-1 flex flex-col gap-2.5 mb-7 list-none p-0">
@@ -116,9 +116,9 @@
           <p class="text-[11px] font-bold tracking-[0.18em] uppercase text-[#888] mb-4">High Ticket</p>
           <div class="mb-1">
             <span class="text-[52px] font-black text-whiteish leading-none">
-              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span>100
+              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span><%= @argentina ? "140.000" : "100" %>
             </span>
-            <p class="text-[13px] text-[#555] font-medium mt-1">USD / mes</p>
+            <p class="text-[13px] text-[#555] font-medium mt-1"><%= @argentina ? "ARS" : "USD" %> / mes</p>
           </div>
           <div class="w-8 h-0.5 bg-graphite my-5"></div>
           <ul class="flex-1 flex flex-col gap-2.5 mb-7 list-none p-0">

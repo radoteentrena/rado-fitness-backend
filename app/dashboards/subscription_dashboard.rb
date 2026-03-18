@@ -39,7 +39,6 @@ class SubscriptionDashboard < Administrate::BaseDashboard
   COLLECTION_FILTERS = {
     active:      ->(resources) { resources.where(status: :active) },
     past_due:    ->(resources) { resources.where(status: :past_due) },
-    stripe:      ->(resources) { resources.where(processor: :stripe) },
     mercadopago: ->(resources) { resources.where(processor: :mercadopago) }
   }.freeze
 

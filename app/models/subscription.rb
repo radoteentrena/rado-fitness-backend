@@ -1,7 +1,7 @@
 class Subscription < ApplicationRecord
   belongs_to :user
 
-  enum :processor, { stripe: 0, mercadopago: 1 }
+  enum :processor, { mercadopago: 0 }
   enum :plan_tier, { basic: 0, medium: 1, high_ticket: 2 }
   enum :status, { pending: 0, active: 1, past_due: 2, canceled: 3 }
 

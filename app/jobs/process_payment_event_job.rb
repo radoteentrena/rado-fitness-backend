@@ -2,67 +2,13 @@ class ProcessPaymentEventJob < ApplicationJob
   queue_as :default
 
   def perform(processor:, event_type:, payload:)
-    case processor
-    when "stripe"      then handle_stripe(event_type, payload)
-    when "mercadopago" then handle_mercadopago(event_type, payload)
-    end
+    handle_mercadopago(event_type, payload) if processor == "mercadopago"
   rescue StandardError => e
     Rails.logger.error "ProcessPaymentEventJob error [#{processor}/#{event_type}]: #{e.message}"
     raise
   end
 
   private
-
-  # ── Stripe ─────────────────────────────────────────────────────────────────
-
-  def handle_stripe(event_type, payload)
-    case event_type
-    when "checkout.session.completed"    then stripe_checkout_completed(payload)
-    when "invoice.payment_succeeded"     then stripe_payment_succeeded(payload)
-    when "invoice.payment_failed"        then stripe_payment_failed(payload)
-    when "customer.subscription.deleted" then stripe_subscription_deleted(payload)
-    end
-  end
-
-  def stripe_checkout_completed(payload)
-    user = User.find_by!(id: payload["client_reference_id"])
-    sub  = Subscription.find_or_initialize_by(user: user)
-
-    sub.assign_attributes(
-      processor:            :stripe,
-      plan_tier:            user.plan_tier,
-      status:               :active,
-      external_id:          payload["subscription"],
-      external_customer_id: payload["customer"],
-      currency:             payload["currency"]&.upcase || "USD",
-      amount_cents:         payload["amount_subtotal"]
-    )
-    sub.save!
-    user.active!
-  end
-
-  def stripe_payment_succeeded(payload)
-    sub = Subscription.find_by!(external_id: payload["subscription"])
-    period_end = payload.dig("lines", "data", 0, "period", "end")
-    sub.update!(current_period_end: Time.at(period_end)) if period_end
-  end
-
-  def stripe_payment_failed(payload)
-    sub = Subscription.find_by!(external_id: payload["subscription"])
-    sub.past_due!
-    CoachAlert.create!(
-      user:     sub.user,
-      category: :payment_failed,
-      message:  "Pago fallido en Stripe para la suscripción #{sub.external_id}.",
-      status:   :pending
-    )
-  end
-
-  def stripe_subscription_deleted(payload)
-    sub = Subscription.find_by!(external_id: payload["id"])
-    sub.update!(status: :canceled, canceled_at: Time.current)
-    sub.user.churned!
-  end
 
   # ── MercadoPago ─────────────────────────────────────────────────────────────
 

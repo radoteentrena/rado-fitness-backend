@@ -34,8 +34,8 @@ RSpec.describe Subscription, type: :model do
   end
 
   describe "enums" do
-    it "has processor enum with stripe and mercadopago" do
-      expect(Subscription.processors.keys).to contain_exactly("stripe", "mercadopago")
+    it "has processor enum with mercadopago" do
+      expect(Subscription.processors.keys).to contain_exactly("mercadopago")
     end
 
     it "has status enum with pending, active, past_due, canceled" do
