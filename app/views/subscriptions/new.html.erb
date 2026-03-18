@@ -1,24 +1,160 @@
-<div class="min-h-screen bg-background flex items-center justify-center px-4">
-  <div class="max-w-md w-full space-y-8">
-    <div>
-      <h1 class="text-3xl font-bold uppercase tracking-tight text-whiteish">
+<div class="bg-blackish min-h-screen font-display py-20 px-6">
+  <div class="max-w-5xl mx-auto">
+
+    <%# Page header %>
+    <header class="text-center mb-14">
+      <span class="block text-[11px] font-bold tracking-[0.15em] uppercase text-saffron mb-4">
+        Paso 2 de 2
+      </span>
+      <h1 class="text-[42px] font-black uppercase text-whiteish leading-[1.05] tracking-tight mb-3">
         Elegí tu plan
       </h1>
-      <p class="mt-2 text-muted">Suscripción mensual. Cancelá cuando quieras.</p>
-    </div>
+      <p class="text-[15px] text-[#888] tracking-wide">
+        Suscripción mensual. Cancelá cuando quieras.
+      </p>
+    </header>
 
-    <div class="border-2 border-graphite p-6 space-y-4">
-      <div class="flex justify-between items-center">
-        <span class="text-whiteish font-bold uppercase"><%= current_user.plan_tier&.humanize %></span>
-        <span class="text-primary font-bold text-xl">
-          <%= current_user.basic? ? "$10" : current_user.medium? ? "$50" : "$100" %>/mes
-        </span>
+    <%# Flash alert %>
+    <% if flash[:alert] %>
+      <div class="max-w-2xl mx-auto mb-8 border-2 border-red-500 p-4 text-red-400 text-sm text-center">
+        <%= flash[:alert] %>
       </div>
+    <% end %>
 
-      <%= button_to subscriptions_path, method: :post,
-            class: "w-full button mt-4" do %>
-        Continuar al pago
+    <%# Plan grid — one form per card %>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-stretch">
+
+      <%# Basic %>
+      <%= form_with url: subscriptions_path, method: :post, class: "contents" do |f| %>
+        <%= f.hidden_field :plan_tier, value: "basic" %>
+        <div class="border-2 border-graphite relative flex flex-col p-8 cursor-pointer
+                    hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#2F2F2F]
+                    transition-all duration-100">
+          <p class="text-[11px] font-bold tracking-[0.18em] uppercase text-[#888] mb-4">Basic</p>
+          <div class="mb-1">
+            <span class="text-[52px] font-black text-whiteish leading-none">
+              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span>10
+            </span>
+            <p class="text-[13px] text-[#555] font-medium mt-1">USD / mes</p>
+          </div>
+          <div class="w-8 h-0.5 bg-graphite my-5"></div>
+          <ul class="flex-1 flex flex-col gap-2.5 mb-7 list-none p-0">
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Placeholder beneficio uno
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Placeholder beneficio dos
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Placeholder beneficio tres
+            </li>
+          </ul>
+          <%= f.submit "Elegir Basic",
+              class: "w-full py-3.5 text-xs font-black tracking-[0.14em] uppercase
+                      border-2 border-graphite text-whiteish bg-transparent cursor-pointer
+                      hover:border-whiteish hover:shadow-[4px_4px_0px_0px_#2F2F2F]
+                      hover:-translate-x-0.5 hover:-translate-y-0.5
+                      transition-all duration-100" %>
+        </div>
       <% end %>
+
+      <%# Medium — featured %>
+      <%= form_with url: subscriptions_path, method: :post, class: "contents" do |f| %>
+        <%= f.hidden_field :plan_tier, value: "medium" %>
+        <div class="border-2 border-saffron relative flex flex-col p-8 cursor-pointer
+                    hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#F5C228]
+                    transition-all duration-100">
+          <span class="absolute -top-3 left-1/2 -translate-x-1/2
+                       bg-saffron text-blackish text-[10px] font-black tracking-[0.14em] uppercase
+                       px-3 py-0.5 whitespace-nowrap">
+            Más popular
+          </span>
+          <p class="text-[11px] font-bold tracking-[0.18em] uppercase text-saffron mb-4">Medium</p>
+          <div class="mb-1">
+            <span class="text-[52px] font-black text-whiteish leading-none">
+              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span>50
+            </span>
+            <p class="text-[13px] text-[#555] font-medium mt-1">USD / mes</p>
+          </div>
+          <div class="w-8 h-0.5 bg-saffron opacity-40 my-5"></div>
+          <ul class="flex-1 flex flex-col gap-2.5 mb-7 list-none p-0">
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+              Todo lo de Basic
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+              Placeholder beneficio cuatro
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+              Placeholder beneficio cinco
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+              Placeholder beneficio seis
+            </li>
+          </ul>
+          <%= f.submit "Elegir Medium",
+              class: "w-full py-3.5 text-xs font-black tracking-[0.14em] uppercase
+                      bg-saffron border-2 border-saffron text-blackish cursor-pointer
+                      hover:shadow-[4px_4px_0px_0px_#fff]
+                      hover:-translate-x-0.5 hover:-translate-y-0.5
+                      transition-all duration-100" %>
+        </div>
+      <% end %>
+
+      <%# High Ticket %>
+      <%= form_with url: subscriptions_path, method: :post, class: "contents" do |f| %>
+        <%= f.hidden_field :plan_tier, value: "high_ticket" %>
+        <div class="border-2 border-graphite relative flex flex-col p-8 cursor-pointer
+                    hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#2F2F2F]
+                    transition-all duration-100">
+          <p class="text-[11px] font-bold tracking-[0.18em] uppercase text-[#888] mb-4">High Ticket</p>
+          <div class="mb-1">
+            <span class="text-[52px] font-black text-whiteish leading-none">
+              <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span>100
+            </span>
+            <p class="text-[13px] text-[#555] font-medium mt-1">USD / mes</p>
+          </div>
+          <div class="w-8 h-0.5 bg-graphite my-5"></div>
+          <ul class="flex-1 flex flex-col gap-2.5 mb-7 list-none p-0">
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Todo lo de Medium
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Placeholder beneficio siete
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Placeholder beneficio ocho
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Placeholder beneficio nueve
+            </li>
+          </ul>
+          <%= f.submit "Elegir High Ticket",
+              class: "w-full py-3.5 text-xs font-black tracking-[0.14em] uppercase
+                      border-2 border-graphite text-whiteish bg-transparent cursor-pointer
+                      hover:border-whiteish hover:shadow-[4px_4px_0px_0px_#2F2F2F]
+                      hover:-translate-x-0.5 hover:-translate-y-0.5
+                      transition-all duration-100" %>
+        </div>
+      <% end %>
+
     </div>
+
+    <%# Footer note %>
+    <p class="text-center mt-8 text-xs text-[#444] tracking-wide">
+      Al continuar aceptás los <a href="#" class="text-[#666] underline">términos y condiciones</a>.
+      Podés cancelar en cualquier momento.
+    </p>
+
   </div>
 </div>
