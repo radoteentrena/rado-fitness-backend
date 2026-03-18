@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_18_151947) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_18_152837) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -276,6 +276,26 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_18_151947) do
     t.index ["user_id"], name: "index_routines_on_user_id"
   end
 
+  create_table "subscriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "processor", null: false
+    t.integer "plan_tier", null: false
+    t.integer "status", default: 0, null: false
+    t.string "external_id"
+    t.string "external_customer_id"
+    t.string "external_plan_id"
+    t.string "currency", default: "USD"
+    t.integer "amount_cents"
+    t.datetime "current_period_end"
+    t.boolean "cancel_at_period_end", default: false, null: false
+    t.datetime "canceled_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["processor"], name: "index_subscriptions_on_processor"
+    t.index ["status"], name: "index_subscriptions_on_status"
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
+  end
+
   create_table "training_sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "program_id", null: false
@@ -394,6 +414,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_18_151947) do
   add_foreign_key "programs", "users"
   add_foreign_key "progress_photos", "users"
   add_foreign_key "routines", "users"
+  add_foreign_key "subscriptions", "users"
   add_foreign_key "training_sessions", "phases"
   add_foreign_key "training_sessions", "programs"
   add_foreign_key "training_sessions", "routines"
