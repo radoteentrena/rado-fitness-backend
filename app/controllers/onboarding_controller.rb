@@ -18,7 +18,7 @@ class OnboardingController < ApplicationController
 
     if @user.save
       sign_in(@user)
-      redirect_to onboarding_success_path
+      redirect_to new_subscription_path
     else
       render :new, status: :unprocessable_entity
     end
@@ -41,7 +41,7 @@ class OnboardingController < ApplicationController
         :experience_level, :best_lifts, :commitment_level,
         :training_frequency, :injuries, :plays_sports, :sport_details,
         :time_per_session, :diet_quality, :activity_level, :sleep_hours,
-        :social_media_consent, :referral_source, goals: []
+        :social_media_consent, :referral_source, :country, goals: []
       ]
     )
   end

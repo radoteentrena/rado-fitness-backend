@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   resource :onboarding, only: [:new, :create], controller: 'onboarding'
   get 'onboarding/success', to: 'onboarding#success', as: :onboarding_success
 
+  get  "subscription/new",        to: "subscriptions#new",        as: :new_subscription
+  post "subscription",            to: "subscriptions#create",     as: :subscriptions
+  get  "subscription/processing", to: "subscriptions#processing", as: :subscriptions_processing
+
   namespace :admin do
       resources :coach_alerts
       resources :dietary_plans
@@ -27,6 +31,8 @@ Rails.application.routes.draw do
       resources :progress_photos, except: [ :index ]
       resources :program_executions, except: [ :index ]
       resources :exercise_logs, except: [ :index ]
+      resources :subscription_cancellations, only: [:create]
+      resources :subscriptions, only: [:index, :show]
 
       get  "ai_coach",          to: "ai_coach#new",      as: :new_ai_coach
       post "ai_coach/generate", to: "ai_coach#generate", as: :generate_ai_coach
@@ -44,6 +50,7 @@ Rails.application.routes.draw do
   # Webhooks
   namespace :webhooks do
     post "whatsapp/incoming", to: "whatsapp#incoming"
+    post "mercadopago",       to: "mercadopago#create"
   end
 
   namespace :api do

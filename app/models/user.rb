@@ -42,6 +42,7 @@ class User < ApplicationRecord
 
   # Associations
   has_one :onboarding_profile, dependent: :destroy
+  has_one :subscription, dependent: :destroy
   accepts_nested_attributes_for :onboarding_profile
 
   has_many :routines, dependent: :destroy
