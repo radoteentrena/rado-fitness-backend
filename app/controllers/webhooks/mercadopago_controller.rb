@@ -7,8 +7,7 @@ module Webhooks
       raw_body = request.body.read
       body = JSON.parse(raw_body)
 
-      # TEMPORARY: signature check disabled to test endpoint reachability via MP panel
-      # return head :bad_request unless valid_signature?(body)
+      return head :bad_request unless valid_signature?(body)
 
       topic = body["type"] || params[:topic]
 
