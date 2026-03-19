@@ -1,6 +1,7 @@
 module Subscriptions
   class MercadoPagoCheckout
     PLAN_KEYS = { basic: :basic, medium: :medium, high_ticket: :high_ticket }.freeze
+    MP_CHECKOUT_BASE = "https://www.mercadopago.com.ar/subscriptions/checkout"
 
     def initialize(user, plan_tier)
       @user = user
@@ -8,31 +9,11 @@ module Subscriptions
     end
 
     def call
-      sdk = Mercadopago::SDK.new(
-        Rails.application.credentials.dig(:mercadopago, :access_token)
-      )
+      pid = plan_id
+      return { success: false, error: "Plan no configurado" } unless pid.present?
 
-      host = Rails.application.credentials.dig(:app_host)
-      helpers = Rails.application.routes.url_helpers
-
-      response = sdk.preapproval.create({
-        "preapproval_plan_id" => plan_id,
-        "payer_email"         => @user.email,
-        "external_reference"  => @user.id.to_s,
-        "back_url"            => helpers.subscriptions_processing_url(host: host),
-        "notification_url"    => helpers.webhooks_mercadopago_url(host: host)
-      })
-
-      if response[:status] == 201
-        { success: true, redirect_url: response.dig(:response, "init_point") }
-      else
-        error = response.dig(:response, "message") || "MercadoPago error"
-        Rails.logger.error "MP checkout error for user #{@user.id}: #{error}"
-        { success: false, error: error }
-      end
-    rescue StandardError => e
-      Rails.logger.error "MP checkout exception for user #{@user.id}: #{e.message}"
-      { success: false, error: e.message }
+      url = "#{MP_CHECKOUT_BASE}?preapproval_plan_id=#{pid}"
+      { success: true, redirect_url: url }
     end
 
     private
