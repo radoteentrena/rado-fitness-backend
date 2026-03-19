@@ -12,11 +12,15 @@ module Subscriptions
         Rails.application.credentials.dig(:mercadopago, :access_token)
       )
 
+      host = Rails.application.credentials.dig(:app_host)
+      helpers = Rails.application.routes.url_helpers
+
       response = sdk.preapproval.create(
         "preapproval_plan_id" => plan_id,
         "payer_email"         => @user.email,
         "external_reference"  => @user.id.to_s,
-        "back_url"            => Rails.application.routes.url_helpers.subscriptions_processing_url(host: Rails.application.credentials.dig(:app_host))
+        "back_url"            => helpers.subscriptions_processing_url(host: host),
+        "notification_url"    => helpers.webhooks_mercadopago_url(host: host)
       )
 
       if response["status"] == 201
