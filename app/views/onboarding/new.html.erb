@@ -4,7 +4,7 @@
     <div data-controller="multi-step-form" class="w-full pb-32">
       <div class="mb-16">
         <div class="flex justify-center items-center mb-4">
-          <span class="text-lg font-bold text-gray-400 tracking-widest uppercase" data-multi-step-form-target="progress">Paso 1 de 15</span>
+          <span class="text-lg font-bold text-gray-400 tracking-widest uppercase" data-multi-step-form-target="progress">Paso 1 de 16</span>
         </div>
         <div class="w-full h-4 bg-black border-2 border-primary/50 relative overflow-hidden">
           <div class="absolute top-0 left-0 h-full bg-saffron transition-all duration-300 ease-out" style="width: 0%" data-multi-step-form-target="progressBar"></div>
@@ -353,6 +353,23 @@
                 <% end %>
               </div>
             </div>
+          </div>
+        </div>
+
+        <%# Country selection — determines payment processor %>
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
+          <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-saffron">¿Desde dónde nos escribís?</h2>
+          </div>
+
+          <div class="space-y-3">
+            <%= p.select :country,
+                  [["Argentina", "AR"], ["Estados Unidos", "US"], ["Chile", "CL"],
+                   ["Colombia", "CO"], ["México", "MX"], ["Brasil", "BR"],
+                   ["Otro", "OTHER"]],
+                  { prompt: "Seleccioná tu país" },
+                  required: true,
+                  class: "w-full bg-black border-2 border-primary/50 text-white px-6 py-5 text-xl font-medium focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all appearance-none rounded-none" %>
           </div>
         </div>
 

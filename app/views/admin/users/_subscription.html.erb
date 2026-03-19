@@ -1,0 +1,66 @@
+<%# app/views/admin/users/_subscription.html.erb %>
+<div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+  <h3 class="text-sm font-bold uppercase tracking-widest text-graphite dark:text-muted mb-4">
+    Suscripción
+  </h3>
+
+  <% if subscription %>
+    <% status_colors = {
+      "active"   => "bg-primary text-blackish",
+      "pending"  => "bg-shadow text-muted",
+      "past_due" => "bg-yellow-500 text-blackish",
+      "canceled" => "bg-blackish text-whiteish"
+    } %>
+
+    <dl class="space-y-3">
+      <div class="flex justify-between">
+        <dt class="text-sm text-graphite dark:text-muted">Estado</dt>
+        <dd>
+          <span class="px-2 py-0.5 text-xs font-bold uppercase rounded <%= status_colors[subscription.status] || 'bg-graphite text-whiteish' %>">
+            <%= subscription.status.humanize %>
+          </span>
+          <% if subscription.cancel_at_period_end? %>
+            <span class="ml-1 text-xs text-muted">(cancela al vencer)</span>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="flex justify-between">
+        <dt class="text-sm text-graphite dark:text-muted">Plan</dt>
+        <dd class="text-sm font-medium text-blackish dark:text-whiteish">
+          <%= subscription.plan_tier.humanize %> —
+          <%= subscription.currency %> <%= number_to_currency(subscription.amount_in_dollars, unit: "") %>
+        </dd>
+      </div>
+
+      <div class="flex justify-between">
+        <dt class="text-sm text-graphite dark:text-muted">Procesador</dt>
+        <dd class="text-sm font-medium text-blackish dark:text-whiteish">
+          MercadoPago
+        </dd>
+      </div>
+
+      <% if subscription.current_period_end? %>
+        <div class="flex justify-between">
+          <dt class="text-sm text-graphite dark:text-muted">Próximo cobro</dt>
+          <dd class="text-sm text-blackish dark:text-whiteish">
+            <%= subscription.current_period_end.strftime("%d %b %Y") %>
+          </dd>
+        </div>
+      <% end %>
+    </dl>
+
+    <% unless subscription.cancel_at_period_end? || subscription.canceled? %>
+      <div class="mt-4 pt-4 border-t border-shadow dark:border-graphite">
+        <%= button_to admin_subscription_cancellations_path(subscription_id: subscription.id),
+              method: :post,
+              data: { confirm: "¿Cancelar al vencimiento del período actual?" },
+              class: "w-full text-sm border-2 border-graphite text-graphite hover:border-blackish hover:text-blackish dark:border-graphite dark:text-muted dark:hover:border-whiteish dark:hover:text-whiteish px-4 py-2 font-medium transition-colors" do %>
+          Cancelar al vencimiento
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-sm text-muted">Sin suscripción activa.</p>
+  <% end %>
+</div>
