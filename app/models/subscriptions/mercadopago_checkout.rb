@@ -15,18 +15,18 @@ module Subscriptions
       host = Rails.application.credentials.dig(:app_host)
       helpers = Rails.application.routes.url_helpers
 
-      response = sdk.preapproval.create(
+      response = sdk.preapproval.create({
         "preapproval_plan_id" => plan_id,
         "payer_email"         => @user.email,
         "external_reference"  => @user.id.to_s,
         "back_url"            => helpers.subscriptions_processing_url(host: host),
         "notification_url"    => helpers.webhooks_mercadopago_url(host: host)
-      )
+      })
 
-      if response["status"] == 201
-        { success: true, redirect_url: response["response"]["init_point"] }
+      if response[:status] == 201
+        { success: true, redirect_url: response.dig(:response, "init_point") }
       else
-        error = response.dig("response", "message") || "MercadoPago error"
+        error = response.dig(:response, "message") || "MercadoPago error"
         Rails.logger.error "MP checkout error for user #{@user.id}: #{error}"
         { success: false, error: error }
       end
