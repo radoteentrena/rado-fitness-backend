@@ -104,7 +104,6 @@ class ProcessPaymentEventJob < ApplicationJob
 
     case payment["status"]
     when "approved"
-      # Cancel all other subscriptions for this user
       user.subscriptions.where.not(id: subscription.id).update_all(status: :canceled)
 
       subscription.update!(
