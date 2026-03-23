@@ -37,7 +37,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
         payload: payload
       )
 
-      sub = user.reload.subscription
+      sub = user.reload.active_subscription
       expect(sub).to be_active
       expect(sub.external_id).to eq(mp_sub_id)
       expect(user.reload).to be_active
