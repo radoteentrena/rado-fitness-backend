@@ -43,35 +43,59 @@ Throughout this spec and all implementation code:
 
 **Remove** the `validates :user_id, uniqueness: true` constraint. A user may have multiple subscription records over time. Only one subscription should be `active` or `pending` at a time — enforced at the application layer.
 
-**Change `User` association** from `has_one :subscription, dependent: :destroy` to `has_many :subscriptions, dependent: :destroy`. Add a deterministic convenience scope:
+**Change `User` association** from `has_one :subscription, dependent: :destroy` to `has_many :subscriptions, dependent: :destroy`. Add the new enum and convenience scope:
 
 ```ruby
 # user.rb
 has_many :subscriptions, dependent: :destroy
+
+# Use prefix: :access to avoid collision with existing `enum :status` which also
+# generates `active!` and `active?`. With prefix, methods become:
+# user.access_active!, user.access_locked!, user.access_active?, user.access_locked?
+enum :access_status, { active: 0, locked: 1 }, default: :active, prefix: :access
 
 def active_subscription
   subscriptions.where(status: [:pending, :active]).order(created_at: :desc).first
 end
 ```
 
-`order(created_at: :desc)` ensures the most recently created record wins when multiple pending/active rows exist during a transition. All existing call sites of `user.subscription` must be updated to `user.active_subscription`.
+The existing `user.active!` (which sets `status = :active` from the `enum :status` declaration) is **not affected** by adding the new enum with `prefix: :access`. Do not call `user.active!` to unlock access — call `user.access_active!` instead.
 
-The existing `find_or_initialize_by(user: user)` in the `mercadopago_preapproval` webhook branch must be updated to use `first_or_initialize` (which supports array scopes):
+All existing call sites of `user.subscription` must be updated to `user.active_subscription`. Known call sites to update:
+- `app/controllers/subscriptions_controller.rb`
+- `app/controllers/webhooks/mercadopago_controller.rb` (via `ProcessPaymentEventJob`)
+- `app/views/admin/users/show.html.erb` (renders the subscription partial with `user.subscription`)
+- Any other views or presenters referencing `user.subscription`
+
+The existing `find_or_initialize_by(user: user)` in the `mercadopago_preapproval` webhook branch must be updated to:
 
 ```ruby
-Subscription.where(user: user, billing_type: :recurring, status: [:active, :pending]).first_or_initialize
+sub = Subscription.where(user: user, billing_type: :recurring, status: [:active, :pending])
+                  .first_or_initialize
 ```
 
-Add the following columns:
+`first_or_initialize` auto-assigns equality conditions (`billing_type: :recurring`) on a new record but does **not** auto-assign array conditions (`status: [:active, :pending]`). The subsequent `assign_attributes` call must therefore explicitly set `status`, `billing_type: :recurring`, and all other required fields.
 
-| Column | Type | Notes |
-|---|---|---|
-| `billing_type` | integer (enum) | `recurring: 0`, `one_time: 1`. Default: `recurring` |
-| `frequency` | integer (enum) | `monthly: 0`, `quarterly: 1`, `yearly: 2`. Default: `monthly` |
-| `access_expires_at` | datetime | Set on webhook `approved` for one-time payments; nil for recurring |
-| `reminded_at` | datetime | Updated after each reminder send; used for idempotency |
-| `past_due_since` | datetime | Set when `status` transitions to `past_due`; used by dunning job |
-| `mp_preference_id` | string | Stores MP `preference.id` for one-time Checkout Pro payments |
+When a new subscription payment is approved, cancel all previous subscription records for that user before granting access. Only run this step if the record is persisted (i.e., `subscription.persisted?`) — skip if it is a brand-new unsaved record (first-time subscriber) to avoid the `WHERE id IS NOT NULL` condition that would cancel all existing records:
+
+```ruby
+if subscription.persisted?
+  user.subscriptions.where.not(id: subscription.id).update_all(status: :canceled)
+end
+```
+
+This prevents stale `active` records from appearing in future dunning queries.
+
+Add the following columns. All integer columns must be `null: false, default: 0` so existing rows get a valid value immediately without a backfill:
+
+| Column | Type | Migration options | Notes |
+|---|---|---|---|
+| `billing_type` | integer (enum) | `null: false, default: 0` | `recurring: 0`, `one_time: 1` |
+| `frequency` | integer (enum) | `null: false, default: 0` | `monthly: 0`, `quarterly: 1`, `yearly: 2` |
+| `access_expires_at` | datetime | `null: true` | Set on webhook `approved` for one-time; nil for recurring |
+| `reminded_at` | datetime | `null: true` | Updated after each reminder send |
+| `past_due_since` | datetime | `null: true` | Set on `past_due` transition |
+| `mp_preference_id` | string | `null: true` | MP `preference.id` for Checkout Pro payments |
 
 **Model validation:** `billing_type: one_time` is only valid with `frequency: monthly`.
 
@@ -81,32 +105,49 @@ validates :frequency, inclusion: { in: [:monthly] }, if: -> { one_time? }
 
 ### Migration: `users`
 
-| Column | Type | Notes |
-|---|---|---|
-| `access_status` | integer (enum) | `active: 0`, `locked: 1`. Default: `active` |
+Add `access_status` as a non-null integer with DB default `0`:
+
+```ruby
+add_column :users, :access_status, :integer, null: false, default: 0
+```
+
+This ensures all existing rows get `access_status = 0` (`:active`) immediately without a separate backfill step. No data migration needed.
 
 ---
 
 ## UI Flow
 
-**Current:** Plan selection (`GET /subscriptions/new`) → `POST /subscriptions`
-**New:** Plan selection → Frequency selector → `POST /subscriptions`
+**Current:** Plan selection (`GET /subscription/new`) → `POST /subscription`
+**New:** Plan selection → Frequency selector → `POST /subscription`
 
 ### Routes
 
-Two separate controller actions for the two screens. The existing routes use singular paths (`subscription/new`, `subscription`), so the new route follows the same convention:
+Add to `config/routes.rb`:
 
-- `GET /subscription/new` — plan selector (existing, no change)
-- `GET /subscription/frequency?plan_tier=basic` — frequency selector (new action: `frequency`)
-- `POST /subscription` — checkout (existing `create` action, extended)
+```ruby
+get "subscription/frequency", to: "subscriptions#frequency", as: :subscription_frequency
+```
 
-The plan selector form uses `method: :get` and `action: subscription_frequency_path` so that `plan_tier` is passed as a query param. The frequency selector displays the 4 options with `plan_tier` as a hidden field, then POSTs to `subscription_path`.
+Full route set:
+- `GET /subscription/new` — plan selector (existing `new` action; helper: `new_subscription_path`)
+- `GET /subscription/frequency` — frequency selector (new `frequency` action; helper: `subscription_frequency_path`)
+- `POST /subscription` — checkout (existing `create` action; helper: `subscription_path`)
 
-`new_subscription_url` (pointing to the plan selector) remains the correct recovery URL for locked users.
+The plan selector form uses `method: :get` pointing to `subscription_frequency_path` so that `plan_tier` is appended as a query param. The frequency selector displays the 4 options with `plan_tier` as a hidden field, then POSTs to `subscriptions_path` (the existing plural helper that maps to `POST /subscription`).
 
-### URL helper in API context
+`new_subscription_url` (pointing to the plan selector) is the recovery URL for locked users.
 
-`check_access_locked!` uses `new_subscription_url`. `default_url_options` must be configured in `Api::V1::BaseController` (or inherited from `ApplicationController`) with `host: Rails.application.credentials.dig(:app_host)` to prevent a missing-host error.
+### URL helpers in API context
+
+`Api::V1::BaseController` inherits from `ActionController::API` and does not include URL helpers automatically. Add:
+
+```ruby
+include Rails.application.routes.url_helpers
+
+def default_url_options
+  { host: Rails.application.credentials.dig(:app_host) }
+end
+```
 
 ### Frequency Selector Screen
 
@@ -184,28 +225,40 @@ The existing guard `return unless payment["status"] == "rejected"` must be **rem
 ```ruby
 when "payment"
   if payment.dig("metadata", "preapproval_id").present?
-    # Preapproval-related payment (existing logic, guard kept here)
+    # Preapproval-related payment (existing logic, guard relocated here)
     return unless payment["status"] == "rejected"
     # ... existing past_due logic ...
     sub.past_due!
-    sub.update!(past_due_since: Time.current)  # write past_due_since here
+    sub.update!(past_due_since: Time.current)
   else
     handle_checkout_pro_payment(payment)
   end
 ```
 
 **`handle_checkout_pro_payment`** (new private method):
+
+The MP Checkout Pro payment object includes a `"preference_id"` key at the top level of the payment hash. **Implementer must verify this key name against the actual MP SDK response** before shipping — log the full payload on the first test payment to confirm.
+
 - Look up `Subscription` using `find_by(mp_preference_id: payment["preference_id"])`
-- If no record found: log a warning and return (do not raise — avoids job retry loops for unrecognized preference IDs)
-- On `approved`: `subscription.update!(access_expires_at: Time.current + 1.month, status: :active)`, `user.active!` (sets `user.status = :active`, matching the existing preapproval `authorized` behavior), and `user.update!(access_status: :active)`. No `CoachAlert` is created for one-time payments.
+- If no record found: log a warning and return (do not raise — avoids retry loops for unrecognized preference IDs)
+- On `approved`:
+  - Cancel other subscriptions first: `user.subscriptions.where.not(id: subscription.id).update_all(status: :canceled)`
+  - `subscription.update!(access_expires_at: Time.current + 1.month, status: :active)`
+  - `user.active!` (sets `user.status = :active`)
+  - `user.access_active!` (sets `user.access_status = :active` via prefixed enum method)
+  - No `CoachAlert` created
 - On `rejected` / `cancelled`: log only, no access change, no `CoachAlert`
 
 ### `ProcessPaymentEventJob` — `subscription_preapproval` branch
 
 Extended additively:
-- On `authorized`: set `user.access_status = :active` (in addition to existing `user.active!`), clear `subscription.reminded_at`, clear `subscription.past_due_since`. The `assign_attributes` call must explicitly include `billing_type: :recurring` to ensure newly initialized records have the correct value before `save!`.
-- On `"cancelled"` (MP string, two `l`s): update `subscription.status = :canceled` (enum key, one `l`) — existing behavior, no change
-- On `paused`: update `subscription.status` accordingly
+- On `authorized`:
+  - Cancel other subscriptions first: `user.subscriptions.where.not(id: sub.id).update_all(status: :canceled)`
+  - Set `user.access_active!` (in addition to existing `user.active!` which sets `user.status`)
+  - Clear `sub.reminded_at` and `sub.past_due_since`
+  - `assign_attributes` must explicitly include `billing_type: :recurring` and `status: :active`
+- On `"cancelled"` (MP string, two `l`s): set `subscription.status = :canceled` (existing behavior which calls `user.churned!`); additionally call `user.access_locked!` so the user loses API access immediately rather than waiting for the dunning job
+- On `"paused"` (MP string): log only — no `paused` value in the `Subscription` status enum, do not attempt to write it
 
 ---
 
@@ -215,17 +268,15 @@ Runs **daily** via cron.
 
 ### Queries
 
-1. One-time subscriptions: `billing_type: :one_time`, `status: :active`, `access_expires_at < Time.current`
-2. Recurring subscriptions: `billing_type: :recurring`, `status: :past_due`
+1. One-time: `Subscription.where(billing_type: :one_time, status: :active).where("access_expires_at < ?", Time.current)`
+2. Recurring: `Subscription.where(billing_type: :recurring, status: :past_due)`
 
-Scoping one-time to `status: :active` ensures abandoned `pending` records (checkout never completed) are never dunned. One-time subscriptions **do not transition to `past_due`** — the `past_due` status is only set by the preapproval webhook branch which applies to recurring only. One-time subscriptions remain in `status: :active` throughout the dunning period (days 0–4) and are only removed from the dunning query when the user pays (webhook sets a new `access_expires_at`) or the subscription is `canceled`.
+One-time subscriptions remain `status: :active` throughout the dunning period (days 0–4). At `days_overdue >= 5`, after locking the user, the job also sets `subscription.update!(status: :canceled)` on the one-time subscription. This removes it from future dunning queries and provides a clear terminal state. The `update_all(status: :canceled)` on payment approval ensures stale records from previous cycles are also excluded.
 
 ### `days_overdue` calculation
 
 - **One-time**: `(Date.current - subscription.access_expires_at.to_date).to_i`
 - **Recurring**: `(Date.current - subscription.past_due_since.to_date).to_i`
-
-`past_due_since` is guaranteed non-nil for any recurring subscription in `past_due` status because it is written at the `sub.past_due!` call in `ProcessPaymentEventJob`.
 
 ### Dunning cadence
 
@@ -234,7 +285,7 @@ Scoping one-time to `status: :active` ensures abandoned `pending` records (check
 | 0 | Send WhatsApp + email reminder #1 | Yes |
 | 2 | Send WhatsApp + email reminder #2 | Yes |
 | 4 | Send WhatsApp + email final warning | Yes |
-| ≥ 5 | Set `user.access_status = :locked` | — |
+| ≥ 5 | `user.access_locked!` | — |
 
 ### Guard logic (idempotency)
 
@@ -243,7 +294,7 @@ Before sending any reminder, the job checks **both**:
 1. `days_overdue` is exactly 0, 2, or 4
 2. `reminded_at.nil? || reminded_at.to_date < Date.current`
 
-Both must pass. Condition 1 prevents sends on intermediate days (1 or 3). Condition 2 prevents duplicate sends on the same calendar day after retries. `reminded_at` is updated to `Time.current` after every successful send.
+Both must pass. `reminded_at` is updated to `Time.current` after each send.
 
 ### Channels
 
@@ -256,25 +307,34 @@ Both must pass. Condition 1 prevents sends on intermediate days (1 or 3). Condit
 
 ### Locking
 
-`SubscriptionDunningJob` sets `user.access_status = :locked` when `days_overdue >= 5`.
+`SubscriptionDunningJob` calls `user.access_locked!` when `days_overdue >= 5`.
 
 ### API enforcement
 
-`Api::V1::BaseController` gains a `before_action :check_access_locked!`:
+`Api::V1::BaseController` — add after existing `before_action :authenticate_user!`:
 
 ```ruby
+include Rails.application.routes.url_helpers
+
+before_action :authenticate_user!
+before_action :check_access_locked!
+
+def default_url_options
+  { host: Rails.application.credentials.dig(:app_host) }
+end
+
 def check_access_locked!
-  return unless current_user&.locked?
+  return unless current_user.access_locked?
   render json: { error: "access_locked", payment_url: new_subscription_url }, status: :forbidden
 end
 ```
 
-`default_url_options` must include `host: Rails.application.credentials.dig(:app_host)` in this controller. Web and admin controllers are unaffected.
+`check_access_locked!` runs after `authenticate_user!`, so `current_user` is always present. Web and admin controllers are unaffected.
 
 ### Unlocking
 
-- **Recurring**: `subscription_preapproval` with `authorized` → `user.access_status = :active` (alongside `user.active!`), clear `reminded_at`, clear `past_due_since`
-- **One-time**: `payment` with `approved` (Checkout Pro branch) → `access_expires_at = Time.current + 1.month`, `status = :active`, `user.access_status = :active`
+- **Recurring**: `subscription_preapproval` `authorized` → `user.active!` + `user.access_active!`, clear `reminded_at` and `past_due_since`
+- **One-time**: `payment` `approved` (Checkout Pro branch) → `user.active!` + `user.access_active!`, `access_expires_at = Time.current + 1.month`
 
 ---
 
@@ -283,17 +343,17 @@ end
 | # | Deliverable |
 |---|---|
 | 1 | Migration: extend `subscriptions` (billing_type, frequency, access_expires_at, reminded_at, past_due_since, mp_preference_id); remove DB uniqueness on user_id |
-| 2 | Migration: add `access_status` to `users` |
-| 3 | Update `User`: `has_one` → `has_many :subscriptions, dependent: :destroy`; add `active_subscription` scope; update all call sites |
-| 4 | New controller action `SubscriptionsController#frequency` + route `GET /subscriptions/frequency` |
+| 2 | Migration: `add_column :users, :access_status, :integer, null: false, default: 0`; add `enum :access_status, { active: 0, locked: 1 }, default: :active, prefix: :access` to `user.rb` |
+| 3 | Update `User`: `has_one` → `has_many :subscriptions, dependent: :destroy`; add `active_subscription` scope; update all call sites including `app/views/admin/users/show.html.erb` |
+| 4 | Add route `get "subscription/frequency", to: "subscriptions#frequency", as: :subscription_frequency`; new `SubscriptionsController#frequency` action |
 | 5 | New view: frequency selector screen |
-| 6 | Update `SubscriptionsController#create` to route by billing_type/frequency |
+| 6 | Update `SubscriptionsController#create` to route by `billing_type`/`frequency` |
 | 7 | New service: `Subscriptions::MercadoPagoOneTimeCheckout` |
-| 8 | Refactor `ProcessPaymentEventJob#mercadopago_payment`: relocate guard inside preapproval branch; add Checkout Pro branch; write `past_due_since` on `past_due!` |
-| 9 | Update `ProcessPaymentEventJob#mercadopago_preapproval`: write `user.access_status`, clear `reminded_at` and `past_due_since` on `authorized` |
+| 8 | Refactor `ProcessPaymentEventJob#mercadopago_payment`: relocate guard inside preapproval branch; add Checkout Pro branch; write `past_due_since` on `past_due!`; cancel other subscriptions on approval; verify `payment["preference_id"]` key against MP SDK |
+| 9 | Update `ProcessPaymentEventJob#mercadopago_preapproval`: call `user.access_active!` on `authorized`; add `billing_type: :recurring` and `status: :active` to `assign_attributes`; cancel other subscriptions; log-only for `paused` |
 | 10 | Update `Subscriptions::MercadoPagoCheckout` to route frequency to correct plan ID |
-| 11 | Add 9 quarterly/yearly plan IDs to credentials |
+| 11 | Add 9 plan IDs to credentials (basic/medium/high_ticket × monthly/quarterly/yearly) |
 | 12 | New job: `SubscriptionDunningJob` with daily cron |
 | 13 | New mailer: `SubscriptionReminderMailer` |
-| 14 | `Api::V1::BaseController#check_access_locked!` + `default_url_options` configuration |
+| 14 | `Api::V1::BaseController`: include `url_helpers`, `default_url_options`, `check_access_locked!` after `authenticate_user!` |
 | 15 | Model validation: `one_time` billing_type only valid with `monthly` frequency |
