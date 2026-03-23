@@ -9,6 +9,7 @@ class User < ApplicationRecord
   include Discard::Model
 
   enum :status, { lead: 0, active: 1, churned: 2, archived: 3 }, default: :lead
+  enum :access_status, { active: 0, locked: 1 }, default: :active, prefix: :access
   enum :plan_tier, { basic: 0, medium: 1, high_ticket: 2 }
   enum :category, { pelele: 0, civil: 1, soldado: 2 }
 
@@ -42,7 +43,7 @@ class User < ApplicationRecord
 
   # Associations
   has_one :onboarding_profile, dependent: :destroy
-  has_one :subscription, dependent: :destroy
+  has_many :subscriptions, dependent: :destroy
   accepts_nested_attributes_for :onboarding_profile
 
   has_many :routines, dependent: :destroy
@@ -56,6 +57,10 @@ class User < ApplicationRecord
 
   def name
     "#{first_name} #{last_name}"
+  end
+
+  def active_subscription
+    subscriptions.where(status: [:pending, :active]).order(created_at: :desc).first
   end
 
   def target_workouts_per_week

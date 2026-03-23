@@ -1,10 +1,9 @@
 module Subscriptions
   class MercadoPagoCheckout
-    PLAN_KEYS = { basic: :basic, medium: :medium, high_ticket: :high_ticket }.freeze
-
-    def initialize(user, plan_tier)
+    def initialize(user, plan_tier, frequency = "monthly")
       @user = user
       @plan_tier = plan_tier.to_sym
+      @frequency = frequency.to_s
     end
 
     def call
@@ -19,12 +18,11 @@ module Subscriptions
         "back_url"            => Rails.application.routes.url_helpers.subscriptions_processing_url(host: Rails.application.credentials.dig(:app_host))
       )
 
-      if response["status"] == 201
-        { success: true, redirect_url: response["response"]["init_point"] }
+      if response[:status] == 201
+        { success: true, redirect_url: response[:response]["init_point"] }
       else
-        error = response.dig("response", "message") || "MercadoPago error"
-        Rails.logger.error "MP checkout error for user #{@user.id}: #{error}"
-        { success: false, error: error }
+        Rails.logger.error "MP checkout error for user #{@user.id}: #{response.inspect}"
+        { success: false, error: "MercadoPago error (status #{response[:status]})" }
       end
     rescue StandardError => e
       Rails.logger.error "MP checkout exception for user #{@user.id}: #{e.message}"
@@ -34,7 +32,8 @@ module Subscriptions
     private
 
     def plan_id
-      Rails.application.credentials.dig(:mercadopago, :plans, PLAN_KEYS[@plan_tier])
+      key = :"#{@plan_tier}_#{@frequency}"
+      Rails.application.credentials.dig(:mercadopago, :plans, key)
     end
   end
 end

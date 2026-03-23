@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get 'onboarding/success', to: 'onboarding#success', as: :onboarding_success
 
   get  "subscription/new",        to: "subscriptions#new",        as: :new_subscription
+  get  "subscription/frequency",  to: "subscriptions#frequency",  as: :subscription_frequency
   post "subscription",            to: "subscriptions#create",     as: :subscriptions
   get  "subscription/processing", to: "subscriptions#processing", as: :subscriptions_processing
 

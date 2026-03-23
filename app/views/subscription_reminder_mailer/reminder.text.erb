@@ -1,0 +1,13 @@
+Hola <%= @user.first_name %>,
+
+<% if @days_overdue == 0 -%>
+Tu pago está pendiente. Renovalo para seguir accediendo a tu plan de entrenamiento y nutrición.
+<% elsif @days_overdue == 2 -%>
+Todavía no recibimos tu pago. Si ya lo realizaste, podés ignorar este mensaje. De lo contrario, regularizá tu situación para no perder acceso.
+<% else -%>
+⚠️ ÚLTIMO AVISO: Si no regularizás tu pago antes de mañana, tu acceso será suspendido.
+<% end -%>
+
+Renovar suscripción: <%= @payment_url %>
+
+Si tenés alguna duda, respondé a este mail o contactanos por WhatsApp.
