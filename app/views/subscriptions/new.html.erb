@@ -4,7 +4,7 @@
     <%# Page header %>
     <header class="text-center mb-14">
       <span class="block text-[11px] font-bold tracking-[0.15em] uppercase text-saffron mb-4">
-        Paso 2 de 2
+        Paso 2 de 3
       </span>
       <h1 class="text-[42px] font-black uppercase text-whiteish leading-[1.05] tracking-tight mb-3">
         Elegí tu plan
@@ -21,11 +21,11 @@
       </div>
     <% end %>
 
-    <%# Plan grid — one form per card %>
+    <%# Plan grid — one form per card (GET → frequency) %>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-stretch">
 
       <%# Basic %>
-      <%= form_with url: subscriptions_path, method: :post, class: "contents" do |f| %>
+      <%= form_with url: subscription_frequency_path, method: :get, class: "contents" do |f| %>
         <%= f.hidden_field :plan_tier, value: "basic" %>
         <div class="border-2 border-graphite relative flex flex-col p-8 cursor-pointer
                     hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#2F2F2F]
@@ -62,7 +62,7 @@
       <% end %>
 
       <%# Medium — featured %>
-      <%= form_with url: subscriptions_path, method: :post, class: "contents" do |f| %>
+      <%= form_with url: subscription_frequency_path, method: :get, class: "contents" do |f| %>
         <%= f.hidden_field :plan_tier, value: "medium" %>
         <div class="border-2 border-saffron relative flex flex-col p-8 cursor-pointer
                     hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#F5C228]
@@ -108,7 +108,7 @@
       <% end %>
 
       <%# High Ticket %>
-      <%= form_with url: subscriptions_path, method: :post, class: "contents" do |f| %>
+      <%= form_with url: subscription_frequency_path, method: :get, class: "contents" do |f| %>
         <%= f.hidden_field :plan_tier, value: "high_ticket" %>
         <div class="border-2 border-graphite relative flex flex-col p-8 cursor-pointer
                     hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#2F2F2F]

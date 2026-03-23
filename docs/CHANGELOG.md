@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Feature:** Payment System Overhaul — Added support for one-time payments and recurring subscriptions (monthly, quarterly, yearly) via MercadoPago.
+- **Feature:** Dunning & Access Locking — Automated payment reminders with grace periods via SolidQueue, and API access locking for unpaid users.
 - **Feature:** Added comprehensive server-side model validations (`OnboardingProfile`, `User`) and frontend HTML5 constraints for onboarding form.
 - **Feature:** Added data sanitization callbacks to strip whitespace and normalize handles before validation.
 
