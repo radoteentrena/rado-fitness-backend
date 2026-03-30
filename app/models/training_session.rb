@@ -12,9 +12,9 @@ class TrainingSession < ApplicationRecord
   validates :session_number, presence: true, numericality: { greater_than: 0, only_integer: true }
   validates :started_at, presence: true, if: -> { in_progress? || completed? }
 
-  scope :current_for, ->(user) {
+  def self.current_for(user)
     where(user: user, status: [ statuses[:pending], statuses[:in_progress] ])
       .order(created_at: :asc)
       .first
-  }
+  end
 end
