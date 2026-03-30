@@ -70,6 +70,8 @@ gem "administrate"
 # Authentication
 gem "devise"
 gem "google_sign_in"
+gem "omniauth"
+gem "omniauth-google-oauth2"
 
 # Soft Delete
 gem "discard"
