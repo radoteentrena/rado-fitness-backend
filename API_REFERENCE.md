@@ -16,6 +16,73 @@ Accept: application/json
 Content-Type: application/json
 ```
 
+### POST /auth/google
+
+**Descripción:** Autentica un usuario móvil mediante token JWT de Google Sign-In. Valida exactamente el email contra la base de datos y devuelve un token de autenticación si el usuario existe y está activo.
+
+**Flujo:**
+1. Usuario inicia sesión con Google en app móvil
+2. Google devuelve ID token al app
+3. App envía POST con `id_token` al endpoint
+4. Rails valida token, busca usuario por email exacto
+5. Si usuario existe y status = "active", devuelve `auth_token`
+6. App almacena token en secure storage y lo incluye en todos los requests
+
+**Requisito:** Usuario debe existir en la base de datos (creado durante registro web) con `status: "active"`.
+
+**Request:**
+```http
+POST /auth/google
+Content-Type: application/json
+
+{
+  "id_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Response (200 - OK):**
+```json
+{
+  "auth_token": "abc123xyz789def456",
+  "user": {
+    "id": 1,
+    "email": "patriciopherrero@gmail.com",
+    "first_name": "Patricio",
+    "last_name": "Perez",
+    "status": "active",
+    "plan_tier": "high_ticket"
+  }
+}
+```
+
+**Response (401 - Unauthorized):**
+```json
+{
+  "error": "Invalid or expired token"
+}
+```
+
+O si no existe el usuario:
+```json
+{
+  "error": "No active account found with this email"
+}
+```
+
+O si la cuenta no está activa:
+```json
+{
+  "error": "Account not yet activated or has been deactivated"
+}
+```
+
+**Notas de Seguridad:**
+- Token JWT debe ser válido y sin expirar (Google ID tokens expiran en ~1 hora)
+- Email en token se compara exactamente contra el registrado (case-insensitive)
+- Solo usuarios con `status: "active"` pueden autenticarse
+- Token no se almacena en la BD (single-use)
+- Móvil debe guardar el `auth_token` devuelto en secure storage, NO en plain text
+
 ---
 
 ## 1. Sincronización Inicial (El Dashboard)
