@@ -69,6 +69,7 @@ gem "administrate"
 
 # Authentication
 gem "devise"
+gem "google_sign_in"
 
 # Soft Delete
 gem "discard"
