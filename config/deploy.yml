@@ -54,6 +54,10 @@ env:
     # Use rado_fitness-db for a db accessory server on same machine via local kamal docker network.
     DB_HOST: rado_fitness-db
 
+    # Database connection variables for Rails
+    POSTGRES_USER: rado_fitness
+    POSTGRES_DB: rado_fitness_production
+
     # Log everything from Rails
     RAILS_LOG_LEVEL: info
 
