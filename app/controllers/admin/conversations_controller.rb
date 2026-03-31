@@ -26,9 +26,9 @@ module Admin
         # Trigger notification to user (defer to background job)
         NotifyUserOfCoachReplyJob.perform_later(@message.id) if defined?(NotifyUserOfCoachReplyJob)
 
-        redirect_to admin_conversation_path(@conversation), notice: "Mensaje enviado exitosamente"
+        redirect_to admin_conversation_path(@conversation), notice: t('admin.conversations.message_sent')
       else
-        redirect_to admin_conversation_path(@conversation), alert: "Error al enviar el mensaje: #{@message.errors.full_messages.join(', ')}"
+        redirect_to admin_conversation_path(@conversation), alert: "#{t('admin.conversations.error_sending_message')}: #{@message.errors.full_messages.join(', ')}"
       end
     end
 
@@ -36,11 +36,11 @@ module Admin
       @message = @conversation.messages.find(params[:message_id])
 
       # Only coach can delete messages, and only their own
-      if @message.sender_type == 'coach'
+      if @message.coach?
         @message.discard
-        redirect_to admin_conversation_path(@conversation), notice: "Mensaje eliminado exitosamente"
+        redirect_to admin_conversation_path(@conversation), notice: t('admin.conversations.message_deleted')
       else
-        redirect_to admin_conversation_path(@conversation), alert: "No puedes eliminar mensajes del cliente"
+        redirect_to admin_conversation_path(@conversation), alert: t('admin.conversations.cannot_delete_client_message')
       end
     end
 
@@ -66,12 +66,12 @@ module Admin
       binary_data = Base64.decode64(base64_data)
       filename = "voice_#{Time.current.to_i}.webm"
 
-      # Create an UploadedFile object that ActiveStorage expects
-      Rack::Test::UploadedFile.new(
-        StringIO.new(binary_data),
-        "audio/webm",
-        original_filename: filename
-      )
+      # Create an UploadedFile that ActionController expects
+      ActionDispatch::Http::UploadedFile.new(
+        tempfile: Tempfile.new,
+        filename: filename,
+        type: "audio/webm"
+      ).tap { |file| file.tempfile.write(binary_data) && file.tempfile.rewind }
     end
   end
 end

@@ -9,6 +9,7 @@ class Message < ApplicationRecord
   validates :conversation_id, presence: true
   validates :sender_type, presence: true
   validates :content, presence: true, unless: -> { voice_note.attached? }
+  validates :voice_note, file_size: { less_than: 5.megabytes }, allow_nil: true
 
   scope :not_deleted, -> { where(discarded_at: nil) }
   scope :chronological, -> { order(created_at: :asc) }
