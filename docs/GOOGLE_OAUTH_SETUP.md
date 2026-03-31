@@ -20,10 +20,10 @@ Flujo simple: usuario toca "Loguearme con Google" → Google valida → vuelve a
 2. Elegí tu proyecto
 3. **APIs & Services > Credentials**
 4. **Create Credentials > OAuth 2.0 Client ID**
-5. Elegí **Android** o **iOS** (o los dos si tenés pelotas)
+5. Elegí **Android** o **iOS** (o los dos)
    - **Android:** Dame el package name y el SHA-1 fingerprint
    - **iOS:** Dame el bundle ID
-6. Copiá el **Client ID** — lo vas a necesitar boludo/a
+6. Copiá el **Client ID** — lo vas a necesitar
 
 ### 2. Habilitar la API de Google Sign-In
 
@@ -80,7 +80,7 @@ Seguí [la documentación oficial](https://github.com/react-native-google-signin
 
 #### 4. Ejemplo de Implementación
 
-Acá está lo importante. Este es el código que hace la magia:
+Acá está lo importante. Este es el código que hace la diferencia:
 
 ```typescript
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
@@ -122,7 +122,7 @@ async function loginWithGoogle() {
 
 #### 5. Guardar el Token de Forma Segura
 
-Esto NO es opcional, boludo/a. Usá `react-native-secure-storage` o `AsyncStorage` encriptado:
+Esto NO es opcional. Usá `react-native-secure-storage` o `AsyncStorage` encriptado:
 
 ```typescript
 import SecureStorage from 'react-native-secure-storage';
@@ -161,6 +161,7 @@ bundle exec rspec spec/requests/api/v1/auth_google_spec.rb
 ```
 
 Todos deberían pasar. Si no pasan, hay un quilombo en el backend.
+Culpa mía seguro.
 
 ### Testing Manual
 
@@ -172,7 +173,7 @@ Todos deberían pasar. Si no pasan, hay un quilombo en el backend.
 
 Esto es lo que importa:
 
-1. Compilá la app y instalá en el teléfono (iOS o Android, o ambos)
+1. Compilá la app e instalá en el teléfono (iOS o Android, o ambos)
 2. Tocá el botón "Loguearme con Google"
 3. Verificá que el email que devuelve Google match exactamente con el registrado en la BD
 4. Confirmá que recibís el `auth_token` y que los requests a la API funcionan
