@@ -2,6 +2,8 @@
 
 require "json"
 
+WorkoutExercise.delete_all
+Workout.delete_all
 Exercise.delete_all
 Book.delete_all
 BookChunk.delete_all
