@@ -1,0 +1,6 @@
+<% user = field.data %>
+<% if user.present? %>
+  <%= user.first_name %> <%= user.last_name[0] %>.
+<% else %>
+  —
+<% end %>
