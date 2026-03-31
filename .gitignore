@@ -51,3 +51,4 @@ CLAUDE.md
 /docs/superpowers/plans
 /docs/superpowers/specs
 .playwright-mcp/
+*.png
