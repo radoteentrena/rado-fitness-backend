@@ -28,7 +28,7 @@ Rails.application.routes.draw do
       resources :user_dietary_plans, except: [ :index, :show ]
       resources :assignments, only: [ :new, :create ]
       resources :daily_metrics, only: [ :show ]
-      resources :messages
+      # resources :messages  # Removed — use Conversations instead
       resources :progress_photos, except: [ :index ]
       resources :program_executions, except: [ :index ]
       resources :exercise_logs, except: [ :index ]
