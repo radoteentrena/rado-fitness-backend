@@ -8,6 +8,10 @@ Rails.application.routes.draw do
 
   namespace :admin do
       resources :coach_alerts
+      resources :conversations, only: [:index, :show] do
+        post :create_message
+        delete :delete_message
+      end
       resources :dietary_plans
       resources :exercises
       resources :phases, except:  [ :index ]
@@ -27,7 +31,7 @@ Rails.application.routes.draw do
       resources :user_dietary_plans, except: [ :index, :show ]
       resources :assignments, only: [ :new, :create ]
       resources :daily_metrics, only: [ :show ]
-      resources :messages
+      # resources :messages  # Removed — use Conversations instead
       resources :progress_photos, except: [ :index ]
       resources :program_executions, except: [ :index ]
       resources :exercise_logs, except: [ :index ]

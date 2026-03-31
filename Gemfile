@@ -107,5 +107,7 @@ gem "rspec-rails", "~> 8.0", groups: [:development, :test]
 
 gem "factory_bot_rails", "~> 6.5", groups: [:development, :test]
 
+gem "shoulda-matchers", "~> 6.0", group: :test
+
 gem "administrate-field-active_storage", "~> 1.0"
 gem "minitest", "< 6.0", group: [:development, :test]
