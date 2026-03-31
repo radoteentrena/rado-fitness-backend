@@ -21,6 +21,11 @@ module Admin
       end
 
       if @message.save
+        @conversation.update(last_message_at: Time.current)
+
+        # Trigger notification to user (defer to background job)
+        NotifyUserOfCoachReplyJob.perform_later(@message.id) if defined?(NotifyUserOfCoachReplyJob)
+
         redirect_to admin_conversation_path(@conversation), notice: "Mensaje enviado exitosamente"
       else
         redirect_to admin_conversation_path(@conversation), alert: "Error al enviar el mensaje: #{@message.errors.full_messages.join(', ')}"
