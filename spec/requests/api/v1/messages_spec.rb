@@ -114,6 +114,18 @@ RSpec.describe 'Api::V1::Messages', type: :request do
         expect(json['content']).to eq('Test message')
         expect(json['sender_type']).to eq('client')
       end
+
+      it 'updates conversation last_message_at when message created' do
+        conversation = create(:conversation, user: medium_user, last_message_at: 1.hour.ago)
+        old_timestamp = conversation.last_message_at
+
+        post '/api/v1/messages',
+          params: { message: { content: 'New message' } },
+          headers: auth_headers(medium_user)
+
+        conversation.reload
+        expect(conversation.last_message_at).to be > old_timestamp
+      end
     end
   end
 

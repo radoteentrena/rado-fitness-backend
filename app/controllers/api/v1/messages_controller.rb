@@ -21,6 +21,8 @@ class Api::V1::MessagesController < Api::V1::BaseController
     @message.sender_type = :client
 
     if @message.save
+      @conversation.update(last_message_at: Time.current)
+
       # Trigger notification to coach (defer to background job)
       NotifyCoachOfNewMessageJob.perform_later(@message.id) if defined?(NotifyCoachOfNewMessageJob)
 
