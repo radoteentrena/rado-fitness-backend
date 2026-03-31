@@ -50,3 +50,4 @@ CLAUDE.md
 /.worktrees
 /docs/superpowers/plans
 /docs/superpowers/specs
+.playwright-mcp/
