@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_30_212955) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_31_220616) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -98,6 +98,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_30_212955) do
     t.index ["user_id"], name: "index_coach_alerts_on_user_id"
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "last_message_at"
+    t.datetime "read_by_coach_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_message_at"], name: "index_conversations_on_last_message_at"
+    t.index ["user_id"], name: "index_conversations_on_user_id", unique: true
+  end
+
   create_table "daily_metrics", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.date "date_logged"
@@ -180,7 +190,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_30_212955) do
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "conversation_id", null: false
+    t.datetime "discarded_at"
+    t.datetime "read_at"
+    t.index ["conversation_id", "created_at"], name: "index_messages_on_conversation_id_and_created_at"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["discarded_at"], name: "index_messages_on_discarded_at"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.string "notification_type"
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_notifications_on_conversation_id"
   end
 
   create_table "onboarding_profiles", force: :cascade do |t|
@@ -363,6 +388,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_30_212955) do
     t.integer "access_status", default: 0, null: false
     t.string "google_uid"
     t.string "provider", default: "email", null: false
+    t.string "fcm_token"
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -409,11 +435,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_30_212955) do
   add_foreign_key "ai_messages", "ai_conversations"
   add_foreign_key "book_chunks", "books"
   add_foreign_key "coach_alerts", "users"
+  add_foreign_key "conversations", "users"
   add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
   add_foreign_key "exercise_logs", "program_executions"
   add_foreign_key "exercise_logs", "workout_exercises"
+  add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
+  add_foreign_key "notifications", "conversations"
   add_foreign_key "onboarding_profiles", "users"
   add_foreign_key "phase_routines", "phases"
   add_foreign_key "phase_routines", "routines"
