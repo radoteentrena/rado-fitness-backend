@@ -51,4 +51,9 @@ CLAUDE.md
 /docs/superpowers/plans
 /docs/superpowers/specs
 .playwright-mcp/
+.superpowers
+.kamal
+.claude
+.agent/workflows
+.github
 *.png
