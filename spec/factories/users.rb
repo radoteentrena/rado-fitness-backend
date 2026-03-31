@@ -4,6 +4,8 @@ FactoryBot.define do
     last_name  { "User" }
     sequence(:email) { |n| "test#{n}@example.com" }
     phone      { "+5491155551234" }
+    password { "SecurePassword123!" }
+    password_confirmation { "SecurePassword123!" }
     status     { :lead }
     plan_tier  { :basic }
     category   { :pelele }
