@@ -9,10 +9,10 @@ class ConversationDashboard < Administrate::BaseDashboard
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
     id: Field::Number,
-    user: Field::BelongsTo,
+    user: ConversationUserField,
     messages: Field::HasMany,
-    last_message_at: Field::DateTime,
-    read_by_coach_at: Field::DateTime,
+    last_message_at: HumanizedTimestampField,
+    read_by_coach_at: ReadStatusField,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze

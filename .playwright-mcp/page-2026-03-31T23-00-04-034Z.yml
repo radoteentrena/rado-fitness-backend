@@ -1,0 +1,123 @@
+- main [ref=e2]:
+  - generic [ref=e5]:
+    - link "RADOTEENTRENA" [ref=e7] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e8]: RADOTEENTRENA
+    - navigation [ref=e9]:
+      - link "LOG IN" [ref=e10] [cursor=pointer]:
+        - /url: /users/sign_in
+      - link "COMIENZA" [ref=e11] [cursor=pointer]:
+        - /url: /onboarding/new
+  - generic [ref=e12]:
+    - img "Gritty gym background with weights" [ref=e14]
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - heading "CONSTRUYE EL FÍSICO QUE SIEMPRE QUISISTE" [level=1] [ref=e18]:
+          - generic [ref=e19]: CONSTRUYE EL FÍSICO
+          - generic [ref=e20]: QUE SIEMPRE QUISISTE
+        - paragraph [ref=e21]:
+          - text: Entrenamiento profesional diseñado para maximizar tu fuerza
+          - text: y esculpir tu estética.
+      - img "Coach Rado" [ref=e22]
+  - generic [ref=e24]:
+    - generic [ref=e25]:
+      - generic [ref=e26]: star
+      - generic [ref=e27]: star
+      - generic [ref=e28]: star
+      - generic [ref=e29]: star
+      - generic [ref=e30]: star
+    - paragraph [ref=e31]: Más de 1000 Alumnos han construido su mejor versión.
+    - generic [ref=e32]:
+      - img "Testimonial 1" [ref=e33]
+      - img "Testimonial 2" [ref=e34]
+      - img "Testimonial 3" [ref=e35]
+      - img "Testimonial 4" [ref=e36]
+  - generic [ref=e38]:
+    - generic [ref=e39]:
+      - heading "LOS PILARES DEL ÉXITO FÍSICO" [level=2] [ref=e40]
+      - paragraph [ref=e41]: Dejá de entrenar sin rumbo. Aplico ciencia y esfuerzo para resultados visibles y duraderos.
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e45]: fitness_center
+        - heading "FUERZA REAL" [level=3] [ref=e46]
+        - paragraph [ref=e47]: Incrementá tus cargas progresivamente y construí una base sólida de fuerza real.
+      - generic [ref=e48]:
+        - generic [ref=e50]: accessibility_new
+        - heading "ESTÉTICA DESEADA" [level=3] [ref=e51]
+        - paragraph [ref=e52]: Vos me comunicás tu sentido de la estética y yo te armo el plan para lograrlo, priorizando un físico armonioso y atlético.
+      - generic [ref=e53]:
+        - generic [ref=e55]: psychology
+        - heading "TRANSFORMACIÓN TOTAL" [level=3] [ref=e56]
+        - paragraph [ref=e57]: El mindset es clave para todo aspecto de tu vida, aquí no es diferente. Vamos a construir tu disciplina para que puedas ser fiel a tus objetivos.
+  - generic [ref=e60]:
+    - img "Coach Rado" [ref=e63]
+    - generic [ref=e64]:
+      - heading "MI FILOSOFÍA" [level=4] [ref=e65]
+      - heading "FUERZA + ESTÉTICA" [level=2] [ref=e66]
+      - generic [ref=e67]:
+        - paragraph [ref=e68]: Durante años, vi personas fuertes pero sin forma, o estéticas. Me negué a aceptar ese compromiso.
+        - paragraph [ref=e69]: Desarrollé un método que fusiona el powerlifting con el culturismo de alta frecuencia. El resultado es un físico que no solo impone presencia, sino que rinde al máximo nivel. No entrenamos para "participar", entrenamos para dominar.
+  - generic [ref=e72]:
+    - generic [ref=e73]:
+      - heading "COMIENZA CON MI APP DE ENTRENAMIENTO" [level=2] [ref=e75]:
+        - text: COMIENZA CON
+        - generic [ref=e76]:
+          - text: MI APP DE
+          - text: ENTRENAMIENTO
+      - generic [ref=e77]:
+        - heading "PROGRAMAS DE FUERZA Y ESTÉTICA" [level=4] [ref=e78]
+        - paragraph [ref=e79]: He volcado toda mi experiencia en powerlifting y culturismo en esta aplicación. Accede a las rutinas exactas de hipertrofia y los ciclos de fuerza que utilizo para construir un físico de élite. Sin rellenos, solo entrenamiento efectivo.
+        - list [ref=e80]:
+          - listitem [ref=e81]:
+            - generic [ref=e82]: check_circle
+            - text: Periodización para ganancias constantes
+          - listitem [ref=e83]:
+            - generic [ref=e84]: check_circle
+            - text: Técnica y ejecución detallada
+          - listitem [ref=e85]:
+            - generic [ref=e86]: check_circle
+            - text: Seguimiento de progreso real
+      - link "COMIENZA" [ref=e87] [cursor=pointer]:
+        - /url: /onboarding/new
+    - generic:
+      - img "Fitness App Interface on Phone"
+  - generic [ref=e89]:
+    - heading "PREGUNTAS FRECUENTES" [level=2] [ref=e90]
+    - generic [ref=e91]:
+      - group [ref=e92] [cursor=pointer]:
+        - generic "¿Es este programa para principiantes?" [ref=e93]:
+          - generic [ref=e94]: ¿Es este programa para principiantes?
+          - img [ref=e96]
+      - group [ref=e98] [cursor=pointer]:
+        - generic "¿Cuánto tiempo necesito entrenar al día?" [ref=e99]:
+          - generic [ref=e100]: ¿Cuánto tiempo necesito entrenar al día?
+          - img [ref=e102]
+      - group [ref=e104] [cursor=pointer]:
+        - generic "¿Necesito suplementos obligatorios?" [ref=e105]:
+          - generic [ref=e106]: ¿Necesito suplementos obligatorios?
+          - img [ref=e108]
+  - generic [ref=e111]:
+    - heading "NO ESPERES AL LUNES" [level=2] [ref=e112]
+    - paragraph [ref=e113]: El físico que deseas está al otro lado del dolor y la disciplina. Empieza hoy.
+    - link "COMIENZA" [ref=e114] [cursor=pointer]:
+      - /url: /onboarding/new
+  - generic [ref=e116]:
+    - generic [ref=e117]:
+      - generic [ref=e118]: RADOTEENTRENA
+      - paragraph [ref=e119]: © 2026 Rado Te Entrena. Todos los derechos reservados.
+    - generic [ref=e120]:
+      - link "Términos" [ref=e121] [cursor=pointer]:
+        - /url: "#"
+      - link "Privacidad" [ref=e122] [cursor=pointer]:
+        - /url: "#"
+      - link "Contacto" [ref=e123] [cursor=pointer]:
+        - /url: "#"
+    - generic [ref=e124]:
+      - link "Instagram" [ref=e125] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e126]: Instagram
+        - img [ref=e127]
+      - link "Twitter" [ref=e130] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e131]: Twitter
+        - img [ref=e132]
