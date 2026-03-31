@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
       resources :coach_alerts
+      resources :conversations, only: [:index, :show]
       resources :dietary_plans
       resources :exercises
       resources :phases, except:  [ :index ]
