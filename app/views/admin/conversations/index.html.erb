@@ -1,0 +1,30 @@
+<div class="conversations-container">
+  <!-- LEFT PANEL: Conversation List -->
+  <aside class="conversations-sidebar">
+    <div class="sidebar-header">
+      <h2>Conversaciones</h2>
+    </div>
+
+    <!-- Conversation List with Infinite Scroll -->
+    <div class="conversations-list" id="conversations-list">
+      <% if @conversations.empty? %>
+        <div class="conversations-empty">
+          <p>Sin conversaciones aún</p>
+        </div>
+      <% else %>
+        <% @conversations.each do |conversation| %>
+          <%= render 'conversation_item', conversation: conversation %>
+        <% end %>
+      <% end %>
+    </div>
+  </aside>
+
+  <!-- RIGHT PANEL: Chat Display (Turbo Frame) -->
+  <main class="conversations-main">
+    <%= turbo_frame_tag "conversation-detail", style: "display: flex; flex-direction: column; flex: 1;" do %>
+      <div class="conversations-empty-state">
+        <p>Selecciona una conversación para empezar</p>
+      </div>
+    <% end %>
+  </main>
+</div>
