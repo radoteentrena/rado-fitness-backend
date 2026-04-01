@@ -48,8 +48,10 @@ CLAUDE.md
 
 # Git worktrees
 /.worktrees
-/docs/superpowers/plans
-/docs/superpowers/specs
+
+# Local documentation (persists across branches, not tracked)
+/docs/
+
 .playwright-mcp/
 .superpowers
 .kamal

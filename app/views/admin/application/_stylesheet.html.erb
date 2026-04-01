@@ -9,4 +9,10 @@ by providing a `content_for(:stylesheet)` block.
 
 <%# Load main application styles (Tailwind) instead of Administrate defaults %>
 <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+
+<%# Load admin conversation styles %>
+<%= stylesheet_link_tag "admin/conversations/index", "data-turbo-track": "reload" %>
+<%= stylesheet_link_tag "admin/conversations/show", "data-turbo-track": "reload" %>
+<%= stylesheet_link_tag "admin/conversations/conversation_item", "data-turbo-track": "reload" %>
+
 <%= yield :stylesheet %>

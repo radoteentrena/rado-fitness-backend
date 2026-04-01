@@ -1,374 +1,99 @@
+<%= turbo_frame_tag "conversation-detail", class: "conversation-frame", style: "display: flex; height: 100%;" do %>
+
 <div class="conversation-detail">
   <!-- Conversation Header -->
-  <div class="conversation-header">
-    <div class="header-top">
-      <%= link_to "← Volver", admin_conversations_path, class: "btn-secondary" %>
+  <header class="conversation-header">
+    <div class="header-content">
       <h1><%= "#{@conversation.user.first_name} #{@conversation.user.last_name}" %></h1>
+      <div class="header-meta">
+        <span class="meta-item"><%= @conversation.user.email %></span>
+        <% if @conversation.last_message_at %>
+          <span class="meta-item">Última: <%= @conversation.last_message_at.strftime("%H:%M el %d %b") %></span>
+        <% end %>
+      </div>
     </div>
-    <div class="conversation-meta">
-      <p><strong>Email:</strong> <%= @conversation.user.email %></p>
-      <p><strong>Última actividad:</strong> <%= @conversation.last_message_at&.strftime("%d de %B de %Y a las %H:%M") || "Sin mensajes" %></p>
-      <p><strong>Leído por ti:</strong> <%= @conversation.read_by_coach_at&.strftime("%d de %B de %Y a las %H:%M") || "Nunca" %></p>
-    </div>
-  </div>
+  </header>
 
   <!-- Messages Thread -->
   <div class="conversation-thread" id="message-thread">
     <% if @messages.empty? %>
-      <p class="no-messages">Sin mensajes aún</p>
+      <div class="messages-empty">
+        <p>Sin mensajes aún</p>
+      </div>
     <% else %>
       <% @messages.each do |message| %>
-        <div class="message message-<%= message.sender_type %>">
-          <div class="message-header">
-            <strong class="message-sender">
-              <% if message.sender_type == 'coach' %>
-                🔵 Rado (Entrenador)
-              <% else %>
-                👤 <%= @conversation.user.first_name %>
+        <div class="message-group message-<%= message.sender_type %>">
+          <% if message.sender_type == 'coach' %>
+            <div class="message-label">Tú</div>
+          <% else %>
+            <div class="message-label"><%= @conversation.user.first_name %></div>
+          <% end %>
+
+          <div class="message-pill">
+            <% if message.content.present? %>
+              <div class="message-content"><%= message.content %></div>
+            <% end %>
+
+            <% if message.voice_note.attached? %>
+              <div class="message-voice">
+                <audio controls>
+                  <source src="<%= url_for(message.voice_note) %>" type="audio/webm">
+                  Audio no soportado
+                </audio>
+              </div>
+            <% end %>
+
+            <div class="message-meta-footer">
+              <span class="message-time"><%= message.created_at.strftime("%H:%M") %></span>
+              <% if message.read_at.present? %>
+                <span class="read-status">✓</span>
               <% end %>
-            </strong>
-            <span class="message-time"><%= message.created_at.strftime("%H:%M el %d de %b") %></span>
-          </div>
-
-          <% if message.content.present? %>
-            <div class="message-content"><%= message.content %></div>
-          <% end %>
-
-          <% if message.voice_note.attached? %>
-            <div class="message-voice">
-              <audio controls>
-                <source src="<%= url_for(message.voice_note) %>" type="audio/webm">
-                Tu navegador no soporta reproducción de audio.
-              </audio>
+              <% if message.sender_type == 'coach' %>
+                <%= button_to '',
+                    admin_conversation_delete_message_path(@conversation),
+                    method: :delete,
+                    params: { message_id: message.id },
+                    data: { confirm: '¿Borrar?' },
+                    class: 'btn-delete-icon',
+                    title: 'Borrar' %>
+              <% end %>
             </div>
-          <% end %>
-
-          <div class="message-footer">
-            <% if message.read_at.present? %>
-              <span class="read-status">✓ Leído <%= message.read_at.strftime("%H:%M") %></span>
-            <% end %>
-
-            <% if message.sender_type == 'coach' %>
-              <%= button_to '🗑️ Borrar',
-                  admin_conversation_delete_message_path(@conversation),
-                  method: :delete,
-                  params: { message_id: message.id },
-                  data: { confirm: '¿Estás seguro que deseas borrar este mensaje?' },
-                  class: 'btn-delete' %>
-            <% end %>
           </div>
         </div>
       <% end %>
     <% end %>
   </div>
 
-  <!-- Reply Form -->
-  <div class="reply-form">
-    <h3>Responder a <%= @conversation.user.first_name %></h3>
+  <!-- Input Area -->
+  <div class="conversation-input-area">
+    <%= form_with model: [:admin, @conversation], local: true, url: admin_conversation_create_message_path(@conversation), method: :post, class: "message-form" do |f| %>
+      <div class="input-wrapper" data-controller="voice-recorder">
+        <div class="text-input-group">
+          <%= f.text_area :content,
+              id: 'message_content',
+              placeholder: 'Escribe un mensaje...',
+              rows: 1,
+              class: 'slim-input',
+              data: { action: 'keydown->form#handleKeyDown' } %>
 
-    <%= form_with model: [:admin, @conversation], local: true, url: admin_conversation_create_message_path(@conversation), method: :post do |f| %>
-      <!-- Text Message Input -->
-      <div class="form-group">
-        <label for="message_content">Mensaje de Texto</label>
-        <%= f.text_area :content,
-            id: 'message_content',
-            placeholder: 'Escribe tu respuesta aquí...',
-            rows: 4,
-            class: 'form-input' %>
-      </div>
-
-      <!-- Voice Recording UI -->
-      <div class="form-group">
-        <label>Mensaje de Voz</label>
-        <div class="voice-recorder" data-controller="voice-recorder">
-          <div class="voice-controls">
-            <button type="button"
-                    class="btn-record"
-                    data-action="voice-recorder#start">
-              🎤 Grabar
-            </button>
-            <button type="button"
-                    class="btn-stop hidden"
-                    data-action="voice-recorder#stop">
-              ⏹️ Parar
-            </button>
-          </div>
-
-          <div class="waveform hidden" data-voice-recorder-target="waveform"></div>
-
-          <div class="voice-status" data-voice-recorder-target="status"></div>
+          <button type="button"
+                  class="btn-microphone"
+                  data-action="voice-recorder#toggleRecording"
+                  title="Grabar nota de voz">
+            🎤
+          </button>
 
           <input type="hidden"
                  name="voice_data"
                  data-voice-recorder-target="voiceInput">
         </div>
-      </div>
 
-      <!-- Form Actions -->
-      <div class="form-actions">
-        <%= f.submit "Enviar Respuesta", class: "btn-primary" %>
+        <%= f.submit "Enviar",
+            class: "btn-send" %>
+
+        <div class="voice-status hidden" data-voice-recorder-target="status"></div>
       </div>
     <% end %>
   </div>
 </div>
-
-<style>
-  .conversation-detail {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background: #040307;
-    color: #F5F5F5;
-  }
-
-  .conversation-header {
-    padding: 2rem;
-    border-bottom: 2px solid #F5C228;
-    background: #0a0a0a;
-  }
-
-  .header-top {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .conversation-header h1 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #F5C228;
-    flex: 1;
-  }
-
-  .conversation-meta p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-    color: #aaa;
-  }
-
-  .conversation-thread {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .message {
-    padding: 1rem;
-    border: 2px solid #2F2F2F;
-    background: #1a1a1a;
-    max-width: 80%;
-  }
-
-  .message-coach {
-    align-self: flex-end;
-    border-color: #F5C228;
-  }
-
-  .message-client {
-    align-self: flex-start;
-  }
-
-  .message-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-  }
-
-  .message-sender {
-    color: #F5C228;
-  }
-
-  .message-time {
-    font-size: 0.8rem;
-    color: #888;
-    margin-left: 1rem;
-  }
-
-  .message-content {
-    margin: 0.5rem 0;
-    word-break: break-word;
-    line-height: 1.4;
-  }
-
-  .message-voice {
-    margin: 0.5rem 0;
-  }
-
-  .message-voice audio {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-
-  .message-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-  }
-
-  .read-status {
-    color: #F5C228;
-  }
-
-  .btn-delete {
-    background: #d32f2f;
-    color: white;
-    border: 2px solid #d32f2f;
-    padding: 0.25rem 0.5rem;
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-
-  .btn-delete:hover {
-    background: #b71c1c;
-    border-color: #b71c1c;
-  }
-
-  .reply-form {
-    padding: 1.5rem;
-    border-top: 2px solid #2F2F2F;
-    background: #0a0a0a;
-  }
-
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: #F5C228;
-  }
-
-  .form-input {
-    width: 100%;
-    padding: 0.75rem;
-    background: #1a1a1a;
-    color: #F5F5F5;
-    border: 2px solid #2F2F2F;
-    font-family: inherit;
-    font-size: 1rem;
-    box-sizing: border-box;
-  }
-
-  .form-input:focus {
-    outline: none;
-    border-color: #F5C228;
-    box-shadow: 0 0 0 3px rgba(245, 194, 40, 0.1);
-  }
-
-  .voice-recorder {
-    border: 2px solid #2F2F2F;
-    padding: 1rem;
-    background: #1a1a1a;
-  }
-
-  .voice-controls {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .btn-record,
-  .btn-stop {
-    padding: 0.75rem 1rem;
-    border: 2px solid #F5C228;
-    background: #1a1a1a;
-    color: #F5C228;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9rem;
-  }
-
-  .btn-record:hover {
-    background: #F5C228;
-    color: #040307;
-  }
-
-  .btn-stop:hover {
-    background: #d32f2f;
-    border-color: #d32f2f;
-    color: white;
-  }
-
-  .btn-stop {
-    border-color: #d32f2f;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  .waveform {
-    height: 60px;
-    background: #0a0a0a;
-    border: 1px solid #2F2F2F;
-    margin-top: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #888;
-    font-size: 0.9rem;
-  }
-
-  .waveform::before {
-    content: "🎙️ Grabando...";
-  }
-
-  .voice-status {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: #aaa;
-    min-height: 1.2em;
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .btn-primary {
-    background: #F5C228;
-    color: #040307;
-    padding: 0.75rem 1.5rem;
-    border: 2px solid #F5C228;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-
-  .btn-primary:hover {
-    background: #040307;
-    color: #F5C228;
-  }
-
-  .btn-secondary {
-    padding: 0.5rem 1rem;
-    border: 2px solid #2F2F2F;
-    background: transparent;
-    color: #F5F5F5;
-    cursor: pointer;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  .btn-secondary:hover {
-    border-color: #F5C228;
-    color: #F5C228;
-  }
-
-  .no-messages {
-    text-align: center;
-    color: #888;
-    padding: 2rem;
-  }
-</style>
+<% end %>
