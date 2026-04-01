@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
+const MAX_RECORDING_TIME = 300000 // 5 minutes in milliseconds
+
 export default class extends Controller {
   static targets = ["voiceInput", "waveform", "status"]
 
@@ -7,6 +9,8 @@ export default class extends Controller {
     this.mediaRecorder = null
     this.audioChunks = []
     this.isRecording = false
+    this.recordingStartTime = null
+    this.timerInterval = null
   }
 
   start(event) {
@@ -27,8 +31,17 @@ export default class extends Controller {
           stream.getTracks().forEach(track => track.stop())
         }
 
+        this.mediaRecorder.onerror = (event) => {
+          this.updateStatus(`Error: ${event.error}`)
+          this.isRecording = false
+          this.stopTimer()
+          this.updateUI('saved')
+        }
+
         this.mediaRecorder.start()
         this.isRecording = true
+        this.recordingStartTime = Date.now()
+        this.startTimer()
         this.updateUI('recording')
       })
       .catch(err => {
@@ -41,8 +54,46 @@ export default class extends Controller {
     if (this.mediaRecorder && this.isRecording) {
       this.mediaRecorder.stop()
       this.isRecording = false
+      this.stopTimer()
       this.updateUI('saved')
       this.updateStatus('✓ Mensaje de voz grabado')
+    }
+  }
+
+  toggleRecording(event) {
+    event.preventDefault()
+    if (this.isRecording) {
+      this.stop(event)
+    } else {
+      this.start(event)
+    }
+  }
+
+  startTimer() {
+    this.timerInterval = setInterval(() => {
+      if (this.isRecording && this.recordingStartTime) {
+        const elapsed = Date.now() - this.recordingStartTime
+
+        // Auto-stop at max recording time
+        if (elapsed >= MAX_RECORDING_TIME) {
+          this.stop({ preventDefault: () => {} })
+          this.updateStatus('⏱ Tiempo máximo alcanzado')
+          return
+        }
+
+        const elapsedSeconds = Math.floor(elapsed / 1000)
+        const minutes = Math.floor(elapsedSeconds / 60)
+        const seconds = elapsedSeconds % 60
+        const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+        this.updateStatus(timeString)
+      }
+    }, 100)
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval)
+      this.timerInterval = null
     }
   }
 
@@ -57,20 +108,49 @@ export default class extends Controller {
   updateUI(state) {
     const recordBtn = this.element.querySelector(".btn-record")
     const stopBtn = this.element.querySelector(".btn-stop")
-    const waveform = this.waveformTarget
+
+    // Check if waveform target exists (for legacy UI)
+    const waveform = this.hasWaveformTarget ? this.waveformTarget : null
 
     if (state === 'recording') {
-      recordBtn.classList.add('hidden')
-      stopBtn.classList.remove('hidden')
-      waveform.classList.remove('hidden')
+      if (recordBtn) recordBtn.classList.add('hidden')
+      if (stopBtn) stopBtn.classList.remove('hidden')
+      if (waveform) waveform.classList.remove('hidden')
+
+      // Set data attribute for slim input style
+      this.element.setAttribute('data-recording', 'true')
+
+      // Trigger animation for status
+      if (this.hasStatusTarget) {
+        this.statusTarget.classList.remove('hidden')
+        this.statusTarget.classList.add('recording-active')
+      }
     } else if (state === 'saved') {
-      recordBtn.classList.remove('hidden')
-      stopBtn.classList.add('hidden')
-      waveform.classList.add('hidden')
+      if (recordBtn) recordBtn.classList.remove('hidden')
+      if (stopBtn) stopBtn.classList.add('hidden')
+      if (waveform) waveform.classList.add('hidden')
+
+      // Remove data attribute
+      this.element.setAttribute('data-recording', 'false')
+
+      // Trigger animation for success message
+      if (this.hasStatusTarget) {
+        this.statusTarget.classList.remove('recording-active')
+      }
+    }
+  }
+
+  get hasWaveformTarget() {
+    try {
+      return this.waveformTargets.length > 0
+    } catch {
+      return false
     }
   }
 
   updateStatus(message) {
-    this.statusTarget.textContent = message
+    if (this.hasStatusTarget) {
+      this.statusTarget.textContent = message
+    }
   }
 }
