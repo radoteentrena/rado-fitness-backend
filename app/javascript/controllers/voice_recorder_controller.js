@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
+const MAX_RECORDING_TIME = 300000 // 5 minutes in milliseconds
+
 export default class extends Controller {
   static targets = ["voiceInput", "waveform", "status"]
 
@@ -27,6 +29,13 @@ export default class extends Controller {
           const audioBlob = new Blob(this.audioChunks, { type: "audio/webm" })
           this.saveAudio(audioBlob)
           stream.getTracks().forEach(track => track.stop())
+        }
+
+        this.mediaRecorder.onerror = (event) => {
+          this.updateStatus(`Error: ${event.error}`)
+          this.isRecording = false
+          this.stopTimer()
+          this.updateUI('saved')
         }
 
         this.mediaRecorder.start()
@@ -63,9 +72,18 @@ export default class extends Controller {
   startTimer() {
     this.timerInterval = setInterval(() => {
       if (this.isRecording && this.recordingStartTime) {
-        const elapsed = Math.floor((Date.now() - this.recordingStartTime) / 1000)
-        const minutes = Math.floor(elapsed / 60)
-        const seconds = elapsed % 60
+        const elapsed = Date.now() - this.recordingStartTime
+
+        // Auto-stop at max recording time
+        if (elapsed >= MAX_RECORDING_TIME) {
+          this.stop({ preventDefault: () => {} })
+          this.updateStatus('⏱ Tiempo máximo alcanzado')
+          return
+        }
+
+        const elapsedSeconds = Math.floor(elapsed / 1000)
+        const minutes = Math.floor(elapsedSeconds / 60)
+        const seconds = elapsedSeconds % 60
         const timeString = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
         this.updateStatus(timeString)
       }
