@@ -1,0 +1,85 @@
+:root {
+  --idx-bg: #F5F5F5;
+  --idx-text: #040307;
+  --idx-sidebar-bg: #FAFAFA;
+  --idx-sidebar-border: #E0E0E0;
+  --idx-header-bg: #F5F5F5;
+  --idx-header-title: #040307;
+  --idx-empty-text: #999;
+}
+
+html.dark {
+  --idx-bg: #040307;
+  --idx-text: #F5F5F5;
+  --idx-sidebar-bg: #0a0a0a;
+  --idx-sidebar-border: #2F2F2F;
+  --idx-header-bg: #000;
+  --idx-header-title: #F5C228;
+  --idx-empty-text: #666;
+}
+
+.conversations-container {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: calc(100vh - 74px);
+  margin-top: 74px;
+  background: var(--idx-bg);
+  color: var(--idx-text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Switzer', sans-serif;
+}
+
+.conversations-sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid var(--idx-sidebar-border);
+  background: var(--idx-sidebar-bg);
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--idx-sidebar-border);
+  background: var(--idx-header-bg);
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--idx-header-title);
+}
+
+.conversations-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.conversations-empty {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--idx-empty-text);
+  font-size: 0.9rem;
+}
+
+.conversations-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: var(--idx-bg);
+}
+
+.conversations-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: var(--idx-text);
+}
+
+.conversations-empty-state p {
+  font-size: 1rem;
+  margin: 0;
+}

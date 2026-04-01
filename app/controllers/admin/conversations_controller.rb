@@ -1,6 +1,12 @@
 module Admin
   class ConversationsController < Admin::ApplicationController
     before_action :set_conversation, only: [:show, :create_message, :delete_message]
+    before_action :load_conversations, only: [:index, :show]
+
+    layout :resolve_layout
+
+    def index
+    end
 
     def show
       # Update read_by_coach_at when Rado opens conversation
@@ -46,10 +52,32 @@ module Admin
 
     private
 
+    def resolve_layout
+      # Return appropriate layout based on action and request type
+      case action_name
+      when 'index'
+        'conversations'
+      when 'show'
+        # For Turbo Frame requests to show action, skip layout
+        request.headers['turbo-frame'] == 'conversation-detail' ? false : 'conversations'
+      else
+        nil  # Use default admin layout
+      end
+    end
+
     def set_conversation
       # Handle both :id (from show) and :conversation_id (from nested routes)
       conversation_id = params[:id] || params[:conversation_id]
       @conversation = Conversation.find(conversation_id)
+    end
+
+    def load_conversations
+      # Load all conversations, unread first, then by last message timestamp
+      @conversations = Conversation.all.sort_by do |c|
+        unread_count = c.messages.where(read_at: nil).where(sender_type: 'client').count
+        # Sort by: unread count (descending) then last_message_at (descending)
+        [-unread_count, -(c.last_message_at&.to_i || 0)]
+      end
     end
 
     def message_params
@@ -66,12 +94,18 @@ module Admin
       binary_data = Base64.decode64(base64_data)
       filename = "voice_#{Time.current.to_i}.webm"
 
+      # Create a tempfile in binary mode to handle binary audio data
+      tempfile = Tempfile.new([filename.gsub(/\.webm$/, ''), '.webm'], encoding: 'ASCII-8BIT')
+      tempfile.binmode
+      tempfile.write(binary_data)
+      tempfile.rewind
+
       # Create an UploadedFile that ActionController expects
       ActionDispatch::Http::UploadedFile.new(
-        tempfile: Tempfile.new,
+        tempfile: tempfile,
         filename: filename,
         type: "audio/webm"
-      ).tap { |file| file.tempfile.write(binary_data) && file.tempfile.rewind }
+      )
     end
   end
 end
