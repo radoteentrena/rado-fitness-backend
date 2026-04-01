@@ -99,8 +99,8 @@ html.dark {
 
 .message-group.message-coach {
   display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-start;
+
+  justify-content: flex-end;
 }
 
 .message-label {
@@ -119,9 +119,8 @@ html.dark {
   padding: 0.75rem;
   background: var(--conv-message-bg);
   border: 2px solid var(--conv-pill-border);
-  width: fit-content;
-  min-width: 360px;
-  max-width: 75%;
+  width: 100%;
+  max-width: 600px;
   word-wrap: break-word;
 }
 
@@ -364,11 +363,34 @@ html.dark {
 
 @media (max-width: 768px) {
   .message-pill {
-    max-width: 85%;
+    max-width: 90%;
   }
 
   .slim-input {
     font-size: 1rem;
+  }
+
+  .conversation-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .header-content h1 {
+    font-size: 1rem;
+    margin: 0 0 0.35rem 0;
+  }
+
+  .header-meta {
+    gap: 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .conversation-thread {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .conversation-input-area {
+    padding: 0.75rem 1rem;
   }
 }
 

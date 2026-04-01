@@ -83,3 +83,29 @@ html.dark {
   font-size: 1rem;
   margin: 0;
 }
+
+@media (max-width: 768px) {
+  .conversations-container {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: calc(100vh - 74px);
+  }
+
+  .conversations-sidebar {
+    max-height: 50vh;
+    border-right: none;
+    border-bottom: 2px solid var(--idx-sidebar-border);
+  }
+
+  .sidebar-header {
+    padding: 1rem;
+  }
+
+  .sidebar-header h2 {
+    font-size: 1rem;
+  }
+
+  .conversations-main {
+    min-height: 50vh;
+  }
+}
