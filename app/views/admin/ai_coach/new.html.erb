@@ -1,5 +1,20 @@
 <% content_for(:title) { "AI Coach" } %>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('#ai-coach-wizard form');
+  const generateButton = document.getElementById('generate-button');
+
+  if (form && generateButton) {
+    form.addEventListener('submit', function(e) {
+      // Add loading state to button
+      generateButton.classList.add('loading');
+      generateButton.disabled = true;
+    });
+  }
+});
+</script>
+
 <%= turbo_frame_tag "admin_main_content" do %>
   <div class="max-w-4xl mx-auto">
     <!-- Header -->
@@ -71,10 +86,10 @@
 
         <!-- Submit -->
         <div class="flex justify-end">
-          <button type="submit"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-blackish font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
-            <span class="material-symbols-outlined">auto_awesome</span>
-            Generate
+          <button type="submit" id="generate-button"
+            class="generate-button inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-blackish font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
+            <span class="generate-icon material-symbols-outlined">auto_awesome</span>
+            <span class="generate-text">Generate</span>
           </button>
         </div>
       <% end %>
