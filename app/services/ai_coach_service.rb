@@ -228,6 +228,10 @@ class AiCoachService
       and clear periodization. Consider the client's current fitness level and goals.
 
       Always include practical instructions for each exercise to guide execution.
+
+      IMPORTANT: All program names, descriptions, and instructions MUST be written in Spanish.
+      This includes the program name, routine names, workout descriptions, exercise instructions,
+      and dietary plan information. The audience is Argentine/Spanish-speaking clients.
     SYSTEM
   end
 

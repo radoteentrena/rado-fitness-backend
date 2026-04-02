@@ -1,0 +1,42 @@
+/* AI Coach - Generate Button Loading State */
+
+/* Spinner animation - smooth, professional rotation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button loading state */
+.generate-button.loading {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.generate-button.loading .generate-icon {
+  animation: spin 1s linear infinite;
+}
+
+/* Hide text, show "Generating..." when loading */
+.generate-button.loading .generate-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  margin: 0;
+}
+
+.generate-button.loading::after {
+  content: "Generando...";
+  margin-left: 0.5rem;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .generate-button.loading .generate-icon {
+    animation: none;
+    opacity: 0.6;
+  }
+}
