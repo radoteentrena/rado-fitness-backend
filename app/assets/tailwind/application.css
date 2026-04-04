@@ -22,6 +22,7 @@
   --color-graphite: #2F2F2F;
 
   --color-shadow: #282828;
+  --color-shadow-grey: #282828;
 
   --color-blackish: #040307;
 
@@ -38,6 +39,12 @@
 
   /* Border Radius */
   --radius-default: 12px;
+
+  /* Homepage Template Colors */
+  --color-saffron: #f5c228;
+  --color-shadow-grey: #282828;
+  --color-black: #040307;
+  --color-white: #ffffff;
 }
 
 @layer base {
