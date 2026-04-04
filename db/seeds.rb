@@ -5,62 +5,64 @@ require "json"
 WorkoutExercise.delete_all
 Workout.delete_all
 Exercise.delete_all
-Book.delete_all
 BookChunk.delete_all
+Book.delete_all
 
 # ============================================================================
 # EXERCISES - 42 fitness exercises from programming books
 # ============================================================================
 
 exercises = [
-  "Press con Mancuerna Inclinada",
-  "Remo Sentado",
-  "Empuje de Cadera a Una Pierna",
-  "Apertura Lateral Lateral con Banda",
-  "Empuje de Cadera con Banda en Rodilla",
-  "Press con Mancuerna sobre Cabeza",
-  "Estocada Inversa con Mancuerna",
-  "Jalón Lat",
-  "Extensión de Espalda con Mancuerna",
-  "Elevación Lateral",
-  "Sentadilla Sumo",
-  "Press de Banco Agarre Cerrado",
-  "Sentadilla Posterior con Pausa",
-  "Dominada Negativa",
-  "Empuje de Cadera con Barra con Pausa",
-  "Abducción de Cadera de Pie con Banda",
-  "Extensión de Tríceps sobre Cabeza",
-  "Curl de Bícep",
-  "Elevación de Pantorrilla de Pie",
-  "Elevación Lateral con Mancuerna",
-  "Curl Martillo",
-  "Curl de Pierna Sentado",
-  "Elevación de Pantorrilla Sentado",
-  "Press con Mancuerna Declinado",
-  "Aperturas en Polea",
-  "Remo con Mancuerna",
-  "Extensión de Espalda",
-  "Prensa de Pierna",
-  "Aperturas Traseras Deltoides",
-  "Elevación Frontal con Mancuerna",
-  "Jalones Faciales en Polea",
-  "Curl de Concentración",
-  "Empuje de Tríceps en Polea",
-  "Salto al Cajón",
-  "Empuje de Cadera con Barra",
-  "Sentadilla Frontal con Mancuerna",
-  "Retroceso en Polea",
-  "Elevación Glúteos-Isquio",
-  "Press Militar",
-  "Sentadilla con Barra",
-  "Press de Banco con Barra",
-  "Dominada",
-  "Peso Muerto Rumano"
+  { name: "Press con Mancuerna Inclinada", muscle_group: "Chest" },
+  { name: "Remo Sentado", muscle_group: "Back" },
+  { name: "Empuje de Cadera a Una Pierna", muscle_group: "Glutes" },
+  { name: "Apertura Lateral Lateral con Banda", muscle_group: "Chest" },
+  { name: "Empuje de Cadera con Banda en Rodilla", muscle_group: "Glutes" },
+  { name: "Press con Mancuerna sobre Cabeza", muscle_group: "Shoulders" },
+  { name: "Estocada Inversa con Mancuerna", muscle_group: "Legs" },
+  { name: "Jalón Lat", muscle_group: "Back" },
+  { name: "Extensión de Espalda con Mancuerna", muscle_group: "Back" },
+  { name: "Elevación Lateral", muscle_group: "Shoulders" },
+  { name: "Sentadilla Sumo", muscle_group: "Legs" },
+  { name: "Press de Banco Agarre Cerrado", muscle_group: "Chest" },
+  { name: "Sentadilla Posterior con Pausa", muscle_group: "Legs" },
+  { name: "Dominada Negativa", muscle_group: "Back" },
+  { name: "Empuje de Cadera con Barra con Pausa", muscle_group: "Glutes" },
+  { name: "Abducción de Cadera de Pie con Banda", muscle_group: "Glutes" },
+  { name: "Extensión de Tríceps sobre Cabeza", muscle_group: "Arms" },
+  { name: "Curl de Bícep", muscle_group: "Arms" },
+  { name: "Elevación de Pantorrilla de Pie", muscle_group: "Calves" },
+  { name: "Elevación Lateral con Mancuerna", muscle_group: "Shoulders" },
+  { name: "Curl Martillo", muscle_group: "Arms" },
+  { name: "Curl de Pierna Sentado", muscle_group: "Legs" },
+  { name: "Elevación de Pantorrilla Sentado", muscle_group: "Calves" },
+  { name: "Press con Mancuerna Declinado", muscle_group: "Chest" },
+  { name: "Aperturas en Polea", muscle_group: "Chest" },
+  { name: "Remo con Mancuerna", muscle_group: "Back" },
+  { name: "Extensión de Espalda", muscle_group: "Back" },
+  { name: "Prensa de Pierna", muscle_group: "Legs" },
+  { name: "Aperturas Traseras Deltoides", muscle_group: "Shoulders" },
+  { name: "Elevación Frontal con Mancuerna", muscle_group: "Shoulders" },
+  { name: "Jalones Faciales en Polea", muscle_group: "Back" },
+  { name: "Curl de Concentración", muscle_group: "Arms" },
+  { name: "Empuje de Tríceps en Polea", muscle_group: "Arms" },
+  { name: "Salto al Cajón", muscle_group: "Legs" },
+  { name: "Empuje de Cadera con Barra", muscle_group: "Glutes" },
+  { name: "Sentadilla Frontal con Mancuerna", muscle_group: "Legs" },
+  { name: "Retroceso en Polea", muscle_group: "Arms" },
+  { name: "Elevación Glúteos-Isquio", muscle_group: "Glutes" },
+  { name: "Press Militar", muscle_group: "Shoulders" },
+  { name: "Sentadilla con Barra", muscle_group: "Legs" },
+  { name: "Press de Banco con Barra", muscle_group: "Chest" },
+  { name: "Dominada", muscle_group: "Back" },
+  { name: "Peso Muerto Rumano", muscle_group: "Back" }
 ]
 
 puts "🏋️  Seeding exercises..."
-exercises.each do |exercise_name|
-  Exercise.find_or_create_by!(name: exercise_name)
+exercises.each do |exercise_data|
+  Exercise.find_or_create_by!(name: exercise_data[:name]) do |e|
+    e.muscle_group = exercise_data[:muscle_group]
+  end
 end
 puts "✅ Seeded #{exercises.count} exercises\n"
 
