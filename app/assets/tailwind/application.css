@@ -31,8 +31,6 @@
 
   /* Custom Brand Colors from Stitch's Template */
   --color-background-light: #F8F9FA;
-  --color-background-dark: #0F172A;
-  --color-sidebar-bg: #F2F2F2;
 
   /* Fonts */
   --font-display: "Switzer", "sans-serif";
@@ -40,12 +38,6 @@
 
   /* Border Radius */
   --radius-default: 12px;
-
-  /* Homepage Template Colors */
-  --color-saffron: #f5c228;
-  --color-shadow-grey: #282828;
-  --color-black: #040307;
-  --color-white: #ffffff;
 }
 
 @layer base {

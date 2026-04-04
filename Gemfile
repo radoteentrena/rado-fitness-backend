@@ -77,8 +77,6 @@ gem "omniauth-google-oauth2"
 gem "discard"
 
 # IA Integration
-gem "langchainrb"
-
 # Manejo de Iconos
 gem "heroicon"
 
@@ -86,7 +84,6 @@ gem "heroicon"
 gem "dotenv-rails"
 
 gem "faker", "~> 3.5", group: :development
-gem "test", "~> 1.0", group: :development
 
 gem "twilio-ruby", "~> 7.10"
 

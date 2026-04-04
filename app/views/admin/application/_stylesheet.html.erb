@@ -15,4 +15,7 @@ by providing a `content_for(:stylesheet)` block.
 <%= stylesheet_link_tag "admin/conversations/show", "data-turbo-track": "reload" %>
 <%= stylesheet_link_tag "admin/conversations/conversation_item", "data-turbo-track": "reload" %>
 
+<%# Load AI coach styles %>
+<%= stylesheet_link_tag "admin/ai_coach", "data-turbo-track": "reload" %>
+
 <%= yield :stylesheet %>

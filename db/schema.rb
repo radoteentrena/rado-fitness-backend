@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_31_220616) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_04_173700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -152,34 +152,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_31_220616) do
     t.string "video_link"
     t.string "muscle_group"
     t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "leads", force: :cascade do |t|
-    t.string "name"
-    t.string "last_name"
-    t.string "gender"
-    t.integer "age"
-    t.string "weight"
-    t.string "height"
-    t.string "email"
-    t.string "phone"
-    t.string "instagram"
-    t.jsonb "goals"
-    t.integer "experience_level"
-    t.text "best_lifts"
-    t.string "commitment_level"
-    t.string "training_frequency"
-    t.text "injuries"
-    t.string "plays_sports"
-    t.string "sport_details"
-    t.string "time_per_session"
-    t.string "diet_quality"
-    t.string "activity_level"
-    t.string "sleep_hours"
-    t.string "social_media_consent"
-    t.string "referral_source"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -385,7 +357,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_31_220616) do
     t.integer "workout_compliance_score"
     t.integer "diet_adherence_score"
     t.string "auth_token"
-    t.integer "access_status", default: 0, null: false
     t.string "google_uid"
     t.string "provider", default: "email", null: false
     t.string "fcm_token"

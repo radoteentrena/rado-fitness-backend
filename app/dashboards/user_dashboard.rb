@@ -52,17 +52,12 @@ class UserDashboard < Administrate::BaseDashboard
     category
     discarded_at
     email
-    encrypted_password
     first_name
     last_name
     phone
     plan_tier
     programs
-    remember_created_at
-    reset_password_sent_at
-    reset_password_token
     routines
-    status
     status
     created_at
     updated_at
@@ -73,19 +68,11 @@ class UserDashboard < Administrate::BaseDashboard
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
     category
-    discarded_at
     email
-    encrypted_password
     first_name
     last_name
     phone
     plan_tier
-    programs
-    remember_created_at
-    reset_password_sent_at
-    reset_password_token
-    routines
-    status
     status
   ].freeze
 

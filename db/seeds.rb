@@ -4,7 +4,8 @@ require "json"
 
 WorkoutExercise.delete_all
 Workout.delete_all
-Exercise.delete_all
+# Exercise.delete_all — Commented out to preserve existing exercises in production
+# Only new exercises will be created, existing ones will be updated with muscle_group if missing
 BookChunk.delete_all
 Book.delete_all
 
@@ -60,8 +61,11 @@ exercises = [
 
 puts "🏋️  Seeding exercises..."
 exercises.each do |exercise_data|
-  Exercise.find_or_create_by!(name: exercise_data[:name]) do |e|
-    e.muscle_group = exercise_data[:muscle_group]
+  exercise = Exercise.find_or_create_by!(name: exercise_data[:name])
+  # Update muscle_group for existing exercises that don't have one
+  if exercise.muscle_group.blank?
+    exercise.update!(muscle_group: exercise_data[:muscle_group])
+    puts "  ✓ Updated #{exercise.name} with muscle group: #{exercise_data[:muscle_group]}"
   end
 end
 puts "✅ Seeded #{exercises.count} exercises\n"
