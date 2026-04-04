@@ -2,8 +2,8 @@
 
 require "json"
 
-WorkoutExercise.delete_all
-Workout.delete_all
+# WorkoutExercise.delete_all
+# Workout.delete_all
 # Exercise.delete_all — Commented out to preserve existing exercises in production
 # Only new exercises will be created, existing ones will be updated with muscle_group if missing
 BookChunk.delete_all
