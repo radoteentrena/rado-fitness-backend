@@ -4,8 +4,6 @@ class Program < ApplicationRecord
   has_many :routines, through: :phases
   has_many :user_dietary_plans, through: :phases
 
-  public
-
   def current_week
     ((Date.current - created_at.to_date).to_i / 7) + 1
   end

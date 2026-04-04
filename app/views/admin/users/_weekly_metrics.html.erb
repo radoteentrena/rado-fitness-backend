@@ -25,7 +25,7 @@
    target_protein = active_plan&.protein_target || 0
 %>
 
-<div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+<div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-primary/30 p-6">
   <div class="flex items-center justify-between mb-6">
     <div class="flex items-center space-x-4">
       <h3 class="text-lg font-bold text-blackish dark:text-whiteish">Weekly Overview</h3>
@@ -88,7 +88,7 @@
       <% workout_done = metric&.workout_completed || execution.present? %>
 
       <%
-        border_class = is_today ? 'border-primary' : (workout_done ? 'border-warning' : 'border-shadow dark:border-graphite')
+        border_class = is_today ? 'border-primary' : (workout_done ? 'border-warning' : 'border-shadow dark:border-primary/30')
         bg_class = workout_done ? 'bg-warning/10 dark:bg-warning/10' : (is_today ? 'bg-primary/5 dark:bg-primary/10' : 'bg-whiteish dark:bg-shadow')
         head_bg_class = workout_done ? 'bg-warning/20 dark:bg-warning/20' : (is_today ? 'bg-primary/10 dark:bg-primary/20' : 'bg-background-light dark:bg-graphite')
         text_color_class = workout_done ? 'text-warning-dark dark:text-warning' : 'text-graphite dark:text-muted'
@@ -96,7 +96,7 @@
 
       <div class="flex flex-col h-full rounded-lg border <%= border_class %> <%= bg_class %> overflow-hidden relative">
         <%# Header %>
-        <div class="px-2 py-1.5 text-center border-b border-shadow dark:border-graphite <%= head_bg_class %> relative">
+        <div class="px-2 py-1.5 text-center border-b border-shadow dark:border-primary/30 <%= head_bg_class %> relative">
            <span class="text-xs font-medium <%= text_color_class %>"><%= day.strftime("%a") %></span>
            <div class="text-sm font-bold text-blackish dark:text-whiteish"><%= day.day %></div>
            <% if workout_done %>
@@ -126,7 +126,7 @@
                        <span class="text-xs font-medium text-blackish dark:text-whiteish"><%= metric.protein_consumed || "-" %></span>
                     </div>
                     <% if execution %>
-                      <div class="flex justify-between items-center mt-2 pt-1 border-t border-shadow/50 dark:border-graphite/50">
+                      <div class="flex justify-between items-center mt-2 pt-1 border-t border-shadow/50 dark:border-primary/30">
                          <span class="text-[10px] text-graphite dark:text-muted">Workout</span>
                          <span class="text-[10px] font-bold text-warning"><%= execution.duration_minutes || '-' %>m</span>
                       </div>

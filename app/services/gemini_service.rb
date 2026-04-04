@@ -36,22 +36,6 @@ class GeminiService
     {}
   end
 
-  def generate_weekly_feedback(metrics_data, user_name)
-    prompt = <<~PROMPT
-      You are Rado, a high-performance fitness coach.
-      Analyze the following weekly metrics for your client, #{user_name}.
-
-      Metrics:
-      #{metrics_data}
-
-      Write a feedback paragraph (max 150 words).
-      Tone: Motivational, strict, professional, direct.
-      Highlight wins and call out missed targets.
-    PROMPT
-
-    call_gemini(prompt) || "Error generating feedback."
-  end
-
   private
 
   def call_gemini(prompt)

@@ -49,8 +49,8 @@
                     <% s_score = resource.workout_compliance_score ? resource.workout_compliance_score : 0%>
                     <% s_color = s_score >= 80 ? "bg-green-500" : (s_score >= 50 ? "bg-yellow-400" : "bg-red-500") %>
                     <div class="flex items-center space-x-2">
-                        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 min-w-[60px]">
-                            <div class="<%= s_color %> h-2.5 rounded-full" style="width: <%= s_score %>%"></div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 min-w-[60px]" style="--score: <%= s_score %>%">
+                            <div class="<%= s_color %> h-2.5 rounded-full" style="width: var(--score)"></div>
                         </div>
                         <span class="text-xs font-medium text-gray-700 dark:text-gray-300"><%= s_score %>%</span>
                     </div>
@@ -61,8 +61,8 @@
                     <% m_score = resource.diet_adherence_score ? resource.diet_adherence_score : 0%>
                     <% m_color = m_score >= 80 ? "bg-green-500" : (m_score >= 50 ? "bg-yellow-400" : "bg-red-500") %>
                     <div class="flex items-center space-x-2">
-                        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 min-w-[60px]">
-                            <div class="<%= m_color %> h-2.5 rounded-full" style="width: <%= m_score %>%"></div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 min-w-[60px]" style="--score: <%= m_score %>%">
+                            <div class="<%= m_color %> h-2.5 rounded-full" style="width: var(--score)"></div>
                         </div>
                         <span class="text-xs font-medium text-gray-700 dark:text-gray-300"><%= m_score %>%</span>
                     </div>

@@ -39,12 +39,13 @@ class User < ApplicationRecord
 
   # Callbacks
   before_validation :set_temporary_password, on: :create
-  after_create :send_welcome_email
+  before_validation :strip_whitespace
 
   # Associations
   has_one :onboarding_profile, dependent: :destroy
   has_one :subscription, dependent: :destroy
   accepts_nested_attributes_for :onboarding_profile
+  has_many :coach_alerts, dependent: :destroy
 
   has_many :routines, dependent: :destroy
   has_many :programs, dependent: :destroy
@@ -113,11 +114,6 @@ class User < ApplicationRecord
     )
   end
 
-  def overall_score
-    (calculate_workout_compliance_score * 0.4 + calculate_diet_consistency_score * 0.3 + calculate_diet_adherence_score * 0.3).round
-  end
-
-
   def latest_weight
     daily_metrics.where.not(weight: nil).order(date_logged: :desc).pick(:weight).truncate(2) if daily_metrics.exists?
   end
@@ -160,8 +156,4 @@ class User < ApplicationRecord
     self.email = email&.strip&.downcase
   end
 
-  def send_welcome_email
-    # TODO: Configure mailer properly for all environments
-    # send_reset_password_instructions
-  end
 end
