@@ -58,3 +58,4 @@ CLAUDE.md
 .claude
 .agent/workflows
 .github
+/qa

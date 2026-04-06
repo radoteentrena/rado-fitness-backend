@@ -34,7 +34,7 @@ module Admin
       if resource.save
         respond_to do |format|
           format.html { redirect_to [namespace, resource], notice: translate_with_resource("create.success") }
-          format.turbo_stream { render locals: { resource: resource } }
+          format.turbo_stream { render locals: { resource: resource, phase_id: params[:phase_id] } }
         end
       else
         render :new, locals: {
