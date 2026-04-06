@@ -61,7 +61,7 @@
              </div>
              <div>
                 <dt class="text-sm font-medium text-graphite dark:text-muted">Plan Tier</dt>
-                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= user.plan_tier&.titleize %></dd>
+                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= user.plan_tier&.titleize || "N/A" %></dd>
              </div>
              <div>
                 <dt class="text-sm font-medium text-graphite dark:text-muted">Member Since</dt>
@@ -137,7 +137,7 @@
                     </div>
                     <div class="ml-4">
                         <dt class="text-sm font-medium text-graphite dark:text-muted">Workout Compliance (S%)</dt>
-                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.workout_compliance_score %>%</dd>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.workout_compliance_score.present? ? "#{user.workout_compliance_score}%" : "—" %></dd>
                     </div>
                 </div>
             </div>
@@ -148,7 +148,7 @@
                     </div>
                     <div class="ml-4">
                         <dt class="text-sm font-medium text-graphite dark:text-muted">Diet Adherence (M%)</dt>
-                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.diet_adherence_score %>%</dd>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.diet_adherence_score.present? ? "#{user.diet_adherence_score}%" : "—" %></dd>
                     </div>
                 </div>
             </div>

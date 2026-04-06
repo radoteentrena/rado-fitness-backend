@@ -1,5 +1,5 @@
-<%= turbo_frame_tag "modal_frame" do %>
-  <div class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-blackish/50 backdrop-blur-sm" data-controller="modal" data-modal-target="modal" data-modal-auto-open-value="true" data-action="click->modal#closeBackground keyup@window->modal#closeWithKeyboard">
+<%= turbo_frame_tag "overlay_frame" do %>
+  <div class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-blackish/50 backdrop-blur-sm" data-controller="overlay" data-overlay-target="overlay" data-overlay-auto-open-value="true" data-action="click->overlay#closeBackground keyup@window->overlay#closeWithKeyboard">
     <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-whiteish dark:bg-shadow rounded-xl shadow-2xl border border-shadow dark:border-graphite">
 
       <!-- Header -->
@@ -8,7 +8,7 @@
           <h3 class="text-xl font-bold text-blackish dark:text-whiteish">Daily Metric Details</h3>
           <p class="text-sm text-graphite dark:text-muted"><%= daily_metric.date_logged.strftime("%A, %B %d, %Y") %></p>
         </div>
-        <button type="button" class="text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish transition-colors" data-action="click->modal#close">
+        <button type="button" class="text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish transition-colors" data-action="click->overlay#close">
           <span class="material-symbols-outlined text-2xl">close</span>
         </button>
       </div>
@@ -91,7 +91,7 @@
 
       <!-- Footer -->
        <div class="bg-background-light dark:bg-graphite p-4 border-t border-shadow dark:border-graphite flex justify-end sticky bottom-0 rounded-b-xl">
-           <button type="button" class="px-4 py-2 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-lg text-blackish dark:text-whiteish hover:bg-shadow/5 transition-colors text-sm font-medium" data-action="click->modal#close">
+           <button type="button" class="px-4 py-2 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-lg text-blackish dark:text-whiteish hover:bg-shadow/5 transition-colors text-sm font-medium" data-action="click->overlay#close">
              Close
            </button>
        </div>
