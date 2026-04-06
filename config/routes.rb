@@ -25,7 +25,9 @@ Rails.application.routes.draw do
         resources :workouts, only: [ :new, :create ]
       end
       resources :phase_routines, except: [ :index, :show ]
-      resources :workouts, except: [ :index, :new, :create ]
+      resources :workouts, except: [ :index, :new, :create ] do
+        resources :workout_exercises, only: [ :new, :create ]
+      end
       resources :workout_exercises, only: [ :edit, :update ]
       resources :users
       resources :user_dietary_plans, except: [ :index, :show ]

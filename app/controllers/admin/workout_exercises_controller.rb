@@ -1,6 +1,22 @@
 module Admin
   class WorkoutExercisesController < Admin::ApplicationController
+    before_action :set_workout, only: %i[new create]
     before_action :set_workout_exercise, only: %i[edit update]
+
+    def new
+      @workout_exercise = @workout.workout_exercises.build
+    end
+
+    def create
+      @workout_exercise = @workout.workout_exercises.build(workout_exercise_params)
+      @workout_exercise.order_index = @workout.workout_exercises.count + 1
+
+      if @workout_exercise.save
+        redirect_to admin_routine_path(@workout.routine), notice: "Exercise added."
+      else
+        render :new, status: :unprocessable_entity
+      end
+    end
 
     def edit
       # Responds to Turbo Stream / Frame by default based on format in standard Rails
@@ -22,12 +38,17 @@ module Admin
 
     private
 
+    def set_workout
+      @workout = Workout.find(params[:workout_id])
+    end
+
     def set_workout_exercise
       @workout_exercise = WorkoutExercise.find(params[:id])
     end
 
     def workout_exercise_params
       params.require(:workout_exercise).permit(
+        :exercise_id,
         :sets,
         :reps,
         :warmup_sets,
