@@ -1,0 +1,54 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-blackish/50 backdrop-blur-sm p-4">
+  <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-shadow dark:border-graphite">
+    <div class="flex items-center justify-between p-4 border-b border-shadow dark:border-graphite bg-background-light dark:bg-graphite">
+      <h3 class="text-lg font-semibold text-blackish dark:text-whiteish">
+        <%= coach_alert.persisted? ? "Edit Alert" : "New Coach Alert" %>
+      </h3>
+      <%= link_to admin_coach_alerts_path, class: "text-graphite hover:text-blackish dark:text-muted dark:hover:text-whiteish transition-colors" do %>
+        <span class="material-symbols-outlined">close</span>
+      <% end %>
+    </div>
+
+    <%= form_with model: [:admin, coach_alert], html: { class: "p-6 space-y-5" } do |f| %>
+      <% if coach_alert.errors.any? %>
+        <div class="p-3 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-lg text-sm">
+          <ul class="list-disc pl-5 space-y-1">
+            <% coach_alert.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :user_id, "Client", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+        <%= f.collection_select :user_id, User.order(:first_name), :id, :name, { include_blank: "Select client..." }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <div>
+        <%= f.label :category, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+        <%= f.select :category, CoachAlert.categories.keys.map { |k| [k.titleize.gsub("_", " "), k] }, { include_blank: "Select category..." }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <div>
+        <%= f.label :status, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+        <%= f.select :status, CoachAlert.statuses.keys.map { |k| [k.titleize, k] }, {}, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <div>
+        <%= f.label :message, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+        <%= f.text_area :message, rows: 3, placeholder: "Describe what triggered this alert...", class: "block w-full p-2.5 text-sm text-blackish bg-background-light rounded-lg border border-shadow focus:ring-primary focus:border-primary dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <div>
+        <%= f.label :action_taken, "Action Taken", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+        <%= f.text_area :action_taken, rows: 2, placeholder: "What did you do about it? (optional)", class: "block w-full p-2.5 text-sm text-blackish bg-background-light rounded-lg border border-shadow focus:ring-primary focus:border-primary dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2 border-t border-shadow dark:border-graphite">
+        <%= link_to "Cancel", admin_coach_alerts_path, class: "px-4 py-2 text-sm font-medium text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish transition-colors" %>
+        <%= f.submit class: "px-5 py-2 bg-primary text-blackish font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

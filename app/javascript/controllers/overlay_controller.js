@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal", "backdrop"]
+  static targets = ["overlay", "backdrop"]
   static values = {
     autoOpen: { type: Boolean, default: false }
   }
@@ -13,14 +13,14 @@ export default class extends Controller {
   }
 
   open() {
-    this.modalTarget.classList.remove("hidden")
-    this.modalTarget.classList.add("flex")
+    this.overlayTarget.classList.remove("hidden")
+    this.overlayTarget.classList.add("flex")
     document.body.classList.add("overflow-hidden")
   }
 
   close() {
-    this.modalTarget.classList.add("hidden")
-    this.modalTarget.classList.remove("flex")
+    this.overlayTarget.classList.add("hidden")
+    this.overlayTarget.classList.remove("flex")
     document.body.classList.remove("overflow-hidden")
 
     // If opened via Turbo Stream or standard navigation to a "new" route,
@@ -28,9 +28,9 @@ export default class extends Controller {
     // For now, simple hide.
   }
 
-  // Action for clicking outside the modal content
+  // Action for clicking outside the overlay content
   closeBackground(event) {
-    if (this.hasModalTarget && event.target === this.modalTarget) {
+    if (this.hasModalTarget && event.target === this.overlayTarget) {
       this.close()
     }
   }

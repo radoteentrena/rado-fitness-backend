@@ -19,7 +19,10 @@ module Admin
     end
 
     def edit
-      # Responds to Turbo Stream / Frame by default based on format in standard Rails
+      # When accessed directly (not via turbo frame), redirect to the routine viewer
+      unless turbo_frame_request?
+        redirect_to admin_routine_path(@workout_exercise.workout.routine)
+      end
     end
 
     def update
