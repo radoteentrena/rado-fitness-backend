@@ -3,7 +3,7 @@ Todos nuestros endpoints viven bajo la ruta `/api/v1/`.
 
 ## URL Base
 **Desarrollo local:** `http://localhost:3000/api/v1`
-**Producción:** `https://www.radoteentrena.com/api/v1`
+**Producción:** `https://radoteentrena.com/api/v1`
 *(Asegurate de cambiar esto según el entorno donde estés probando.)*
 
 ## Autenticación
@@ -82,6 +82,47 @@ O si la cuenta no está activa:
 - Solo usuarios con `status: "active"` pueden autenticarse
 - Token no se almacena en la BD (single-use)
 - Móvil debe guardar el `auth_token` devuelto en secure storage, NO en plain text
+
+---
+
+### POST /auth/email
+
+**Descripción:** Autentica un usuario con email y contraseña. Alternativa al login con Google para casos donde no se usa OAuth.
+
+**Requisito:** Usuario debe existir con `status: "active"`.
+
+**Request:**
+```http
+POST /auth/email
+Content-Type: application/json
+
+{
+  "email": "patriciopherrero@gmail.com",
+  "password": "tu_contraseña"
+}
+```
+
+**Response (200 - OK):**
+```json
+{
+  "auth_token": "abc123xyz789def456",
+  "user": {
+    "id": 1,
+    "email": "patriciopherrero@gmail.com",
+    "first_name": "Patricio",
+    "last_name": "Perez",
+    "status": "active",
+    "plan_tier": "high_ticket"
+  }
+}
+```
+
+**Response (401 - Unauthorized):**
+```json
+{
+  "error": "Invalid email or password"
+}
+```
 
 ---
 

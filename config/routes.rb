@@ -63,6 +63,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get "sync", to: "sync#index"
       post "auth/google", to: "auth#google"
+      post "auth/email", to: "auth#email"
 
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]
