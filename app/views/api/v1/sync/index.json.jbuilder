@@ -7,7 +7,7 @@ json.recent_metrics @metrics
 
 if @active_program
   json.active_program do
-    json.extract! @active_program, :id, :title, :duration_weeks
+    json.extract! @active_program, :id, :name, :duration_weeks
   end
 else
   json.active_program nil
@@ -15,7 +15,7 @@ end
 
 if @active_routine
   json.active_routine do
-    json.extract! @active_routine, :id, :title, :duration_weeks
+    json.extract! @active_routine, :id, :name, :duration_weeks
   end
 else
   json.active_routine nil
