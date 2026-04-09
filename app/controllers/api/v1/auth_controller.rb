@@ -1,5 +1,5 @@
 class Api::V1::AuthController < Api::V1::BaseController
-  skip_before_action :authenticate_user!, only: [:google]
+  skip_before_action :authenticate_user!, only: [:google, :email]
 
   # POST /api/v1/auth/google
   # Authenticates user via Google ID token
@@ -32,6 +32,31 @@ class Api::V1::AuthController < Api::V1::BaseController
     user.update(google_uid: payload['sub'], provider: 'google_oauth2') unless user.google_uid.present?
 
     # Return auth token and user data
+    render json: {
+      auth_token: user.auth_token,
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        status: user.status,
+        plan_tier: user.plan_tier
+      }
+    }, status: :ok
+  end
+
+  # POST /api/v1/auth/email
+  # Authenticates user via email + password
+  def email
+    email    = params.require(:email).downcase.strip
+    password = params.require(:password)
+
+    user = User.find_by(email: email, status: :active)
+
+    unless user&.valid_password?(password)
+      return render json: { error: "Invalid email or password" }, status: :unauthorized
+    end
+
     render json: {
       auth_token: user.auth_token,
       user: {
