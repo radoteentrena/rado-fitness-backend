@@ -211,9 +211,10 @@
           <span class="text-sm text-graphite dark:text-muted"><%= user.progress_photos.count %> total snaps</span>
       </div>
 
-      <% if user.progress_photos.with_attached_image.any? %>
+      <% if user.progress_photos.any? %>
           <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               <% user.progress_photos.with_attached_image.order(date: :desc).each do |photo| %>
+                  <% next unless photo.image.attached? %>
                   <div class="group relative rounded-lg overflow-hidden border border-shadow dark:border-primary/30 bg-background-light dark:bg-graphite aspect-[3/4]">
                       <%= link_to admin_progress_photo_path(photo), class: "block w-full h-full" do %>
                           <%= image_tag photo.image, class: "object-cover w-full h-full transition-transform duration-300 group-hover:scale-105" %>
