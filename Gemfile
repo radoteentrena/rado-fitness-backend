@@ -67,6 +67,9 @@ end
 # Admin dashboard
 gem "administrate"
 
+# CORS
+gem "rack-cors"
+
 # Authentication
 gem "devise"
 gem "google_sign_in"
