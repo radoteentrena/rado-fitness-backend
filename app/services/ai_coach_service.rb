@@ -162,11 +162,16 @@ class AiCoachService
         )
 
         if user
+          user.user_dietary_plans.active.update_all(active: false)
           UserDietaryPlan.create!(
             user: user,
             dietary_plan: dietary_plan,
+            phase: phase,
+            calories_target: dietary_plan.calories_target,
+            protein_target: dietary_plan.protein_target,
             start_date: Date.current,
-            end_date: Date.current + (program&.duration_weeks || 8).weeks
+            end_date: Date.current + (program&.duration_weeks || 8).weeks,
+            active: true
           )
         end
       end
@@ -197,18 +202,42 @@ class AiCoachService
   def build_client_profile(user)
     return "No specific client selected. Generate a general template." unless user
 
-    <<~PROFILE
+    profile = user.onboarding_profile
+
+    base = <<~BASE
       CLIENT PROFILE:
       - Name: #{user.name}
       - Category: #{user.category}
       - Status: #{user.status}
-      - Current Weight: #{user.latest_weight || 'Not logged'}
+      - Current Weight (logged): #{user.latest_weight || 'Not logged'}
       - Weight Trend (7d): #{user.weight_trend || 'N/A'}
       - Workout Compliance: #{user.calculate_workout_compliance_score}%
       - Diet Adherence: #{user.calculate_diet_adherence_score}%
       - Current Programs: #{user.programs.map(&:name).join(', ').presence || 'None'}
       - Target Workouts/Week: #{user.target_workouts_per_week}
-    PROFILE
+    BASE
+
+    return base unless profile
+
+    base + <<~ONBOARDING
+
+      ONBOARDING QUESTIONNAIRE:
+      - Gender: #{profile.gender}
+      - Age: #{profile.age}
+      - Weight (self-reported): #{profile.weight}
+      - Height: #{profile.height}
+      - Goals: #{Array(profile.goals).join(', ').presence || 'Not specified'}
+      - Training Experience Level: #{profile.experience_level}/10
+      - Best Lifts: #{profile.best_lifts.presence || 'Not specified'}
+      - Commitment Level: #{profile.commitment_level}
+      - Training Frequency: #{profile.training_frequency} days/week
+      - Time per Session: #{profile.time_per_session.presence || 'Not specified'}
+      - Injuries / Limitations: #{profile.injuries.presence || 'None reported'}
+      - Plays Sports: #{profile.plays_sports}#{profile.plays_sports == 'Si' && profile.sport_details.present? ? " (#{profile.sport_details})" : ''}
+      - Diet Quality: #{profile.diet_quality}
+      - Daily Activity Level: #{profile.activity_level}
+      - Sleep: #{profile.sleep_hours} hours/night
+    ONBOARDING
   end
 
   def build_system_prompt(mode)
@@ -309,14 +338,16 @@ class AiCoachService
               }
             ]
           }
-        ],
-        "dietary_plan": {
-          "name": "string",
-          "description": "string",
-          "calories_target": integer,
-          "protein_target": integer
-        }
+        ]
       }
+    ],
+    "dietary_plan": {
+      "name": "string",
+      "description": "string",
+      "calories_target": integer,
+      "protein_target": integer
+    }
+  }
     JSON
   end
 
