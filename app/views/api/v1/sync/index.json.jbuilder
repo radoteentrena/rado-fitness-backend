@@ -5,6 +5,14 @@ end
 
 json.recent_metrics @metrics
 
+if @dietary_plan
+  json.dietary_plan do
+    json.extract! @dietary_plan, :id, :calories_target, :protein_target, :notes, :start_date, :end_date, :active
+  end
+else
+  json.dietary_plan nil
+end
+
 if @active_program
   json.active_program do
     json.extract! @active_program, :id, :name, :duration_weeks
