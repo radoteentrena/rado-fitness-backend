@@ -15,10 +15,10 @@ class DailyMetric < ApplicationRecord
     self.compliant = (calories_consumed.to_i > 0 || protein_consumed.to_i > 0)
 
     # Accuracy Logic: Did they hit the targets? (+/- 10%)
-    if user_dietary_plan.present? && compliant
-      c_target = user_dietary_plan.calories_target
-      p_target = user_dietary_plan.protein_target
+    c_target = user_dietary_plan&.calories_target
+    p_target = user_dietary_plan&.protein_target
 
+    if compliant && c_target.present? && p_target.present?
       c_range = (c_target * 0.9)..(c_target * 1.1)
       p_range = (p_target * 0.9)..(p_target * 1.1)
 
