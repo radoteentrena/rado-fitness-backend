@@ -1,0 +1,39 @@
+<%= turbo_frame_tag "modal_frame" do %>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-blackish/50 backdrop-blur-sm p-4">
+    <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-xl w-full max-w-md overflow-hidden border border-shadow dark:border-graphite">
+      <div class="flex items-center justify-between p-4 border-b border-shadow dark:border-graphite bg-background-light dark:bg-graphite">
+        <div>
+          <h3 class="text-lg font-semibold text-blackish dark:text-whiteish">Cambiar ejercicio</h3>
+          <p class="text-xs text-muted mt-0.5"><%= @workout_exercise.exercise.muscle_group %></p>
+        </div>
+        <%= link_to admin_routine_path(@workout_exercise.workout.routine), data: { turbo_frame: "modal_frame" }, class: "text-graphite hover:text-blackish dark:text-muted dark:hover:text-whiteish transition-colors" do %>
+          <span class="material-symbols-outlined">close</span>
+        <% end %>
+      </div>
+
+      <%= form_with url: admin_workout_exercise_path(@workout_exercise), method: :patch, class: "p-6 space-y-4" do |f| %>
+        <div>
+          <label class="block text-xs uppercase text-muted mb-2 font-bold tracking-wider">Seleccionar reemplazo</label>
+          <% if @exercises.any? %>
+            <select name="workout_exercise[exercise_id]" class="w-full bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish">
+              <% @exercises.each do |exercise| %>
+                <option value="<%= exercise.id %>"><%= exercise.name %></option>
+              <% end %>
+            </select>
+          <% else %>
+            <p class="text-sm text-muted italic p-3 border border-dashed border-shadow dark:border-graphite rounded-lg">
+              No hay otros ejercicios en el grupo "<%= @workout_exercise.exercise.muscle_group %>".
+            </p>
+          <% end %>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2 border-t border-shadow dark:border-graphite">
+          <%= link_to "Cancelar", admin_routine_path(@workout_exercise.workout.routine), data: { turbo_frame: "modal_frame" }, class: "text-blackish bg-whiteish border border-shadow font-medium rounded-lg text-sm px-5 py-2.5 hover:bg-background-light dark:bg-shadow dark:text-muted dark:border-graphite dark:hover:text-whiteish dark:hover:bg-graphite transition-colors" %>
+          <% if @exercises.any? %>
+            <%= f.submit "Cambiar", class: "text-blackish bg-primary hover:bg-primary/90 font-medium rounded-lg text-sm px-5 py-2.5 cursor-pointer" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
