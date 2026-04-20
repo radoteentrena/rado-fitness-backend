@@ -38,10 +38,11 @@ class OnboardingController < ApplicationController
       :first_name, :last_name, :email, :phone,
       onboarding_profile_attributes: [
         :gender, :age, :weight, :height, :instagram,
-        :experience_level, :best_lifts, :commitment_level,
+        :experience_level, :best_lifts, :training_years, :commitment_level,
         :training_frequency, :injuries, :plays_sports, :sport_details,
         :time_per_session, :diet_quality, :activity_level, :sleep_hours,
-        :social_media_consent, :referral_source, :country, goals: []
+        :social_media_consent, :referral_source, :referral_source_other,
+        :goals_other, :country, goals: []
       ]
     )
   end

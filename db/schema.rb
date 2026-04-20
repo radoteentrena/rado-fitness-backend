@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_04_173700) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_20_185136) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -204,6 +204,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_04_173700) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "country"
+    t.string "training_years"
+    t.string "goals_other"
+    t.string "referral_source_other"
     t.index ["user_id"], name: "index_onboarding_profiles_on_user_id"
   end
 
