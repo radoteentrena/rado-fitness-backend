@@ -30,7 +30,7 @@
   </div>
 
   <div class="flex items-center justify-end gap-4 pt-6 border-t border-shadow">
-    <%= link_to "Cancel", admin_routine_path(@routine || @workout.routine), class: "px-4 py-2 text-sm font-medium text-muted hover:text-whiteish transition-colors duration-200" %>
+    <%= link_to "Cancel", admin_routine_path(@routine || @workout.routine), data: { turbo_frame: "_top" }, class: "px-4 py-2 text-sm font-medium text-muted hover:text-whiteish transition-colors duration-200" %>
     <%= f.submit class: "px-6 py-2 bg-saffron hover:bg-saffron-dark text-blackish font-bold rounded-lg rounded-tl-none shadow-sm transition-colors duration-200 cursor-pointer" %>
   </div>
 <% end %>

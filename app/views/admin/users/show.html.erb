@@ -176,6 +176,14 @@
                                          <span class="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded border border-primary/20">Week <%= program.current_week %></span>
                                     </div>
                                 </div>
+                                <%= button_to remove_user_admin_program_path(program), method: :delete,
+                                    data: { turbo_confirm: "¿Estás seguro de querer borrar el programa \"#{program.name}\" a #{user.name}?" },
+                                    class: "p-2 text-graphite hover:text-red-500 dark:text-muted dark:hover:text-red-400 hover:cursor-pointer transition-colors rounded focus:outline-none focus:ring-2 focus:ring-red-400",
+                                    title: "Remover programa" do %>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
+                                  </svg>
+                                <% end %>
                             </div>
 
                             <% if (current_routine = program.current_routine) %>
