@@ -3,12 +3,11 @@ class Api::V1::SyncController < Api::V1::BaseController
     @user = current_user
     @active_program = @user.programs.last
     @dietary_plan = @user.user_dietary_plans.active.first
-    @active_routine = @active_program&.routines&.first
+    @active_routine = @active_program&.current_routine
+    @current_week = @active_program&.current_week
     @current_week_workouts = []
 
     if @active_routine
-      # In a real scenario we'd query by current week, but since we are MVP
-      # let's return all workouts for this specific Block/Routine
       @current_week_workouts = @active_routine.workouts.includes(workout_exercises: :exercise).order(:day_number)
     end
 

@@ -136,19 +136,71 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
 - **Qué te devuelve (JSON):**
   ```json
   {
-    "user": { ... },
-    "active_program": { ... },
-    "active_routine": { ... },
-    "current_week_workouts": {
-      "1": [ { "routine_exercise": ... } ], // Ejercicios del Día 1
-      "2": [ ... ]                          // Ejercicios del Día 2
+    "user": {
+      "id": 1,
+      "first_name": "Patricio",
+      "last_name": "Perez",
+      "email": "patriciopherrero@gmail.com",
+      "plan_tier": "high_ticket",
+      "category": "performance",
+      "full_name": "Patricio Perez"
     },
-    "metrics": {
-      "workout_compliance": 85, // % de entrenamientos que hizo
-      "metric_compliance": 90   // % de constancia con dieta/hábitos
-    }
+    "recent_metrics": {
+      "workout_compliance": 85,
+      "metric_compliance": 90
+    },
+    "dietary_plan": {
+      "id": 3,
+      "calories_target": 2800,
+      "protein_target": 200,
+      "notes": null,
+      "start_date": "2026-01-01",
+      "end_date": "2026-03-01",
+      "active": true
+    },
+    "active_program": {
+      "id": 7,
+      "name": "Programa Fuerza Hipertrofia",
+      "duration_weeks": 12,
+      "current_week": 4
+    },
+    "active_routine": {
+      "id": 2,
+      "name": "Bloque A - Volumen",
+      "duration_weeks": 6
+    },
+    "current_week_workouts": [
+      {
+        "id": 10,
+        "name": "Upper Body A",
+        "description": null,
+        "day_number": 1,
+        "order_index": 0,
+        "exercises": [
+          {
+            "id": 45,
+            "sets": 4,
+            "reps": "6-8",
+            "load": "RPE 8",
+            "sub_option_one": null,
+            "sub_option_two": null,
+            "exercise": {
+              "id": 12,
+              "name": "Press Banca",
+              "muscle_group": "Pecho",
+              "video_link": "https://youtube.com/...",
+              "description": "Instrucciones del ejercicio"
+            }
+          }
+        ]
+      }
+    ]
   }
   ```
+
+**Notas:**
+- `active_routine` refleja la rutina activa según la semana actual del programa (respeta `duration_weeks` de cada bloque).
+- `current_week` es la semana actual del programa desde que fue asignado al usuario (empieza en 1). Sirve para mostrar progreso ("Semana 4 de 12").
 
 ---
 
@@ -296,11 +348,12 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
           {
             "workout_exercise_id": 45,
             "exercise_name": "Press Banca",
+            "muscle_group": "Pecho",
             "sets": 4,
-            "reps": 6,
-            "load": 100,
-            "early_rpe": 8,
-            "last_rpe": 8,
+            "reps": "6-8",
+            "load": "RPE 8",
+            "early_rpe": "~7",
+            "last_rpe": "~8",
             "last_logged": {
               "date": "2026-02-20",
               "actual_sets": [

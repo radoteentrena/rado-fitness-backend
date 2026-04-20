@@ -16,6 +16,7 @@ end
 if @active_program
   json.active_program do
     json.extract! @active_program, :id, :name, :duration_weeks
+    json.current_week @current_week
   end
 else
   json.active_program nil
