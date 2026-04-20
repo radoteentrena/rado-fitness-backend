@@ -58,7 +58,7 @@
 
       <div>
         <%= f.label :intensity_technique, "Intensity Technique", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
-        <%= f.text_field :intensity_technique, placeholder: "e.g. Drop set, Rest-pause", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+        <%= f.select :intensity_technique, options_for_select(WorkoutExercise::INTENSITY_TECHNIQUES, f.object.intensity_technique), { include_blank: "None" }, class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
       </div>
 
       <div class="flex items-center justify-end gap-3 pt-4 border-t border-shadow dark:border-graphite">

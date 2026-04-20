@@ -29,7 +29,11 @@ Rails.application.routes.draw do
       resources :workouts, except: [ :index, :new, :create ] do
         resources :workout_exercises, only: [ :new, :create ]
       end
-      resources :workout_exercises, only: [ :edit, :update ]
+      resources :workout_exercises, only: [ :edit, :update, :destroy ] do
+        member do
+          get :swap
+        end
+      end
       resources :users
       resources :user_dietary_plans, except: [ :index, :show ]
       resources :assignments, only: [ :new, :create ]

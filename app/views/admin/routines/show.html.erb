@@ -52,7 +52,7 @@
 
                <div class="space-y-6">
                   <% workout.workout_exercises.order(:order_index).each do |we| %>
-                     <%= render partial: "admin/workout_exercises/workout_exercise", locals: { workout_exercise: we } %>
+                     <%= render partial: "admin/workout_exercises/workout_exercise", locals: { workout_exercise: we, allow_actions: !@routine.is_template? } %>
                   <% end %>
 
                   <div class="mt-4 flex justify-center border-2 border-dashed border-shadow dark:border-graphite rounded-lg p-4 hover:border-primary transition-colors">
@@ -114,3 +114,5 @@
      </div>
   </div>
 </div>
+
+<%= turbo_frame_tag "modal_frame" %>

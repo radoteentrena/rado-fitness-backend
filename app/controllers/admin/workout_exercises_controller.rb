@@ -1,7 +1,7 @@
 module Admin
   class WorkoutExercisesController < Admin::ApplicationController
     before_action :set_workout, only: %i[new create]
-    before_action :set_workout_exercise, only: %i[edit update]
+    before_action :set_workout_exercise, only: %i[edit update destroy swap]
 
     def new
       @workout_exercise = @workout.workout_exercises.build
@@ -19,7 +19,6 @@ module Admin
     end
 
     def edit
-      # When accessed directly (not via turbo frame), redirect to the routine viewer
       unless turbo_frame_request?
         redirect_to admin_routine_path(@workout_exercise.workout.routine)
       end
@@ -28,15 +27,34 @@ module Admin
     def update
       if @workout_exercise.update(workout_exercise_params)
         respond_to do |format|
-          # Reload inside the frame with the newly updated `workout_exercise` partial
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(@workout_exercise, partial: "admin/workout_exercises/workout_exercise", locals: { workout_exercise: @workout_exercise }),
+              turbo_stream.update("modal_frame", "")
+            ]
+          end
           format.html { render partial: "admin/workout_exercises/workout_exercise", locals: { workout_exercise: @workout_exercise } }
         end
       else
         respond_to do |format|
-          # Re-render the form with validation errors (unprocessable_entity is important for Turbo to catch errors)
           format.html { render :edit, status: :unprocessable_entity }
         end
       end
+    end
+
+    def destroy
+      routine = @workout_exercise.workout.routine
+      @workout_exercise.destroy
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.remove(@workout_exercise) }
+        format.html { redirect_to admin_routine_path(routine) }
+      end
+    end
+
+    def swap
+      @exercises = Exercise.where(muscle_group: @workout_exercise.exercise.muscle_group)
+                           .where.not(id: @workout_exercise.exercise_id)
+                           .order(:name)
     end
 
     private
@@ -61,7 +79,8 @@ module Admin
         :load,
         :intensity_technique,
         :sub_option_one,
-        :sub_option_two
+        :sub_option_two,
+        :time_estimate
       )
     end
   end
