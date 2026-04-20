@@ -22,8 +22,8 @@
                           <%= f.text_field :name, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "e.g. Bench Press" %>
                       </div>
                       <div>
-                          <%= f.label :muscle_group, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-                           <%= f.text_field :muscle_group, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "e.g. Chest" %>
+                          <%= f.label :muscle_group, "Grupo Muscular", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+                          <%= f.select :muscle_group, options_for_select(Exercise::MUSCLE_GROUPS, f.object.muscle_group), { include_blank: "Seleccionar grupo muscular..." }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary" %>
                       </div>
                       <div class="sm:col-span-2">
                           <%= f.label :video_link, "Video URL", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>

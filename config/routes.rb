@@ -19,6 +19,7 @@ Rails.application.routes.draw do
         resource :builder, only: [ :show ], controller: "program_builders"
         member do
           post :sync_sheet
+          delete :remove_user
         end
       end
       resources :routines do

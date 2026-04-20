@@ -5,7 +5,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
     @conversation = current_user.conversations.find_or_create_by(user_id: current_user.id)
     @messages = @conversation.messages.not_deleted.chronological
 
-    # Mark coach messages as read by user
     Message.where(conversation: @conversation, sender_type: :coach, read_at: nil).update_all(read_at: Time.current)
 
     render json: {
@@ -23,7 +22,6 @@ class Api::V1::MessagesController < Api::V1::BaseController
     if @message.save
       @conversation.update(last_message_at: Time.current)
 
-      # Trigger notification to coach (defer to background job)
       NotifyCoachOfNewMessageJob.perform_later(@message.id) if defined?(NotifyCoachOfNewMessageJob)
 
       render json: serialize_message(@message), status: :created

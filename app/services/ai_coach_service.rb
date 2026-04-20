@@ -322,7 +322,7 @@ class AiCoachService
                 "exercises": [
                   {
                     "name": "string (exact name if existing, descriptive if new)",
-                    "muscle_group": "string (e.g. 'Chest', 'Back', 'Legs')",
+                    "muscle_group": "string — MUST be one of: #{Exercise::MUSCLE_GROUPS.join(', ')}",
                     "existing_exercise_id": integer_or_null,
                     "sets": integer,
                 "warmup_sets": "string (e.g. '1-2' or '0')",
