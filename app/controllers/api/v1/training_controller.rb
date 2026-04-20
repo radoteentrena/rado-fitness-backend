@@ -112,6 +112,7 @@ class Api::V1::TrainingController < Api::V1::BaseController
         {
           workout_exercise_id: we.id,
           exercise_name: we.exercise.name,
+          muscle_group: we.exercise.muscle_group,
           sets: we.sets,
           reps: we.reps,
           load: we.load,
