@@ -6,13 +6,22 @@
 
 <div class="flex justify-start">
   <div class="max-w-[85%] bg-graphite border border-primary/20 text-whiteish text-sm rounded-lg px-3 py-2">
-    <p class="text-xs text-muted mb-1 font-medium uppercase tracking-wider">AI Coach</p>
-    <p>Cambios preparados. Revisá el JSON y aplicá cuando estés listo.</p>
-    <% if ai_json["routines"].present? %>
-      <details class="mt-2">
-        <summary class="text-xs text-primary cursor-pointer hover:underline">Ver JSON</summary>
-        <pre class="text-[10px] text-muted mt-1 overflow-x-auto max-h-32 whitespace-pre-wrap"><%= JSON.pretty_generate(ai_json) %></pre>
-      </details>
+    <p class="text-xs text-muted mb-2 font-medium uppercase tracking-wider">AI Coach</p>
+    <p class="mb-2"><%= summary %></p>
+    <% if modifications.any? %>
+      <ul class="space-y-1 border-t border-primary/20 pt-2">
+        <% modifications.each do |mod| %>
+          <li class="text-xs text-muted">
+            <% if mod["workout_exercise_id"].present? %>
+              <span class="text-primary font-medium">#<%= mod["workout_exercise_id"] %></span>
+              <%= mod.except("workout_exercise_id").map { |k, v| "#{k}: #{v}" }.join(" · ") %>
+            <% else %>
+              <span class="text-saffron font-medium">+ <%= mod["name"] %></span>
+              (workout #<%= mod["workout_id"] %>) · <%= mod["sets"] %>x<%= mod["reps"] %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
     <% end %>
   </div>
 </div>
