@@ -11,3 +11,14 @@ two:
   description: MyText
   user: two
   is_template: false
+
+template_routine:
+  name: Rutina Template
+  description: Rutina template de 3 días
+  is_template: true
+
+user_routine:
+  name: Rutina Usuario
+  description: Rutina asignada
+  user: active_user
+  is_template: false

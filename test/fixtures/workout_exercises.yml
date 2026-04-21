@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+user_workout_exercise:
+  workout: user_workout
+  exercise: bench_press
+  sets: 4
+  reps: "8-10"
+  rest_seconds: 120
+  order_index: 0
