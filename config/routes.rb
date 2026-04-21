@@ -17,6 +17,10 @@ Rails.application.routes.draw do
       resources :phases, except:  [ :index ]
       resources :programs do
         resource :builder, only: [ :show ], controller: "program_builders"
+        resource :chat, controller: "program_chat", only: [ :show ] do
+          post :message
+          post :apply
+        end
         member do
           post :sync_sheet
           delete :remove_user
@@ -34,7 +38,9 @@ Rails.application.routes.draw do
           get :swap
         end
       end
-      resources :users
+      resources :users do
+        resource :program_assignment, only: [ :create ]
+      end
       resources :user_dietary_plans, except: [ :index, :show ]
       resources :assignments, only: [ :new, :create ]
       resources :daily_metrics, only: [ :show ]
