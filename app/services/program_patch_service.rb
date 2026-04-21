@@ -4,6 +4,33 @@ class ProgramPatchService
     @json    = updated_json
   end
 
+  def call_modifications
+    ActiveRecord::Base.transaction do
+      Array(@json).each do |mod|
+        if mod["workout_exercise_id"].present?
+          we = WorkoutExercise.find(mod["workout_exercise_id"])
+          fields = mod.slice("sets", "reps", "rest_seconds", "intensity_technique", "load").compact
+          we.update!(fields.transform_keys(&:to_sym))
+        else
+          WorkoutExercise.find(mod["replace_workout_exercise_id"]).destroy! if mod["replace_workout_exercise_id"].present?
+          exercise = Exercise.find_or_create_by!(name: mod["name"]) do |e|
+            e.muscle_group = mod["muscle_group"]
+          end
+          parent_workout = Workout.find(mod["workout_id"])
+          WorkoutExercise.create!(
+            workout:             parent_workout,
+            exercise:            exercise,
+            sets:                mod["sets"],
+            reps:                mod["reps"].to_s,
+            rest_seconds:        mod["rest_seconds"],
+            intensity_technique: mod["intensity_technique"],
+            load:                mod["load"]
+          )
+        end
+      end
+    end
+  end
+
   def call
     ActiveRecord::Base.transaction do
       Array(@json["routines"]).each do |routine_data|

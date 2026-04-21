@@ -3,22 +3,12 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["panel", "frame"]
 
-  connect() {
-    this.boundReveal = this.revealPanel.bind(this)
-    this.frameTarget.addEventListener("turbo:frame-load", this.boundReveal)
-  }
-
-  disconnect() {
-    this.frameTarget.removeEventListener("turbo:frame-load", this.boundReveal)
-  }
-
   open() {
     const chatUrl = this.frameTarget.dataset.chatUrl
-    if (this.frameTarget.src !== chatUrl) {
-      this.frameTarget.src = chatUrl
-    } else {
-      this.revealPanel()
+    if (this.frameTarget.getAttribute("src") !== chatUrl) {
+      this.frameTarget.setAttribute("src", chatUrl)
     }
+    this.revealPanel()
   }
 
   close() {

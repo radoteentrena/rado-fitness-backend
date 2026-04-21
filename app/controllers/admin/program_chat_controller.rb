@@ -10,46 +10,57 @@ module Admin
     def message
       @conversation = find_or_create_conversation
       result = AiCoachService.new.refine(
-        conversation: @conversation,
-        message:      params[:message],
-        mode:         "program_chat"
+        conversation:    @conversation,
+        message:         params[:message],
+        mode:            "program_chat",
+        program_context: serialize_program(@program)
       )
+
+      modifications = result[:structured_data]["modifications"] || []
+      summary       = result[:structured_data]["summary"] || ""
+      @conversation.update!(generated_data: { "pending_modifications" => modifications, "pending_summary" => summary })
 
       render turbo_stream: [
         turbo_stream.append("chat-messages",
           partial: "admin/program_chat/message_pair",
-          locals:  { user_message: params[:message], ai_json: result[:structured_data] }),
+          locals:  { user_message: params[:message], modifications: modifications, summary: summary }),
         turbo_stream.replace("chat-apply-button",
           partial: "admin/program_chat/apply_button",
-          locals:  { program: @program, conversation: @conversation })
+          locals:  { program: @program, conversation: @conversation,
+                     routine_id: params[:routine_id], workout_id: params[:workout_id] }),
+        turbo_stream.update("chat-error", "")
       ]
     rescue => e
       Rails.logger.error("ProgramChat message error: #{e.message}")
-      render turbo_stream: turbo_stream.replace("chat-error",
+      render turbo_stream: turbo_stream.update("chat-error",
         partial: "admin/program_chat/error",
-        locals:  { message: e.message })
+        locals:  { message: "Hubo un error con la IA. Por favor, intentá de nuevo." })
     end
 
     def apply
       @conversation = find_or_create_conversation
-      ProgramPatchService.new(@program, @conversation.generated_data).call
-      @conversation.update!(generated_data: serialize_program(@program.reload))
+      modifications = @conversation.generated_data["pending_modifications"] || []
+      ProgramPatchService.new(@program, modifications).call_modifications
+      @conversation.update!(generated_data: { "pending_modifications" => [], "pending_summary" => "" })
 
-      phases = @program.phases
-                       .includes(routines: :user)
-                       .order(:order_index)
-
-      render turbo_stream: [
-        turbo_stream.replace("program-builder-content",
-          partial: "admin/program_builders/content",
-          locals:  { program: @program, phases: phases }),
-        turbo_stream.replace("chat-apply-button", "")
+      streams = [
+        turbo_stream.replace("chat-apply-button", ""),
+        turbo_stream.update("chat-error", "")
       ]
+
+      if params[:routine_id].present?
+        routine = Routine.find(params[:routine_id])
+        reload_src = admin_routine_path(routine, workout_id: params[:workout_id].presence)
+        streams << turbo_stream.replace("workout_content",
+          html: view_context.turbo_frame_tag("workout_content", src: reload_src).to_s)
+      end
+
+      render turbo_stream: streams
     rescue ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid => e
       Rails.logger.error("ProgramChat apply error: #{e.message}")
-      render turbo_stream: turbo_stream.replace("chat-error",
+      render turbo_stream: turbo_stream.update("chat-error",
         partial: "admin/program_chat/error",
-        locals:  { message: e.message })
+        locals:  { message: "Error al aplicar los cambios: #{e.message}" })
     end
 
     private
@@ -62,7 +73,7 @@ module Admin
       AiConversation.find_or_create_by!(program: @program, status: "active") do |c|
         c.user           = @program.user
         c.objectives     = "Chat de programa: #{@program.name}"
-        c.generated_data = serialize_program(@program)
+        c.generated_data = { "pending_modifications" => [], "pending_summary" => "" }
       end
     end
 

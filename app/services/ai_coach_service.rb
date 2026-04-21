@@ -3,7 +3,7 @@ require "uri"
 require "json"
 
 class AiCoachService
-  GENERATION_MODEL = "gemini-2.0-flash"
+  GENERATION_MODEL = "gemini-2.5-flash"
 
   def initialize
     @api_key = ENV["GEMINI_API_KEY"]
@@ -44,27 +44,35 @@ class AiCoachService
     { conversation: conversation, structured_data: structured_data }
   end
 
-  def refine(conversation:, message:, mode: "program")
-    book_context = retrieve_context(message)
+  def refine(conversation:, message:, mode: "program", program_context: nil)
+    book_context = mode == "program_chat" ? nil : retrieve_context(message)
 
-    history = conversation.message_history
-    latest_data = conversation.generated_data
+    history = mode == "program_chat" ? [] : conversation.message_history
+    latest_data = program_context || conversation.generated_data
 
-    refinement_prompt = <<~PROMPT
-      The coach wants to modify the previously generated program.
+    refinement_prompt = if mode == "program_chat"
+      <<~PROMPT
+        Programa actual (solo para contexto):
+        #{latest_data.to_json}
 
-      Previous program (JSON):
-      #{latest_data.to_json}
+        Solicitud del coach: "#{message}"
 
-      Additional book knowledge for this refinement:
-      #{book_context}
+        Devolvé ÚNICAMENTE el JSON de modificaciones según las instrucciones del sistema.
+      PROMPT
+    else
+      <<~PROMPT
+        The coach wants to modify the previously generated program.
 
-      Coach's request: "#{message}"
+        Previous program (JSON):
+        #{latest_data.to_json}
 
-      Please return the COMPLETE updated program as JSON, incorporating the requested changes.
-      Keep the same JSON structure. Only modify what the coach asked for.
-      Return ONLY valid JSON, no markdown fences.
-    PROMPT
+        #{book_context ? "Additional book knowledge for this refinement:\n        #{book_context}\n" : ""}Coach's request: "#{message}"
+
+        Please return the COMPLETE updated program as JSON, incorporating the requested changes.
+        Keep the same JSON structure. Only modify what the coach asked for.
+        Return ONLY valid JSON, no markdown fences.
+      PROMPT
+    end
 
     system_prompt = build_system_prompt(mode)
     response_text = call_gemini(system_prompt, refinement_prompt, history: history)
@@ -264,16 +272,26 @@ class AiCoachService
 
     return base unless mode == "program_chat"
 
-    base + <<~CHAT
+    <<~CHAT
+      Sos un AI Coach de fitness especializado en modificaciones de programas de entrenamiento.
+      Respondés ÚNICAMENTE con un JSON válido. Sin texto conversacional, sin markdown, sin explicaciones.
+      Empezá con '{' y terminá con '}'.
 
-      CONSTRAINTS FOR PROGRAM CHAT MODE:
-      You may ONLY modify exercise-level attributes: sets, reps, load, rest_seconds,
-      intensity_technique, and exercise substitutions within existing workouts.
-      Do NOT add new workouts or routines.
-      Only remove exercises if the coach explicitly requests removal.
-      You MUST preserve all existing IDs (workout_exercise_id, workout_id, exercise_id, routine id, workout id).
-      Return the COMPLETE updated program JSON with all IDs intact, not just the changed parts.
-      For new exercises (swaps), set workout_exercise_id to null and include the workout_id of the parent workout.
+      Devolvé ÚNICAMENTE este esquema con los cambios solicitados:
+      {
+        "summary": "Descripción breve de los cambios en español",
+        "modifications": [
+          { "workout_exercise_id": <id_existente>, <solo_los_campos_que_cambian> },
+          { "workout_exercise_id": null, "replace_workout_exercise_id": <id_a_eliminar_o_null>, "workout_id": <id>, "name": "...", "muscle_group": "...", "sets": ..., "reps": "...", "rest_seconds": ..., "load": "..." }
+        ]
+      }
+
+      Reglas:
+      - Para modificar atributos: workout_exercise_id con el id + solo los campos que cambian.
+      - Para reemplazar un ejercicio: workout_exercise_id null + replace_workout_exercise_id con el id del ejercicio a eliminar + workout_id del workout padre.
+      - Para agregar un ejercicio nuevo sin reemplazar: workout_exercise_id null + replace_workout_exercise_id null + workout_id.
+      - No agregues workouts ni rutinas nuevas.
+      - NO devuelvas el programa completo. Solo el array de modificaciones y el summary.
     CHAT
   end
 
@@ -377,7 +395,7 @@ class AiCoachService
     end
   end
 
-  def call_gemini(system_prompt, user_prompt, history: [])
+  def call_gemini(system_prompt, user_prompt, history: [], attempt: 1)
     uri = URI("#{@base_url}?key=#{@api_key}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
@@ -410,6 +428,11 @@ class AiCoachService
     if response.code == "200"
       json = JSON.parse(response.body)
       json.dig("candidates", 0, "content", "parts", 0, "text")
+    elsif response.code == "429" && attempt <= 3
+      wait = 2 ** attempt
+      Rails.logger.warn("Gemini 429 – retrying in #{wait}s (attempt #{attempt}/3)")
+      sleep(wait)
+      call_gemini(system_prompt, user_prompt, history: history, attempt: attempt + 1)
     else
       Rails.logger.error("Gemini API Error: #{response.code} - #{response.body}")
       raise "Gemini API error: #{response.code}"
