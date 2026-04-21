@@ -1,6 +1,5 @@
 class Api::V1::BaseController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
-  include Rails.application.routes.url_helpers
 
   before_action :authenticate_user!
   before_action :check_access_locked!
@@ -19,10 +18,6 @@ class Api::V1::BaseController < ActionController::API
 
   def check_access_locked!
     return unless current_user&.access_locked?
-    render json: { error: "access_locked", payment_url: new_subscription_url }, status: :forbidden
-  end
-
-  def default_url_options
-    { host: Rails.application.credentials.dig(:app_host) }
+    render json: { error: "access_locked", payment_path: "/subscription/new" }, status: :forbidden
   end
 end
