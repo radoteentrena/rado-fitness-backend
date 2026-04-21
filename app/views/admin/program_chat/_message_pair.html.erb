@@ -1,0 +1,18 @@
+<div class="flex justify-end">
+  <div class="max-w-[85%] bg-primary/20 border border-primary/30 text-whiteish text-sm rounded-lg px-3 py-2">
+    <%= user_message %>
+  </div>
+</div>
+
+<div class="flex justify-start">
+  <div class="max-w-[85%] bg-graphite border border-primary/20 text-whiteish text-sm rounded-lg px-3 py-2">
+    <p class="text-xs text-muted mb-1 font-medium uppercase tracking-wider">AI Coach</p>
+    <p>Cambios preparados. Revisá el JSON y aplicá cuando estés listo.</p>
+    <% if ai_json["routines"].present? %>
+      <details class="mt-2">
+        <summary class="text-xs text-primary cursor-pointer hover:underline">Ver JSON</summary>
+        <pre class="text-[10px] text-muted mt-1 overflow-x-auto max-h-32 whitespace-pre-wrap"><%= JSON.pretty_generate(ai_json) %></pre>
+      </details>
+    <% end %>
+  </div>
+</div>
