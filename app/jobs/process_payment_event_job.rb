@@ -42,6 +42,8 @@ class ProcessPaymentEventJob < ApplicationJob
       end
       sub.save!
       user.active!
+      result = ProgramMatcherService.new(user).call
+      Rails.logger.warn("ProgramMatcher: no templates for user #{user.id}") if result.nil?
     when "cancelled"
       sub = Subscription.find_by!(user: user)
       sub.update!(status: :canceled, canceled_at: Time.current)

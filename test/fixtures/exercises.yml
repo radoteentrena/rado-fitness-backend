@@ -11,3 +11,8 @@ two:
   video_link: MyString
   muscle_group: MyString
   description: MyText
+
+bench_press:
+  name: Press de Banca
+  muscle_group: Pecho
+  description: Press de banca plano con barra

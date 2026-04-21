@@ -17,6 +17,10 @@
 
     <div class="flex space-x-3">
         <%= link_to "Edit User", edit_admin_user_path(user), data: { turbo_frame: "modal_frame" }, class: "button" %>
+        <%= button_to "Re-asignar Programa", admin_user_program_assignment_path(user),
+            method: :post,
+            data: { turbo_confirm: "¿Re-asignar programa a #{user.name}? Se buscará el mejor template disponible." },
+            class: "button" %>
     </div>
   </div>
 
