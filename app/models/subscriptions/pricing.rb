@@ -7,13 +7,17 @@ module Subscriptions
 
     def self.base_price(plan_tier, argentina:)
       table = argentina ? PRICES_ARS : PRICES_USD
-      table.fetch(plan_tier.to_sym)
+      table.fetch(plan_tier.to_sym) { raise ArgumentError, "Invalid plan_tier: #{plan_tier}" }
     end
 
     def self.effective_price(plan_tier, billing_type, frequency, argentina:)
       base = base_price(plan_tier, argentina: argentina)
-      multiplier = billing_type.to_sym == :one_time ? 1.0 : DISCOUNTS.fetch(frequency.to_sym, 1.0)
-      (base * multiplier).round
+      if billing_type.to_sym == :one_time
+        base
+      else
+        multiplier = DISCOUNTS.fetch(frequency.to_sym) { raise ArgumentError, "Invalid frequency: #{frequency}" }
+        (base * multiplier).round
+      end
     end
 
     def self.currency(argentina:)
