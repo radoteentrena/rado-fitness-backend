@@ -24,13 +24,23 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-         <%= link_to "Add Workout Day", new_admin_routine_workout_path(@routine), class: "px-4 py-2 bg-saffron text-blackish font-bold rounded-lg hover:bg-saffron-dark transition-colors" %>
-         <%= link_to "Edit Routine", edit_admin_routine_path(@routine), class: "px-4 py-2 bg-primary text-blackish font-bold rounded-lg hover:bg-primary/90 transition-colors" if accessible_action?(@routine, :edit) %>
+         <%= link_to new_admin_routine_workout_path(@routine),
+               class: "p-2 bg-saffron text-blackish rounded-lg hover:bg-saffron-dark transition-colors",
+               title: "Add Workout Day" do %>
+           <span class="material-symbols-outlined text-xl">add</span>
+         <% end %>
+         <% if accessible_action?(@routine, :edit) %>
+           <%= link_to edit_admin_routine_path(@routine),
+                 class: "p-2 bg-primary text-blackish rounded-lg hover:bg-primary/90 transition-colors",
+                 title: "Edit Routine" do %>
+             <span class="material-symbols-outlined text-xl">edit</span>
+           <% end %>
+         <% end %>
          <% if @program %>
            <button data-action="program-chat#open"
-                   class="flex items-center gap-2 text-sm font-medium px-4 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-blackish transition-all">
-             <span class="material-symbols-outlined text-base">smart_toy</span>
-             Chat con AI Coach
+                   class="p-2 border-2 border-primary text-primary hover:bg-primary hover:text-blackish transition-all"
+                   title="Chat con AI Coach">
+             <span class="material-symbols-outlined text-xl">smart_toy</span>
            </button>
          <% end %>
       </div>
