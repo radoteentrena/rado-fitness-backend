@@ -58,28 +58,7 @@ class ProgramMatcherService
   end
 
   def ai_rank(shortlist)
-    client_profile = AiCoachService.new.build_client_profile(@user)
-    serialized = shortlist.map do |t|
-      { name: t.name, description: t.description, duration_weeks: t.duration_weeks }
-    end
-
-    prompt = <<~PROMPT
-      Client profile:
-      #{client_profile}
-
-      Available programs:
-      #{serialized.to_json}
-
-      Return only the name of the program from the list that best fits this client's profile.
-    PROMPT
-
-    service = AiCoachService.new
-    response = service.send(:call_gemini,
-      "You are a fitness program matcher. Return ONLY the program name, nothing else.",
-      prompt
-    )
-    matched_name = response&.strip
-    shortlist.find { |t| t.name.strip == matched_name }
+    AiCoachService.new.rank_programs(shortlist, @user)
   rescue => e
     Rails.logger.error("ProgramMatcher Gemini call failed: #{e.message}")
     nil

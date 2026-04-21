@@ -70,10 +70,10 @@ module Admin
     end
 
     def find_or_create_conversation
-      AiConversation.find_or_create_by!(program: @program, status: "active") do |c|
+      AiConversation.find_or_create_by!(program: @program, objectives: "Chat de programa: #{@program.name}") do |c|
         c.user           = @program.user
-        c.objectives     = "Chat de programa: #{@program.name}"
         c.generated_data = { "pending_modifications" => [], "pending_summary" => "" }
+        c.status         = "active"
       end
     end
 
