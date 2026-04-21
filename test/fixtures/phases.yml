@@ -13,3 +13,17 @@ two:
   description: MyText
   order_index: 1
   duration_weeks: 1
+
+template_phase:
+  program: template_program
+  name: Fase 1
+  description: Primera fase
+  order_index: 0
+  duration_weeks: 8
+
+user_phase:
+  program: user_program
+  name: Fase 1
+  description: Primera fase
+  order_index: 0
+  duration_weeks: 8

@@ -9,3 +9,13 @@ two:
   phase: two
   routine: two
   order_index: 1
+
+template_phase_routine:
+  phase: template_phase
+  routine: template_routine
+  order_index: 0
+
+user_phase_routine:
+  phase: user_phase
+  routine: user_routine
+  order_index: 0

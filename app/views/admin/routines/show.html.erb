@@ -1,3 +1,4 @@
+<% if @program %><div data-controller="program-chat"><% else %><div><% end %>
 <div class="max-w-7xl mx-auto">
   <!-- Routine Header -->
   <div class="mb-8 p-6 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-xl shadow-md">
@@ -24,8 +25,25 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-         <%= link_to "Add Workout Day", new_admin_routine_workout_path(@routine), class: "px-4 py-2 bg-saffron text-blackish font-bold rounded-lg hover:bg-saffron-dark transition-colors" %>
-         <%= link_to "Edit Routine", edit_admin_routine_path(@routine), class: "px-4 py-2 bg-primary text-blackish font-bold rounded-lg hover:bg-primary/90 transition-colors" if accessible_action?(@routine, :edit) %>
+         <%= link_to new_admin_routine_workout_path(@routine),
+               class: "p-2 bg-saffron text-blackish rounded-lg hover:bg-blackish transition-colors hover:text-saffron",
+               title: "Add Workout Day" do %>
+           <span class="material-symbols-outlined text-xl">add</span>
+         <% end %>
+         <% if accessible_action?(@routine, :edit) %>
+           <%= link_to edit_admin_routine_path(@routine),
+                 class: "p-2 bg-primary text-blackish rounded-lg hover:bg-blackish transition-colors hover:text-saffron",
+                 title: "Edit Routine" do %>
+             <span class="material-symbols-outlined text-xl">edit</span>
+           <% end %>
+         <% end %>
+         <% if @program %>
+           <button data-action="program-chat#open"
+                   class="p-2 border-2 hover:cursor-pointer rounded-lg border-primary text-primary hover:bg-primary hover:text-blackish transition-all"
+                   title="Chat con AI Coach">
+             <span class="material-symbols-outlined text-xl">smart_toy</span>
+           </button>
+         <% end %>
       </div>
     </div>
   </div>
@@ -113,6 +131,34 @@
         </div>
      </div>
   </div>
+</div>
+
+<% if @program %>
+  <div data-program-chat-target="panel"
+       class="fixed right-0 top-0 h-full w-96 z-50 bg-blackish border-l-2 border-primary/50 transform transition-transform duration-300 translate-x-full flex flex-col">
+
+    <div class="flex items-center justify-between px-4 py-3 border-b border-primary/30 shrink-0">
+      <h2 class="text-sm font-bold text-whiteish uppercase tracking-wider">AI Coach Chat</h2>
+      <button data-action="program-chat#close"
+              class="text-muted hover:text-whiteish transition-colors p-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <turbo-frame id="program-chat-panel"
+                 data-program-chat-target="frame"
+                 data-chat-url="<%= admin_program_chat_path(@program, routine_id: @routine.id, workout_id: @selected_workout&.id) %>"
+                 class="flex flex-col flex-1 min-h-0">
+      <div class="flex items-center justify-center h-full text-muted text-sm">
+        Cargando chat...
+      </div>
+    </turbo-frame>
+  </div>
+<% end %>
+
 </div>
 
 <%= turbo_frame_tag "modal_frame" %>
