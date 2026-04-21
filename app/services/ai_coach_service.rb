@@ -44,7 +44,7 @@ class AiCoachService
     { conversation: conversation, structured_data: structured_data }
   end
 
-  def refine(conversation:, message:)
+  def refine(conversation:, message:, mode: "program")
     book_context = retrieve_context(message)
 
     history = conversation.message_history
@@ -66,11 +66,10 @@ class AiCoachService
       Return ONLY valid JSON, no markdown fences.
     PROMPT
 
-    system_prompt = build_system_prompt("program")
+    system_prompt = build_system_prompt(mode)
     response_text = call_gemini(system_prompt, refinement_prompt, history: history)
     structured_data = parse_json_response(response_text)
 
-    # Update conversation
     conversation.add_message!(role: "user", content: message)
     conversation.add_message!(
       role: "assistant",
@@ -80,6 +79,47 @@ class AiCoachService
     conversation.update!(generated_data: structured_data)
 
     { conversation: conversation, structured_data: structured_data }
+  end
+
+  def build_client_profile(user)
+    return "No specific client selected. Generate a general template." unless user
+
+    profile = user.onboarding_profile
+
+    base = <<~BASE
+      CLIENT PROFILE:
+      - Name: #{user.name}
+      - Category: #{user.category}
+      - Status: #{user.status}
+      - Current Weight (logged): #{user.latest_weight || 'Not logged'}
+      - Weight Trend (7d): #{user.weight_trend || 'N/A'}
+      - Workout Compliance: #{user.calculate_workout_compliance_score}%
+      - Diet Adherence: #{user.calculate_diet_adherence_score}%
+      - Current Programs: #{user.programs.map(&:name).join(', ').presence || 'None'}
+      - Target Workouts/Week: #{user.target_workouts_per_week}
+    BASE
+
+    return base unless profile
+
+    base + <<~ONBOARDING
+
+      ONBOARDING QUESTIONNAIRE:
+      - Gender: #{profile.gender}
+      - Age: #{profile.age}
+      - Weight (self-reported): #{profile.weight}
+      - Height: #{profile.height}
+      - Goals: #{Array(profile.goals).join(', ').presence || 'Not specified'}
+      - Training Experience Level: #{profile.experience_level}/10
+      - Best Lifts: #{profile.best_lifts.presence || 'Not specified'}
+      - Commitment Level: #{profile.commitment_level}
+      - Training Frequency: #{profile.training_frequency} days/week
+      - Time per Session: #{profile.time_per_session.presence || 'Not specified'}
+      - Injuries / Limitations: #{profile.injuries.presence || 'None reported'}
+      - Plays Sports: #{profile.plays_sports}#{profile.plays_sports == 'Si' && profile.sport_details.present? ? " (#{profile.sport_details})" : ''}
+      - Diet Quality: #{profile.diet_quality}
+      - Daily Activity Level: #{profile.activity_level}
+      - Sleep: #{profile.sleep_hours} hours/night
+    ONBOARDING
   end
 
   def create_records!(conversation)
@@ -199,49 +239,8 @@ class AiCoachService
     end
   end
 
-  def build_client_profile(user)
-    return "No specific client selected. Generate a general template." unless user
-
-    profile = user.onboarding_profile
-
-    base = <<~BASE
-      CLIENT PROFILE:
-      - Name: #{user.name}
-      - Category: #{user.category}
-      - Status: #{user.status}
-      - Current Weight (logged): #{user.latest_weight || 'Not logged'}
-      - Weight Trend (7d): #{user.weight_trend || 'N/A'}
-      - Workout Compliance: #{user.calculate_workout_compliance_score}%
-      - Diet Adherence: #{user.calculate_diet_adherence_score}%
-      - Current Programs: #{user.programs.map(&:name).join(', ').presence || 'None'}
-      - Target Workouts/Week: #{user.target_workouts_per_week}
-    BASE
-
-    return base unless profile
-
-    base + <<~ONBOARDING
-
-      ONBOARDING QUESTIONNAIRE:
-      - Gender: #{profile.gender}
-      - Age: #{profile.age}
-      - Weight (self-reported): #{profile.weight}
-      - Height: #{profile.height}
-      - Goals: #{Array(profile.goals).join(', ').presence || 'Not specified'}
-      - Training Experience Level: #{profile.experience_level}/10
-      - Best Lifts: #{profile.best_lifts.presence || 'Not specified'}
-      - Commitment Level: #{profile.commitment_level}
-      - Training Frequency: #{profile.training_frequency} days/week
-      - Time per Session: #{profile.time_per_session.presence || 'Not specified'}
-      - Injuries / Limitations: #{profile.injuries.presence || 'None reported'}
-      - Plays Sports: #{profile.plays_sports}#{profile.plays_sports == 'Si' && profile.sport_details.present? ? " (#{profile.sport_details})" : ''}
-      - Diet Quality: #{profile.diet_quality}
-      - Daily Activity Level: #{profile.activity_level}
-      - Sleep: #{profile.sleep_hours} hours/night
-    ONBOARDING
-  end
-
   def build_system_prompt(mode)
-    <<~SYSTEM
+    base = <<~BASE
       You are an expert fitness program designer assistant. You help coaches create
       evidence-based training programs by combining scientific knowledge from fitness
       literature with practical coaching experience.
@@ -261,7 +260,21 @@ class AiCoachService
       IMPORTANT: All program names, descriptions, and instructions MUST be written in Spanish.
       This includes the program name, routine names, workout descriptions, exercise instructions,
       and dietary plan information. The audience is Argentine/Spanish-speaking clients.
-    SYSTEM
+    BASE
+
+    return base unless mode == "program_chat"
+
+    base + <<~CHAT
+
+      CONSTRAINTS FOR PROGRAM CHAT MODE:
+      You may ONLY modify exercise-level attributes: sets, reps, load, rest_seconds,
+      intensity_technique, and exercise substitutions within existing workouts.
+      Do NOT add new workouts or routines.
+      Only remove exercises if the coach explicitly requests removal.
+      You MUST preserve all existing IDs (workout_exercise_id, workout_id, exercise_id, routine id, workout id).
+      Return the COMPLETE updated program JSON with all IDs intact, not just the changed parts.
+      For new exercises (swaps), set workout_exercise_id to null and include the workout_id of the parent workout.
+    CHAT
   end
 
   def build_generation_prompt(objectives:, book_context:, client_profile:, exercises_list:, mode:)
