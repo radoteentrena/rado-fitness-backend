@@ -89,6 +89,28 @@ class AiCoachService
     { conversation: conversation, structured_data: structured_data }
   end
 
+  def rank_programs(shortlist, user)
+    client_profile = build_client_profile(user)
+    serialized = shortlist.map { |t| { name: t.name, description: t.description, duration_weeks: t.duration_weeks } }
+
+    prompt = <<~PROMPT
+      Client profile:
+      #{client_profile}
+
+      Available programs:
+      #{serialized.to_json}
+
+      Return only the name of the program from the list that best fits this client's profile.
+    PROMPT
+
+    response = call_gemini(
+      "You are a fitness program matcher. Return ONLY the program name, nothing else.",
+      prompt
+    )
+    matched_name = response&.strip&.downcase
+    shortlist.find { |t| t.name.strip.downcase == matched_name }
+  end
+
   def build_client_profile(user)
     return "No specific client selected. Generate a general template." unless user
 
