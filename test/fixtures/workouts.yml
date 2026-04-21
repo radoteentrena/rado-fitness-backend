@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+template_workout_1:
+  routine: template_routine
+  name: Día A - Empuje
+  day_number: 1
+  order_index: 0
+
+template_workout_2:
+  routine: template_routine
+  name: Día B - Jalón
+  day_number: 2
+  order_index: 1
+
+template_workout_3:
+  routine: template_routine
+  name: Día C - Piernas
+  day_number: 3
+  order_index: 2
+
+user_workout:
+  routine: user_routine
+  name: Día A - Empuje
+  day_number: 1
+  order_index: 0

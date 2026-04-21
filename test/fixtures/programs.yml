@@ -11,3 +11,14 @@ two:
   duration_weeks: 1
   description: MyText
   user: two
+
+template_program:
+  name: Programa Fuerza 3 Días
+  duration_weeks: 8
+  description: Template para 3 días por semana
+
+user_program:
+  name: Programa Asignado
+  duration_weeks: 8
+  description: Programa asignado a usuario
+  user: active_user
