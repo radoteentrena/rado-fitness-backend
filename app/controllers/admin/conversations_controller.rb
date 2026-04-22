@@ -29,8 +29,7 @@ module Admin
       if @message.save
         @conversation.update(last_message_at: Time.current)
 
-        # Trigger notification to user (defer to background job)
-        NotifyUserOfCoachReplyJob.perform_later(@message.id) if defined?(NotifyUserOfCoachReplyJob)
+        NotifyUserOfCoachReplyJob.perform_later(@message.id)
 
         redirect_to admin_conversation_path(@conversation), notice: t('admin.conversations.message_sent')
       else
