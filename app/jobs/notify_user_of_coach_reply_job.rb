@@ -18,7 +18,7 @@ class NotifyUserOfCoachReplyJob < ApplicationJob
         data: { type: "coach_reply", conversation_id: message.conversation_id.to_s }
       ).deliver
     rescue StandardError => e
-      Rails.logger.error("Failed to send push notification: #{e.message}")
+      Rails.logger.error("[NotifyUserOfCoachReplyJob] Failed to send push notification: #{e.message}")
     end
 
     notification = Notification.create(
