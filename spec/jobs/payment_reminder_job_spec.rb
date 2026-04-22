@@ -53,6 +53,18 @@ RSpec.describe PaymentReminderJob, type: :job do
     end
   end
 
+  describe "canceled subscription expiring in 2 days" do
+    let!(:subscription) do
+      create(:subscription, :canceled, user: user, billing_type: :recurring,
+        current_period_end: 2.days.from_now.middle_of_day)
+    end
+
+    it "does not send a notification" do
+      described_class.perform_now
+      expect(PushNotification).not_to have_received(:new)
+    end
+  end
+
   describe "user without fcm_token" do
     let(:user_no_token) { create(:user, status: :active, fcm_token: nil) }
     let!(:subscription) do

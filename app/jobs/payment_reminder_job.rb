@@ -6,11 +6,11 @@ class PaymentReminderJob < ApplicationJob
     window_end   = 2.days.from_now.end_of_day
     notified_user_ids = Set.new
 
-    recurring_expiring(window_start, window_end).each do |sub|
+    recurring_expiring(window_start, window_end).find_each do |sub|
       notify(sub.user, notified_user_ids)
     end
 
-    one_time_expiring(window_start, window_end).each do |sub|
+    one_time_expiring(window_start, window_end).find_each do |sub|
       notify(sub.user, notified_user_ids)
     end
   end
@@ -18,15 +18,15 @@ class PaymentReminderJob < ApplicationJob
   private
 
   def recurring_expiring(from, to)
-    Subscription.where(billing_type: :recurring)
+    Subscription.preload(:user)
+                .where(billing_type: :recurring, status: :active)
                 .where(current_period_end: from..to)
-                .includes(:user)
   end
 
   def one_time_expiring(from, to)
-    Subscription.where(billing_type: :one_time)
+    Subscription.preload(:user)
+                .where(billing_type: :one_time, status: :active)
                 .where(access_expires_at: from..to)
-                .includes(:user)
   end
 
   def notify(user, notified_user_ids)
