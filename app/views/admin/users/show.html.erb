@@ -65,7 +65,7 @@
              </div>
              <div>
                 <dt class="text-sm font-medium text-graphite dark:text-muted">Plan Tier</dt>
-                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= user.plan_tier&.titleize || "N/A" %></dd>
+                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= (user.active_subscription&.plan_tier || user.plan_tier)&.titleize || "N/A" %></dd>
              </div>
              <div>
                 <dt class="text-sm font-medium text-graphite dark:text-muted">Member Since</dt>

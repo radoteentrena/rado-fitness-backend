@@ -13,8 +13,16 @@ class Subscription < ApplicationRecord
   validate :one_time_requires_monthly_frequency, if: -> { one_time? }
 
   def amount_in_dollars
-    return 0.0 unless amount_cents
-    amount_cents / 100.0
+    if amount_cents.present? && amount_cents > 0
+      amount_cents / 100.0
+    else
+      argentina = (currency == "ARS")
+      begin
+        Subscriptions::Pricing.effective_price(plan_tier, billing_type || :recurring, frequency || :monthly, argentina: argentina).to_f
+      rescue
+        0.0
+      end
+    end
   end
 
   private
