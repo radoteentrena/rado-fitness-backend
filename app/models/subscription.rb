@@ -9,10 +9,17 @@ class Subscription < ApplicationRecord
 
   validates :processor, presence: true
   validates :plan_tier, presence: true
-  validates :frequency, inclusion: { in: %w[monthly], message: "must be monthly for one-time payments" }, if: -> { one_time? }
+
+  validate :one_time_requires_monthly_frequency, if: -> { one_time? }
 
   def amount_in_dollars
     return 0.0 unless amount_cents
     amount_cents / 100.0
+  end
+
+  private
+
+  def one_time_requires_monthly_frequency
+    errors.add(:frequency, "must be monthly for one-time payments") unless monthly?
   end
 end
