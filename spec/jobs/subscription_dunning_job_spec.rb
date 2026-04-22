@@ -92,4 +92,32 @@ RSpec.describe SubscriptionDunningJob, type: :job do
       end
     end
   end
+
+  describe "cancelled recurring subscriptions past period end" do
+    let(:user) { create(:user, access_status: :active) }
+
+    it "locks access when current_period_end has passed" do
+      create(:subscription,
+        user:               user,
+        billing_type:       :recurring,
+        status:             :canceled,
+        current_period_end: 2.days.ago
+      )
+
+      described_class.perform_now
+      expect(user.reload).to be_access_locked
+    end
+
+    it "does NOT lock access when current_period_end is still in the future" do
+      create(:subscription,
+        user:               user,
+        billing_type:       :recurring,
+        status:             :canceled,
+        current_period_end: 5.days.from_now
+      )
+
+      described_class.perform_now
+      expect(user.reload).not_to be_access_locked
+    end
+  end
 end
