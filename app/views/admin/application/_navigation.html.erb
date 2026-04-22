@@ -1,17 +1,14 @@
 <ul class="space-y-2 font-medium" data-controller="active-link">
   <li>
-    <%= link_to admin_dashboard_path, data: { active_link_target: "link", turbo_frame: "admin_main_content", turbo_action: "advance" }, class: "flex items-center p-3 rounded-xl group transition-colors #{request.path == admin_dashboard_path ? 'bg-whiteish text-blackish shadow-sm dark:bg-shadow dark:text-whiteish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}" do %>
-      <svg class="w-5 h-5 transition duration-75 text-inherit" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
-        <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
-        <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
-      </svg>
+    <%= link_to admin_dashboard_path, data: { active_link_target: "link", turbo_frame: "admin_main_content", turbo_action: "advance" }, class: "flex items-center p-3 rounded-xl group transition-colors #{request.path == admin_dashboard_path ? 'bg-saffron text-blackish shadow-sm dark:bg-saffron dark:text-blackish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}" do %>
+      <span class="material-symbols-outlined w-5 h-5 transition duration-75 text-inherit">dashboard</span>
       <span class="ms-3 font-semibold text-sm">Dashboard</span>
     <% end %>
   </li>
 
   <!-- AI Coach -->
   <li>
-    <%= link_to admin_new_ai_coach_path, data: { active_link_target: "link", turbo_frame: "admin_main_content", turbo_action: "advance" }, class: "flex items-center p-3 rounded-xl group transition-colors #{request.path.include?('ai_coach') ? 'bg-whiteish text-blackish shadow-sm dark:bg-shadow dark:text-whiteish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}" do %>
+    <%= link_to admin_new_ai_coach_path, data: { active_link_target: "link", turbo_frame: "admin_main_content", turbo_action: "advance" }, class: "flex items-center p-3 rounded-xl group transition-colors #{request.path.include?('ai_coach') ? 'bg-saffron text-blackish shadow-sm dark:bg-saffron dark:text-blackish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}" do %>
       <span class="material-symbols-outlined w-5 h-5 transition duration-75 text-inherit">psychology</span>
       <span class="ms-3 font-semibold text-sm">AI Coach</span>
     <% end %>
@@ -19,10 +16,8 @@
 
   <!-- Conversations (custom layout, no Turbo) -->
   <li>
-    <%= link_to admin_conversations_path, data: { active_link_target: "link" }, class: "flex items-center p-3 rounded-xl group transition-colors #{request.path.include?('conversations') ? 'bg-whiteish text-blackish shadow-sm dark:bg-shadow dark:text-whiteish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}" do %>
-      <svg class="w-5 h-5 transition duration-75 text-inherit" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3.546l3.294 3.293a1 1 0 0 0 1.414 0L15.546 14H18a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Z"/>
-      </svg>
+    <%= link_to admin_conversations_path, data: { active_link_target: "link" }, class: "flex items-center p-3 rounded-xl group transition-colors #{request.path.include?('conversations') ? 'bg-saffron text-blackish shadow-sm dark:bg-saffron dark:text-blackish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}" do %>
+      <span class="material-symbols-outlined w-5 h-5 transition duration-75 text-inherit">forum</span>
       <span class="ms-3 font-semibold text-sm">Conversations</span>
     <% end %>
   </li>
@@ -33,20 +28,30 @@
       <%= link_to(
         resource_index_route(resource),
         data: { active_link_target: "link", turbo_frame: "admin_main_content", turbo_action: "advance" },
-        class: "flex items-center p-3 rounded-xl group transition-colors #{nav_link_state(resource) == :active ? 'bg-whiteish text-blackish shadow-sm dark:bg-shadow dark:text-whiteish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}"
+        class: "flex items-center p-3 rounded-xl group transition-colors #{nav_link_state(resource) == :active ? 'bg-saffron text-blackish shadow-sm dark:bg-saffron dark:text-blackish' : 'text-graphite hover:bg-background-light dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish'}"
       ) do %>
-        <% icon_path = case resource.to_s
-           when "admin/users" then "M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" # Users
-           when "admin/programs" then "M9 2a1 1 0 0 0 0 2h6a1 1 0 1 0 0-2H9Z M7 8a1 1 0 0 1 2 0v6a1 1 0 1 1-2 0V8Z M5.5 8a1 1 0 0 1 1.5 1.5v3a1.5 1.5 0 1 1-3 0v-3A1.5 1.5 0 0 1 5.5 8Z M13 8a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 1 1-3 0v-3A1.5 1.5 0 0 1 13 8Z" # Programs (List style - simplified)
-           when "admin/dietary_plans" then "M13 14a1 1 0 1 0 0 2h3a1 1 0 1 0 0-2h-3Z M13 10a1 1 0 1 0 0 2h3a1 1 0 1 0 0-2h-3Z M5 2a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3H5Z" # Diet (Page/Doc)
-           when "admin/daily_metrics" then "M4 4.5a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1h-15a.5.5 0 0 1-.5-.5Zm0 2a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1h-15a.5.5 0 0 1-.5-.5Zm0 2a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1h-15a.5.5 0 0 1-.5-.5Z" # Metrics (Chart/List)
-           when "admin/exercises" then "M8 12.5a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM8 12.5a4.5 4.5 0 1 0 9 0 4.5 4.5 0 0 0-9 0Z" # Dumbbell approx
-           else "M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3.546l3.294 3.293a1 1 0 0 0 1.414 0L15.546 14H18a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Z" # Default (Chat/Generic)
+        <% icon_name = case resource.to_s
+           when "users", "admin/users" then "group"
+           when "subscriptions", "admin/subscriptions" then "credit_card"
+           when "programs", "admin/programs" then "app_registration"
+           when "routines", "admin/routines" then "format_list_numbered"
+           when "workouts", "admin/workouts" then "event_note"
+           when "exercises", "admin/exercises" then "fitness_center"
+           when "workout_exercises", "admin/workout_exercises" then "fitness_center"
+           when "training_sessions", "admin/training_sessions" then "directions_run"
+           when "dietary_plans", "admin/dietary_plans" then "restaurant_menu"
+           when "progress_photos", "admin/progress_photos" then "photo_camera"
+           when "daily_metrics", "admin/daily_metrics" then "monitoring"
+           when "coach_alerts", "admin/coach_alerts" then "notifications_active"
+           when "books", "admin/books" then "library_books"
+           when "messages", "admin/messages" then "chat"
+           when "onboarding_profiles", "admin/onboarding_profiles" then "contact_page"
+           when "program_executions", "admin/program_executions" then "task_alt"
+           when "exercise_logs", "admin/exercise_logs" then "checklist"
+           else "label"
            end
         %>
-        <svg class="w-5 h-5 transition duration-75 text-inherit" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-          <path d="<%= icon_path %>"/>
-        </svg>
+        <span class="material-symbols-outlined w-5 h-5 transition duration-75 text-inherit"><%= icon_name %></span>
         <span class="ms-3 font-semibold text-sm"><%= display_resource_name(resource) %></span>
       <% end %>
     </li>
