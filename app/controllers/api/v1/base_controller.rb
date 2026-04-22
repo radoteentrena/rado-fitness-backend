@@ -29,8 +29,4 @@ class Api::V1::BaseController < ActionController::API
     Rails.logger.warn "app_host credential missing — returning relative payment path in access_locked response"
     new_subscription_path
   end
-
-  def default_url_options
-    { host: Rails.application.credentials.dig(:app_host) }
-  end
 end
