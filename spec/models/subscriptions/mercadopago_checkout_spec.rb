@@ -25,7 +25,7 @@ RSpec.describe Subscriptions::MercadoPagoCheckout do
         allow(Mercadopago::SDK).to receive(:new).and_return(mp_client)
         allow(mp_client).to receive(:preapproval).and_return(mp_preapproval)
         allow(mp_preapproval).to receive(:create).and_return(
-          { "status" => 201, "response" => { "init_point" => "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=xxx" } }
+          { status: 201, response: { "init_point" => "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=xxx" } }
         )
       end
 
@@ -39,7 +39,7 @@ RSpec.describe Subscriptions::MercadoPagoCheckout do
         expect(mp_preapproval).to receive(:create).with(
           hash_including("external_reference" => user.id.to_s)
         ).and_return(
-          { "status" => 201, "response" => { "init_point" => "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=xxx" } }
+          { status: 201, response: { "init_point" => "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=xxx" } }
         )
         described_class.new(user, :basic).call
       end
@@ -53,7 +53,7 @@ RSpec.describe Subscriptions::MercadoPagoCheckout do
         allow(Mercadopago::SDK).to receive(:new).and_return(mp_client)
         allow(mp_client).to receive(:preapproval).and_return(mp_preapproval)
         allow(mp_preapproval).to receive(:create).and_return(
-          { "status" => 400, "response" => { "message" => "invalid plan" } }
+          { status: 400, response: { "message" => "invalid plan" } }
         )
       end
 
