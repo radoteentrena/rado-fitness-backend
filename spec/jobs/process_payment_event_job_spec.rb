@@ -37,7 +37,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
         payload: payload
       )
 
-      sub = user.reload.subscription
+      sub = user.reload.active_subscription
       expect(sub).to be_active
       expect(sub.external_id).to eq(mp_sub_id)
       expect(user.reload).to be_active
@@ -77,7 +77,10 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
   end
 
   describe "mercadopago: preapproval cancelled" do
-    let!(:subscription) { create(:subscription, user: user, status: :active, external_id: "mp_sub_123") }
+    let!(:subscription) do
+      create(:subscription, user: user, status: :active, external_id: "mp_sub_123",
+                            current_period_end: nil)
+    end
     let(:payload) { { "type" => "preapproval", "data" => { "id" => "mp_sub_123" } } }
 
     before do
@@ -94,13 +97,46 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       })
     end
 
-    it "cancels subscription and churns user" do
+    it "cancels the subscription identified by external_id, not an arbitrary row" do
+      other_sub = create(:subscription, user: user, status: :active, external_id: "mp_other_999")
+
       described_class.perform_now(
-        processor: "mercadopago",
+        processor:  "mercadopago",
         event_type: "preapproval",
-        payload: payload
+        payload:    payload
       )
+
       expect(subscription.reload).to be_canceled
+      expect(other_sub.reload).to be_active
+    end
+
+    it "locks access immediately when current_period_end is nil" do
+      described_class.perform_now(
+        processor:  "mercadopago",
+        event_type: "preapproval",
+        payload:    payload
+      )
+      expect(user.reload).to be_access_locked
+    end
+
+    it "does NOT lock access when current_period_end is still in the future" do
+      subscription.update!(current_period_end: 10.days.from_now)
+
+      described_class.perform_now(
+        processor:  "mercadopago",
+        event_type: "preapproval",
+        payload:    payload
+      )
+
+      expect(user.reload).not_to be_access_locked
+    end
+
+    it "churns user regardless of period end" do
+      described_class.perform_now(
+        processor:  "mercadopago",
+        event_type: "preapproval",
+        payload:    payload
+      )
       expect(user.reload).to be_churned
     end
   end
