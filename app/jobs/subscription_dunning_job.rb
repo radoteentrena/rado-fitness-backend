@@ -4,6 +4,7 @@ class SubscriptionDunningJob < ApplicationJob
   def perform
     process_one_time_expired
     process_recurring_past_due
+    process_cancelled_past_period
   end
 
   private
@@ -27,6 +28,17 @@ class SubscriptionDunningJob < ApplicationJob
                 .find_each do |sub|
       days_overdue = (Date.current - sub.past_due_since.to_date).to_i
       process_dunning(sub, days_overdue)
+    end
+  end
+
+  # Recurring cancelled: lock access after period end
+  def process_cancelled_past_period
+    Subscription.where(billing_type: :recurring, status: :canceled)
+                .where.not(current_period_end: nil)
+                .where("current_period_end < ?", Time.current)
+                .includes(:user)
+                .find_each do |sub|
+      sub.user.access_locked! unless sub.user.access_locked?
     end
   end
 
