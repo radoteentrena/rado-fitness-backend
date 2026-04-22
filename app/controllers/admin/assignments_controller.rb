@@ -1,6 +1,10 @@
 module Admin
   class AssignmentsController < Admin::ApplicationController
     def new
+      if params[:dietary_plan_id].blank?
+        redirect_to admin_dietary_plans_path, alert: "Please select a dietary plan to assign."
+        return
+      end
       @dietary_plan = DietaryPlan.find(params[:dietary_plan_id])
       @users = User.active.order(:first_name)
     end

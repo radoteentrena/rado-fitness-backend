@@ -7,7 +7,6 @@ class BookIngestionService
 
   def initialize
     @embedding_service = EmbeddingService.new
-    @gemini_service = GeminiService.new
   end
 
   # Ingest a PDF book: extract text, chunk, embed, and store

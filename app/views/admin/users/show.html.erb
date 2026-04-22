@@ -17,6 +17,10 @@
 
     <div class="flex space-x-3">
         <%= link_to "Edit User", edit_admin_user_path(user), data: { turbo_frame: "modal_frame" }, class: "button" %>
+        <%= button_to "Re-asignar Programa", admin_user_program_assignment_path(user),
+            method: :post,
+            data: { turbo_confirm: "¿Re-asignar programa a #{user.name}? Se buscará el mejor template disponible." },
+            class: "button" %>
     </div>
   </div>
 
@@ -25,8 +29,8 @@
 
     <%# Left Column: User Details %>
     <div class="lg:col-span-1 space-y-6">
-      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
-         <div class="flex flex-col items-center pb-6 border-b border-shadow dark:border-graphite">
+      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-primary/30 p-6">
+         <div class="flex flex-col items-center pb-6 border-b border-shadow dark:border-primary/30">
             <div class="w-24 h-24 mb-3 rounded-full bg-primary/20 text-primary flex items-center justify-center text-3xl font-bold">
                 <%= user.first_name[0] %><%= user.last_name[0] %>
             </div>
@@ -61,7 +65,7 @@
              </div>
              <div>
                 <dt class="text-sm font-medium text-graphite dark:text-muted">Plan Tier</dt>
-                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= user.plan_tier&.titleize %></dd>
+                <dd class="text-base font-semibold text-blackish dark:text-whiteish"><%= user.plan_tier&.titleize || "N/A" %></dd>
              </div>
              <div>
                 <dt class="text-sm font-medium text-graphite dark:text-muted">Member Since</dt>
@@ -73,7 +77,7 @@
       <%= render "subscription", subscription: user.active_subscription %>
 
       <%# Dietary Plan %>
-      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-primary/30 p-6">
           <div class="flex items-center justify-between mb-4">
               <h3 class="text-lg font-bold text-blackish dark:text-whiteish">Current Dietary Plan</h3>
               <% unless user.user_dietary_plans.active.any? %>
@@ -98,11 +102,11 @@
                   </div>
 
                   <div class="grid grid-cols-2 gap-4">
-                      <div class="p-4 rounded-lg border border-shadow dark:border-graphite text-center">
+                      <div class="p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
                           <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Calories</span>
                           <span class="block mt-1 text-2xl font-bold text-blackish dark:text-whiteish"><%= active_plan.calories_target %></span>
                       </div>
-                       <div class="p-4 rounded-lg border border-shadow dark:border-graphite text-center">
+                       <div class="p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
                           <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Protein</span>
                           <span class="block mt-1 text-2xl font-bold text-blackish dark:text-whiteish"><%= active_plan.protein_target %>g</span>
                       </div>
@@ -115,8 +119,8 @@
                   <% end %>
               </div>
           <% else %>
-              <div class="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-shadow dark:border-graphite rounded-lg">
-                  <span class="material-symbols-outlined text-3xl text-shadow dark:text-graphite mb-2">restaurant_menu</span>
+              <div class="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-shadow dark:border-primary/30 rounded-lg">
+                  <span class="material-symbols-outlined text-3xl text-graphite dark:text-muted mb-2">restaurant_menu</span>
                   <p class="text-graphite dark:text-muted text-sm">No active plan.</p>
               </div>
           <% end %>
@@ -130,25 +134,25 @@
     <div class="lg:col-span-2 space-y-6">
         <%# Stats Grid %>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-graphite">
+            <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-primary/30">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-primary/20 dark:bg-graphite text-primary dark:text-primary">
                          <span class="material-symbols-outlined text-2xl">fitness_center</span>
                     </div>
                     <div class="ml-4">
                         <dt class="text-sm font-medium text-graphite dark:text-muted">Workout Compliance (S%)</dt>
-                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.workout_compliance_score %>%</dd>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.workout_compliance_score.present? ? "#{user.workout_compliance_score}%" : "—" %></dd>
                     </div>
                 </div>
             </div>
-            <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-graphite">
+            <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-primary/30">
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-primary/10 dark:bg-graphite text-primary dark:text-primary">
                          <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
                     </div>
                     <div class="ml-4">
                         <dt class="text-sm font-medium text-graphite dark:text-muted">Diet Adherence (M%)</dt>
-                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.diet_adherence_score %>%</dd>
+                        <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.diet_adherence_score.present? ? "#{user.diet_adherence_score}%" : "—" %></dd>
                     </div>
                 </div>
             </div>
@@ -161,7 +165,7 @@
 
 
         <%# Placeholder for future sections %>
-        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+        <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-primary/30 p-6">
             <h3 class="text-lg font-bold text-blackish dark:text-whiteish mb-4">Assigned Programs</h3>
             <% if user.programs.any? %>
                 <ul class="space-y-4">
@@ -176,10 +180,18 @@
                                          <span class="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded border border-primary/20">Week <%= program.current_week %></span>
                                     </div>
                                 </div>
+                                <%= button_to remove_user_admin_program_path(program), method: :delete,
+                                    data: { turbo_confirm: "¿Estás seguro de querer borrar el programa \"#{program.name}\" a #{user.name}?" },
+                                    class: "p-2 text-graphite hover:text-red-500 dark:text-muted dark:hover:text-red-400 hover:cursor-pointer transition-colors rounded focus:outline-none focus:ring-2 focus:ring-red-400",
+                                    title: "Remover programa" do %>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
+                                  </svg>
+                                <% end %>
                             </div>
 
                             <% if (current_routine = program.current_routine) %>
-                                <div class="mt-3 pt-3 border-t border-shadow dark:border-graphite">
+                                <div class="mt-3 pt-3 border-t border-shadow dark:border-primary/30">
                                     <p class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider mb-2">Current Routine</p>
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-2">
@@ -195,7 +207,7 @@
                     <% end %>
                 </ul>
             <% else %>
-                <p class="text-graphite dark:text-graphite text-sm">No programs assigned yet.</p>
+                <p class="text-graphite dark:text-muted text-sm">No programs assigned yet.</p>
             <% end %>
         </div>
     </div>
@@ -205,16 +217,17 @@
   <%= render "admin/users/training_progress", user: user %>
 
   <%# Progress Photos Gallery %>
-  <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
+  <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-primary/30 p-6">
       <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-bold text-blackish dark:text-whiteish">Progress Photos</h3>
           <span class="text-sm text-graphite dark:text-muted"><%= user.progress_photos.count %> total snaps</span>
       </div>
 
-      <% if user.progress_photos.with_attached_image.any? %>
+      <% if user.progress_photos.any? %>
           <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               <% user.progress_photos.with_attached_image.order(date: :desc).each do |photo| %>
-                  <div class="group relative rounded-lg overflow-hidden border border-shadow dark:border-graphite bg-background-light dark:bg-graphite aspect-[3/4]">
+                  <% next unless photo.image.attached? %>
+                  <div class="group relative rounded-lg overflow-hidden border border-shadow dark:border-primary/30 bg-background-light dark:bg-graphite aspect-[3/4]">
                       <%= link_to admin_progress_photo_path(photo), class: "block w-full h-full" do %>
                           <%= image_tag photo.image, class: "object-cover w-full h-full transition-transform duration-300 group-hover:scale-105" %>
                       <% end %>
@@ -228,8 +241,8 @@
               <% end %>
           </div>
       <% else %>
-          <div class="flex flex-col items-center justify-center py-8 text-center border-2 border-dashed border-shadow dark:border-graphite rounded-lg">
-              <span class="material-symbols-outlined text-3xl text-shadow dark:text-graphite mb-2">photo_camera</span>
+          <div class="flex flex-col items-center justify-center py-8 text-center border-2 border-dashed border-shadow dark:border-primary/30 rounded-lg">
+              <span class="material-symbols-outlined text-3xl text-graphite dark:text-muted mb-2">photo_camera</span>
               <p class="text-graphite dark:text-muted text-sm">No progress photos uploaded yet.</p>
           </div>
       <% end %>

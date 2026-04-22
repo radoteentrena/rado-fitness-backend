@@ -1,0 +1,10 @@
+<%# app/views/fields/active_storage/_show.html.erb %>
+<% if field.data.attached? %>
+  <% if field.data.image? %>
+    <%= image_tag url_for(field.data), style: "max-width: 300px;" %>
+  <% else %>
+    <%= link_to field.data.filename, url_for(field.data) %>
+  <% end %>
+<% else %>
+  -
+<% end %>

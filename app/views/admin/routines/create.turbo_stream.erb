@@ -2,11 +2,13 @@
 
 <%= turbo_stream.update "modal_frame", "" %>
 
-<%= turbo_stream.append "phase_#{resource.phase_id}_routines" do %>
-  <%= render partial: "admin/routines/routine_card", object: resource, as: :routine %>
-<% end %>
+<% if phase_id.present? %>
+  <%= turbo_stream.append "phase_#{phase_id}_routines" do %>
+    <%= render partial: "admin/routines/routine_card", object: resource, as: :routine %>
+  <% end %>
 
-<%= turbo_stream.remove "phase_#{resource.phase_id}_no_routines" %>
+  <%= turbo_stream.remove "phase_#{phase_id}_no_routines" %>
+<% end %>
 
 <%= turbo_stream.prepend "flash_messages" do %>
   <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-shadow dark:text-green-400 border border-green-300 dark:border-green-800" role="alert">

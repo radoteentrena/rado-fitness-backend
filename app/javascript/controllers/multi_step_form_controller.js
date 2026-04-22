@@ -13,6 +13,17 @@ export default class extends Controller {
     }
 
     this.showCurrentStep()
+    this.element.addEventListener("keydown", this.handleKeydown.bind(this))
+  }
+
+  disconnect() {
+    this.element.removeEventListener("keydown", this.handleKeydown.bind(this))
+  }
+
+  handleKeydown(event) {
+    if (event.key === "Enter" && event.target.tagName !== "TEXTAREA") {
+      event.preventDefault()
+    }
   }
 
   next(event) {
@@ -61,17 +72,72 @@ export default class extends Controller {
   updateButtons() {
     const isLastStep = this.currentStep === this.stepTargets.length - 1
 
-    if (this.hasPreviousButtonTarget) {
-        this.previousButtonTarget.classList.remove("hidden")
-    }
-
     if (this.hasNextButtonTarget) {
-        this.nextButtonTarget.classList.toggle("hidden", isLastStep)
+      this.nextButtonTarget.style.display = isLastStep ? "none" : ""
     }
 
     if (this.hasSubmitButtonTarget) {
-        this.submitButtonTarget.classList.toggle("hidden", !isLastStep)
+      this.submitButtonTarget.classList.toggle("hidden", !isLastStep)
     }
+  }
+
+  // Generic conditional toggle: driven by data-condition-target and data-condition-values on the input
+  toggleConditional(event) {
+    const input = event.target
+    const targetId = input.dataset.conditionTarget
+    if (!targetId) return
+
+    const showValues = (input.dataset.conditionValues || "").split(",").map(v => v.trim())
+    const targetEl = document.getElementById(targetId)
+    if (!targetEl) return
+
+    let selectedValue = ""
+    if (input.type === "radio") {
+      const checked = input.closest("form").querySelector(`input[name="${input.name}"]:checked`)
+      selectedValue = checked ? checked.value : ""
+    } else if (input.type === "checkbox") {
+      const checked = input.closest(".checkbox-group")?.querySelector('input[type="checkbox"]:checked')
+      selectedValue = checked ? checked.value : ""
+    }
+
+    const shouldShow = showValues.includes(selectedValue)
+    targetEl.classList.toggle("hidden", !shouldShow)
+
+    // Clear required on hidden fields and restore on visible
+    targetEl.querySelectorAll("input, select, textarea").forEach(el => {
+      if (el.dataset.conditionalRequired) {
+        el.required = shouldShow
+      }
+    })
+  }
+
+  toggleBestLifts(event) {
+    const selected = event.target.closest("form").querySelector('input[name="user[onboarding_profile_attributes][training_years]"]:checked')
+    const show = selected && ["2-5", "5+"].includes(selected.value)
+    document.getElementById("best-lifts-container")?.classList.toggle("hidden", !show)
+  }
+
+  toggleSportDetails(event) {
+    const show = event.target.value === "Si"
+    document.getElementById("sport-details-container")?.classList.toggle("hidden", !show)
+  }
+
+  toggleReferralOther(event) {
+    const show = event.target.value === "Otro"
+    const container = document.getElementById("referral-other-container")
+    if (!container) return
+    container.classList.toggle("hidden", !show)
+    const input = container.querySelector("input")
+    if (input) input.required = show
+  }
+
+  toggleGoalsOther(event) {
+    const checked = event.target.checked
+    const container = document.getElementById("goals-other-container")
+    if (!container) return
+    container.classList.toggle("hidden", !checked)
+    const input = container.querySelector("input")
+    if (input) input.required = checked
   }
 
   isFormValid() {
@@ -125,6 +191,9 @@ export default class extends Controller {
     }
 
     inputs.forEach(input => {
+      // Skip inputs inside hidden conditional containers
+      if (input.closest('.conditional-field.hidden')) return
+
       if (!input.checkValidity()) {
         if (!firstInvalidInput) firstInvalidInput = input
 
@@ -154,14 +223,13 @@ export default class extends Controller {
        if (checkedBoxes.length === 0) {
            isValid = false
            if (!firstInvalidInput && checkboxes.length > 0) firstInvalidInput = checkboxes[0]
-           
+
            checkboxes.forEach(cb => {
               let errorTarget = cb
               const wrapperLabel = cb.closest('label')
               if (wrapperLabel && wrapperLabel.classList.contains('border-2')) {
                 errorTarget = wrapperLabel
               }
-              // Here, ANY checkbox change in the group should remove errors from ALL checkboxes in the group
               addErrorStyling(errorTarget, checkboxes)
            })
        }

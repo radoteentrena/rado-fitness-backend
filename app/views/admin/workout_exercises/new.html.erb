@@ -1,0 +1,70 @@
+<div class="max-w-2xl mx-auto">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold tracking-tight text-blackish dark:text-whiteish">Add Exercise</h1>
+    <p class="text-sm text-graphite dark:text-muted mt-1">Adding to: <span class="font-medium text-primary"><%= @workout.name %></span></p>
+  </div>
+
+  <div class="bg-whiteish dark:bg-shadow rounded-xl border border-shadow dark:border-graphite p-6">
+    <%= form_with model: [@workout, @workout_exercise], url: admin_workout_workout_exercises_path(@workout), data: { turbo_frame: "_top" }, class: "space-y-6" do |f| %>
+      <% if @workout_exercise.errors.any? %>
+        <div class="p-3 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-lg text-sm">
+          <ul class="list-disc pl-5 space-y-1">
+            <% @workout_exercise.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :exercise_id, "Exercise", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+        <% grouped = Exercise.order(:muscle_group, :name).group_by(&:muscle_group) %>
+        <%= f.select :exercise_id, grouped_options_for_select(grouped.map { |group, exercises| [group.to_s.titleize, exercises.map { |e| [e.name, e.id] }] }, @workout_exercise.exercise_id), { include_blank: "Select an exercise..." }, class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <%= f.label :sets, class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+          <%= f.number_field :sets, min: 1, class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+        </div>
+        <div>
+          <%= f.label :reps, class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+          <%= f.text_field :reps, placeholder: "e.g. 8-12", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+        </div>
+        <div>
+          <%= f.label :warmup_sets, "Warmup Sets", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+          <%= f.text_field :warmup_sets, placeholder: "e.g. 2", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-4 gap-4">
+        <div>
+          <%= f.label :early_rpe, "Early RPE", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+          <%= f.text_field :early_rpe, placeholder: "7", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+        </div>
+        <div>
+          <%= f.label :last_rpe, "Last RPE", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+          <%= f.text_field :last_rpe, placeholder: "9", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+        </div>
+        <div>
+          <%= f.label :rest_seconds, "Rest (s)", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+          <%= f.number_field :rest_seconds, min: 0, placeholder: "120", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+        </div>
+        <div>
+          <%= f.label :load, "Load", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+          <%= f.text_field :load, placeholder: "e.g. 50kg", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :intensity_technique, "Intensity Technique", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+        <%= f.select :intensity_technique, options_for_select(WorkoutExercise::INTENSITY_TECHNIQUES, f.object.intensity_technique), { include_blank: "None" }, class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-shadow dark:border-graphite">
+        <%= link_to "Cancel", admin_routine_path(@workout.routine), data: { turbo_frame: "_top" }, class: "px-4 py-2 text-sm font-medium text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish transition-colors" %>
+        <%= f.submit "Add Exercise", class: "px-5 py-2 bg-primary text-blackish font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

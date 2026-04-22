@@ -1,7 +1,6 @@
 <%# app/views/admin/program_builders/show.html.erb %>
 
 <div class="space-y-6">
-  <%# Header with Back %>
   <div class="flex items-center justify-between">
     <div class="flex items-center space-x-4">
       <%= link_to admin_programs_path, class: "p-2 text-graphite bg-whiteish rounded-lg border border-shadow hover:bg-background-light hover:text-blackish dark:bg-shadow dark:border-graphite dark:text-muted dark:hover:bg-shadow/50 dark:hover:text-whiteish" do %>
@@ -22,35 +21,14 @@
         </p>
       </div>
     </div>
-  </div>
-
-  <%# Builder Container Canvas %>
-  <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6 min-h-[500px]">
-
-    <%# Phases Container %>
-    <div id="program_phases_list" class="space-y-6">
-      <% if @phases.any? %>
-        <%= render partial: "admin/phases/phase_block", collection: @phases, as: :phase %>
-      <% else %>
-        <div id="empty_phases_state" class="text-center py-12 border-2 border-dashed border-shadow dark:border-graphite rounded-xl">
-          <span class="material-symbols-outlined text-4xl text-graphite dark:text-muted mb-2">account_tree</span>
-          <h3 class="text-lg font-medium text-blackish dark:text-whiteish mb-1">No phases yet</h3>
-          <p class="text-sm text-graphite dark:text-muted mb-4">Start by adding the first phase to this program.</p>
-        </div>
-      <% end %>
-    </div>
-
-    <%# Add Phase Button %>
-    <div class="mt-8 flex justify-center">
-      <%= link_to new_admin_phase_path(program_id: @program.id), data: { turbo_frame: "modal_frame" }, class: "flex items-center text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none dark:focus:ring-primary/20 transition-all shadow-md" do %>
-        <svg class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-        </svg>
-        Add New Phase
-      <% end %>
-    </div>
 
   </div>
+
+  <div id="program-builder-content">
+    <%= render partial: "admin/program_builders/content",
+               locals: { program: @program, phases: @phases } %>
+  </div>
+
 </div>
 
 <%= turbo_frame_tag "modal_frame" %>

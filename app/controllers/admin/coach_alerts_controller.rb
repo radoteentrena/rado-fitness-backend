@@ -1,5 +1,37 @@
 module Admin
   class CoachAlertsController < Admin::ApplicationController
+    def new
+      @coach_alert = CoachAlert.new
+    end
+
+    def create
+      @coach_alert = CoachAlert.new(coach_alert_params)
+      if @coach_alert.save
+        redirect_to admin_coach_alerts_path, notice: "Alert created."
+      else
+        render :new, status: :unprocessable_entity
+      end
+    end
+
+    def edit
+      @coach_alert = CoachAlert.find(params[:id])
+    end
+
+    def update
+      @coach_alert = CoachAlert.find(params[:id])
+      if @coach_alert.update(coach_alert_params)
+        redirect_to admin_coach_alerts_path, notice: "Alert updated."
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    end
+
+    private
+
+    def coach_alert_params
+      params.require(:coach_alert).permit(:user_id, :category, :status, :message, :action_taken)
+    end
+
     # Overwrite any of the RESTful controller actions to implement custom behavior
     # For example, you may want to send an email after a foo is updated.
     #

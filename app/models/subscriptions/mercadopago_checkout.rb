@@ -7,9 +7,8 @@ module Subscriptions
     end
 
     def call
-      sdk = Mercadopago::SDK.new(
-        Rails.application.credentials.dig(:mercadopago, :access_token)
-      )
+      pid = plan_id
+      return { success: false, error: "Plan no configurado" } unless pid.present?
 
       response = sdk.preapproval.create(
         "preapproval_plan_id" => plan_id,

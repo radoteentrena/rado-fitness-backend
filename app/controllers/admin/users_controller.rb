@@ -119,7 +119,5 @@ module Admin
         page: Administrate::Page::Show.new(dashboard, requested_resource)
       }
     end
-
-    private
   end
 end

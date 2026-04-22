@@ -1,0 +1,44 @@
+<% has_unread = conversation.messages.where(read_at: nil).where(sender_type: 'client').any? %>
+<% last_message = conversation.messages.not_deleted.last %>
+
+<%= link_to admin_conversation_path(conversation),
+    class: "conversation-item #{has_unread ? 'unread' : ''}",
+    data: { turbo_frame: 'conversation-detail' } do %>
+
+  <div class="conversation-item-content">
+    <div class="conversation-item-header">
+      <span class="conversation-item-name">
+        <%= conversation.user.first_name %>
+        <% if has_unread %>
+          <span class="conversation-item-unread">●</span>
+        <% end %>
+      </span>
+      <span class="conversation-item-time">
+        <%= conversation.last_message_at&.strftime("%H:%M") %>
+      </span>
+    </div>
+
+    <div class="conversation-item-body">
+      <% if last_message %>
+        <span class="conversation-item-sender">
+          <% if last_message.sender_type == 'coach' %>
+            Tú:
+          <% else %>
+            <%= conversation.user.first_name %>:
+          <% end %>
+        </span>
+        <span class="conversation-item-message">
+          <% if last_message.content.present? %>
+            <%= truncate(last_message.content, length: 40) %>
+          <% elsif last_message.voice_note.attached? %>
+            🎙️ Nota de voz
+          <% else %>
+            (Sin contenido)
+          <% end %>
+        </span>
+      <% else %>
+        <span class="conversation-item-empty">Sin mensajes</span>
+      <% end %>
+    </div>
+  </div>
+<% end %>
