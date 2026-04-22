@@ -59,8 +59,9 @@ RSpec.describe NotifyUserOfCoachReplyJob, type: :job do
       end
 
       it "still creates a Notification record" do
-        described_class.perform_now(message.id)
-        expect(Notification.count).to eq(1)
+        expect {
+          described_class.perform_now(message.id)
+        }.to change { Notification.count }.by(1)
       end
     end
 
@@ -87,7 +88,6 @@ RSpec.describe NotifyUserOfCoachReplyJob, type: :job do
     context "when message content is nil (voice note)" do
       let(:voice_message) do
         msg = create(:message, conversation: conversation, sender_type: :coach, content: "voice message")
-        # Simulate a voice note by clearing content in DB
         msg.update_column(:content, nil)
         msg
       end

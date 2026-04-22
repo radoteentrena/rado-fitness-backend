@@ -21,10 +21,11 @@ class NotifyUserOfCoachReplyJob < ApplicationJob
       Rails.logger.error("Failed to send push notification: #{e.message}")
     end
 
-    Notification.create!(
+    notification = Notification.create(
       conversation: conversation,
       notification_type: "coach_reply",
       message: "Rado respondió tu pregunta"
     )
+    Rails.logger.error("[NotifyUserOfCoachReplyJob] Failed to create Notification: #{notification.errors.full_messages}") unless notification.persisted?
   end
 end
