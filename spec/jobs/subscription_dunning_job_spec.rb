@@ -120,4 +120,30 @@ RSpec.describe SubscriptionDunningJob, type: :job do
       expect(user.reload).not_to be_access_locked
     end
   end
+
+  describe "deduplication: user with both one-time expired and recurring past_due" do
+    let(:user) { create(:user) }
+
+    it "sends only one reminder when both subscription types are overdue for the same user" do
+      create(:subscription,
+        user:              user,
+        billing_type:      :one_time,
+        status:            :active,
+        access_expires_at: 2.days.ago,
+        reminded_at:       nil
+      )
+      create(:subscription,
+        user:           user,
+        billing_type:   :recurring,
+        status:         :past_due,
+        past_due_since: 2.days.ago,
+        reminded_at:    nil
+      )
+
+      expect(SubscriptionReminderMailer).to receive(:reminder).once.and_call_original
+      allow_any_instance_of(ActionMailer::MessageDelivery).to receive(:deliver_later)
+
+      described_class.perform_now
+    end
+  end
 end
