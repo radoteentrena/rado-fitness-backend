@@ -3,7 +3,7 @@ require "uri"
 require "json"
 
 class AiCoachService
-  GENERATION_MODEL = "gemini-2.5-flash"
+  GENERATION_MODEL = "gemini-flash-latest"
 
   def initialize
     @api_key = ENV["GEMINI_API_KEY"]
