@@ -32,7 +32,7 @@ export default class extends Controller {
   }
 
   get activeClasses() {
-    return ["bg-whiteish", "text-blackish", "shadow-sm", "dark:bg-shadow", "dark:text-whiteish"]
+    return ["bg-saffron", "text-blackish", "shadow-sm", "dark:bg-saffron", "dark:text-blackish"]
   }
 
   get inactiveClasses() {
@@ -41,9 +41,7 @@ export default class extends Controller {
 
   initialize() {
     this.updateHandler = this.updateActiveState.bind(this)
-    // turbo:load fires on initial load and after a visit (including frame advance)
     document.addEventListener("turbo:load", this.updateHandler)
-    // turbo:frame-load fires when a frame finishes loading
     document.addEventListener("turbo:frame-load", this.updateHandler)
   }
 
