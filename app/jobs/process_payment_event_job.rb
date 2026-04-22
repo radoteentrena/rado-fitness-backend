@@ -37,7 +37,7 @@ class ProcessPaymentEventJob < ApplicationJob
         external_id:          mp_id,
         external_customer_id: mp_data["payer_id"].to_s,
         external_plan_id:     mp_data["preapproval_plan_id"],
-        currency:             "ARS",
+        currency:             user.onboarding_profile&.argentina? ? "ARS" : "USD",
         reminded_at:          nil,
         past_due_since:       nil
       )
