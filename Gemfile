@@ -100,8 +100,6 @@ gem "hotwire-livereload", "~> 2.1", group: :development
 gem "neighbor"      # pgvector ActiveRecord integration
 gem "pdf-reader"    # PDF text extraction for book ingestion
 
-# Job scheduling
-gem "whenever", require: false
 
 gem "rspec-rails", "~> 8.0", groups: [:development, :test]
 
