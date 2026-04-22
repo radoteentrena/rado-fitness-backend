@@ -90,13 +90,21 @@ class ProcessPaymentEventJob < ApplicationJob
   end
 
   def handle_checkout_pro_payment(payment)
-    # NOTE: The MP Checkout Pro payment includes "preference_id" at the top level.
-    # Verify this key against actual MP SDK response on first test payment.
+    # MP Checkout Pro payments include "preference_id" at the top level of the payment object.
+    # If MP changes the payload structure, check their payment.get SDK response under payment["preference_id"].
     preference_id = payment["preference_id"]
+
+    unless preference_id.present?
+      Rails.logger.error "MP Checkout Pro payment #{payment["id"]}: missing preference_id in payload. " \
+                         "Full payment keys: #{payment.keys.inspect}"
+      return
+    end
+
     subscription = Subscription.find_by(mp_preference_id: preference_id)
 
     unless subscription
-      Rails.logger.warn "MP Checkout Pro payment: no subscription found for preference_id #{preference_id}"
+      Rails.logger.warn "MP Checkout Pro payment #{payment["id"]}: no subscription found for " \
+                        "preference_id=#{preference_id}. Payment may have been created outside this system."
       return
     end
 
@@ -108,12 +116,13 @@ class ProcessPaymentEventJob < ApplicationJob
 
       subscription.update!(
         access_expires_at: Time.current + 1.month,
-        status: :active
+        status:            :active
       )
       user.active!
       user.access_active!
     when "rejected", "cancelled"
-      Rails.logger.info "MP Checkout Pro payment #{payment["status"]} for preference #{preference_id} — no action"
+      Rails.logger.info "MP Checkout Pro payment #{payment["id"]} #{payment["status"]} " \
+                        "for preference #{preference_id} — no action taken"
     end
   end
 
