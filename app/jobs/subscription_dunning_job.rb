@@ -2,36 +2,36 @@ class SubscriptionDunningJob < ApplicationJob
   queue_as :default
 
   def perform
-    process_one_time_expired
-    process_recurring_past_due
+    reminded_user_ids = Set.new
+    process_one_time_expired(reminded_user_ids)
+    process_recurring_past_due(reminded_user_ids)
     process_cancelled_past_period
   end
 
   private
 
   # One-time: status stays :active, check access_expires_at
-  def process_one_time_expired
+  def process_one_time_expired(reminded_user_ids)
     Subscription.where(billing_type: :one_time, status: :active)
                 .where("access_expires_at < ?", Time.current)
                 .includes(:user)
                 .find_each do |sub|
       days_overdue = (Date.current - sub.access_expires_at.to_date).to_i
-      process_dunning(sub, days_overdue)
+      process_dunning(sub, days_overdue, reminded_user_ids)
     end
   end
 
   # Recurring: check past_due status
-  def process_recurring_past_due
+  def process_recurring_past_due(reminded_user_ids)
     Subscription.where(billing_type: :recurring, status: :past_due)
                 .where.not(past_due_since: nil)
                 .includes(:user)
                 .find_each do |sub|
       days_overdue = (Date.current - sub.past_due_since.to_date).to_i
-      process_dunning(sub, days_overdue)
+      process_dunning(sub, days_overdue, reminded_user_ids)
     end
   end
 
-  # Recurring cancelled: lock access after period end
   def process_cancelled_past_period
     Subscription.where(billing_type: :recurring, status: :canceled)
                 .where.not(current_period_end: nil)
@@ -42,12 +42,16 @@ class SubscriptionDunningJob < ApplicationJob
     end
   end
 
-  def process_dunning(subscription, days_overdue)
+  def process_dunning(subscription, days_overdue, reminded_user_ids)
     user = subscription.user
 
-    case days_overdue
-    when 0, 2, 4
-      send_reminder(user, subscription, days_overdue) if should_send_reminder?(subscription)
+    if [0, 2, 4].include?(days_overdue)
+      unless reminded_user_ids.include?(user.id)
+        if should_send_reminder?(subscription)
+          send_reminder(user, subscription, days_overdue)
+          reminded_user_ids.add(user.id)
+        end
+      end
     end
 
     if days_overdue >= 5
