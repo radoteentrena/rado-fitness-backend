@@ -37,6 +37,14 @@ RSpec.describe "PUT /api/v1/device_token", type: :request do
         headers: auth_headers(user)
 
       expect(response).to have_http_status(:unprocessable_entity)
+      expect(json["errors"]).to be_present
+    end
+
+    it "returns 422 when fcm_token param is absent" do
+      put "/api/v1/device_token",
+        headers: auth_headers(user)
+
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 end
