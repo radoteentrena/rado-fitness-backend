@@ -1,0 +1,7 @@
+es:
+  admin:
+    conversations:
+      message_sent: "Mensaje enviado exitosamente"
+      message_deleted: "Mensaje eliminado exitosamente"
+      cannot_delete_client_message: "No puedes eliminar mensajes del cliente"
+      error_sending_message: "Error al enviar el mensaje"

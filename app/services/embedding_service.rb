@@ -50,13 +50,4 @@ class EmbeddingService
     nil
   end
 
-  # Batch embed multiple texts (calls API sequentially to avoid rate limits)
-  def embed_batch(texts)
-    texts.map.with_index do |text, i|
-      Rails.logger.info("Embedding chunk #{i + 1}/#{texts.size}...")
-      result = embed(text)
-      sleep(0.1) # Small delay to respect rate limits
-      result
-    end
-  end
 end

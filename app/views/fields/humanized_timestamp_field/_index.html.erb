@@ -1,0 +1,18 @@
+<% if field.data.present? %>
+  <% diff = (Time.current - field.data).round %>
+  <% if diff < 60 %>
+    Just now
+  <% elsif diff < 3600 %>
+    <%= (diff / 60).round %>m ago
+  <% elsif diff < 86400 %>
+    Today at <%= field.data.strftime("%I:%M %p").downcase %>
+  <% elsif diff < 172800 %>
+    Yesterday
+  <% elsif diff < 604800 %>
+    <%= (diff / 86400).round %>d ago
+  <% else %>
+    <%= field.data.strftime("%b %d, %Y") %>
+  <% end %>
+<% else %>
+  —
+<% end %>

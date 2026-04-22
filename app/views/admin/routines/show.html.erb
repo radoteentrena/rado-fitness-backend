@@ -1,3 +1,4 @@
+<% if @program %><div data-controller="program-chat"><% else %><div><% end %>
 <div class="max-w-7xl mx-auto">
   <!-- Routine Header -->
   <div class="mb-8 p-6 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-xl shadow-md">
@@ -24,8 +25,25 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-         <%= link_to "Add Workout Day", new_admin_routine_workout_path(@routine), class: "px-4 py-2 bg-saffron text-blackish font-bold rounded-lg hover:bg-saffron-dark transition-colors" %>
-         <%= link_to "Edit Routine", edit_admin_routine_path(@routine), class: "px-4 py-2 bg-primary text-blackish font-bold rounded-lg hover:bg-primary/90 transition-colors" if accessible_action?(@routine, :edit) %>
+         <%= link_to new_admin_routine_workout_path(@routine),
+               class: "p-2 bg-saffron text-blackish rounded-lg hover:bg-blackish transition-colors hover:text-saffron",
+               title: "Add Workout Day" do %>
+           <span class="material-symbols-outlined text-xl">add</span>
+         <% end %>
+         <% if accessible_action?(@routine, :edit) %>
+           <%= link_to edit_admin_routine_path(@routine),
+                 class: "p-2 bg-primary text-blackish rounded-lg hover:bg-blackish transition-colors hover:text-saffron",
+                 title: "Edit Routine" do %>
+             <span class="material-symbols-outlined text-xl">edit</span>
+           <% end %>
+         <% end %>
+         <% if @program %>
+           <button data-action="program-chat#open"
+                   class="p-2 border-2 hover:cursor-pointer rounded-lg border-primary text-primary hover:bg-primary hover:text-blackish transition-all"
+                   title="Chat con AI Coach">
+             <span class="material-symbols-outlined text-xl">smart_toy</span>
+           </button>
+         <% end %>
       </div>
     </div>
   </div>
@@ -52,11 +70,11 @@
 
                <div class="space-y-6">
                   <% workout.workout_exercises.order(:order_index).each do |we| %>
-                     <%= render partial: "admin/workout_exercises/workout_exercise", locals: { workout_exercise: we } %>
+                     <%= render partial: "admin/workout_exercises/workout_exercise", locals: { workout_exercise: we, allow_actions: !@routine.is_template? } %>
                   <% end %>
 
                   <div class="mt-4 flex justify-center border-2 border-dashed border-shadow dark:border-graphite rounded-lg p-4 hover:border-primary transition-colors">
-                    <%= link_to '#', class: "text-graphite dark:text-muted hover:text-primary font-medium flex items-center gap-2" do %>
+                    <%= link_to new_admin_workout_workout_exercise_path(workout), data: { turbo_frame: "_top" }, class: "text-graphite dark:text-muted hover:text-primary font-medium flex items-center gap-2" do %>
                       <span class="material-symbols-outlined">add_circle</span>
                       Add Exercise
                     <% end %>
@@ -75,49 +93,72 @@
 
      <!-- Sidebar: Info Cards -->
      <div class="space-y-6">
-        <!-- Overview Card -->
+        <%
+          all_workout_exercises = @routine.workouts.includes(workout_exercises: :exercise).flat_map(&:workout_exercises)
+          total_exercises = all_workout_exercises.count
+          muscle_group_counts = all_workout_exercises
+            .map { |we| we.exercise&.muscle_group.presence || "Sin grupo" }
+            .tally
+            .sort_by { |_, count| -count }
+        %>
+
+        <!-- Muscle Group Breakdown Card -->
         <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm p-6 border border-shadow dark:border-graphite">
-           <h3 class="font-bold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
-             <span class="material-symbols-outlined text-primary">info</span>
-             Program Guide
+           <h3 class="font-bold text-blackish dark:text-whiteish mb-1 flex items-center gap-2">
+             <span class="material-symbols-outlined text-primary">fitness_center</span>
+             Grupos Musculares
            </h3>
-           <div class="text-sm text-graphite dark:text-muted space-y-3">
-              <p>RPE (Rate of Perceived Exertion) scales from 1-10.</p>
-              <ul class="list-disc pl-4 space-y-1 marker:text-primary">
-                 <li><strong>RPE 7:</strong> 3 reps in reserve.</li>
-                 <li><strong>RPE 8:</strong> 2 reps in reserve.</li>
-                 <li><strong>RPE 9:</strong> 1 rep in reserve.</li>
-                 <li><strong>RPE 10:</strong> Max effort.</li>
-              </ul>
-           </div>
-        </div>
+           <p class="text-xs text-muted mb-4"><%= total_exercises %> ejercicios · <%= @routine.workouts.count %> días</p>
 
-        <!-- Progress Card -->
-         <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm p-6 border border-shadow dark:border-graphite">
-           <h3 class="font-bold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
-             <span class="material-symbols-outlined text-primary">trending_up</span>
-             Phase Focus
-           </h3>
-
-           <div class="space-y-4">
-              <div class="flex items-center justify-between text-sm">
-                 <span class="text-muted">Total Volume</span>
-                 <span class="font-bold text-blackish dark:text-whiteish">High</span>
-              </div>
-               <div class="flex items-center justify-between text-sm">
-                 <span class="text-muted">Intensity</span>
-                 <span class="font-bold text-blackish dark:text-whiteish">Moderate</span>
-              </div>
-
-              <div class="pt-4 border-t border-shadow dark:border-graphite">
-                  <h4 class="text-xs font-bold uppercase tracking-wider text-muted mb-2">Suggested Rest Days</h4>
-                  <div class="flex gap-2">
-                     <span class="px-2 py-1 bg-background-light dark:bg-graphite rounded text-xs font-bold">Wed</span>
-                     <span class="px-2 py-1 bg-background-light dark:bg-graphite rounded text-xs font-bold">Sun</span>
-                  </div>
-              </div>
-           </div>
+           <% if muscle_group_counts.any? %>
+             <ul class="space-y-3">
+               <% muscle_group_counts.each do |group, count| %>
+                 <% percentage = total_exercises > 0 ? (count.to_f / total_exercises * 100).round : 0 %>
+                 <li>
+                   <div class="flex items-center justify-between text-sm mb-1">
+                     <span class="font-medium text-blackish dark:text-whiteish"><%= group %></span>
+                     <span class="text-xs text-muted"><%= count %> (<%= percentage %>%)</span>
+                   </div>
+                   <div class="w-full bg-background-light dark:bg-graphite rounded-full h-1.5">
+                     <div class="bg-primary h-1.5 rounded-full" style="width: <%= percentage %>%"></div>
+                   </div>
+                 </li>
+               <% end %>
+             </ul>
+           <% else %>
+             <p class="text-sm text-muted italic">Sin ejercicios aún.</p>
+           <% end %>
         </div>
      </div>
   </div>
 </div>
+
+<% if @program %>
+  <div data-program-chat-target="panel"
+       class="fixed right-0 top-0 h-full w-96 z-50 bg-blackish border-l-2 border-primary/50 transform transition-transform duration-300 translate-x-full flex flex-col">
+
+    <div class="flex items-center justify-between px-4 py-3 border-b border-primary/30 shrink-0">
+      <h2 class="text-sm font-bold text-whiteish uppercase tracking-wider">AI Coach Chat</h2>
+      <button data-action="program-chat#close"
+              class="text-muted hover:text-whiteish transition-colors p-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <turbo-frame id="program-chat-panel"
+                 data-program-chat-target="frame"
+                 data-chat-url="<%= admin_program_chat_path(@program, routine_id: @routine.id, workout_id: @selected_workout&.id) %>"
+                 class="flex flex-col flex-1 min-h-0">
+      <div class="flex items-center justify-center h-full text-muted text-sm">
+        Cargando chat...
+      </div>
+    </turbo-frame>
+  </div>
+<% end %>
+
+</div>
+
+<%= turbo_frame_tag "modal_frame" %>

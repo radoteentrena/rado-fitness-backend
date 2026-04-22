@@ -12,8 +12,8 @@
     </div>
 
     <!-- Wizard Form -->
-    <div id="ai-coach-wizard">
-      <%= form_tag admin_generate_ai_coach_path, method: :post, data: { turbo_frame: "ai_coach_result" } do %>
+    <div id="ai-coach-wizard" data-controller="ai-coach">
+      <%= form_tag admin_generate_ai_coach_path, method: :post, data: { turbo_frame: "ai_coach_result", action: "submit->ai-coach#handleSubmit" } do %>
         <!-- Step 1: Client Selection -->
         <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-6">
           <h2 class="text-lg font-semibold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
@@ -71,10 +71,10 @@
 
         <!-- Submit -->
         <div class="flex justify-end">
-          <button type="submit"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-blackish font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]">
-            <span class="material-symbols-outlined">auto_awesome</span>
-            Generate
+          <button type="submit" id="generate-button" data-ai-coach-target="generateButton"
+            class="generate-button inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-blackish font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] cursor-pointer">
+            <span class="generate-icon material-symbols-outlined">auto_awesome</span>
+            <span class="generate-text">Generate</span>
           </button>
         </div>
       <% end %>

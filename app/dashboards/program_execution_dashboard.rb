@@ -12,7 +12,7 @@ class ProgramExecutionDashboard < Administrate::BaseDashboard
     completed_at: Field::DateTime,
     duration_minutes: Field::Number,
     exercise_logs: Field::HasMany,
-    routine: Field::BelongsTo,
+    workout: Field::BelongsTo,
     user: Field::BelongsTo,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
@@ -37,7 +37,7 @@ class ProgramExecutionDashboard < Administrate::BaseDashboard
     completed_at
     duration_minutes
     exercise_logs
-    routine
+    workout
     user
     created_at
     updated_at
@@ -50,7 +50,7 @@ class ProgramExecutionDashboard < Administrate::BaseDashboard
     completed_at
     duration_minutes
     exercise_logs
-    routine
+    workout
     user
   ].freeze
 

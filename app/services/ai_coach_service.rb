@@ -3,7 +3,7 @@ require "uri"
 require "json"
 
 class AiCoachService
-  GENERATION_MODEL = "gemini-2.0-flash"
+  GENERATION_MODEL = "gemini-2.5-flash"
 
   def initialize
     @api_key = ENV["GEMINI_API_KEY"]
@@ -44,33 +44,40 @@ class AiCoachService
     { conversation: conversation, structured_data: structured_data }
   end
 
-  def refine(conversation:, message:)
-    book_context = retrieve_context(message)
+  def refine(conversation:, message:, mode: "program", program_context: nil)
+    book_context = mode == "program_chat" ? nil : retrieve_context(message)
 
-    history = conversation.message_history
-    latest_data = conversation.generated_data
+    history = mode == "program_chat" ? [] : conversation.message_history
+    latest_data = program_context || conversation.generated_data
 
-    refinement_prompt = <<~PROMPT
-      The coach wants to modify the previously generated program.
+    refinement_prompt = if mode == "program_chat"
+      <<~PROMPT
+        Programa actual (solo para contexto):
+        #{latest_data.to_json}
 
-      Previous program (JSON):
-      #{latest_data.to_json}
+        Solicitud del coach: "#{message}"
 
-      Additional book knowledge for this refinement:
-      #{book_context}
+        Devolvé ÚNICAMENTE el JSON de modificaciones según las instrucciones del sistema.
+      PROMPT
+    else
+      <<~PROMPT
+        The coach wants to modify the previously generated program.
 
-      Coach's request: "#{message}"
+        Previous program (JSON):
+        #{latest_data.to_json}
 
-      Please return the COMPLETE updated program as JSON, incorporating the requested changes.
-      Keep the same JSON structure. Only modify what the coach asked for.
-      Return ONLY valid JSON, no markdown fences.
-    PROMPT
+        #{book_context ? "Additional book knowledge for this refinement:\n        #{book_context}\n" : ""}Coach's request: "#{message}"
 
-    system_prompt = build_system_prompt("program")
+        Please return the COMPLETE updated program as JSON, incorporating the requested changes.
+        Keep the same JSON structure. Only modify what the coach asked for.
+        Return ONLY valid JSON, no markdown fences.
+      PROMPT
+    end
+
+    system_prompt = build_system_prompt(mode)
     response_text = call_gemini(system_prompt, refinement_prompt, history: history)
     structured_data = parse_json_response(response_text)
 
-    # Update conversation
     conversation.add_message!(role: "user", content: message)
     conversation.add_message!(
       role: "assistant",
@@ -80,6 +87,69 @@ class AiCoachService
     conversation.update!(generated_data: structured_data)
 
     { conversation: conversation, structured_data: structured_data }
+  end
+
+  def rank_programs(shortlist, user)
+    client_profile = build_client_profile(user)
+    serialized = shortlist.map { |t| { name: t.name, description: t.description, duration_weeks: t.duration_weeks } }
+
+    prompt = <<~PROMPT
+      Client profile:
+      #{client_profile}
+
+      Available programs:
+      #{serialized.to_json}
+
+      Return only the name of the program from the list that best fits this client's profile.
+    PROMPT
+
+    response = call_gemini(
+      "You are a fitness program matcher. Return ONLY the program name, nothing else.",
+      prompt
+    )
+    matched_name = response&.strip&.downcase
+    shortlist.find { |t| t.name.strip.downcase == matched_name }
+  end
+
+  def build_client_profile(user)
+    return "No specific client selected. Generate a general template." unless user
+
+    profile = user.onboarding_profile
+
+    base = <<~BASE
+      CLIENT PROFILE:
+      - Name: #{user.name}
+      - Category: #{user.category}
+      - Status: #{user.status}
+      - Current Weight (logged): #{user.latest_weight || 'Not logged'}
+      - Weight Trend (7d): #{user.weight_trend || 'N/A'}
+      - Workout Compliance: #{user.calculate_workout_compliance_score}%
+      - Diet Adherence: #{user.calculate_diet_adherence_score}%
+      - Current Programs: #{user.programs.map(&:name).join(', ').presence || 'None'}
+      - Target Workouts/Week: #{user.target_workouts_per_week}
+    BASE
+
+    return base unless profile
+
+    base + <<~ONBOARDING
+
+      ONBOARDING QUESTIONNAIRE:
+      - Gender: #{profile.gender}
+      - Age: #{profile.age}
+      - Weight (self-reported): #{profile.weight}
+      - Height: #{profile.height}
+      - Goals: #{Array(profile.goals).join(', ').presence || 'Not specified'}
+      - Training Experience Level: #{profile.experience_level}/10
+      - Best Lifts: #{profile.best_lifts.presence || 'Not specified'}
+      - Commitment Level: #{profile.commitment_level}
+      - Training Frequency: #{profile.training_frequency} days/week
+      - Time per Session: #{profile.time_per_session.presence || 'Not specified'}
+      - Injuries / Limitations: #{profile.injuries.presence || 'None reported'}
+      - Plays Sports: #{profile.plays_sports}#{profile.plays_sports == 'Si' && profile.sport_details.present? ? " (#{profile.sport_details})" : ''}
+      - Diet Quality: #{profile.diet_quality}
+      - Daily Activity Level: #{profile.activity_level}
+      - Sleep: #{profile.sleep_hours} hours/night
+    ONBOARDING
   end
 
   def create_records!(conversation)
@@ -162,11 +232,16 @@ class AiCoachService
         )
 
         if user
+          user.user_dietary_plans.active.update_all(active: false)
           UserDietaryPlan.create!(
             user: user,
             dietary_plan: dietary_plan,
+            phase: phase,
+            calories_target: dietary_plan.calories_target,
+            protein_target: dietary_plan.protein_target,
             start_date: Date.current,
-            end_date: Date.current + (program&.duration_weeks || 8).weeks
+            end_date: Date.current + (program&.duration_weeks || 8).weeks,
+            active: true
           )
         end
       end
@@ -194,25 +269,8 @@ class AiCoachService
     end
   end
 
-  def build_client_profile(user)
-    return "No specific client selected. Generate a general template." unless user
-
-    <<~PROFILE
-      CLIENT PROFILE:
-      - Name: #{user.name}
-      - Category: #{user.category}
-      - Status: #{user.status}
-      - Current Weight: #{user.latest_weight || 'Not logged'}
-      - Weight Trend (7d): #{user.weight_trend || 'N/A'}
-      - Workout Compliance: #{user.calculate_workout_compliance_score}%
-      - Diet Adherence: #{user.calculate_diet_adherence_score}%
-      - Current Programs: #{user.programs.map(&:name).join(', ').presence || 'None'}
-      - Target Workouts/Week: #{user.target_workouts_per_week}
-    PROFILE
-  end
-
   def build_system_prompt(mode)
-    <<~SYSTEM
+    base = <<~BASE
       You are an expert fitness program designer assistant. You help coaches create
       evidence-based training programs by combining scientific knowledge from fitness
       literature with practical coaching experience.
@@ -228,7 +286,35 @@ class AiCoachService
       and clear periodization. Consider the client's current fitness level and goals.
 
       Always include practical instructions for each exercise to guide execution.
-    SYSTEM
+
+      IMPORTANT: All program names, descriptions, and instructions MUST be written in Spanish.
+      This includes the program name, routine names, workout descriptions, exercise instructions,
+      and dietary plan information. The audience is Argentine/Spanish-speaking clients.
+    BASE
+
+    return base unless mode == "program_chat"
+
+    <<~CHAT
+      Sos un AI Coach de fitness especializado en modificaciones de programas de entrenamiento.
+      Respondés ÚNICAMENTE con un JSON válido. Sin texto conversacional, sin markdown, sin explicaciones.
+      Empezá con '{' y terminá con '}'.
+
+      Devolvé ÚNICAMENTE este esquema con los cambios solicitados:
+      {
+        "summary": "Descripción breve de los cambios en español",
+        "modifications": [
+          { "workout_exercise_id": <id_existente>, <solo_los_campos_que_cambian> },
+          { "workout_exercise_id": null, "replace_workout_exercise_id": <id_a_eliminar_o_null>, "workout_id": <id>, "name": "...", "muscle_group": "...", "sets": ..., "reps": "...", "rest_seconds": ..., "load": "..." }
+        ]
+      }
+
+      Reglas:
+      - Para modificar atributos: workout_exercise_id con el id + solo los campos que cambian.
+      - Para reemplazar un ejercicio: workout_exercise_id null + replace_workout_exercise_id con el id del ejercicio a eliminar + workout_id del workout padre.
+      - Para agregar un ejercicio nuevo sin reemplazar: workout_exercise_id null + replace_workout_exercise_id null + workout_id.
+      - No agregues workouts ni rutinas nuevas.
+      - NO devuelvas el programa completo. Solo el array de modificaciones y el summary.
+    CHAT
   end
 
   def build_generation_prompt(objectives:, book_context:, client_profile:, exercises_list:, mode:)
@@ -289,7 +375,7 @@ class AiCoachService
                 "exercises": [
                   {
                     "name": "string (exact name if existing, descriptive if new)",
-                    "muscle_group": "string (e.g. 'Chest', 'Back', 'Legs')",
+                    "muscle_group": "string — MUST be one of: #{Exercise::MUSCLE_GROUPS.join(', ')}",
                     "existing_exercise_id": integer_or_null,
                     "sets": integer,
                 "warmup_sets": "string (e.g. '1-2' or '0')",
@@ -305,14 +391,16 @@ class AiCoachService
               }
             ]
           }
-        ],
-        "dietary_plan": {
-          "name": "string",
-          "description": "string",
-          "calories_target": integer,
-          "protein_target": integer
-        }
+        ]
       }
+    ],
+    "dietary_plan": {
+      "name": "string",
+      "description": "string",
+      "calories_target": integer,
+      "protein_target": integer
+    }
+  }
     JSON
   end
 
@@ -329,7 +417,7 @@ class AiCoachService
     end
   end
 
-  def call_gemini(system_prompt, user_prompt, history: [])
+  def call_gemini(system_prompt, user_prompt, history: [], attempt: 1)
     uri = URI("#{@base_url}?key=#{@api_key}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
@@ -362,6 +450,11 @@ class AiCoachService
     if response.code == "200"
       json = JSON.parse(response.body)
       json.dig("candidates", 0, "content", "parts", 0, "text")
+    elsif response.code == "429" && attempt <= 3
+      wait = 2 ** attempt
+      Rails.logger.warn("Gemini 429 – retrying in #{wait}s (attempt #{attempt}/3)")
+      sleep(wait)
+      call_gemini(system_prompt, user_prompt, history: history, attempt: attempt + 1)
     else
       Rails.logger.error("Gemini API Error: #{response.code} - #{response.body}")
       raise "Gemini API error: #{response.code}"

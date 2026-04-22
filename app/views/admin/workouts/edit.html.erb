@@ -1,0 +1,10 @@
+<div class="mb-6 flex justify-between items-center">
+  <h1 class="text-3xl font-black text-whiteish uppercase tracking-tight font-display">
+    Edit Workout Day
+  </h1>
+  <%= link_to "Back to Routine", admin_routine_path(@workout.routine), data: { turbo_frame: "_top" }, class: "px-4 py-2 bg-graphite hover:bg-shadow text-whiteish font-medium rounded-lg rounded-tl-none transition-colors duration-200" %>
+</div>
+
+<div class="bg-background-light dark:bg-blackish rounded-xl border border-shadow p-6">
+  <%= render "form" %>
+</div>

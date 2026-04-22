@@ -5,7 +5,7 @@ require "json"
 class GeminiService
   def initialize
     @api_key = ENV["GEMINI_API_KEY"]
-    @base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+    @base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
   end
 
   def parse_metrics(text)
@@ -34,22 +34,6 @@ class GeminiService
   rescue => e
     Rails.logger.error("GeminiService Error: #{e.message}")
     {}
-  end
-
-  def generate_weekly_feedback(metrics_data, user_name)
-    prompt = <<~PROMPT
-      You are Rado, a high-performance fitness coach.
-      Analyze the following weekly metrics for your client, #{user_name}.
-
-      Metrics:
-      #{metrics_data}
-
-      Write a feedback paragraph (max 150 words).
-      Tone: Motivational, strict, professional, direct.
-      Highlight wins and call out missed targets.
-    PROMPT
-
-    call_gemini(prompt) || "Error generating feedback."
   end
 
   private

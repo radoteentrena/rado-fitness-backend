@@ -1,0 +1,99 @@
+<%= turbo_frame_tag "conversation-detail", class: "conversation-frame", style: "display: flex; height: 100%;" do %>
+
+<div class="conversation-detail">
+  <!-- Conversation Header -->
+  <header class="conversation-header">
+    <div class="header-content">
+      <h1><%= "#{@conversation.user.first_name} #{@conversation.user.last_name}" %></h1>
+      <div class="header-meta">
+        <span class="meta-item"><%= @conversation.user.email %></span>
+        <% if @conversation.last_message_at %>
+          <span class="meta-item">Última: <%= @conversation.last_message_at.strftime("%H:%M el %d %b") %></span>
+        <% end %>
+      </div>
+    </div>
+  </header>
+
+  <!-- Messages Thread -->
+  <div class="conversation-thread" id="message-thread">
+    <% if @messages.empty? %>
+      <div class="messages-empty">
+        <p>Sin mensajes aún</p>
+      </div>
+    <% else %>
+      <% @messages.each do |message| %>
+        <div class="message-group message-<%= message.sender_type %>">
+          <% if message.sender_type == 'coach' %>
+            <div class="message-label">Tú</div>
+          <% else %>
+            <div class="message-label"><%= @conversation.user.first_name %></div>
+          <% end %>
+
+          <div class="message-pill">
+            <% if message.content.present? %>
+              <div class="message-content"><%= message.content %></div>
+            <% end %>
+
+            <% if message.voice_note.attached? %>
+              <div class="message-voice">
+                <audio controls>
+                  <source src="<%= url_for(message.voice_note) %>" type="audio/webm">
+                  Audio no soportado
+                </audio>
+              </div>
+            <% end %>
+
+            <div class="message-meta-footer">
+              <span class="message-time"><%= message.created_at.strftime("%H:%M") %></span>
+              <% if message.read_at.present? %>
+                <span class="read-status">✓</span>
+              <% end %>
+              <% if message.sender_type == 'coach' %>
+                <%= button_to '',
+                    admin_conversation_delete_message_path(@conversation),
+                    method: :delete,
+                    params: { message_id: message.id },
+                    data: { confirm: '¿Borrar?' },
+                    class: 'btn-delete-icon',
+                    title: 'Borrar' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Input Area -->
+  <div class="conversation-input-area">
+    <%= form_with model: [:admin, @conversation], local: true, url: admin_conversation_create_message_path(@conversation), method: :post, class: "message-form" do |f| %>
+      <div class="input-wrapper" data-controller="voice-recorder">
+        <div class="text-input-group">
+          <%= f.text_area :content,
+              id: 'message_content',
+              placeholder: 'Escribe un mensaje...',
+              rows: 1,
+              class: 'slim-input',
+              data: { action: 'keydown->form#handleKeyDown' } %>
+
+          <button type="button"
+                  class="btn-microphone"
+                  data-action="voice-recorder#toggleRecording"
+                  title="Grabar nota de voz">
+            🎤
+          </button>
+
+          <input type="hidden"
+                 name="voice_data"
+                 data-voice-recorder-target="voiceInput">
+        </div>
+
+        <%= f.submit "Enviar",
+            class: "btn-send" %>
+
+        <div class="voice-status hidden" data-voice-recorder-target="status"></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<% end %>

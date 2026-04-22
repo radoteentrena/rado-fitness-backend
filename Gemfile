@@ -67,15 +67,19 @@ end
 # Admin dashboard
 gem "administrate"
 
+# CORS
+gem "rack-cors"
+
 # Authentication
 gem "devise"
+gem "google_sign_in"
+gem "omniauth"
+gem "omniauth-google-oauth2"
 
 # Soft Delete
 gem "discard"
 
 # IA Integration
-gem "langchainrb"
-
 # Manejo de Iconos
 gem "heroicon"
 
@@ -83,7 +87,6 @@ gem "heroicon"
 gem "dotenv-rails"
 
 gem "faker", "~> 3.5", group: :development
-gem "test", "~> 1.0", group: :development
 
 gem "twilio-ruby", "~> 7.10"
 
@@ -104,6 +107,8 @@ gem "pdf-reader"    # PDF text extraction for book ingestion
 gem "rspec-rails", "~> 8.0", groups: [:development, :test]
 
 gem "factory_bot_rails", "~> 6.5", groups: [:development, :test]
+
+gem "shoulda-matchers", "~> 6.0", group: :test
 
 gem "administrate-field-active_storage", "~> 1.0"
 gem "minitest", "< 6.0", group: [:development, :test]

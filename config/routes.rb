@@ -9,26 +9,43 @@ Rails.application.routes.draw do
 
   namespace :admin do
       resources :coach_alerts
+      resources :conversations, only: [:index, :show] do
+        post :create_message
+        delete :delete_message
+      end
       resources :dietary_plans
       resources :exercises
       resources :phases, except:  [ :index ]
       resources :programs do
         resource :builder, only: [ :show ], controller: "program_builders"
+        resource :chat, controller: "program_chat", only: [ :show ] do
+          post :message
+          post :apply
+        end
         member do
           post :sync_sheet
+          delete :remove_user
         end
       end
       resources :routines do
         resources :workouts, only: [ :new, :create ]
       end
       resources :phase_routines, except: [ :index, :show ]
-      resources :workouts, except: [ :index, :new, :create ]
-      resources :workout_exercises, only: [ :edit, :update ]
-      resources :users
+      resources :workouts, except: [ :index, :new, :create ] do
+        resources :workout_exercises, only: [ :new, :create ]
+      end
+      resources :workout_exercises, only: [ :edit, :update, :destroy ] do
+        member do
+          get :swap
+        end
+      end
+      resources :users do
+        resource :program_assignment, only: [ :create ]
+      end
       resources :user_dietary_plans, except: [ :index, :show ]
       resources :assignments, only: [ :new, :create ]
       resources :daily_metrics, only: [ :show ]
-      resources :messages
+      # resources :messages  # Removed — use Conversations instead
       resources :progress_photos, except: [ :index ]
       resources :program_executions, except: [ :index ]
       resources :exercise_logs, except: [ :index ]
@@ -57,6 +74,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get "sync", to: "sync#index"
+      post "auth/google", to: "auth#google"
+      post "auth/email", to: "auth#email"
 
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]

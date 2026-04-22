@@ -64,9 +64,9 @@ module Admin
       record = service.create_records!(@conversation)
 
       if record.is_a?(Program)
-        redirect_to admin_program_path(record), notice: "✅ Program created successfully!"
+        redirect_to admin_program_path(record), notice: "Program created successfully!"
       else
-        redirect_to admin_routine_path(record), notice: "✅ Routine created successfully!"
+        redirect_to admin_routine_path(record), notice: "Routine created successfully!"
       end
     rescue => e
       Rails.logger.error("AI Coach Approve Error: #{e.message}")

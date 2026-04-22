@@ -1,0 +1,20 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+active_user_profile:
+  user: active_user
+  gender: Masculino
+  age: 28
+  weight: "80"
+  height: "175"
+  training_frequency: "3"
+  training_years: "2-5"
+  experience_level: 5
+  commitment_level: Alto
+  plays_sports: "No"
+  injuries: Ninguna
+  diet_quality: Bueno
+  activity_level: Activo
+  sleep_hours: 6-8
+  social_media_consent: Si
+  referral_source: Redes sociales
+  country: Argentina
