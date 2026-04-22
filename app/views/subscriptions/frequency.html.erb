@@ -1,0 +1,95 @@
+<div class="bg-blackish min-h-screen font-display py-20 px-6">
+  <div class="max-w-3xl mx-auto">
+
+    <%# Page header %>
+    <header class="text-center mb-14">
+      <span class="block text-[11px] font-bold tracking-[0.15em] uppercase text-saffron mb-4">
+        Paso 3 de 3
+      </span>
+      <h1 class="text-[42px] font-black uppercase text-whiteish leading-[1.05] tracking-tight mb-3">
+        Elegí tu frecuencia
+      </h1>
+      <p class="text-[15px] text-[#888] tracking-wide">
+        Plan <span class="text-whiteish font-bold"><%= @plan_tier.humanize %></span> — elegí cómo querés pagar.
+      </p>
+    </header>
+
+    <%# Flash alert %>
+    <% if flash[:alert] %>
+      <div class="max-w-2xl mx-auto mb-8 border-2 border-red-500 p-4 text-red-400 text-sm text-center">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <%# Frequency options — vertical stack %>
+    <div class="space-y-4">
+      <% @options.each_with_index do |opt, i| %>
+        <%= form_with url: subscriptions_path, method: :post, class: "block", data: { turbo: false } do |f| %>
+          <%= f.hidden_field :plan_tier, value: @plan_tier %>
+          <%= f.hidden_field :billing_type, value: opt[:billing_type] %>
+          <%= f.hidden_field :frequency, value: opt[:frequency] %>
+
+          <button type="submit"
+                  class="w-full text-left border-2 border-graphite p-6 flex items-center justify-between
+                         hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#2F2F2F]
+                         transition-all duration-100 group
+                         <%= 'border-saffron hover:shadow-[6px_6px_0px_0px_#F5C228]' if i == 1 %>">
+            <div class="flex items-center gap-4">
+              <div>
+                <p class="text-[15px] font-bold text-whiteish tracking-wide uppercase">
+                  <%= opt[:label] %>
+                </p>
+                <% if opt[:billing_type] == "recurring" && opt[:frequency] != "monthly" %>
+                  <p class="text-[11px] text-[#555] mt-1">
+                    Cobro automático cada
+                    <%= opt[:frequency] == "quarterly" ? "3 meses" : "12 meses" %>
+                  </p>
+                <% elsif opt[:billing_type] == "one_time" %>
+                  <p class="text-[11px] text-[#555] mt-1">
+                    Sin renovación automática
+                  </p>
+                <% else %>
+                  <p class="text-[11px] text-[#555] mt-1">
+                    Cobro automático mensual
+                  </p>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <% if opt[:badge] %>
+                <span class="bg-saffron text-blackish text-[10px] font-black tracking-[0.1em] uppercase
+                             px-2.5 py-1 whitespace-nowrap">
+                  <%= opt[:badge] %>
+                </span>
+              <% end %>
+              <div class="text-right">
+                <span class="text-[28px] font-black text-whiteish leading-none">
+                  <%= opt[:price] %>
+                </span>
+                <% if opt[:subtitle] %>
+                  <p class="text-[11px] text-[#555] font-medium mt-0.5"><%= opt[:subtitle] %></p>
+                <% end %>
+              </div>
+              <svg class="w-5 h-5 text-[#444] group-hover:text-whiteish transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </button>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%# Back link %>
+    <div class="text-center mt-8">
+      <%= link_to "← Volver a elegir plan", new_subscription_path,
+          class: "text-xs text-[#555] hover:text-whiteish tracking-wide uppercase font-bold transition-colors" %>
+    </div>
+
+    <%# Footer note %>
+    <p class="text-center mt-4 text-xs text-[#444] tracking-wide">
+      Al continuar aceptás los <a href="#" class="text-[#666] underline">términos y condiciones</a>.
+    </p>
+
+  </div>
+</div>

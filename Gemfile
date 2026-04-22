@@ -103,6 +103,7 @@ gem "hotwire-livereload", "~> 2.1", group: :development
 gem "neighbor"      # pgvector ActiveRecord integration
 gem "pdf-reader"    # PDF text extraction for book ingestion
 
+
 gem "rspec-rails", "~> 8.0", groups: [:development, :test]
 
 gem "factory_bot_rails", "~> 6.5", groups: [:development, :test]

@@ -1,11 +1,61 @@
 class SubscriptionsController < ApplicationController
+  include ActionView::Helpers::NumberHelper
+
   before_action :authenticate_user!
   layout "homepage"
 
-  VALID_PLAN_TIERS = %w[basic medium high_ticket].freeze
+  VALID_PLAN_TIERS    = %w[basic medium high_ticket].freeze
+  VALID_BILLING_TYPES = %w[one_time recurring].freeze
+  VALID_FREQUENCIES   = %w[monthly quarterly yearly].freeze
 
   def new
     @argentina = current_user.onboarding_profile&.argentina?
+  end
+
+  def frequency
+    @plan_tier = validated_plan_tier
+    if @plan_tier.nil?
+      redirect_to new_subscription_path, alert: "Plan inválido. Por favor elegí una opción."
+      return
+    end
+
+    @argentina = current_user.onboarding_profile&.argentina?
+    symbol     = Subscriptions::Pricing.currency_symbol(argentina: @argentina)
+
+    @options = [
+      {
+        label:        "Pago único (1 mes)",
+        billing_type: "one_time",
+        frequency:    "monthly",
+        price:        "#{symbol}#{number_with_delimiter(Subscriptions::Pricing.effective_price(@plan_tier, :one_time, :monthly, argentina: @argentina))}",
+        subtitle:     nil,
+        badge:        nil
+      },
+      {
+        label:        "Mensual",
+        billing_type: "recurring",
+        frequency:    "monthly",
+        price:        "#{symbol}#{number_with_delimiter(Subscriptions::Pricing.effective_price(@plan_tier, :recurring, :monthly, argentina: @argentina))}",
+        subtitle:     "/ mes",
+        badge:        nil
+      },
+      {
+        label:        "Trimestral",
+        billing_type: "recurring",
+        frequency:    "quarterly",
+        price:        "#{symbol}#{number_with_delimiter(Subscriptions::Pricing.effective_price(@plan_tier, :recurring, :quarterly, argentina: @argentina))}",
+        subtitle:     "/ mes",
+        badge:        "5% off"
+      },
+      {
+        label:        "Anual",
+        billing_type: "recurring",
+        frequency:    "yearly",
+        price:        "#{symbol}#{number_with_delimiter(Subscriptions::Pricing.effective_price(@plan_tier, :recurring, :yearly, argentina: @argentina))}",
+        subtitle:     "/ mes",
+        badge:        "10% off"
+      }
+    ]
   end
 
   def create
@@ -15,7 +65,20 @@ class SubscriptionsController < ApplicationController
       return
     end
 
-    result = Subscriptions::MercadoPagoCheckout.new(current_user, plan).call
+    billing_type = params[:billing_type]
+    frequency    = params[:frequency]
+
+    unless VALID_BILLING_TYPES.include?(billing_type) && VALID_FREQUENCIES.include?(frequency)
+      redirect_to subscription_frequency_path(plan_tier: plan), alert: "Seleccioná una frecuencia válida."
+      return
+    end
+
+    result = if billing_type == "one_time"
+      Subscriptions::MercadoPagoOneTimeCheckout.new(current_user, plan, frequency).call
+    else
+      Subscriptions::MercadoPagoCheckout.new(current_user, plan, frequency).call
+    end
+
     if result[:success]
       redirect_to result[:redirect_url], allow_other_host: true
     else

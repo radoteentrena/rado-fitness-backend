@@ -48,11 +48,11 @@ CLAUDE.md
 
 # Git worktrees
 /.worktrees
+/.playwright-mcp
 
 # Local documentation (persists across branches, not tracked)
 /docs/
 
-.playwright-mcp/
 .superpowers
 .kamal
 .claude

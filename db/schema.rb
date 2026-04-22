@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_20_185136) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_22_130725) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -297,6 +297,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_20_185136) do
     t.datetime "reminded_at"
     t.datetime "past_due_since"
     t.string "mp_preference_id"
+    t.index ["mp_preference_id"], name: "index_subscriptions_on_mp_preference_id", unique: true, where: "(mp_preference_id IS NOT NULL)"
     t.index ["processor"], name: "index_subscriptions_on_processor"
     t.index ["status"], name: "index_subscriptions_on_status"
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
@@ -363,6 +364,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_20_185136) do
     t.string "google_uid"
     t.string "provider", default: "email", null: false
     t.string "fcm_token"
+    t.integer "access_status", default: 0, null: false
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
