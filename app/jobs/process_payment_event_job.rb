@@ -29,6 +29,9 @@ class ProcessPaymentEventJob < ApplicationJob
     when "authorized"
       sub = Subscription.where(user: user, billing_type: :recurring, status: [:active, :pending])
                         .first_or_initialize
+      amount = mp_data.dig("auto_recurring", "transaction_amount")
+      amount_cents = amount ? (amount.to_f * 100).to_i : nil
+
       sub.assign_attributes(
         processor:            :mercadopago,
         plan_tier:            user.plan_tier,
@@ -38,6 +41,7 @@ class ProcessPaymentEventJob < ApplicationJob
         external_customer_id: mp_data["payer_id"].to_s,
         external_plan_id:     mp_data["preapproval_plan_id"],
         currency:             user.onboarding_profile&.argentina? ? "ARS" : "USD",
+        amount_cents:         amount_cents,
         reminded_at:          nil,
         past_due_since:       nil
       )

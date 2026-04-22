@@ -90,7 +90,7 @@
                     </span>
                 </td>
                 <td class="px-6 py-4">
-                    <%= resource.plan_tier&.titleize %>
+                    <%= (resource.active_subscription&.plan_tier || resource.plan_tier)&.titleize || "N/A" %>
                 </td>
                 <td class="px-6 py-4 text-right">
                     <%= link_to "Edit", edit_admin_user_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>
