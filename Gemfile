@@ -97,7 +97,7 @@ gem "google-apis-sheets_v4", "~> 0.46.0"
 gem "google-apis-drive_v3", "~> 0.46.0"
 gem "googleauth", "~> 1.16"
 
-gem "fcm"
+gem "fcm", "~> 2.0"
 
 gem "hotwire-livereload", "~> 2.1", group: :development
 
