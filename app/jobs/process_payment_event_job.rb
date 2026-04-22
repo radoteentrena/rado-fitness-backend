@@ -119,8 +119,10 @@ class ProcessPaymentEventJob < ApplicationJob
     when "approved"
       user.subscriptions.where.not(id: subscription.id).update_all(status: :canceled)
 
+      approved_at = payment["date_approved"].present? ? Time.parse(payment["date_approved"]) : Time.current
+
       subscription.update!(
-        access_expires_at: Time.current + 1.month,
+        access_expires_at: approved_at + 1.month,
         status:            :active
       )
       user.active!
