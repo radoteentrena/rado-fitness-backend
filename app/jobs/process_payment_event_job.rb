@@ -54,10 +54,15 @@ class ProcessPaymentEventJob < ApplicationJob
       user.active!
       user.access_active!
     when "cancelled"
-      sub = Subscription.find_by!(user: user)
+      sub = Subscription.find_by!(external_id: mp_id)
       sub.update!(status: :canceled, canceled_at: Time.current)
       user.churned!
-      user.access_locked!
+      if sub.current_period_end.nil? || sub.current_period_end <= Time.current
+        user.access_locked!
+      else
+        Rails.logger.info "Preapproval #{mp_id} cancelled but period ends #{sub.current_period_end} — " \
+                          "deferring access lock to dunning job"
+      end
     when "paused"
       Rails.logger.info "MP preapproval paused for user #{user.id} (mp_id: #{mp_id}) — no action taken"
     end
