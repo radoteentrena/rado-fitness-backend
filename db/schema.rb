@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_03_23_150148) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_22_130725) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -98,6 +98,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_23_150148) do
     t.index ["user_id"], name: "index_coach_alerts_on_user_id"
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "last_message_at"
+    t.datetime "read_by_coach_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_message_at"], name: "index_conversations_on_last_message_at"
+    t.index ["user_id"], name: "index_conversations_on_user_id", unique: true
+  end
+
   create_table "daily_metrics", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.date "date_logged"
@@ -146,41 +156,28 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_23_150148) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "leads", force: :cascade do |t|
-    t.string "name"
-    t.string "last_name"
-    t.string "gender"
-    t.integer "age"
-    t.string "weight"
-    t.string "height"
-    t.string "email"
-    t.string "phone"
-    t.string "instagram"
-    t.jsonb "goals"
-    t.integer "experience_level"
-    t.text "best_lifts"
-    t.string "commitment_level"
-    t.string "training_frequency"
-    t.text "injuries"
-    t.string "plays_sports"
-    t.string "sport_details"
-    t.string "time_per_session"
-    t.string "diet_quality"
-    t.string "activity_level"
-    t.string "sleep_hours"
-    t.string "social_media_consent"
-    t.string "referral_source"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "messages", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "sender_type"
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "conversation_id", null: false
+    t.datetime "discarded_at"
+    t.datetime "read_at"
+    t.index ["conversation_id", "created_at"], name: "index_messages_on_conversation_id_and_created_at"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["discarded_at"], name: "index_messages_on_discarded_at"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.string "notification_type"
+    t.text "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_notifications_on_conversation_id"
   end
 
   create_table "onboarding_profiles", force: :cascade do |t|
@@ -207,6 +204,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_23_150148) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "country"
+    t.string "training_years"
+    t.string "goals_other"
+    t.string "referral_source_other"
     t.index ["user_id"], name: "index_onboarding_profiles_on_user_id"
   end
 
@@ -297,6 +297,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_23_150148) do
     t.datetime "reminded_at"
     t.datetime "past_due_since"
     t.string "mp_preference_id"
+    t.index ["mp_preference_id"], name: "index_subscriptions_on_mp_preference_id", unique: true, where: "(mp_preference_id IS NOT NULL)"
     t.index ["processor"], name: "index_subscriptions_on_processor"
     t.index ["status"], name: "index_subscriptions_on_status"
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
@@ -360,10 +361,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_23_150148) do
     t.integer "workout_compliance_score"
     t.integer "diet_adherence_score"
     t.string "auth_token"
+    t.string "google_uid"
+    t.string "provider", default: "email", null: false
+    t.string "fcm_token"
     t.integer "access_status", default: 0, null: false
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["google_uid"], name: "index_users_on_google_uid", unique: true, where: "(google_uid IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
@@ -406,11 +411,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_03_23_150148) do
   add_foreign_key "ai_messages", "ai_conversations"
   add_foreign_key "book_chunks", "books"
   add_foreign_key "coach_alerts", "users"
+  add_foreign_key "conversations", "users"
   add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
   add_foreign_key "exercise_logs", "program_executions"
   add_foreign_key "exercise_logs", "workout_exercises"
+  add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
+  add_foreign_key "notifications", "conversations"
   add_foreign_key "onboarding_profiles", "users"
   add_foreign_key "phase_routines", "phases"
   add_foreign_key "phase_routines", "routines"
