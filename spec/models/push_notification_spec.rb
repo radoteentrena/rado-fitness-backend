@@ -11,6 +11,8 @@ RSpec.describe PushNotification do
     )
   end
 
+  after { PushNotification.instance_variable_set(:@fcm_client, nil) }
+
   describe "#deliver" do
     context "when user has no fcm_token" do
       before { user.fcm_token = nil }

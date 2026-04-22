@@ -9,8 +9,7 @@ class PushNotification
   def deliver
     return false if @user.fcm_token.blank?
 
-    client = FCM.new(Rails.application.credentials.dig(:firebase, :service_account_json))
-    response = client.send_v1(payload)
+    response = self.class.fcm_client.send_v1(payload)
 
     if response[:status_code] == 200
       Rails.logger.info("[PushNotification] Sent to user #{@user.id}")
@@ -22,6 +21,10 @@ class PushNotification
   rescue StandardError => e
     Rails.logger.error("[PushNotification] Error for user #{@user.id}: #{e.message}")
     false
+  end
+
+  def self.fcm_client
+    @fcm_client ||= FCM.new(Rails.application.credentials.dig(:firebase, :service_account_json))
   end
 
   private
