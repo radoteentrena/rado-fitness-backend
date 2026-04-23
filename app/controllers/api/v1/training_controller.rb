@@ -126,17 +126,16 @@ class Api::V1::TrainingController < Api::V1::BaseController
 
   def last_logged_for(workout_exercise, user)
     log = ExerciseLog
-      .joins(:program_execution)
+      .joins(:training_session)
       .where(workout_exercise_id: workout_exercise.id)
-      .where(program_executions: { user_id: user.id })
-      .order("program_executions.completed_at DESC")
+      .where(training_sessions: { user_id: user.id })
+      .order("training_sessions.completed_at DESC")
       .first
 
     return nil unless log
 
-    execution = log.program_execution
     {
-      date: execution.completed_at&.to_date&.to_s,
+      date: log.training_session.completed_at&.to_date&.to_s,
       actual_sets: log.actual_sets
     }
   end
@@ -155,10 +154,7 @@ class Api::V1::TrainingController < Api::V1::BaseController
     }
   end
 
-  # History shape includes prescribed + actual exercise logs
   def serialize_history_session(session)
-    program_execution = session.program_execution
-
     {
       id: session.id,
       session_number: session.session_number,
@@ -170,18 +166,16 @@ class Api::V1::TrainingController < Api::V1::BaseController
       skipped_at: session.skipped_at&.iso8601,
       skip_reason: session.skip_reason,
       notes: session.notes,
-      exercise_logs: serialize_exercise_logs_for_history(session.workout, program_execution)
+      exercise_logs: serialize_exercise_logs_for_history(session)
     }
   end
 
-  def serialize_exercise_logs_for_history(workout, program_execution)
-    return [] if program_execution.nil?
-
-    logs_by_we_id = program_execution.exercise_logs
+  def serialize_exercise_logs_for_history(session)
+    logs_by_we_id = session.exercise_logs
       .includes(:workout_exercise)
       .index_by(&:workout_exercise_id)
 
-    workout.workout_exercises.includes(:exercise).order(order_index: :asc).map do |we|
+    session.workout.workout_exercises.includes(:exercise).order(order_index: :asc).map do |we|
       log = logs_by_we_id[we.id]
       {
         exercise_name: we.exercise.name,

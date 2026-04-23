@@ -44,18 +44,11 @@ class TrainingProgressionService
     next_session = nil
 
     ActiveRecord::Base.transaction do
-      program_execution = ProgramExecution.create!(
-        user: training_session.user,
-        workout: training_session.workout,
-        training_session: training_session,
-        completed_at: Time.current
-      )
-
       Array(exercise_logs_params).each do |log_params|
         next unless log_params[:workout_exercise_id].present?
 
         ExerciseLog.create!(
-          program_execution: program_execution,
+          training_session: training_session,
           workout_exercise_id: log_params[:workout_exercise_id],
           actual_sets: log_params[:actual_sets]
         )

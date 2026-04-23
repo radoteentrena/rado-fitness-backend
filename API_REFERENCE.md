@@ -286,44 +286,7 @@ Para que los clientes suban sus fotos semanales.
 
 ---
 
-## 6. Ejecución de Entrenamientos (Loggear el Workout)
-
-Este es el más complicado. Lo usás cuando el usuario termina el entrenamiento en el gimnasio y le da a "Guardar".
-
-- **Endpoint:** `POST /program_executions`
-- **Qué labura:** Guarda exactamente qué hizo el boludo en el gimnasio: peso, repeticiones, RIR (Repeticiones en Reserva) de cada serie.
-- **Body de la petición (prestá atención a la estructura anidada):**
-  ```json
-  {
-    "program_execution": {
-      "workout_id": 12, // ID del workout que acaba de hacer
-      "completed_at": "2026-02-26T14:30:00Z",
-      "duration_minutes": 65, // Cuánto tardó
-      "exercise_logs_attributes": [
-        {
-          "workout_exercise_id": 45, // ID del primer ejercicio
-          "actual_sets": [
-            { "reps": 10, "load": 100, "rir": 2 }, // Primera serie
-            { "reps": 8, "load": 105, "rir": 1 }   // Segunda serie
-          ]
-        },
-        {
-          "workout_exercise_id": 46, // Segundo ejercicio
-          "actual_sets": [
-             { "reps": 12, "load": 50, "rir": 2 }
-          ]
-        }
-      ]
-    }
-  }
-  ```
-- **Si anda bien (Status 201):**
-  `{ "id": 5, "message": "Workout successfully logged" }`
-- **Si hay error (Status 422):** Te tira los `"errors"`. Fijate si te falta algún ID que rompa las validaciones.
-
----
-
-## 7. Entrenamientos (Training Sessions)
+## 6. Entrenamientos (Training Sessions)
 
 Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltarla si es necesario, e historial.
 
@@ -482,7 +445,7 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 
 ---
 
-## 8. Token de Dispositivo (Push Notifications)
+## 7. Token de Dispositivo (Push Notifications)
 
 Para recibir notificaciones push, la app tiene que registrar el token FCM del dispositivo después del login.
 
