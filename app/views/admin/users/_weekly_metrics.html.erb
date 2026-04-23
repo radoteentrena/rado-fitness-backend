@@ -131,10 +131,10 @@
                           ((session.completed_at - session.started_at) / 60).round
                         end
                       %>
-                      <div class="flex justify-between items-center mt-2 pt-1 border-t border-shadow/50 dark:border-primary/30">
-                         <span class="text-[10px] text-graphite dark:text-muted">Workout</span>
-                         <span class="text-[10px] font-bold text-warning"><%= duration_min ? "#{duration_min}m" : '✓' %></span>
-                      </div>
+                      <%= link_to admin_training_session_path(session), data: { turbo_frame: "modal_frame", turbo_prefetch: "false" }, class: "flex justify-between items-center mt-2 pt-1 border-t border-shadow/50 dark:border-primary/30 hover:opacity-70 transition-opacity" do %>
+                        <span class="text-[10px] text-graphite dark:text-muted">Workout</span>
+                        <span class="text-[10px] font-bold text-warning"><%= duration_min ? "#{duration_min}m" : '✓' %></span>
+                      <% end %>
                     <% end %>
                  </div>
 
@@ -152,10 +152,10 @@
                      ((session.completed_at - session.started_at) / 60).round
                    end
                  %>
-                 <div class="text-center">
+                 <%= link_to admin_training_session_path(session), data: { turbo_frame: "modal_frame", turbo_prefetch: "false" }, class: "text-center hover:opacity-70 transition-opacity" do %>
                    <span class="material-symbols-outlined text-warning text-xl">fitness_center</span>
                    <span class="block text-[10px] text-warning font-medium"><%= duration_min ? "#{duration_min}m" : '✓' %></span>
-                 </div>
+                 <% end %>
                <% else %>
                  <span class="text-graphite dark:text-muted text-[10px] italic">No Log</span>
                <% end %>
