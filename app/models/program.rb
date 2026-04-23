@@ -35,6 +35,8 @@ class Program < ApplicationRecord
         end
       end
 
+      TrainingProgressionService.create_initial_session(target_user, new_program)
+
       new_program
     end
   end
