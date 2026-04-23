@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       resources :daily_metrics, only: [ :show ]
       # resources :messages  # Removed — use Conversations instead
       resources :progress_photos, except: [ :index ]
+      resources :training_sessions, only: [ :show ]
       resources :subscription_cancellations, only: [:create]
       resources :subscriptions, only: [:index, :show]
 
