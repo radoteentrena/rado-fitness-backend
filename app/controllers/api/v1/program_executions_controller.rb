@@ -13,14 +13,19 @@ class Api::V1::ProgramExecutionsController < Api::V1::BaseController
   private
 
   def execution_params
-    params.require(:program_execution).permit(
-      :workout_id,
+    p = params.require(:program_execution).permit(
+      :workout_id, :routine_id,
       :completed_at,
       :duration_minutes,
       exercise_logs_attributes: [
-        :workout_exercise_id,
+        :workout_exercise_id, :routine_exercise_id,
         actual_sets: [ :reps, :load, :rir ]
       ]
     )
+    p[:workout_id] ||= p.delete(:routine_id)
+    p[:exercise_logs_attributes]&.each do |log|
+      log[:workout_exercise_id] ||= log.delete(:routine_exercise_id)
+    end
+    p
   end
 end

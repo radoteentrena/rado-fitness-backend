@@ -296,19 +296,19 @@ Este es el más complicado. Lo usás cuando el usuario termina el entrenamiento 
   ```json
   {
     "program_execution": {
-      "routine_id": 12, // ID de la rutina que acaba de hacer
+      "workout_id": 12, // ID del workout que acaba de hacer
       "completed_at": "2026-02-26T14:30:00Z",
       "duration_minutes": 65, // Cuánto tardó
       "exercise_logs_attributes": [
         {
-          "routine_exercise_id": 45, // ID del primer ejercicio
+          "workout_exercise_id": 45, // ID del primer ejercicio
           "actual_sets": [
             { "reps": 10, "load": 100, "rir": 2 }, // Primera serie
             { "reps": 8, "load": 105, "rir": 1 }   // Segunda serie
           ]
         },
         {
-          "routine_exercise_id": 46, // Segundo ejercicio
+          "workout_exercise_id": 46, // Segundo ejercicio
           "actual_sets": [
              { "reps": 12, "load": 50, "rir": 2 }
           ]
