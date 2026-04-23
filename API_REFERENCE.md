@@ -340,31 +340,42 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 - **Body:** Nada, solo el token.
 - **Qué te devuelve:** La sesión con status `"in_progress"` y toda la info de ejercicios igual que arriba.
 
-### Completar la Sesión (Registrar el Entrenamiento)
-- **Endpoint:** `POST /training/complete`
-- **Qué labura:** Guarda todos los ejercicios que hizo (series, reps, pesos, RPE) y marca la sesión como completada. También te devuelve la siguiente sesión si existe.
+### Registrar un Ejercicio (Incremental)
+- **Endpoint:** `PUT /training/log_exercise`
+- **Qué labura:** Guarda (o actualiza) el log de un ejercicio individual mientras la sesión está en progreso. Se llama cada vez que el usuario avanza al siguiente ejercicio. Si ya existe un log para ese ejercicio en la sesión, lo sobreescribe.
 - **Body de la petición:**
   ```json
   {
-    "exercise_logs": [
-      {
-        "workout_exercise_id": 45,
-        "actual_sets": [
-          { "reps": 6, "weight": 100, "rpe": 8 },
-          { "reps": 5, "weight": 105, "rpe": 8 }
-        ]
-      },
-      {
-        "workout_exercise_id": 46,
-        "actual_sets": [
-          { "reps": 10, "weight": 50, "rpe": 7 }
-        ]
-      }
-    ],
-    "notes": "Me sentí fuerte hoy"
+    "workout_exercise_id": 45,
+    "actual_sets": [
+      { "reps": 6, "weight": 100, "rpe": 8 },
+      { "reps": 5, "weight": 105, "rpe": 8 }
+    ]
   }
   ```
 - **Campos en `actual_sets`:** `reps`, `weight`, `rpe` (RPE = 1-10, qué tan duro estuvo).
+- **Qué te devuelve:**
+  ```json
+  {
+    "exercise_log": {
+      "workout_exercise_id": 45,
+      "actual_sets": [
+        { "reps": 6, "weight": 100, "rpe": 8 },
+        { "reps": 5, "weight": 105, "rpe": 8 }
+      ]
+    }
+  }
+  ```
+
+### Completar la Sesión
+- **Endpoint:** `POST /training/complete`
+- **Qué labura:** Marca la sesión como completada. Los ejercicios ya fueron guardados con `PUT /training/log_exercise`. También te devuelve la siguiente sesión si existe.
+- **Body de la petición:**
+  ```json
+  {
+    "notes": "Me sentí fuerte hoy"
+  }
+  ```
 - **Qué te devuelve:**
   ```json
   {

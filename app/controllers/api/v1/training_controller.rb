@@ -1,5 +1,5 @@
 class Api::V1::TrainingController < Api::V1::BaseController
-  before_action :set_current_session, only: [ :start, :complete, :skip ]
+  before_action :set_current_session, only: [ :start, :log_exercise, :complete, :skip ]
 
   # GET /api/v1/training/current
   def current
@@ -20,11 +20,32 @@ class Api::V1::TrainingController < Api::V1::BaseController
     render json: { error: e.message }, status: :unprocessable_entity
   end
 
+  # PUT /api/v1/training/log_exercise
+  def log_exercise
+    we_id = log_exercise_params[:workout_exercise_id]
+    sets  = log_exercise_params[:actual_sets]
+
+    unless we_id.present?
+      return render json: { error: "workout_exercise_id es requerido." }, status: :unprocessable_entity
+    end
+
+    log = ExerciseLog.find_or_initialize_by(
+      training_session: @training_session,
+      workout_exercise_id: we_id
+    )
+    log.actual_sets = sets
+
+    if log.save
+      render json: { exercise_log: { workout_exercise_id: log.workout_exercise_id, actual_sets: log.actual_sets } }
+    else
+      render json: { error: log.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    end
+  end
+
   # POST /api/v1/training/complete
   def complete
     result = TrainingProgressionService.complete_session(
       @training_session,
-      complete_params[:exercise_logs] || [],
       notes: complete_params[:notes]
     )
 
@@ -85,10 +106,11 @@ class Api::V1::TrainingController < Api::V1::BaseController
   end
 
   def complete_params
-    params.permit(
-      :notes,
-      exercise_logs: [ :workout_exercise_id, actual_sets: [ :reps, :weight, :rpe ] ]
-    )
+    params.permit(:notes)
+  end
+
+  def log_exercise_params
+    params.permit(:workout_exercise_id, actual_sets: [ :reps, :weight, :rpe ])
   end
 
   # Full session shape including workout exercises and last_logged data
@@ -128,7 +150,7 @@ class Api::V1::TrainingController < Api::V1::BaseController
     log = ExerciseLog
       .joins(:training_session)
       .where(workout_exercise_id: workout_exercise.id)
-      .where(training_sessions: { user_id: user.id })
+      .where(training_sessions: { user_id: user.id, status: TrainingSession.statuses[:completed] })
       .order("training_sessions.completed_at DESC")
       .first
 
