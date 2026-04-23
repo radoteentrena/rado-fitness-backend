@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_22_130725) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_23_200138) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -138,12 +138,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_22_130725) do
   end
 
   create_table "exercise_logs", force: :cascade do |t|
-    t.bigint "program_execution_id", null: false
     t.bigint "workout_exercise_id", null: false
     t.jsonb "actual_sets"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["program_execution_id"], name: "index_exercise_logs_on_program_execution_id"
+    t.bigint "training_session_id", null: false
+    t.index ["training_session_id"], name: "index_exercise_logs_on_training_session_id"
     t.index ["workout_exercise_id"], name: "index_exercise_logs_on_workout_exercise_id"
   end
 
@@ -229,19 +229,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_22_130725) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["program_id"], name: "index_phases_on_program_id"
-  end
-
-  create_table "program_executions", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.datetime "completed_at"
-    t.integer "duration_minutes"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "workout_id", null: false
-    t.bigint "training_session_id"
-    t.index ["training_session_id"], name: "index_program_executions_on_training_session_id"
-    t.index ["user_id"], name: "index_program_executions_on_user_id"
-    t.index ["workout_id"], name: "index_program_executions_on_workout_id"
   end
 
   create_table "programs", force: :cascade do |t|
@@ -414,7 +401,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_22_130725) do
   add_foreign_key "conversations", "users"
   add_foreign_key "daily_metrics", "user_dietary_plans"
   add_foreign_key "daily_metrics", "users"
-  add_foreign_key "exercise_logs", "program_executions"
+  add_foreign_key "exercise_logs", "training_sessions"
   add_foreign_key "exercise_logs", "workout_exercises"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
@@ -423,9 +410,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_22_130725) do
   add_foreign_key "phase_routines", "phases"
   add_foreign_key "phase_routines", "routines"
   add_foreign_key "phases", "programs"
-  add_foreign_key "program_executions", "training_sessions"
-  add_foreign_key "program_executions", "users"
-  add_foreign_key "program_executions", "workouts"
   add_foreign_key "programs", "users"
   add_foreign_key "progress_photos", "users"
   add_foreign_key "routines", "users"

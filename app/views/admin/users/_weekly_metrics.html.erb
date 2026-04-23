@@ -84,8 +84,8 @@
     <% days.each do |day| %>
       <% metric = metrics_by_date[day] %>
       <% is_today = day == Date.today %>
-      <% execution = user.program_executions.where(completed_at: day.beginning_of_day..day.end_of_day).first %>
-      <% workout_done = metric&.workout_completed || execution.present? %>
+      <% session = user.training_sessions.completed.where(completed_at: day.beginning_of_day..day.end_of_day).first %>
+      <% workout_done = metric&.workout_completed || session.present? %>
 
       <%
         border_class = is_today ? 'border-primary' : (workout_done ? 'border-warning' : 'border-shadow dark:border-primary/30')
@@ -125,10 +125,15 @@
                        <span class="text-[10px] text-graphite dark:text-muted">Ptn</span>
                        <span class="text-xs font-medium text-blackish dark:text-whiteish"><%= metric.protein_consumed || "-" %></span>
                     </div>
-                    <% if execution %>
+                    <% if session %>
+                      <%
+                        duration_min = if session.started_at && session.completed_at
+                          ((session.completed_at - session.started_at) / 60).round
+                        end
+                      %>
                       <div class="flex justify-between items-center mt-2 pt-1 border-t border-shadow/50 dark:border-primary/30">
                          <span class="text-[10px] text-graphite dark:text-muted">Workout</span>
-                         <span class="text-[10px] font-bold text-warning"><%= execution.duration_minutes || '-' %>m</span>
+                         <span class="text-[10px] font-bold text-warning"><%= duration_min ? "#{duration_min}m" : '✓' %></span>
                       </div>
                     <% end %>
                  </div>
@@ -141,11 +146,16 @@
              <% end %>
            <% else %>
              <div class="flex-1 flex flex-col items-center justify-center space-y-2">
-               <% if execution %>
-                 <%= link_to admin_program_execution_path(execution), class: "text-center hover:opacity-80" do %>
+               <% if session %>
+                 <%
+                   duration_min = if session.started_at && session.completed_at
+                     ((session.completed_at - session.started_at) / 60).round
+                   end
+                 %>
+                 <div class="text-center">
                    <span class="material-symbols-outlined text-warning text-xl">fitness_center</span>
-                   <span class="block text-[10px] text-warning font-medium"><%= execution.duration_minutes || '-' %>m</span>
-                 <% end %>
+                   <span class="block text-[10px] text-warning font-medium"><%= duration_min ? "#{duration_min}m" : '✓' %></span>
+                 </div>
                <% else %>
                  <span class="text-graphite dark:text-muted text-[10px] italic">No Log</span>
                <% end %>

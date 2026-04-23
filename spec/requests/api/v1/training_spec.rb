@@ -135,13 +135,12 @@ RSpec.describe "Training API", type: :request do
     context "with an in_progress session" do
       before { in_progress_session }
 
-      it "returns 200, completes the session, and creates a ProgramExecution" do
-        expect {
-          post "/api/v1/training/complete", headers: auth_headers(user)
-        }.to change(ProgramExecution, :count).by(1)
+      it "returns 200 and completes the session" do
+        post "/api/v1/training/complete", headers: auth_headers(user)
 
         expect(response).to have_http_status(:ok)
         expect(json["session"]["status"]).to eq("completed")
+        expect(in_progress_session.reload.status).to eq("completed")
       end
 
       it "includes next_session in the response" do
