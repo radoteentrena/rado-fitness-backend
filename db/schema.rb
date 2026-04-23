@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_23_200138) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -143,6 +143,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_200138) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "training_session_id", null: false
+    t.index ["training_session_id", "workout_exercise_id"], name: "index_exercise_logs_unique_per_session", unique: true
     t.index ["training_session_id"], name: "index_exercise_logs_on_training_session_id"
     t.index ["workout_exercise_id"], name: "index_exercise_logs_on_workout_exercise_id"
   end

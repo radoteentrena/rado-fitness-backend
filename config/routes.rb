@@ -84,6 +84,7 @@ Rails.application.routes.draw do
       namespace :training do
         get :current
         post :start
+        put :log_exercise
         post :complete
         post :skip
         get :history
