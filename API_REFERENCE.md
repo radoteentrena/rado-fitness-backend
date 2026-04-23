@@ -482,12 +482,44 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 
 ---
 
+## 8. Token de Dispositivo (Push Notifications)
+
+Para recibir notificaciones push, la app tiene que registrar el token FCM del dispositivo después del login.
+
+- **Endpoint:** `PUT /device_token`
+- **Qué labura:** Guarda (o actualiza) el token FCM del dispositivo asociado al usuario autenticado.
+- **Body de la petición:**
+  ```json
+  {
+    "fcm_token": "dGhpcyBpcyBhIHNhbXBsZSB0b2tlbg..."
+  }
+  ```
+- **Si anda bien (Status 204):** Sin body. Éxito silencioso.
+- **Si hay error (Status 422):**
+  ```json
+  {
+    "errors": ["fcm_token can't be blank"]
+  }
+  ```
+
+**Cuándo llamarlo:** Al hacer login y cada vez que el SDK de Firebase entregue un nuevo token (el token puede rotar).
+
+---
+
 ## Manejo de Errores (Importante)
 
 Siempre revisa el código HTTP de la respuesta:
 
 - **200 / 201** — Todo bien, che. Guardamos los datos.
 - **401 Unauthorized** — El token falta, caducó o está mal. Mandalo al login de nuevo.
+- **403 Forbidden (`access_locked`)** — La suscripción del usuario venció. La respuesta incluye una URL de pago para redirigir:
+  ```json
+  {
+    "error": "access_locked",
+    "payment_url": "https://radoteentrena.com/subscriptions/new"
+  }
+  ```
+  Mostrá un paywall o redirigí al usuario a `payment_url`.
 - **404 Not Found** — El recurso no existe (ej. no hay sesión activa para `/training/start`).
 - **422 Unprocessable Entity** — Falló una validación. Revisa el array `"errors"` de la respuesta y mostráselo al usuario.
 - **500 Internal Server Error** — Esto es culpa mía. Avísame y reviso los logs.
