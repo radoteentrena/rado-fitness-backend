@@ -9,6 +9,8 @@ class RefactorExerciseLogsToTrainingSession < ActiveRecord::Migration[8.0]
       WHERE program_executions.id = exercise_logs.program_execution_id
     SQL
 
+    execute "DELETE FROM exercise_logs WHERE training_session_id IS NULL"
+
     change_column_null :exercise_logs, :training_session_id, false
 
     remove_foreign_key :exercise_logs, :program_executions
