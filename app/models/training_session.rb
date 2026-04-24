@@ -4,7 +4,7 @@ class TrainingSession < ApplicationRecord
   belongs_to :phase
   belongs_to :routine
   belongs_to :workout
-  has_one :program_execution
+  has_many :exercise_logs, dependent: :destroy
 
   enum :status, { pending: 0, in_progress: 1, completed: 2, skipped: 3 }
 

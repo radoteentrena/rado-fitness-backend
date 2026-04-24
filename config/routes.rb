@@ -47,8 +47,7 @@ Rails.application.routes.draw do
       resources :daily_metrics, only: [ :show ]
       # resources :messages  # Removed — use Conversations instead
       resources :progress_photos, except: [ :index ]
-      resources :program_executions, except: [ :index ]
-      resources :exercise_logs, except: [ :index ]
+      resources :training_sessions, only: [ :show ]
       resources :subscription_cancellations, only: [:create]
       resources :subscriptions, only: [:index, :show]
 
@@ -81,11 +80,11 @@ Rails.application.routes.draw do
       resources :messages, only: [ :index, :create ]
       resources :daily_metrics, only: [ :create ]
       resources :progress_photos, only: [ :create ]
-      resources :program_executions, only: [ :create ]
 
       namespace :training do
         get :current
         post :start
+        put :log_exercise
         post :complete
         post :skip
         get :history
