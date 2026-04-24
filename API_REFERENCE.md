@@ -286,44 +286,7 @@ Para que los clientes suban sus fotos semanales.
 
 ---
 
-## 6. Ejecución de Entrenamientos (Loggear el Workout)
-
-Este es el más complicado. Lo usás cuando el usuario termina el entrenamiento en el gimnasio y le da a "Guardar".
-
-- **Endpoint:** `POST /program_executions`
-- **Qué labura:** Guarda exactamente qué hizo el boludo en el gimnasio: peso, repeticiones, RIR (Repeticiones en Reserva) de cada serie.
-- **Body de la petición (prestá atención a la estructura anidada):**
-  ```json
-  {
-    "program_execution": {
-      "workout_id": 12, // ID del workout que acaba de hacer
-      "completed_at": "2026-02-26T14:30:00Z",
-      "duration_minutes": 65, // Cuánto tardó
-      "exercise_logs_attributes": [
-        {
-          "workout_exercise_id": 45, // ID del primer ejercicio
-          "actual_sets": [
-            { "reps": 10, "load": 100, "rir": 2 }, // Primera serie
-            { "reps": 8, "load": 105, "rir": 1 }   // Segunda serie
-          ]
-        },
-        {
-          "workout_exercise_id": 46, // Segundo ejercicio
-          "actual_sets": [
-             { "reps": 12, "load": 50, "rir": 2 }
-          ]
-        }
-      ]
-    }
-  }
-  ```
-- **Si anda bien (Status 201):**
-  `{ "id": 5, "message": "Workout successfully logged" }`
-- **Si hay error (Status 422):** Te tira los `"errors"`. Fijate si te falta algún ID que rompa las validaciones.
-
----
-
-## 7. Entrenamientos (Training Sessions)
+## 6. Entrenamientos (Training Sessions)
 
 Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltarla si es necesario, e historial.
 
@@ -377,31 +340,42 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 - **Body:** Nada, solo el token.
 - **Qué te devuelve:** La sesión con status `"in_progress"` y toda la info de ejercicios igual que arriba.
 
-### Completar la Sesión (Registrar el Entrenamiento)
-- **Endpoint:** `POST /training/complete`
-- **Qué labura:** Guarda todos los ejercicios que hizo (series, reps, pesos, RPE) y marca la sesión como completada. También te devuelve la siguiente sesión si existe.
+### Registrar un Ejercicio (Incremental)
+- **Endpoint:** `PUT /training/log_exercise`
+- **Qué labura:** Guarda (o actualiza) el log de un ejercicio individual mientras la sesión está en progreso. Se llama cada vez que el usuario avanza al siguiente ejercicio. Si ya existe un log para ese ejercicio en la sesión, lo sobreescribe.
 - **Body de la petición:**
   ```json
   {
-    "exercise_logs": [
-      {
-        "workout_exercise_id": 45,
-        "actual_sets": [
-          { "reps": 6, "weight": 100, "rpe": 8 },
-          { "reps": 5, "weight": 105, "rpe": 8 }
-        ]
-      },
-      {
-        "workout_exercise_id": 46,
-        "actual_sets": [
-          { "reps": 10, "weight": 50, "rpe": 7 }
-        ]
-      }
-    ],
-    "notes": "Me sentí fuerte hoy"
+    "workout_exercise_id": 45,
+    "actual_sets": [
+      { "reps": 6, "weight": 100, "rpe": 8 },
+      { "reps": 5, "weight": 105, "rpe": 8 }
+    ]
   }
   ```
 - **Campos en `actual_sets`:** `reps`, `weight`, `rpe` (RPE = 1-10, qué tan duro estuvo).
+- **Qué te devuelve:**
+  ```json
+  {
+    "exercise_log": {
+      "workout_exercise_id": 45,
+      "actual_sets": [
+        { "reps": 6, "weight": 100, "rpe": 8 },
+        { "reps": 5, "weight": 105, "rpe": 8 }
+      ]
+    }
+  }
+  ```
+
+### Completar la Sesión
+- **Endpoint:** `POST /training/complete`
+- **Qué labura:** Marca la sesión como completada. Los ejercicios ya fueron guardados con `PUT /training/log_exercise`. También te devuelve la siguiente sesión si existe.
+- **Body de la petición:**
+  ```json
+  {
+    "notes": "Me sentí fuerte hoy"
+  }
+  ```
 - **Qué te devuelve:**
   ```json
   {
@@ -482,7 +456,7 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 
 ---
 
-## 8. Token de Dispositivo (Push Notifications)
+## 7. Token de Dispositivo (Push Notifications)
 
 Para recibir notificaciones push, la app tiene que registrar el token FCM del dispositivo después del login.
 

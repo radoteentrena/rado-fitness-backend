@@ -36,7 +36,7 @@ class TrainingProgressionService
     training_session
   end
 
-  def self.complete_session(training_session, exercise_logs_params, notes: nil)
+  def self.complete_session(training_session, notes: nil)
     unless training_session.in_progress?
       raise ArgumentError, "La sesión debe estar en progreso para completarse (estado actual: #{training_session.status})"
     end
@@ -44,23 +44,6 @@ class TrainingProgressionService
     next_session = nil
 
     ActiveRecord::Base.transaction do
-      program_execution = ProgramExecution.create!(
-        user: training_session.user,
-        workout: training_session.workout,
-        training_session: training_session,
-        completed_at: Time.current
-      )
-
-      Array(exercise_logs_params).each do |log_params|
-        next unless log_params[:workout_exercise_id].present?
-
-        ExerciseLog.create!(
-          program_execution: program_execution,
-          workout_exercise_id: log_params[:workout_exercise_id],
-          actual_sets: log_params[:actual_sets]
-        )
-      end
-
       training_session.update!(
         status: :completed,
         completed_at: Time.current,

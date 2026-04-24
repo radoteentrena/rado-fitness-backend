@@ -68,7 +68,6 @@
       <div class="space-y-2" data-controller="disclosure">
         <% history_sessions.each do |session| %>
           <%
-            program_execution = session.program_execution
             duration_str = if session.started_at && session.completed_at
               minutes = ((session.completed_at - session.started_at) / 60).round
               "#{minutes}m"
@@ -122,9 +121,9 @@
                 <p class="text-sm text-graphite dark:text-muted italic">
                   Skipped<% if session.skip_reason.present? %>: "<%= session.skip_reason %>"<% end %>
                 </p>
-              <% elsif session.completed? && program_execution %>
+              <% elsif session.completed? %>
                 <%
-                  logs_by_we_id = program_execution.exercise_logs
+                  logs_by_we_id = session.exercise_logs
                     .includes(:workout_exercise)
                     .index_by(&:workout_exercise_id)
                   workout_exercises = session.workout.workout_exercises.includes(:exercise).order(order_index: :asc)
