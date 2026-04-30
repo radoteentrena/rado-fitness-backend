@@ -1,6 +1,7 @@
 json.user do
   json.extract! @user, :id, :first_name, :last_name, :email, :plan_tier, :category
   json.full_name @user.name
+  json.avatar_url @user.avatar.attached? ? url_for(@user.avatar) : nil
 end
 
 json.recent_metrics @metrics
