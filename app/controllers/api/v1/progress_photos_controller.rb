@@ -1,4 +1,18 @@
 class Api::V1::ProgressPhotosController < Api::V1::BaseController
+  def index
+    photos = current_user.progress_photos.order(date: :desc)
+    render json: {
+      photos: photos.map do |photo|
+        {
+          id:        photo.id,
+          date:      photo.date,
+          note:      photo.note,
+          image_url: photo.image.attached? ? url_for(photo.image) : nil
+        }
+      end
+    }
+  end
+
   def create
     @photo = current_user.progress_photos.build(photo_params)
 

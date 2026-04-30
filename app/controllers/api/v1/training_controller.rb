@@ -1,5 +1,6 @@
 class Api::V1::TrainingController < Api::V1::BaseController
-  before_action :set_current_session, only: [ :start, :log_exercise, :complete, :skip ]
+  before_action :set_session_for_start, only: [ :start ]
+  before_action :set_current_session, only: [ :log_exercise, :complete, :skip ]
 
   # GET /api/v1/training/current
   def current
@@ -97,6 +98,20 @@ class Api::V1::TrainingController < Api::V1::BaseController
 
   private
 
+  def set_session_for_start
+    workout_id = params[:workout_id]
+
+    @training_session = if workout_id.present?
+      current_user.training_sessions
+        .where(workout_id: workout_id, status: [ TrainingSession.statuses[:pending], TrainingSession.statuses[:in_progress] ])
+        .first
+    else
+      TrainingSession.current_for(current_user)
+    end
+
+    render json: { error: "No hay sesión activa." }, status: :not_found if @training_session.nil?
+  end
+
   def set_current_session
     @training_session = TrainingSession.current_for(current_user)
 
@@ -140,6 +155,8 @@ class Api::V1::TrainingController < Api::V1::BaseController
           load: we.load,
           early_rpe: we.early_rpe,
           last_rpe: we.last_rpe,
+          warmup: we.warmup_sets.present?,
+          warmup_sets: we.warmup_sets,
           last_logged: last_logged_for(we, user)
         }
       end

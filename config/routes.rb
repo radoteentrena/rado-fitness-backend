@@ -79,7 +79,10 @@ Rails.application.routes.draw do
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]
       resources :daily_metrics, only: [ :create ]
-      resources :progress_photos, only: [ :create ]
+      resources :progress_photos, only: [ :index, :create ]
+
+      put "users/avatar",  to: "users#update_avatar"
+      get "user/progress", to: "users#progress"
 
       namespace :training do
         get :current

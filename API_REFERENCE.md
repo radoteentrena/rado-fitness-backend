@@ -201,6 +201,7 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
 **Notas:**
 - `active_routine` refleja la rutina activa según la semana actual del programa (respeta `duration_weeks` de cada bloque).
 - `current_week` es la semana actual del programa desde que fue asignado al usuario (empieza en 1). Sirve para mostrar progreso ("Semana 4 de 12").
+- `user.avatar_url` es la URL de la foto de perfil del usuario. Puede ser `null` si no tiene foto.
 
 ---
 
@@ -266,8 +267,27 @@ Si en vez del chat querés un formulario clásico para que registre peso, pasos,
 
 ## 5. Fotos de Progreso
 
-Para que los clientes suban sus fotos semanales.
+Para que los clientes suban y vean sus fotos semanales.
 
+### Obtener Todas las Fotos
+- **Endpoint:** `GET /progress_photos`
+- **Qué labura:** Devuelve todas las fotos de progreso del usuario, de la más reciente a la más vieja.
+- **Parámetros:** Nada.
+- **Qué te devuelve:**
+  ```json
+  {
+    "photos": [
+      {
+        "id": 1,
+        "date": "2026-04-20",
+        "note": "Me veo más grande",
+        "image_url": "https://www.radoteentrena.com/rails/active_storage/blobs/..."
+      }
+    ]
+  }
+  ```
+
+### Subir una Foto
 - **Endpoint:** `POST /progress_photos`
 - **Atención acá:** Cuando mandás una foto real desde React Native, **no** mandes un JSON de lo común. Tenés que usar `FormData` (`multipart/form-data`).
 - **Cómo estructurar el FormData:**
@@ -317,6 +337,8 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
             "load": "RPE 8",
             "early_rpe": "~7",
             "last_rpe": "~8",
+            "warmup": true,
+            "warmup_sets": "2x10",
             "last_logged": {
               "date": "2026-02-20",
               "actual_sets": [
@@ -329,6 +351,8 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
     }
   }
   ```
+- `warmup`: `true` si el ejercicio tiene series de entrada en calor. `false` si no.
+- `warmup_sets`: El string con las series de calentamiento (ej. `"2x10"`). `null` si no tiene.
 - **Si no hay sesión activa:**
   ```json
   { "session": null, "status": "no_active_program" }
@@ -336,8 +360,14 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 
 ### Iniciar la Sesión
 - **Endpoint:** `POST /training/start`
-- **Qué labura:** Marca la sesión como "en progreso" y registra cuándo empezó.
-- **Body:** Nada, solo el token.
+- **Qué labura:** Marca la sesión como "en progreso" y registra cuándo empezó. El cliente puede elegir qué workout iniciar mandando el `workout_id`.
+- **Body:**
+  ```json
+  {
+    "workout_id": 10
+  }
+  ```
+  Si no mandás `workout_id`, arranca la primera sesión pendiente (comportamiento anterior).
 - **Qué te devuelve:** La sesión con status `"in_progress"` y toda la info de ejercicios igual que arriba.
 
 ### Registrar un Ejercicio (Incremental)
@@ -456,7 +486,57 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 
 ---
 
-## 7. Token de Dispositivo (Push Notifications)
+## 7. Perfil de Usuario
+
+### Subir Foto de Perfil
+- **Endpoint:** `PUT /users/avatar`
+- **Atención acá:** Usar `FormData` (`multipart/form-data`), no JSON.
+- **Cómo estructurar el FormData:**
+  - `avatar`: El archivo de la foto (Blob/File).
+- **Si anda bien (Status 200):**
+  ```json
+  {
+    "avatar_url": "https://www.radoteentrena.com/rails/active_storage/blobs/..."
+  }
+  ```
+- **Notas:** La URL devuelta se puede usar directamente en un `<Image>`. El `avatar_url` también aparece en `/sync` y en las respuestas de `/auth/google` y `/auth/email` dentro del objeto `user`.
+
+---
+
+### Progreso del Usuario
+- **Endpoint:** `GET /user/progress`
+- **Qué labura:** Te devuelve el resumen de progreso del usuario: racha activa, días entrenados, cumplimiento de workouts y métricas, y el historial reciente de sesiones.
+- **Parámetros:** Nada.
+- **Qué te devuelve:**
+  ```json
+  {
+    "streak": 7,
+    "days_trained": 42,
+    "workout_compliance": 85,
+    "metric_compliance": 78,
+    "recent_sessions": [
+      {
+        "date": "2026-04-29",
+        "status": "completed",
+        "workout_name": "Upper Body A"
+      },
+      {
+        "date": "2026-04-27",
+        "status": "skipped",
+        "workout_name": "Lower Body A"
+      }
+    ]
+  }
+  ```
+- `streak`: Sesiones consecutivas completadas desde la más reciente. Se rompe con cualquier sesión saltada.
+- `days_trained`: Total histórico de sesiones completadas.
+- `workout_compliance`: Porcentaje de cumplimiento de entrenamientos (últimos 7 días vs. objetivo semanal).
+- `metric_compliance`: Porcentaje de días con métricas registradas y compliant (últimos 30 días).
+- `recent_sessions`: Últimas 10 sesiones (completadas o saltadas), de la más reciente a la más vieja.
+
+---
+
+## 8. Token de Dispositivo (Push Notifications)
 
 Para recibir notificaciones push, la app tiene que registrar el token FCM del dispositivo después del login.
 
@@ -481,6 +561,7 @@ Para recibir notificaciones push, la app tiene que registrar el token FCM del di
 ---
 
 ## Manejo de Errores (Importante)
+
 
 Siempre revisa el código HTTP de la respuesta:
 
