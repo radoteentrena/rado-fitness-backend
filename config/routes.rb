@@ -8,7 +8,13 @@ Rails.application.routes.draw do
   get  "subscription/processing", to: "subscriptions#processing", as: :subscriptions_processing
 
   namespace :admin do
-      resources :coach_alerts
+      resources :coach_alerts do
+        member do
+          patch :resolve
+          patch :dismiss
+          post  :send_message
+        end
+      end
       resources :conversations, only: [:index, :show] do
         post :create_message
         delete :delete_message
