@@ -504,7 +504,7 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 ---
 
 ### Progreso del Usuario
-- **Endpoint:** `GET /user/progress`
+- **Endpoint:** `GET /users/progress`
 - **Qué labura:** Te devuelve el resumen de progreso del usuario: racha activa, días entrenados, cumplimiento de workouts y métricas, y el historial reciente de sesiones.
 - **Parámetros:** Nada.
 - **Qué te devuelve:**
