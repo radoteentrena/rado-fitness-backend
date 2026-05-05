@@ -97,7 +97,7 @@
                                 <td class="px-4 py-3 truncate max-w-xs"><%= alert.message %></td>
                                 <td class="px-4 py-3"><%= time_ago_in_words(alert.created_at) %> ago</td>
                                 <td class="px-4 py-3">
-                                    <%= link_to "View", "/avo/resources/coach_alerts/#{alert.id}", class: "font-medium text-primary hover:underline" %>
+                                    <%= link_to "View", admin_coach_alert_path(alert), class: "font-medium text-primary hover:underline" %>
                                 </td>
                             </tr>
                             <% end %>
