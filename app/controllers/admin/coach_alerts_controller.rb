@@ -15,6 +15,8 @@ module Admin
 
     def show
       @coach_alert = CoachAlert.find(params[:id])
+      sent_ids = session["coach_alert_messages_#{@coach_alert.id}"] || []
+      @alert_messages = sent_ids.any? ? Message.where(id: sent_ids).chronological : []
     end
 
     def new
@@ -40,6 +42,30 @@ module Admin
         redirect_to admin_coach_alert_path(@coach_alert), notice: "Alert updated."
       else
         render :edit, status: :unprocessable_entity
+      end
+    end
+
+    def send_message
+      @coach_alert = CoachAlert.find(params[:id])
+      user = @coach_alert.user
+      content = params[:content].to_s.strip
+
+      if content.blank?
+        redirect_to admin_coach_alert_path(@coach_alert), alert: "Message can't be blank."
+        return
+      end
+
+      conversation = Conversation.find_or_create_by!(user: user)
+      message = conversation.messages.build(content: content, sender_type: :coach, user: user)
+
+      if message.save
+        conversation.update(last_message_at: Time.current)
+        NotifyUserOfCoachReplyJob.perform_later(message.id) if defined?(NotifyUserOfCoachReplyJob)
+        key = "coach_alert_messages_#{@coach_alert.id}"
+        session[key] = (session[key] || []) + [message.id]
+        redirect_to admin_coach_alert_path(@coach_alert), notice: "Message sent to #{user.name}."
+      else
+        redirect_to admin_coach_alert_path(@coach_alert), alert: "Failed to send: #{message.errors.full_messages.join(', ')}"
       end
     end
 

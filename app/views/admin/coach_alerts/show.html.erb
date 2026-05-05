@@ -35,12 +35,12 @@
 
     <div class="flex items-center gap-3">
       <% if alert.pending? %>
-        <%= button_to "Resolve", resolve_admin_coach_alert_path(alert), method: :patch,
+        <%= button_to resolve_admin_coach_alert_path(alert), method: :patch,
             class: "flex items-center gap-1.5 px-4 py-2 bg-green-600 hover:bg-green-700 text-whiteish font-bold text-sm rounded-lg transition-colors cursor-pointer" do %>
           <span class="material-symbols-outlined text-base">check_circle</span>
           Resolve
         <% end %>
-        <%= button_to "Dismiss", dismiss_admin_coach_alert_path(alert), method: :patch,
+        <%= button_to dismiss_admin_coach_alert_path(alert), method: :patch,
             data: { turbo_confirm: "Dismiss this alert?" },
             class: "flex items-center gap-1.5 px-4 py-2 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish font-bold text-sm rounded-lg transition-colors cursor-pointer" do %>
           <span class="material-symbols-outlined text-base">close</span>
@@ -79,19 +79,40 @@
         </div>
       </div>
 
-      <%# Action Taken %>
-      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite p-6">
-        <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-muted mb-4">Action Taken</h3>
-        <% if alert.action_taken.present? %>
-          <p class="text-blackish dark:text-whiteish leading-relaxed"><%= alert.action_taken %></p>
-        <% else %>
-          <div class="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-shadow dark:border-graphite rounded-lg">
-            <span class="material-symbols-outlined text-3xl text-graphite dark:text-muted mb-2">pending_actions</span>
-            <p class="text-graphite dark:text-muted text-sm">No action recorded yet.</p>
-            <%= link_to "Add action", edit_admin_coach_alert_path(alert), data: { turbo_frame: "modal_frame" },
-                class: "text-primary text-sm hover:underline mt-1" %>
+      <%# Message Client %>
+      <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-sm border border-shadow dark:border-graphite overflow-hidden">
+        <%# Sent from this alert %>
+        <% if @alert_messages.any? %>
+          <div class="flex flex-col gap-3 p-4 max-h-64 overflow-y-auto">
+            <% @alert_messages.each do |msg| %>
+              <div class="flex justify-end">
+                <div class="max-w-[80%] px-3 py-2 rounded-xl rounded-br-sm text-sm text-blackish bg-primary">
+                  <p class="leading-snug"><%= msg.content %></p>
+                  <p class="text-[10px] mt-1 text-blackish/60"><%= msg.created_at.strftime("%b %d · %H:%M") %></p>
+                </div>
+              </div>
+            <% end %>
           </div>
+          <div class="border-t border-shadow dark:border-graphite"></div>
         <% end %>
+
+        <%# Compose %>
+        <div class="p-4">
+          <% unless @alert_messages.any? %>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-muted mb-3">Message Client</h3>
+          <% end %>
+          <%= form_with url: send_message_admin_coach_alert_path(alert), method: :post do |f| %>
+            <%= f.text_area :content,
+                rows: 3,
+                placeholder: "Write a message to #{alert.user.name}...",
+                class: "block w-full p-3 text-sm text-blackish bg-background-light rounded-lg border border-shadow focus:ring-primary focus:border-primary dark:bg-graphite dark:border-graphite dark:text-whiteish dark:placeholder-muted resize-none" %>
+            <div class="flex items-center justify-between mt-3">
+              <p class="text-xs text-graphite dark:text-muted">Sends via in-app chat.</p>
+              <%= f.submit "Send",
+                  class: "px-4 py-2 bg-primary hover:bg-primary/90 text-blackish font-bold text-sm rounded-lg transition-colors cursor-pointer" %>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
 
