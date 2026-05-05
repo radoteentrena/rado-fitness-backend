@@ -1,54 +1,45 @@
-require "net/http"
-require "uri"
-require "json"
-
 class AiCoachService
-  GENERATION_MODEL = "gemini-flash-latest"
-
   def initialize
-    @api_key = ENV["GEMINI_API_KEY"]
-    @embedding_service = EmbeddingService.new
-    @base_url = "https://generativelanguage.googleapis.com/v1beta/models/#{GENERATION_MODEL}:generateContent"
+    @gemini  = GeminiClient.new
+    @embedder = EmbeddingService.new
   end
 
   def generate_program(objectives:, user: nil, mode: "program")
-    book_context = retrieve_context(objectives)
-    client_profile = build_client_profile(user)
-    exercises_list = Exercise.all.pluck(:name, :muscle_group).map { |n, mg| "#{n} (#{mg})" }.join(", ")
+    book_context    = retrieve_context(objectives)
+    client_profile  = build_client_profile(user)
+    exercises_list  = Rails.cache.fetch("exercises_list", expires_in: 1.hour) do
+      Exercise.all.pluck(:name, :muscle_group).map { |n, mg| "#{n} (#{mg})" }.join(", ")
+    end
+
     system_prompt = build_system_prompt(mode)
-    user_prompt = build_generation_prompt(
-      objectives: objectives,
-      book_context: book_context,
+    user_prompt   = build_generation_prompt(
+      objectives:     objectives,
+      book_context:   book_context,
       client_profile: client_profile,
       exercises_list: exercises_list,
-      mode: mode
+      mode:           mode
     )
 
-    response_text = call_gemini(system_prompt, user_prompt)
-    structured_data = parse_json_response(response_text)
+    response_text   = @gemini.call(system_prompt, user_prompt)
+    structured_data = @gemini.parse_json(response_text)
 
     conversation = AiConversation.create!(
-      user: user,
-      title: structured_data.dig("program", "name") || "AI Generated #{mode.capitalize}",
-      objectives: objectives,
+      user:           user,
+      title:          structured_data.dig("program", "name") || "AI Generated #{mode.capitalize}",
+      objectives:     objectives,
       generated_data: structured_data
     )
 
     conversation.add_message!(role: "user", content: objectives)
-    conversation.add_message!(
-      role: "assistant",
-      content: response_text,
-      structured_data: structured_data
-    )
+    conversation.add_message!(role: "assistant", content: response_text, structured_data: structured_data)
 
     { conversation: conversation, structured_data: structured_data }
   end
 
   def refine(conversation:, message:, mode: "program", program_context: nil)
-    book_context = mode == "program_chat" ? nil : retrieve_context(message)
-
-    history = mode == "program_chat" ? [] : conversation.message_history
-    latest_data = program_context || conversation.generated_data
+    book_context  = mode == "program_chat" ? nil : retrieve_context(message)
+    history       = mode == "program_chat" ? [] : conversation.message_history
+    latest_data   = program_context || conversation.generated_data
 
     refinement_prompt = if mode == "program_chat"
       <<~PROMPT
@@ -74,16 +65,12 @@ class AiCoachService
       PROMPT
     end
 
-    system_prompt = build_system_prompt(mode)
-    response_text = call_gemini(system_prompt, refinement_prompt, history: history)
-    structured_data = parse_json_response(response_text)
+    system_prompt   = build_system_prompt(mode)
+    response_text   = @gemini.call(system_prompt, refinement_prompt, history: history)
+    structured_data = @gemini.parse_json(response_text)
 
     conversation.add_message!(role: "user", content: message)
-    conversation.add_message!(
-      role: "assistant",
-      content: response_text,
-      structured_data: structured_data
-    )
+    conversation.add_message!(role: "assistant", content: response_text, structured_data: structured_data)
     conversation.update!(generated_data: structured_data)
 
     { conversation: conversation, structured_data: structured_data }
@@ -91,7 +78,7 @@ class AiCoachService
 
   def rank_programs(shortlist, user)
     client_profile = build_client_profile(user)
-    serialized = shortlist.map { |t| { name: t.name, description: t.description, duration_weeks: t.duration_weeks } }
+    serialized     = shortlist.map { |t| { name: t.name, description: t.description, duration_weeks: t.duration_weeks } }
 
     prompt = <<~PROMPT
       Client profile:
@@ -103,12 +90,16 @@ class AiCoachService
       Return only the name of the program from the list that best fits this client's profile.
     PROMPT
 
-    response = call_gemini(
-      "You are a fitness program matcher. Return ONLY the program name, nothing else.",
-      prompt
-    )
-    matched_name = response&.strip&.downcase
-    shortlist.find { |t| t.name.strip.downcase == matched_name }
+    response   = @gemini.call("You are a fitness program matcher. Return ONLY the program name, nothing else.", prompt)
+    matched    = response&.strip&.downcase
+    shortlist.find { |t| t.name.strip.downcase == matched }
+  end
+
+  def create_records!(conversation)
+    result = ProgramRecordBuilder.new(conversation.generated_data, conversation.user).build!
+    program = result.is_a?(Program) ? result : nil
+    conversation.update!(status: "completed", program: program)
+    result
   end
 
   def build_client_profile(user)
@@ -152,121 +143,18 @@ class AiCoachService
     ONBOARDING
   end
 
-  def create_records!(conversation)
-    data = conversation.generated_data
-    user = conversation.user
-
-    ActiveRecord::Base.transaction do
-      program = nil
-
-      if data["program"]
-        program = Program.create!(
-          name: data["program"]["name"],
-          description: data["program"]["description"],
-          duration_weeks: data["program"]["duration_weeks"],
-          user: user
-        )
-
-        phase = Phase.create!(
-          name: "Phase 1",
-          description: "Initial phase for #{program.name}",
-          duration_weeks: program.duration_weeks,
-          program: program,
-          order_index: 1
-        )
-      else
-        phase = nil
-      end
-
-      data["routines"]&.each_with_index do |routine_data, r_index|
-        routine = Routine.create!(
-          name: routine_data["name"],
-          description: routine_data["description"],
-          duration_weeks: routine_data["duration_weeks"],
-          is_template: user.nil?,
-          user: user
-        )
-
-        if phase
-          PhaseRoutine.create!(phase: phase, routine: routine, order_index: r_index)
-        end
-
-        routine_data["workouts"]&.each_with_index do |workout_data, w_index|
-          workout = Workout.create!(
-            routine: routine,
-            name: workout_data["name"] || "Workout #{w_index + 1}",
-            description: workout_data["description"],
-            day_number: workout_data["day_number"] || (w_index + 1),
-            order_index: w_index
-          )
-
-          workout_data["exercises"]&.each_with_index do |ex_data, index|
-            exercise = find_or_create_exercise(ex_data)
-
-            WorkoutExercise.create!(
-              workout: workout,
-              exercise: exercise,
-              sets: ex_data["sets"],
-              reps: ex_data["reps"].to_s,
-              rest_seconds: ex_data["rest_seconds"],
-              intensity_technique: ex_data["intensity_technique"],
-              warmup_sets: ex_data["warmup_sets"],
-              early_rpe: ex_data["early_rpe"],
-              last_rpe: ex_data["last_rpe"],
-              load: ex_data["load"],
-              time_estimate: ex_data["time_estimate"],
-              sub_option_one: ex_data["sub_option_one"],
-              sub_option_two: ex_data["sub_option_two"],
-              order_index: index
-            )
-          end
-        end
-      end
-
-      if data["dietary_plan"]
-        dietary_plan = DietaryPlan.create!(
-          name: data["dietary_plan"]["name"],
-          description: data["dietary_plan"]["description"],
-          calories_target: data["dietary_plan"]["calories_target"],
-          protein_target: data["dietary_plan"]["protein_target"]
-        )
-
-        if user
-          user.user_dietary_plans.active.update_all(active: false)
-          UserDietaryPlan.create!(
-            user: user,
-            dietary_plan: dietary_plan,
-            phase: phase,
-            calories_target: dietary_plan.calories_target,
-            protein_target: dietary_plan.protein_target,
-            start_date: Date.current,
-            end_date: Date.current + (program&.duration_weeks || 8).weeks,
-            active: true
-          )
-        end
-      end
-
-      conversation.update!(status: "completed", program: program)
-
-      program || Routine.where(user: user).last
-    end
-  end
-
   private
 
   def retrieve_context(query)
-    query_embedding = @embedding_service.embed(query)
+    query_embedding = @embedder.embed(query)
     return "No book knowledge available." unless query_embedding
 
     chunks = BookChunk.search(query_embedding, limit: 10)
+    return "No relevant book knowledge found for this query." if chunks.none?
 
-    if chunks.any?
-      chunks.map.with_index do |chunk, i|
-        "[Source #{i + 1} - #{chunk.book.title}, p.#{chunk.page_number}]\n#{chunk.content}"
-      end.join("\n\n")
-    else
-      "No relevant book knowledge found for this query."
-    end
+    chunks.map.with_index do |chunk, i|
+      "[Source #{i + 1} - #{chunk.book.title}, p.#{chunk.page_number}]\n#{chunk.content}"
+    end.join("\n\n")
   end
 
   def build_system_prompt(mode)
@@ -361,7 +249,7 @@ class AiCoachService
 
     <<~JSON
       {
-#{program_block.chomp}
+    #{program_block.chomp}
         "routines": [
           {
             "name": "string (e.g. 'Push/Pull/Legs 1')",
@@ -402,98 +290,5 @@ class AiCoachService
     }
   }
     JSON
-  end
-
-  def find_or_create_exercise(ex_data)
-    if ex_data["existing_exercise_id"]
-      Exercise.find_by(id: ex_data["existing_exercise_id"]) ||
-        Exercise.find_or_create_by!(name: ex_data["name"]) do |e|
-          e.muscle_group = ex_data["muscle_group"]
-        end
-    else
-      Exercise.find_or_create_by!(name: ex_data["name"]) do |e|
-        e.muscle_group = ex_data["muscle_group"]
-      end
-    end
-  end
-
-  def call_gemini(system_prompt, user_prompt, history: [], attempt: 1)
-    uri = URI("#{@base_url}?key=#{@api_key}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE if Rails.env.development?
-
-    contents = []
-
-    history.each do |msg|
-      contents << {
-        role: msg[:role] == "assistant" ? "model" : "user",
-        parts: [ { text: msg[:content] } ]
-      }
-    end
-
-    contents << { role: "user", parts: [ { text: user_prompt } ] }
-
-    request = Net::HTTP::Post.new(uri)
-    request["Content-Type"] = "application/json"
-    request.body = {
-      system_instruction: { parts: [ { text: system_prompt } ] },
-      contents: contents,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 8192
-      }
-    }.to_json
-
-    response = http.request(request)
-
-    if response.code == "200"
-      json = JSON.parse(response.body)
-      json.dig("candidates", 0, "content", "parts", 0, "text")
-    elsif response.code == "429" && attempt <= 3
-      wait = 2 ** attempt
-      Rails.logger.warn("Gemini 429 – retrying in #{wait}s (attempt #{attempt}/3)")
-      sleep(wait)
-      call_gemini(system_prompt, user_prompt, history: history, attempt: attempt + 1)
-    else
-      Rails.logger.error("Gemini API Error: #{response.code} - #{response.body}")
-      raise "Gemini API error: #{response.code}"
-    end
-  end
-
-  def parse_json_response(text)
-    return {} unless text
-
-    begin
-      return JSON.parse(text)
-    rescue JSON::ParserError
-    end
-    if text.include?("```json")
-      match = text.match(/```json\s*(.*?)\s*```/m)
-      return JSON.parse(match[1]) if match
-    end
-
-    if text.include?("```")
-      match = text.match(/```\s*(.*?)\s*```/m)
-      return JSON.parse(match[1]) if match
-    end
-    first_brace = text.index("{")
-    last_brace = text.rindex("}")
-
-    if first_brace && last_brace && last_brace > first_brace
-      json_candidate = text[first_brace..last_brace]
-      begin
-        return JSON.parse(json_candidate)
-      rescue JSON::ParserError
-        Rails.logger.error("AiCoachService JSON extract failed on candidate: #{json_candidate.first(100)}...")
-      end
-    end
-
-    Rails.logger.error("AiCoachService failed to parse response: #{text.first(100)}...")
-    {}
-  rescue JSON::ParserError => e
-    Rails.logger.error("AiCoachService JSON parse error: #{e.message}")
-    Rails.logger.error("Raw response: #{text}")
-    {}
   end
 end

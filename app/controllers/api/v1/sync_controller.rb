@@ -1,7 +1,7 @@
 class Api::V1::SyncController < Api::V1::BaseController
   def index
     @user = current_user
-    @active_program = @user.programs.last
+    @active_program = @user.active_program
     @dietary_plan = @user.user_dietary_plans.active.first
     @active_routine = @active_program&.current_routine
     @current_week = @active_program&.current_week

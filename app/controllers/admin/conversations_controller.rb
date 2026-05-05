@@ -72,12 +72,14 @@ module Admin
     end
 
     def load_conversations
-      # Load all conversations, unread first, then by last message timestamp
-      @conversations = Conversation.all.sort_by do |c|
-        unread_count = c.messages.where(read_at: nil).where(sender_type: 'client').count
-        # Sort by: unread count (descending) then last_message_at (descending)
-        [-unread_count, -(c.last_message_at&.to_i || 0)]
-      end
+      @conversations = Conversation
+        .left_joins(:messages)
+        .select(
+          "conversations.*",
+          "COUNT(CASE WHEN messages.read_at IS NULL AND messages.sender_type = 'client' AND messages.discarded_at IS NULL THEN 1 END) AS unread_count"
+        )
+        .group("conversations.id")
+        .order("unread_count DESC, COALESCE(conversations.last_message_at, '1970-01-01') DESC")
     end
 
     def message_params

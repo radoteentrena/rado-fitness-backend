@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_05_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -124,6 +124,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
     t.boolean "on_target", default: false
     t.boolean "workout_completed", default: false
     t.index ["user_dietary_plan_id"], name: "index_daily_metrics_on_user_dietary_plan_id"
+    t.index ["user_id", "date_logged"], name: "index_daily_metrics_on_user_id_and_date_logged"
     t.index ["user_id"], name: "index_daily_metrics_on_user_id"
   end
 
@@ -155,6 +156,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_exercises_on_name_unique", unique: true
   end
 
   create_table "messages", force: :cascade do |t|

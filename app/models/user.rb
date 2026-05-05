@@ -67,10 +67,15 @@ class User < ApplicationRecord
     subscriptions.where(status: [:pending, :active]).order(created_at: :desc).first
   end
 
-  def target_workouts_per_week
-    return 4 unless programs.exists?
+  def active_program
+    programs.order(created_at: :desc).first
+  end
 
-    active_routine = programs.last.routines.first
+  def target_workouts_per_week
+    program = active_program
+    return 4 unless program
+
+    active_routine = program.routines.first
     return 4 unless active_routine
 
     days_count = active_routine.workouts.count

@@ -53,6 +53,7 @@ CLAUDE.md
 # Local documentation (persists across branches, not tracked)
 /docs/
 
+.agents
 .superpowers
 .kamal
 .claude
