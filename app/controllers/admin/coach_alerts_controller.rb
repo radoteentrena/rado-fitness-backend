@@ -6,6 +6,7 @@ module Admin
       resources = Administrate::Search.new(scoped_resource, dashboard, search_term).run
       resources = apply_collection_includes(resources)
       resources = order.apply(resources)
+      resources = resources.includes(:user)
       resources = resources.where(status: params[:status]) if params[:status].present?
       resources = resources.where(category: params[:category]) if params[:category].present?
       resources = resources.page(params[:page]).per(records_per_page)
@@ -62,7 +63,7 @@ module Admin
         conversation.update(last_message_at: Time.current)
         NotifyUserOfCoachReplyJob.perform_later(message.id) if defined?(NotifyUserOfCoachReplyJob)
         key = "coach_alert_messages_#{@coach_alert.id}"
-        session[key] = (session[key] || []) + [message.id]
+        session[key] = ((session[key] || []) + [message.id]).last(10)
         redirect_to admin_coach_alert_path(@coach_alert), notice: "Message sent to #{user.name}."
       else
         redirect_to admin_coach_alert_path(@coach_alert), alert: "Failed to send: #{message.errors.full_messages.join(', ')}"
@@ -71,14 +72,20 @@ module Admin
 
     def resolve
       @coach_alert = CoachAlert.find(params[:id])
-      @coach_alert.update!(status: :resolved)
-      redirect_to admin_coach_alerts_path, notice: "Alert resolved."
+      if @coach_alert.update(status: :resolved)
+        redirect_to admin_coach_alerts_path, notice: "Alert resolved."
+      else
+        redirect_to admin_coach_alert_path(@coach_alert), alert: "Could not resolve alert."
+      end
     end
 
     def dismiss
       @coach_alert = CoachAlert.find(params[:id])
-      @coach_alert.update!(status: :dismissed)
-      redirect_to admin_coach_alerts_path, notice: "Alert dismissed."
+      if @coach_alert.update(status: :dismissed)
+        redirect_to admin_coach_alerts_path, notice: "Alert dismissed."
+      else
+        redirect_to admin_coach_alert_path(@coach_alert), alert: "Could not dismiss alert."
+      end
     end
 
     private
