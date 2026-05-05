@@ -12,6 +12,7 @@ Rails.application.routes.draw do
         member do
           patch :resolve
           patch :dismiss
+          post  :send_message
         end
       end
       resources :conversations, only: [:index, :show] do

@@ -81,7 +81,7 @@ module Admin
     end
 
     def message_params
-      params.permit(:content)
+      params.require(:conversation).permit(:content)
     end
 
     def decode_base64_to_blob(data_url)
