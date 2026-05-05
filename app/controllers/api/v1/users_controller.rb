@@ -14,7 +14,7 @@ class Api::V1::UsersController < Api::V1::BaseController
     end
   end
 
-  # GET /api/v1/user/progress
+  # GET /api/v1/users/progress
   def progress
     user = current_user
 
@@ -22,6 +22,7 @@ class Api::V1::UsersController < Api::V1::BaseController
     streak          = calculate_streak(user)
 
     recent_sessions = user.training_sessions
+      .includes(:workout)
       .where(status: [ TrainingSession.statuses[:completed], TrainingSession.statuses[:skipped] ])
       .order(session_number: :desc)
       .limit(10)
@@ -36,8 +37,8 @@ class Api::V1::UsersController < Api::V1::BaseController
     render json: {
       streak:             streak,
       days_trained:       completed_count,
-      workout_compliance: user.workout_compliance_score || user.calculate_workout_compliance_score,
-      metric_compliance:  user.diet_adherence_score     || user.calculate_diet_adherence_score,
+      workout_compliance: user.workout_compliance_score.nil? ? user.calculate_workout_compliance_score : user.workout_compliance_score,
+      metric_compliance:  user.diet_adherence_score.nil?     ? user.calculate_diet_adherence_score     : user.diet_adherence_score,
       recent_sessions:    recent_sessions
     }
   end

@@ -1,6 +1,6 @@
 class Api::V1::ProgressPhotosController < Api::V1::BaseController
   def index
-    photos = current_user.progress_photos.order(date: :desc)
+    photos = current_user.progress_photos.order(date: :desc).limit(50)
     render json: {
       photos: photos.map do |photo|
         {
