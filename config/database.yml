@@ -24,7 +24,7 @@ development:
   <<: *default
   database: rado_fitness_development
   host:     <%= ENV.fetch("DB_HOST", "127.0.0.1") %>
-  port:     <%= ENV.fetch("DB_PORT", 5433) %>
+  port:     <%= ENV.fetch("DB_PORT", 5432) %>
   username: <%= ENV.fetch("DB_USERNAME", "rado_fitness") %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD", "") %>
 
@@ -32,7 +32,7 @@ test:
   <<: *default
   database: rado_fitness_test
   host:     <%= ENV.fetch("DB_HOST", "127.0.0.1") %>
-  port:     <%= ENV.fetch("DB_PORT", 5433) %>
+  port:     <%= ENV.fetch("DB_PORT", 5432) %>
   username: <%= ENV.fetch("DB_USERNAME", "rado_fitness") %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD", "") %>
 
