@@ -73,6 +73,9 @@ gem "administrate"
 # CORS
 gem "rack-cors"
 
+# Rate limiting
+gem "rack-attack"
+
 # Authentication
 gem "devise"
 gem "google_sign_in"

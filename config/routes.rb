@@ -81,6 +81,7 @@ Rails.application.routes.draw do
       get "sync", to: "sync#index"
       post "auth/google", to: "auth#google"
       post "auth/email", to: "auth#email"
+      delete "auth/session", to: "auth#destroy"
 
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]

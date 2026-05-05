@@ -16,3 +16,8 @@ production:
   subscription_dunning:
     class: SubscriptionDunningJob
     schedule: at 9am every day
+    timezone: "America/Argentina/Buenos_Aires"
+  user_alerts:
+    class: UserAlertJob
+    schedule: at 8am every day
+    timezone: "America/Argentina/Buenos_Aires"
