@@ -637,7 +637,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails (~> 6.5)
   faker (~> 3.5)
-  fcm
+  fcm (~> 2.0)
   google-apis-drive_v3 (~> 0.46.0)
   google-apis-sheets_v4 (~> 0.46.0)
   google-cloud-storage (~> 1.58)
