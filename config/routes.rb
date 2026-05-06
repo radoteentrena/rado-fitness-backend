@@ -82,6 +82,7 @@ Rails.application.routes.draw do
       post "auth/google", to: "auth#google"
       post "auth/email", to: "auth#email"
       delete "auth/session", to: "auth#destroy"
+      put "device_token", to: "device_tokens#update"
 
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]
