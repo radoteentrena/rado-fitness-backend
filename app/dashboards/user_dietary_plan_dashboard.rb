@@ -11,12 +11,14 @@ class UserDietaryPlanDashboard < Administrate::BaseDashboard
     id: Field::Number,
     active: Field::Boolean,
     calories_target: Field::Number,
+    protein_target: Field::Number,
+    fats_target: Field::Number,
+    carbs_target: Field::Number,
     daily_metrics: Field::HasMany,
     dietary_plan: Field::BelongsTo,
     phase: Field::BelongsTo,
     end_date: Field::Date,
     notes: Field::Text,
-    protein_target: Field::Number,
     start_date: Field::Date,
     user: Field::BelongsTo,
     created_at: Field::DateTime,
@@ -42,12 +44,14 @@ class UserDietaryPlanDashboard < Administrate::BaseDashboard
     id
     active
     calories_target
+    protein_target
+    fats_target
+    carbs_target
     daily_metrics
     phase
     dietary_plan
     end_date
     notes
-    protein_target
     start_date
     user
     created_at
@@ -60,12 +64,14 @@ class UserDietaryPlanDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = %i[
     active
     calories_target
+    protein_target
+    fats_target
+    carbs_target
     daily_metrics
     phase
     dietary_plan
     end_date
     notes
-    protein_target
     start_date
     user
   ].freeze

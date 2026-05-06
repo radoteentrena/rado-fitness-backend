@@ -14,7 +14,8 @@ class GeminiService
       Parse the following unstructured text into a valid JSON object with these keys:
       - calories (integer, estimate if needed)
       - protein (integer, grams)
-      - steps (integer)
+      - fats (integer, grams)
+      - carbs (integer, grams)
       - weight (float, kg)
 
       If a value is not mentioned, use null.

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_05_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_06_153532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -113,7 +113,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000002) do
     t.date "date_logged"
     t.integer "calories_consumed"
     t.integer "protein_consumed"
-    t.integer "steps"
     t.float "weight"
     t.text "raw_message_content"
     t.boolean "compliant"
@@ -123,6 +122,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000002) do
     t.bigint "user_dietary_plan_id"
     t.boolean "on_target", default: false
     t.boolean "workout_completed", default: false
+    t.integer "fats"
+    t.integer "carbs"
     t.index ["user_dietary_plan_id"], name: "index_daily_metrics_on_user_dietary_plan_id"
     t.index ["user_id", "date_logged"], name: "index_daily_metrics_on_user_id_and_date_logged"
     t.index ["user_id"], name: "index_daily_metrics_on_user_id"
@@ -136,6 +137,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000002) do
     t.integer "calories_target"
     t.integer "protein_target"
     t.text "notes"
+    t.integer "fats_target"
+    t.integer "carbs_target"
   end
 
   create_table "exercise_logs", force: :cascade do |t|
@@ -328,6 +331,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_05_000002) do
     t.date "end_date"
     t.boolean "active", default: true
     t.bigint "phase_id"
+    t.integer "fats_target"
+    t.integer "carbs_target"
     t.index ["dietary_plan_id"], name: "index_user_dietary_plans_on_dietary_plan_id"
     t.index ["phase_id"], name: "index_user_dietary_plans_on_phase_id"
     t.index ["user_id"], name: "index_user_dietary_plans_on_user_id"

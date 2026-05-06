@@ -15,6 +15,8 @@ class DietaryPlan < ApplicationRecord
         dietary_plan: self,
         calories_target: calories_target,
         protein_target: protein_target,
+        fats_target: fats_target,
+        carbs_target: carbs_target,
         notes: notes,
         start_date: Date.current,
         active: true
