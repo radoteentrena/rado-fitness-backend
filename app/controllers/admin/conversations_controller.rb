@@ -27,7 +27,11 @@ module Admin
       if @message.save
         @conversation.update(last_message_at: Time.current)
 
+<<<<<<< HEAD
         NotifyUserOfCoachReplyJob.perform_later(@message.id) if defined?(NotifyUserOfCoachReplyJob)
+=======
+        NotifyUserOfCoachReplyJob.perform_later(@message.id)
+>>>>>>> ab438b10a1125919fc7d5c233de6bbffb321509a
 
         redirect_to admin_conversation_path(@conversation), notice: t('admin.conversations.message_sent')
       else
