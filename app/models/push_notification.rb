@@ -24,7 +24,14 @@ class PushNotification
   end
 
   def self.fcm_client
-    @fcm_client ||= FCM.new(Rails.application.credentials.dig(:firebase, :service_account_json))
+    @fcm_client ||= FCM.new(firebase_credentials)
+  end
+
+  def self.firebase_credentials
+    Rails.application.credentials.dig(:firebase, :service_account_json) ||
+      (File.read("config/firebase_credentials.json") if File.exist?("config/firebase_credentials.json")) ||
+      ENV["FIREBASE_CREDENTIALS_JSON"] ||
+      raise(ArgumentError, "Firebase credentials not configured. Set credentials[:firebase][:service_account_json], config/firebase_credentials.json, or FIREBASE_CREDENTIALS_JSON env var.")
   end
 
   private
