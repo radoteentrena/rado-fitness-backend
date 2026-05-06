@@ -81,6 +81,7 @@ Rails.application.routes.draw do
       get "sync", to: "sync#index"
       post "auth/google", to: "auth#google"
       post "auth/email", to: "auth#email"
+      put "device_token", to: "device_tokens#update"
 
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]

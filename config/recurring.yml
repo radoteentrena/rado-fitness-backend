@@ -16,3 +16,6 @@ production:
   subscription_dunning:
     class: SubscriptionDunningJob
     schedule: at 9am every day
+  payment_reminder:
+    class: PaymentReminderJob
+    schedule: "0 12 * * *"
