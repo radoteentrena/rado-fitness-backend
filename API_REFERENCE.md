@@ -153,10 +153,13 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
       "id": 3,
       "calories_target": 2800,
       "protein_target": 200,
+      "fats_target": 80,
+      "carbs_target": 350,
       "notes": null,
       "start_date": "2026-01-01",
       "end_date": "2026-03-01",
-      "active": true
+      "active": true,
+      "logged_weight": false
     },
     "active_program": {
       "id": 7,
@@ -255,7 +258,8 @@ Si en vez del chat querés un formulario clásico para que registre peso, pasos,
       "weight": 82.5,
       "calories_consumed": 2500,
       "protein_consumed": 180,
-      "steps": 10000,
+      "fats": 70,
+      "carbs": 300,
       "workout_completed": true
     }
   }

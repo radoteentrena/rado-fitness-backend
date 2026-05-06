@@ -8,7 +8,8 @@ json.recent_metrics @metrics
 
 if @dietary_plan
   json.dietary_plan do
-    json.extract! @dietary_plan, :id, :calories_target, :protein_target, :notes, :start_date, :end_date, :active
+    json.extract! @dietary_plan, :id, :calories_target, :protein_target, :fats_target, :carbs_target, :notes, :start_date, :end_date, :active
+    json.logged_weight @user.daily_metrics.exists?(date_logged: Date.today, weight: ..Float::INFINITY)
   end
 else
   json.dietary_plan nil

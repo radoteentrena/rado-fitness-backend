@@ -12,7 +12,9 @@
         </p>
         <p class="text-xs text-graphite dark:text-muted truncate mt-0.5 flex space-x-2">
            <span class="flex items-center"><span class="material-symbols-outlined text-[10px] mr-0.5">local_fire_department</span> <%= user_dietary_plan.calories_target || 'N/A' %> kcal</span>
-           <span class="flex items-center"><span class="material-symbols-outlined text-[10px] mr-0.5">fitness_center</span> <%= user_dietary_plan.protein_target || 'N/A' %>g protein</span>
+           <span class="flex items-center"><span class="material-symbols-outlined text-[10px] mr-0.5">fitness_center</span> <%= user_dietary_plan.protein_target || 'N/A' %>g P</span>
+           <span class="flex items-center"><span class="material-symbols-outlined text-[10px] mr-0.5">water_drop</span> <%= user_dietary_plan.fats_target || 'N/A' %>g F</span>
+           <span class="flex items-center"><span class="material-symbols-outlined text-[10px] mr-0.5">grain</span> <%= user_dietary_plan.carbs_target || 'N/A' %>g C</span>
         </p>
       </div>
     </div>

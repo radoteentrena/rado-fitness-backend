@@ -11,10 +11,8 @@ class DailyMetric < ApplicationRecord
   private
 
   def calculate_compliance
-    # Consistency Logic: Did they log anything?
     self.compliant = (calories_consumed.to_i > 0 || protein_consumed.to_i > 0)
-
-    # Accuracy Logic: Did they hit the targets? (+/- 10%)
+    
     c_target = user_dietary_plan&.calories_target
     p_target = user_dietary_plan&.protein_target
 
@@ -48,7 +46,8 @@ class DailyMetric < ApplicationRecord
 
     self.calories_consumed ||= parsed_data["calories"]
     self.protein_consumed  ||= parsed_data["protein"]
-    self.steps             ||= parsed_data["steps"]
+    self.fats              ||= parsed_data["fats"]
+    self.carbs             ||= parsed_data["carbs"]
     self.weight            ||= parsed_data["weight"]
   rescue => e
     Rails.logger.error("DailyMetric AI Parse Error: #{e.message}")

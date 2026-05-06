@@ -90,7 +90,9 @@ class ProgramRecordBuilder
       name:           @data["dietary_plan"]["name"],
       description:    @data["dietary_plan"]["description"],
       calories_target: @data["dietary_plan"]["calories_target"],
-      protein_target:  @data["dietary_plan"]["protein_target"]
+      protein_target:  @data["dietary_plan"]["protein_target"],
+      fats_target:     @data["dietary_plan"]["fats_target"],
+      carbs_target:    @data["dietary_plan"]["carbs_target"]
     )
 
     return unless @user
@@ -102,6 +104,8 @@ class ProgramRecordBuilder
       phase:           phase,
       calories_target: dietary_plan.calories_target,
       protein_target:  dietary_plan.protein_target,
+      fats_target:     dietary_plan.fats_target,
+      carbs_target:    dietary_plan.carbs_target,
       start_date:      Date.current,
       end_date:        Date.current + (program&.duration_weeks || 8).weeks,
       active:          true

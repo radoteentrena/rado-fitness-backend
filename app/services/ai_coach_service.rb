@@ -286,7 +286,9 @@ class AiCoachService
       "name": "string",
       "description": "string",
       "calories_target": integer,
-      "protein_target": integer
+      "protein_target": integer,
+      "fats_target": integer,
+      "carbs_target": integer
     }
   }
     JSON

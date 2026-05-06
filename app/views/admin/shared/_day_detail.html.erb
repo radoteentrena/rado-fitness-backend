@@ -32,7 +32,7 @@
 
         <% if daily_metric %>
           <!-- Key Metrics Grid -->
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div class="bg-background-light dark:bg-graphite p-4 rounded-lg text-center">
               <p class="text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider mb-1">Calories</p>
               <p class="text-xl font-bold text-blackish dark:text-whiteish"><%= daily_metric.calories_consumed || "-" %></p>
@@ -42,8 +42,12 @@
               <p class="text-xl font-bold text-blackish dark:text-whiteish"><%= daily_metric.protein_consumed || "-" %>g</p>
             </div>
             <div class="bg-background-light dark:bg-graphite p-4 rounded-lg text-center">
-              <p class="text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider mb-1">Steps</p>
-              <p class="text-xl font-bold text-blackish dark:text-whiteish"><%= daily_metric.steps || "-" %></p>
+              <p class="text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider mb-1">Carbs</p>
+              <p class="text-xl font-bold text-blackish dark:text-whiteish"><%= daily_metric.carbs || "-" %>g</p>
+            </div>
+            <div class="bg-background-light dark:bg-graphite p-4 rounded-lg text-center">
+              <p class="text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider mb-1">Fats</p>
+              <p class="text-xl font-bold text-blackish dark:text-whiteish"><%= daily_metric.fats || "-" %>g</p>
             </div>
             <div class="bg-background-light dark:bg-graphite p-4 rounded-lg text-center">
               <p class="text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider mb-1">Weight</p>

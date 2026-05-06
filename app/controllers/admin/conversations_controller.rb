@@ -9,7 +9,6 @@ module Admin
     end
 
     def show
-      # Update read_by_coach_at when Rado opens conversation
       @conversation.update(read_by_coach_at: Time.current)
       @messages = @conversation.messages.not_deleted.chronological
       @message = Message.new
@@ -20,7 +19,6 @@ module Admin
       @message.user_id = @conversation.user_id
       @message.sender_type = :coach
 
-      # Handle voice note from base64 data URL
       if params[:voice_data].present?
         voice_io = decode_base64_to_blob(params[:voice_data])
         @message.voice_note.attach(voice_io) if voice_io
@@ -29,7 +27,6 @@ module Admin
       if @message.save
         @conversation.update(last_message_at: Time.current)
 
-        # Trigger notification to user (defer to background job)
         NotifyUserOfCoachReplyJob.perform_later(@message.id) if defined?(NotifyUserOfCoachReplyJob)
 
         redirect_to admin_conversation_path(@conversation), notice: t('admin.conversations.message_sent')
@@ -41,7 +38,6 @@ module Admin
     def delete_message
       @message = @conversation.messages.find(params[:message_id])
 
-      # Only coach can delete messages, and only their own
       if @message.coach?
         @message.discard
         redirect_to admin_conversation_path(@conversation), notice: t('admin.conversations.message_deleted')
@@ -53,20 +49,17 @@ module Admin
     private
 
     def resolve_layout
-      # Return appropriate layout based on action and request type
       case action_name
       when 'index'
         'conversations'
       when 'show'
-        # For Turbo Frame requests to show action, skip layout
         request.headers['turbo-frame'] == 'conversation-detail' ? false : 'conversations'
       else
-        nil  # Use default admin layout
+        nil
       end
     end
 
     def set_conversation
-      # Handle both :id (from show) and :conversation_id (from nested routes)
       conversation_id = params[:id] || params[:conversation_id]
       @conversation = Conversation.find(conversation_id)
     end
@@ -87,7 +80,6 @@ module Admin
     end
 
     def decode_base64_to_blob(data_url)
-      # Extract base64 from data URL like "data:audio/webm;base64,xxxxx"
       return nil unless data_url.is_a?(String) && data_url.include?(',')
 
       base64_data = data_url.split(',')[1]
@@ -96,13 +88,11 @@ module Admin
       binary_data = Base64.decode64(base64_data)
       filename = "voice_#{Time.current.to_i}.webm"
 
-      # Create a tempfile in binary mode to handle binary audio data
       tempfile = Tempfile.new([filename.gsub(/\.webm$/, ''), '.webm'], encoding: 'ASCII-8BIT')
       tempfile.binmode
       tempfile.write(binary_data)
       tempfile.rewind
 
-      # Create an UploadedFile that ActionController expects
       ActionDispatch::Http::UploadedFile.new(
         tempfile: tempfile,
         filename: filename,
