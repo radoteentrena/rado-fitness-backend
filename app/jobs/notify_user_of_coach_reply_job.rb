@@ -8,55 +8,24 @@ class NotifyUserOfCoachReplyJob < ApplicationJob
     conversation = message.conversation
     user = conversation.user
 
-    # Skip if message is from client (not a reply from coach)
-    return if message.sender_type == 'client'
+    return if message.sender_type == "client"
 
-    # Send Firebase FCM push notification to user's mobile app
     begin
-      send_fcm_notification(user, message)
+      PushNotification.new(
+        user: user,
+        title: "Respuesta de Rado",
+        body: message.content&.truncate(100) || "Mensaje de voz",
+        data: { type: "coach_reply", conversation_id: message.conversation_id.to_s }
+      ).deliver
     rescue StandardError => e
-      Rails.logger.error("Failed to send FCM notification: #{e.message}")
-      # Continue to create notification record even if FCM fails
+      Rails.logger.error("[NotifyUserOfCoachReplyJob] Failed to send push notification: #{e.message}")
     end
 
-    # Track the notification
-    Notification.create!(
+    notification = Notification.create(
       conversation: conversation,
-      notification_type: 'coach_reply',
+      notification_type: "coach_reply",
       message: "Rado respondió tu pregunta"
     )
-  end
-
-  private
-
-  def send_fcm_notification(user, message)
-    # Firebase Cloud Messaging integration
-    # This requires FCM credentials and the user's device token
-    return unless user.fcm_token.present?
-
-    notification_payload = {
-      title: "Respuesta de Rado",
-      body: message.content&.truncate(100) || "Mensaje de voz",
-      sound: "default",
-      click_action: "FLUTTER_NOTIFICATION_CLICK"
-    }
-
-    data_payload = {
-      conversation_id: message.conversation_id.to_s,
-      message_id: message.id.to_s,
-      type: "coach_reply"
-    }
-
-    begin
-      # Firebase::MessagingService.send_notification(
-      #   user.fcm_token,
-      #   notification_payload,
-      #   data_payload
-      # )
-      Rails.logger.info("FCM notification sent to user #{user.id} for message #{message.id}")
-    rescue StandardError => e
-      Rails.logger.error("Failed to send FCM notification: #{e.message}")
-      # Silently fail - don't retry
-    end
+    Rails.logger.error("[NotifyUserOfCoachReplyJob] Failed to create Notification: #{notification.errors.full_messages}") unless notification.persisted?
   end
 end

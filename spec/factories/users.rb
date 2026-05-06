@@ -9,5 +9,6 @@ FactoryBot.define do
     status     { :lead }
     plan_tier  { :basic }
     category   { :pelele }
+    fcm_token  { "test_fcm_token" }
   end
 end
