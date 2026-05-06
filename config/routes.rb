@@ -8,7 +8,13 @@ Rails.application.routes.draw do
   get  "subscription/processing", to: "subscriptions#processing", as: :subscriptions_processing
 
   namespace :admin do
-      resources :coach_alerts
+      resources :coach_alerts do
+        member do
+          patch :resolve
+          patch :dismiss
+          post  :send_message
+        end
+      end
       resources :conversations, only: [:index, :show] do
         post :create_message
         delete :delete_message
@@ -47,8 +53,7 @@ Rails.application.routes.draw do
       resources :daily_metrics, only: [ :show ]
       # resources :messages  # Removed — use Conversations instead
       resources :progress_photos, except: [ :index ]
-      resources :program_executions, except: [ :index ]
-      resources :exercise_logs, except: [ :index ]
+      resources :training_sessions, only: [ :show ]
       resources :subscription_cancellations, only: [:create]
       resources :subscriptions, only: [:index, :show]
 
@@ -81,12 +86,15 @@ Rails.application.routes.draw do
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]
       resources :daily_metrics, only: [ :create ]
-      resources :progress_photos, only: [ :create ]
-      resources :program_executions, only: [ :create ]
+      resources :progress_photos, only: [ :index, :create ]
+
+      put "users/avatar",   to: "users#update_avatar"
+      get "users/progress", to: "users#progress"
 
       namespace :training do
         get :current
         post :start
+        put :log_exercise
         post :complete
         post :skip
         get :history

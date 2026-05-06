@@ -43,6 +43,8 @@ class User < ApplicationRecord
   before_validation :strip_whitespace
 
   # Associations
+  has_one_attached :avatar
+
   has_one :onboarding_profile, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   accepts_nested_attributes_for :onboarding_profile
@@ -55,7 +57,6 @@ class User < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :conversations, dependent: :destroy
   has_many :progress_photos, dependent: :destroy
-  has_many :program_executions, dependent: :destroy
   has_many :training_sessions, dependent: :destroy
 
   def name

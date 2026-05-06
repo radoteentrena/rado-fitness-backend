@@ -33,7 +33,8 @@ class Api::V1::AuthController < Api::V1::BaseController
         first_name: user.first_name,
         last_name: user.last_name,
         status: user.status,
-        plan_tier: user.plan_tier
+        plan_tier: user.plan_tier,
+        avatar_url: user.avatar.attached? ? url_for(user.avatar) : nil
       }
     }, status: :ok
   end
@@ -57,7 +58,8 @@ class Api::V1::AuthController < Api::V1::BaseController
         first_name: user.first_name,
         last_name: user.last_name,
         status: user.status,
-        plan_tier: user.plan_tier
+        plan_tier: user.plan_tier,
+        avatar_url: user.avatar.attached? ? url_for(user.avatar) : nil
       }
     }, status: :ok
   end

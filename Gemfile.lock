@@ -122,6 +122,8 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.6.2)
+    digest-crc (0.7.0)
+      rake (>= 12.0.0, < 14.0.0)
     discard (1.4.0)
       activerecord (>= 4.2, < 9.0)
     domain_name (0.6.20240107)
@@ -176,11 +178,28 @@ GEM
       retriable (~> 3.1)
     google-apis-drive_v3 (0.46.0)
       google-apis-core (>= 0.11.0, < 2.a)
+    google-apis-iamcredentials_v1 (0.27.0)
+      google-apis-core (>= 0.15.0, < 2.a)
     google-apis-sheets_v4 (0.46.0)
       google-apis-core (>= 0.15.0, < 2.a)
+    google-apis-storage_v1 (0.62.0)
+      google-apis-core (>= 0.15.0, < 2.a)
+    google-cloud-core (1.8.0)
+      google-cloud-env (>= 1.0, < 3.a)
+      google-cloud-errors (~> 1.0)
     google-cloud-env (2.3.1)
       base64 (~> 0.2)
       faraday (>= 1.0, < 3.a)
+    google-cloud-errors (1.6.0)
+    google-cloud-storage (1.59.0)
+      addressable (~> 2.8)
+      digest-crc (~> 0.4)
+      google-apis-core (>= 0.18, < 2)
+      google-apis-iamcredentials_v1 (~> 0.18)
+      google-apis-storage_v1 (>= 0.42)
+      google-cloud-core (~> 1.6)
+      googleauth (~> 1.9)
+      mini_mime (~> 1.0)
     google-id-token (1.4.2)
       jwt (>= 1)
     google-logging-utils (0.2.0)
@@ -210,6 +229,9 @@ GEM
       domain_name (~> 0.5)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
+    image_processing (1.14.0)
+      mini_magick (>= 4.9.5, < 6)
+      ruby-vips (>= 2.0.17, < 3)
     importmap-rails (2.2.3)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -273,6 +295,8 @@ GEM
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2026.0317)
+    mini_magick (5.3.1)
+      logger
     mini_mime (1.1.5)
     minitest (5.27.0)
     msgpack (1.8.0)
@@ -490,6 +514,9 @@ GEM
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
     ruby-rc4 (0.1.5)
+    ruby-vips (2.3.0)
+      ffi (~> 1.12)
+      logger
     rubyzip (3.2.2)
     securerandom (0.4.1)
     selenium-webdriver (4.39.0)
@@ -613,10 +640,12 @@ DEPENDENCIES
   fcm
   google-apis-drive_v3 (~> 0.46.0)
   google-apis-sheets_v4 (~> 0.46.0)
+  google-cloud-storage (~> 1.58)
   google_sign_in
   googleauth (~> 1.16)
   heroicon
   hotwire-livereload (~> 2.1)
+  image_processing (~> 1.2)
   importmap-rails
   jbuilder
   kamal
