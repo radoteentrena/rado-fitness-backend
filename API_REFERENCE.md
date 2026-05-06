@@ -201,6 +201,7 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
 **Notas:**
 - `active_routine` refleja la rutina activa según la semana actual del programa (respeta `duration_weeks` de cada bloque).
 - `current_week` es la semana actual del programa desde que fue asignado al usuario (empieza en 1). Sirve para mostrar progreso ("Semana 4 de 12").
+- `user.avatar_url` es la URL de la foto de perfil del usuario. Puede ser `null` si no tiene foto.
 
 ---
 
@@ -266,8 +267,27 @@ Si en vez del chat querés un formulario clásico para que registre peso, pasos,
 
 ## 5. Fotos de Progreso
 
-Para que los clientes suban sus fotos semanales.
+Para que los clientes suban y vean sus fotos semanales.
 
+### Obtener Todas las Fotos
+- **Endpoint:** `GET /progress_photos`
+- **Qué labura:** Devuelve todas las fotos de progreso del usuario, de la más reciente a la más vieja.
+- **Parámetros:** Nada.
+- **Qué te devuelve:**
+  ```json
+  {
+    "photos": [
+      {
+        "id": 1,
+        "date": "2026-04-20",
+        "note": "Me veo más grande",
+        "image_url": "https://www.radoteentrena.com/rails/active_storage/blobs/..."
+      }
+    ]
+  }
+  ```
+
+### Subir una Foto
 - **Endpoint:** `POST /progress_photos`
 - **Atención acá:** Cuando mandás una foto real desde React Native, **no** mandes un JSON de lo común. Tenés que usar `FormData` (`multipart/form-data`).
 - **Cómo estructurar el FormData:**
@@ -286,44 +306,7 @@ Para que los clientes suban sus fotos semanales.
 
 ---
 
-## 6. Ejecución de Entrenamientos (Loggear el Workout)
-
-Este es el más complicado. Lo usás cuando el usuario termina el entrenamiento en el gimnasio y le da a "Guardar".
-
-- **Endpoint:** `POST /program_executions`
-- **Qué labura:** Guarda exactamente qué hizo el boludo en el gimnasio: peso, repeticiones, RIR (Repeticiones en Reserva) de cada serie.
-- **Body de la petición (prestá atención a la estructura anidada):**
-  ```json
-  {
-    "program_execution": {
-      "routine_id": 12, // ID de la rutina que acaba de hacer
-      "completed_at": "2026-02-26T14:30:00Z",
-      "duration_minutes": 65, // Cuánto tardó
-      "exercise_logs_attributes": [
-        {
-          "routine_exercise_id": 45, // ID del primer ejercicio
-          "actual_sets": [
-            { "reps": 10, "load": 100, "rir": 2 }, // Primera serie
-            { "reps": 8, "load": 105, "rir": 1 }   // Segunda serie
-          ]
-        },
-        {
-          "routine_exercise_id": 46, // Segundo ejercicio
-          "actual_sets": [
-             { "reps": 12, "load": 50, "rir": 2 }
-          ]
-        }
-      ]
-    }
-  }
-  ```
-- **Si anda bien (Status 201):**
-  `{ "id": 5, "message": "Workout successfully logged" }`
-- **Si hay error (Status 422):** Te tira los `"errors"`. Fijate si te falta algún ID que rompa las validaciones.
-
----
-
-## 7. Entrenamientos (Training Sessions)
+## 6. Entrenamientos (Training Sessions)
 
 Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltarla si es necesario, e historial.
 
@@ -354,6 +337,8 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
             "load": "RPE 8",
             "early_rpe": "~7",
             "last_rpe": "~8",
+            "warmup": true,
+            "warmup_sets": "2x10",
             "last_logged": {
               "date": "2026-02-20",
               "actual_sets": [
@@ -366,6 +351,8 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
     }
   }
   ```
+- `warmup`: `true` si el ejercicio tiene series de entrada en calor. `false` si no.
+- `warmup_sets`: El string con las series de calentamiento (ej. `"2x10"`). `null` si no tiene.
 - **Si no hay sesión activa:**
   ```json
   { "session": null, "status": "no_active_program" }
@@ -373,35 +360,52 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 
 ### Iniciar la Sesión
 - **Endpoint:** `POST /training/start`
-- **Qué labura:** Marca la sesión como "en progreso" y registra cuándo empezó.
-- **Body:** Nada, solo el token.
+- **Qué labura:** Marca la sesión como "en progreso" y registra cuándo empezó. El cliente puede elegir qué workout iniciar mandando el `workout_id`.
+- **Body:**
+  ```json
+  {
+    "workout_id": 10
+  }
+  ```
+  Si no mandás `workout_id`, arranca la primera sesión pendiente (comportamiento anterior).
 - **Qué te devuelve:** La sesión con status `"in_progress"` y toda la info de ejercicios igual que arriba.
 
-### Completar la Sesión (Registrar el Entrenamiento)
-- **Endpoint:** `POST /training/complete`
-- **Qué labura:** Guarda todos los ejercicios que hizo (series, reps, pesos, RPE) y marca la sesión como completada. También te devuelve la siguiente sesión si existe.
+### Registrar un Ejercicio (Incremental)
+- **Endpoint:** `PUT /training/log_exercise`
+- **Qué labura:** Guarda (o actualiza) el log de un ejercicio individual mientras la sesión está en progreso. Se llama cada vez que el usuario avanza al siguiente ejercicio. Si ya existe un log para ese ejercicio en la sesión, lo sobreescribe.
 - **Body de la petición:**
   ```json
   {
-    "exercise_logs": [
-      {
-        "workout_exercise_id": 45,
-        "actual_sets": [
-          { "reps": 6, "weight": 100, "rpe": 8 },
-          { "reps": 5, "weight": 105, "rpe": 8 }
-        ]
-      },
-      {
-        "workout_exercise_id": 46,
-        "actual_sets": [
-          { "reps": 10, "weight": 50, "rpe": 7 }
-        ]
-      }
-    ],
-    "notes": "Me sentí fuerte hoy"
+    "workout_exercise_id": 45,
+    "actual_sets": [
+      { "reps": 6, "weight": 100, "rpe": 8 },
+      { "reps": 5, "weight": 105, "rpe": 8 }
+    ]
   }
   ```
 - **Campos en `actual_sets`:** `reps`, `weight`, `rpe` (RPE = 1-10, qué tan duro estuvo).
+- **Qué te devuelve:**
+  ```json
+  {
+    "exercise_log": {
+      "workout_exercise_id": 45,
+      "actual_sets": [
+        { "reps": 6, "weight": 100, "rpe": 8 },
+        { "reps": 5, "weight": 105, "rpe": 8 }
+      ]
+    }
+  }
+  ```
+
+### Completar la Sesión
+- **Endpoint:** `POST /training/complete`
+- **Qué labura:** Marca la sesión como completada. Los ejercicios ya fueron guardados con `PUT /training/log_exercise`. También te devuelve la siguiente sesión si existe.
+- **Body de la petición:**
+  ```json
+  {
+    "notes": "Me sentí fuerte hoy"
+  }
+  ```
 - **Qué te devuelve:**
   ```json
   {
@@ -482,12 +486,95 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 
 ---
 
+## 7. Perfil de Usuario
+
+### Subir Foto de Perfil
+- **Endpoint:** `PUT /users/avatar`
+- **Atención acá:** Usar `FormData` (`multipart/form-data`), no JSON.
+- **Cómo estructurar el FormData:**
+  - `avatar`: El archivo de la foto (Blob/File).
+- **Si anda bien (Status 200):**
+  ```json
+  {
+    "avatar_url": "https://www.radoteentrena.com/rails/active_storage/blobs/..."
+  }
+  ```
+- **Notas:** La URL devuelta se puede usar directamente en un `<Image>`. El `avatar_url` también aparece en `/sync` y en las respuestas de `/auth/google` y `/auth/email` dentro del objeto `user`.
+
+---
+
+### Progreso del Usuario
+- **Endpoint:** `GET /users/progress`
+- **Qué labura:** Te devuelve el resumen de progreso del usuario: racha activa, días entrenados, cumplimiento de workouts y métricas, y el historial reciente de sesiones.
+- **Parámetros:** Nada.
+- **Qué te devuelve:**
+  ```json
+  {
+    "streak": 7,
+    "days_trained": 42,
+    "workout_compliance": 85,
+    "metric_compliance": 78,
+    "recent_sessions": [
+      {
+        "date": "2026-04-29",
+        "status": "completed",
+        "workout_name": "Upper Body A"
+      },
+      {
+        "date": "2026-04-27",
+        "status": "skipped",
+        "workout_name": "Lower Body A"
+      }
+    ]
+  }
+  ```
+- `streak`: Sesiones consecutivas completadas desde la más reciente. Se rompe con cualquier sesión saltada.
+- `days_trained`: Total histórico de sesiones completadas.
+- `workout_compliance`: Porcentaje de cumplimiento de entrenamientos (últimos 7 días vs. objetivo semanal).
+- `metric_compliance`: Porcentaje de días con métricas registradas y compliant (últimos 30 días).
+- `recent_sessions`: Últimas 10 sesiones (completadas o saltadas), de la más reciente a la más vieja.
+
+---
+
+## 8. Token de Dispositivo (Push Notifications)
+
+Para recibir notificaciones push, la app tiene que registrar el token FCM del dispositivo después del login.
+
+- **Endpoint:** `PUT /device_token`
+- **Qué labura:** Guarda (o actualiza) el token FCM del dispositivo asociado al usuario autenticado.
+- **Body de la petición:**
+  ```json
+  {
+    "fcm_token": "dGhpcyBpcyBhIHNhbXBsZSB0b2tlbg..."
+  }
+  ```
+- **Si anda bien (Status 204):** Sin body. Éxito silencioso.
+- **Si hay error (Status 422):**
+  ```json
+  {
+    "errors": ["fcm_token can't be blank"]
+  }
+  ```
+
+**Cuándo llamarlo:** Al hacer login y cada vez que el SDK de Firebase entregue un nuevo token (el token puede rotar).
+
+---
+
 ## Manejo de Errores (Importante)
+
 
 Siempre revisa el código HTTP de la respuesta:
 
 - **200 / 201** — Todo bien, che. Guardamos los datos.
 - **401 Unauthorized** — El token falta, caducó o está mal. Mandalo al login de nuevo.
+- **403 Forbidden (`access_locked`)** — La suscripción del usuario venció. La respuesta incluye una URL de pago para redirigir:
+  ```json
+  {
+    "error": "access_locked",
+    "payment_url": "https://radoteentrena.com/subscriptions/new"
+  }
+  ```
+  Mostrá un paywall o redirigí al usuario a `payment_url`.
 - **404 Not Found** — El recurso no existe (ej. no hay sesión activa para `/training/start`).
 - **422 Unprocessable Entity** — Falló una validación. Revisa el array `"errors"` de la respuesta y mostráselo al usuario.
 - **500 Internal Server Error** — Esto es culpa mía. Avísame y reviso los logs.

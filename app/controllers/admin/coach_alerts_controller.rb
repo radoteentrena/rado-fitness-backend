@@ -1,5 +1,25 @@
 module Admin
   class CoachAlertsController < Admin::ApplicationController
+    def index
+      authorize_resource(resource_class)
+      search_term = params[:search].to_s.strip
+      resources = Administrate::Search.new(scoped_resource, dashboard, search_term).run
+      resources = apply_collection_includes(resources)
+      resources = order.apply(resources)
+      resources = resources.includes(:user)
+      resources = resources.where(status: params[:status]) if params[:status].present?
+      resources = resources.where(category: params[:category]) if params[:category].present?
+      resources = resources.page(params[:page]).per(records_per_page)
+      page = Administrate::Page::Collection.new(dashboard, order: order)
+      render :index, locals: { resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar? }
+    end
+
+    def show
+      @coach_alert = CoachAlert.find(params[:id])
+      sent_ids = session["coach_alert_messages_#{@coach_alert.id}"] || []
+      @alert_messages = sent_ids.any? ? Message.where(id: sent_ids).chronological : []
+    end
+
     def new
       @coach_alert = CoachAlert.new
     end
@@ -20,9 +40,51 @@ module Admin
     def update
       @coach_alert = CoachAlert.find(params[:id])
       if @coach_alert.update(coach_alert_params)
-        redirect_to admin_coach_alerts_path, notice: "Alert updated."
+        redirect_to admin_coach_alert_path(@coach_alert), notice: "Alert updated."
       else
         render :edit, status: :unprocessable_entity
+      end
+    end
+
+    def send_message
+      @coach_alert = CoachAlert.find(params[:id])
+      user = @coach_alert.user
+      content = params[:content].to_s.strip
+
+      if content.blank?
+        redirect_to admin_coach_alert_path(@coach_alert), alert: "Message can't be blank."
+        return
+      end
+
+      conversation = Conversation.find_or_create_by!(user: user)
+      message = conversation.messages.build(content: content, sender_type: :coach, user: user)
+
+      if message.save
+        conversation.update(last_message_at: Time.current)
+        NotifyUserOfCoachReplyJob.perform_later(message.id) if defined?(NotifyUserOfCoachReplyJob)
+        key = "coach_alert_messages_#{@coach_alert.id}"
+        session[key] = ((session[key] || []) + [message.id]).last(10)
+        redirect_to admin_coach_alert_path(@coach_alert), notice: "Message sent to #{user.name}."
+      else
+        redirect_to admin_coach_alert_path(@coach_alert), alert: "Failed to send: #{message.errors.full_messages.join(', ')}"
+      end
+    end
+
+    def resolve
+      @coach_alert = CoachAlert.find(params[:id])
+      if @coach_alert.update(status: :resolved)
+        redirect_to admin_coach_alerts_path, notice: "Alert resolved."
+      else
+        redirect_to admin_coach_alert_path(@coach_alert), alert: "Could not resolve alert."
+      end
+    end
+
+    def dismiss
+      @coach_alert = CoachAlert.find(params[:id])
+      if @coach_alert.update(status: :dismissed)
+        redirect_to admin_coach_alerts_path, notice: "Alert dismissed."
+      else
+        redirect_to admin_coach_alert_path(@coach_alert), alert: "Could not dismiss alert."
       end
     end
 

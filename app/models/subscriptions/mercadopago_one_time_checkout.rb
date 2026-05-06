@@ -14,7 +14,10 @@ module Subscriptions
       preference_data = {
         "items" => [
           {
+            "id"          => "rado-#{@plan_tier}-#{@frequency}",
             "title"       => "Rado Fitness — #{@plan_tier.to_s.humanize} (Pago único)",
+            "description" => "Programa de entrenamiento personalizado #{@plan_tier.to_s.humanize} — acceso mensual",
+            "category_id" => "services",
             "quantity"    => 1,
             "currency_id" => Pricing.currency(argentina: argentina?),
             "unit_price"  => total_amount
