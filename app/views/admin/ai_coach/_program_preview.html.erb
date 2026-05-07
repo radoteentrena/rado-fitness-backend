@@ -133,6 +133,14 @@
           <div class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @structured_data.dig("dietary_plan", "protein_target") %>g</div>
           <div class="text-xs text-graphite dark:text-muted">protein</div>
         </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @structured_data.dig("dietary_plan", "fats_target") %>g</div>
+          <div class="text-xs text-graphite dark:text-muted">fats</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @structured_data.dig("dietary_plan", "carbs_target") %>g</div>
+          <div class="text-xs text-graphite dark:text-muted">carbs</div>
+        </div>
       </div>
     </div>
   <% end %>

@@ -21,8 +21,13 @@
             method: :post,
             data: { turbo_confirm: "¿Re-asignar programa a #{user.name}? Se buscará el mejor template disponible." },
             class: "button" %>
+        <%= button_to "Generar Link de Pago", admin_user_payment_link_path(user),
+            method: :post,
+            class: "button" %>
     </div>
   </div>
+
+  <div id="payment_link_result"></div>
 
   <%# Main Content Grid %>
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -102,13 +107,21 @@
                   </div>
 
                   <div class="grid grid-cols-2 gap-4">
-                      <div class="p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
+                      <div class="col-span-2 p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
                           <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Calories</span>
                           <span class="block mt-1 text-2xl font-bold text-blackish dark:text-whiteish"><%= active_plan.calories_target %></span>
                       </div>
-                       <div class="p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
+                      <div class="p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
                           <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Protein</span>
                           <span class="block mt-1 text-2xl font-bold text-blackish dark:text-whiteish"><%= active_plan.protein_target %>g</span>
+                      </div>
+                      <div class="p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
+                          <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Fats</span>
+                          <span class="block mt-1 text-2xl font-bold text-blackish dark:text-whiteish"><%= active_plan.fats_target %>g</span>
+                      </div>
+                      <div class="col-span-2 p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
+                          <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Carbs</span>
+                          <span class="block mt-1 text-2xl font-bold text-blackish dark:text-whiteish"><%= active_plan.carbs_target %>g</span>
                       </div>
                   </div>
 

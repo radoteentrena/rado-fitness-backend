@@ -67,10 +67,15 @@ class User < ApplicationRecord
     subscriptions.where(status: [:pending, :active]).order(created_at: :desc).first
   end
 
-  def target_workouts_per_week
-    return 4 unless programs.exists?
+  def active_program
+    programs.order(created_at: :desc).first
+  end
 
-    active_routine = programs.last.routines.first
+  def target_workouts_per_week
+    program = active_program
+    return 4 unless program
+
+    active_routine = program.routines.first
     return 4 unless active_routine
 
     days_count = active_routine.workouts.count
@@ -118,6 +123,34 @@ class User < ApplicationRecord
       workout_compliance_score: calculate_workout_compliance_score,
       diet_adherence_score: calculate_diet_adherence_score
     )
+  end
+
+  def generate_payment_token!
+    update!(
+      payment_link_token: SecureRandom.urlsafe_base64(32),
+      payment_link_expires_at: 30.days.from_now
+    )
+    payment_link_token
+  end
+
+  def payment_token_valid?
+    payment_link_token.present? && payment_link_expires_at&.future?
+  end
+
+  def days_trained
+    training_sessions.where(status: :completed).count
+  end
+
+  def streak
+    count = 0
+    training_sessions
+      .where(status: [ TrainingSession.statuses[:completed], TrainingSession.statuses[:skipped] ])
+      .order(session_number: :desc)
+      .each do |s|
+        break if s.skipped?
+        count += 1
+      end
+    count
   end
 
   def latest_weight

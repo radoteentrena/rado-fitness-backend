@@ -10,10 +10,12 @@ class DietaryPlanDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     calories_target: Field::Number,
+    protein_target: Field::Number,
+    fats_target: Field::Number,
+    carbs_target: Field::Number,
     description: Field::Text,
     name: Field::String,
     notes: Field::Text,
-    protein_target: Field::Number,
     user_dietary_plans: Field::HasMany,
     created_at: Field::DateTime,
     updated_at: Field::DateTime
@@ -28,18 +30,21 @@ class DietaryPlanDashboard < Administrate::BaseDashboard
     name
     calories_target
     protein_target
-    description
+    fats_target
+    carbs_target
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = %i[
     id
-    calories_target
-    description
     name
-    notes
+    calories_target
     protein_target
+    fats_target
+    carbs_target
+    description
+    notes
     user_dietary_plans
     created_at
     updated_at
@@ -49,11 +54,13 @@ class DietaryPlanDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
-    calories_target
-    description
     name
-    notes
+    calories_target
     protein_target
+    fats_target
+    carbs_target
+    description
+    notes
     user_dietary_plans
   ].freeze
 
