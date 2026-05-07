@@ -146,6 +146,8 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
       "full_name": "Patricio Perez"
     },
     "recent_metrics": {
+      "streak": 7,
+      "days_trained": 42,
       "workout_compliance": 85,
       "metric_compliance": 90
     },
@@ -161,16 +163,11 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
       "active": true,
       "logged_weight": false
     },
-    "active_program": {
-      "id": 7,
-      "name": "Programa Fuerza Hipertrofia",
-      "duration_weeks": 12,
-      "current_week": 4
-    },
-    "active_routine": {
-      "id": 2,
-      "name": "Bloque A - Volumen",
-      "duration_weeks": 6
+    "next_session": {
+      "session_id": 12,
+      "status": "pending",
+      "workout_id": 10,
+      "workout_name": "Upper Body - Pull"
     },
     "current_week_workouts": [
       {
@@ -202,9 +199,8 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
   ```
 
 **Notas:**
-- `active_routine` refleja la rutina activa según la semana actual del programa (respeta `duration_weeks` de cada bloque).
-- `current_week` es la semana actual del programa desde que fue asignado al usuario (empieza en 1). Sirve para mostrar progreso ("Semana 4 de 12").
 - `user.avatar_url` es la URL de la foto de perfil del usuario. Puede ser `null` si no tiene foto.
+- `next_session` es el próximo entrenamiento pendiente del usuario — la primera `TrainingSession` con status `pending` o `in_progress`. Usalo en el home para mostrar "Hoy: Upper Body - Pull". Será `null` si no hay programa activo o si no quedan sesiones pendientes. El campo `status` puede ser `"pending"` (todavía no arrancó) o `"in_progress"` (arrancó pero no completó) — usalo para mostrar "Empezar" vs "Continuar". Pasá `workout_id` al endpoint `POST /training/start` para iniciar la sesión.
 
 ---
 
@@ -246,8 +242,38 @@ Acá es donde pasa la magia de la IA.
 
 ## 4. Métricas Diarias
 
-Si en vez del chat querés un formulario clásico para que registre peso, pasos, calorías, lo que sea.
+### Historial de Métricas
+- **Endpoint:** `GET /daily_metrics?page=1&per_page=30`
+- **Qué labura:** Devuelve el historial de métricas del usuario, paginado y ordenado de la más reciente a la más vieja.
+- **Parámetros opcionales:**
+  - `page`: Número de página (default 1).
+  - `per_page`: Registros por página (default 30, máximo 100).
+- **Qué te devuelve:**
+  ```json
+  {
+    "metrics": [
+      {
+        "id": 1,
+        "date_logged": "2026-05-06",
+        "weight": 82.5,
+        "calories_consumed": 2500,
+        "protein_consumed": 180,
+        "fats": 70,
+        "carbs": 300,
+        "workout_completed": true,
+        "compliant": true,
+        "on_target": false
+      }
+    ],
+    "meta": {
+      "current_page": 1,
+      "total_pages": 5,
+      "total_count": 120
+    }
+  }
+  ```
 
+### Registrar Métricas del Día
 - **Endpoint:** `POST /daily_metrics`
 - **Qué labura:** Guarda (o actualiza si ya existe uno de ese día) los datos diarios del usuario.
 - **Body de la petición:**
@@ -444,11 +470,10 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
 - **Qué te devuelve:** Igual que complete, pero con status `"skipped"`.
 
 ### Historial de Entrenamientos
-- **Endpoint:** `GET /training/history?page=1&per_page=20`
-- **Qué labura:** Te devuelve el historial de sesiones completadas o saltadas, paginado (las últimas primero).
+- **Endpoint:** `GET /training/history?month=2026-05`
+- **Qué labura:** Te devuelve todas las sesiones completadas o saltadas del mes indicado, ordenadas por fecha ascendente. Usalo para pintar el calendario mensual.
 - **Parámetros opcionales:**
-  - `page`: Número de página (default 1).
-  - `per_page`: Cuántos entrenamientos por página (default 20, máximo 100).
+  - `month`: Mes en formato `YYYY-MM` (default: mes actual).
 - **Qué te devuelve:**
   ```json
   {
@@ -479,12 +504,7 @@ Los endpoints que manejan todo el ciclo: iniciar la sesión, completarla, saltar
           }
         ]
       }
-    ],
-    "meta": {
-      "current_page": 1,
-      "total_pages": 5,
-      "total_count": 95
-    }
+    ]
   }
   ```
 

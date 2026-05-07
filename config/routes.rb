@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   resource :onboarding, only: [:new, :create], controller: 'onboarding'
   get 'onboarding/success', to: 'onboarding#success', as: :onboarding_success
 
+  get  "/pay/:token", to: "payments#show", as: :pay
+
   get  "subscription/new",        to: "subscriptions#new",        as: :new_subscription
   get  "subscription/frequency",  to: "subscriptions#frequency",  as: :subscription_frequency
   post "subscription",            to: "subscriptions#create",     as: :subscriptions
@@ -47,6 +49,7 @@ Rails.application.routes.draw do
       end
       resources :users do
         resource :program_assignment, only: [ :create ]
+        resource :payment_link, only: [ :create ]
       end
       resources :user_dietary_plans, except: [ :index, :show ]
       resources :assignments, only: [ :new, :create ]
@@ -86,7 +89,7 @@ Rails.application.routes.draw do
 
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]
-      resources :daily_metrics, only: [ :create ]
+      resources :daily_metrics, only: [ :index, :create ]
       resources :progress_photos, only: [ :index, :create ]
 
       put "users/avatar",   to: "users#update_avatar"

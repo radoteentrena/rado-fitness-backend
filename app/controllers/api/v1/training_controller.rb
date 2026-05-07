@@ -75,25 +75,23 @@ class Api::V1::TrainingController < Api::V1::BaseController
 
   # GET /api/v1/training/history
   def history
-    page     = (params[:page] || 1).to_i
-    per_page = (params[:per_page] || 20).to_i.clamp(1, 100)
+    reference_date = if params[:month].present?
+      Date.strptime(params[:month], "%Y-%m") rescue Date.current
+    else
+      Date.current
+    end
+
+    start_of_month = reference_date.beginning_of_month
+    end_of_month   = reference_date.end_of_month
+
+    range = start_of_month.beginning_of_day..end_of_month.end_of_day
 
     sessions = current_user.training_sessions
       .where(status: [ TrainingSession.statuses[:completed], TrainingSession.statuses[:skipped] ])
-      .order(session_number: :desc)
+      .where("started_at BETWEEN :start AND :end OR skipped_at BETWEEN :start AND :end", start: range.begin, end: range.end)
+      .order(Arel.sql("COALESCE(started_at, skipped_at) ASC"))
 
-    total_count = sessions.count
-    total_pages = (total_count.to_f / per_page).ceil
-    paginated = sessions.offset((page - 1) * per_page).limit(per_page)
-
-    render json: {
-      sessions: paginated.map { |s| serialize_history_session(s) },
-      meta: {
-        current_page: page,
-        total_pages: total_pages,
-        total_count: total_count
-      }
-    }
+    render json: { sessions: sessions.map { |s| serialize_history_session(s) } }
   end
 
   private
