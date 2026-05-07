@@ -1,5 +1,6 @@
 class Api::V1::AuthController < Api::V1::BaseController
   skip_before_action :authenticate_user!, only: [:google, :email]
+  skip_before_action :check_access_locked!, only: [:destroy]
 
   # POST /api/v1/auth/google
   def google
@@ -37,6 +38,12 @@ class Api::V1::AuthController < Api::V1::BaseController
         avatar_url: user.avatar.attached? ? url_for(user.avatar) : nil
       }
     }, status: :ok
+  end
+
+  # DELETE /api/v1/auth/session
+  def destroy
+    current_user.regenerate_auth_token
+    head :no_content
   end
 
   # POST /api/v1/auth/email

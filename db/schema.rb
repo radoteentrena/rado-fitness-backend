@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_06_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -113,7 +113,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
     t.date "date_logged"
     t.integer "calories_consumed"
     t.integer "protein_consumed"
-    t.integer "steps"
     t.float "weight"
     t.text "raw_message_content"
     t.boolean "compliant"
@@ -123,7 +122,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
     t.bigint "user_dietary_plan_id"
     t.boolean "on_target", default: false
     t.boolean "workout_completed", default: false
+    t.integer "fats"
+    t.integer "carbs"
     t.index ["user_dietary_plan_id"], name: "index_daily_metrics_on_user_dietary_plan_id"
+    t.index ["user_id", "date_logged"], name: "index_daily_metrics_on_user_id_and_date_logged"
     t.index ["user_id"], name: "index_daily_metrics_on_user_id"
   end
 
@@ -135,6 +137,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
     t.integer "calories_target"
     t.integer "protein_target"
     t.text "notes"
+    t.integer "fats_target"
+    t.integer "carbs_target"
   end
 
   create_table "exercise_logs", force: :cascade do |t|
@@ -155,6 +159,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_exercises_on_name_unique", unique: true
   end
 
   create_table "messages", force: :cascade do |t|
@@ -326,6 +331,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
     t.date "end_date"
     t.boolean "active", default: true
     t.bigint "phase_id"
+    t.integer "fats_target"
+    t.integer "carbs_target"
     t.index ["dietary_plan_id"], name: "index_user_dietary_plans_on_dietary_plan_id"
     t.index ["phase_id"], name: "index_user_dietary_plans_on_phase_id"
     t.index ["user_id"], name: "index_user_dietary_plans_on_user_id"
@@ -353,10 +360,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_23_205742) do
     t.string "provider", default: "email", null: false
     t.string "fcm_token"
     t.integer "access_status", default: 0, null: false
+    t.string "payment_link_token"
+    t.datetime "payment_link_expires_at"
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["google_uid"], name: "index_users_on_google_uid", unique: true, where: "(google_uid IS NOT NULL)"
+    t.index ["payment_link_token"], name: "index_users_on_payment_link_token", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

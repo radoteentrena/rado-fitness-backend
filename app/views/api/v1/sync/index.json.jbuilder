@@ -8,27 +8,23 @@ json.recent_metrics @metrics
 
 if @dietary_plan
   json.dietary_plan do
-    json.extract! @dietary_plan, :id, :calories_target, :protein_target, :notes, :start_date, :end_date, :active
+    json.extract! @dietary_plan, :id, :calories_target, :protein_target, :fats_target, :carbs_target, :notes, :start_date, :end_date, :active
+    json.logged_weight @user.daily_metrics.exists?(date_logged: Date.today, weight: ..Float::INFINITY)
   end
 else
   json.dietary_plan nil
 end
 
-if @active_program
-  json.active_program do
-    json.extract! @active_program, :id, :name, :duration_weeks
-    json.current_week @current_week
-  end
-else
-  json.active_program nil
-end
 
-if @active_routine
-  json.active_routine do
-    json.extract! @active_routine, :id, :name, :duration_weeks
+if @next_session
+  json.next_session do
+    json.session_id @next_session.id
+    json.status @next_session.status
+    json.workout_id @next_session.workout_id
+    json.workout_name @next_session.workout.name
   end
 else
-  json.active_routine nil
+  json.next_session nil
 end
 
 json.current_week_workouts do

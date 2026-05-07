@@ -16,6 +16,14 @@ production:
   subscription_dunning:
     class: SubscriptionDunningJob
     schedule: at 9am every day
+<<<<<<< HEAD
+    timezone: "America/Argentina/Buenos_Aires"
+  user_alerts:
+    class: UserAlertJob
+    schedule: at 8am every day
+    timezone: "America/Argentina/Buenos_Aires"
+=======
   payment_reminder:
     class: PaymentReminderJob
     schedule: "0 12 * * *"
+>>>>>>> ab438b10a1125919fc7d5c233de6bbffb321509a

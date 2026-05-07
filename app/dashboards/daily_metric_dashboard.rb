@@ -15,8 +15,9 @@ class DailyMetricDashboard < Administrate::BaseDashboard
     date_logged: Field::Date,
     on_target: Field::Boolean,
     protein_consumed: Field::Number,
+    fats: Field::Number,
+    carbs: Field::Number,
     raw_message_content: Field::Text,
-    steps: Field::Number,
     user: Field::BelongsTo,
     user_dietary_plan: Field::BelongsTo,
     weight: Field::Number.with_options(decimals: 2),
@@ -47,8 +48,9 @@ class DailyMetricDashboard < Administrate::BaseDashboard
     date_logged
     on_target
     protein_consumed
+    fats
+    carbs
     raw_message_content
-    steps
     user
     user_dietary_plan
     weight
@@ -67,8 +69,9 @@ class DailyMetricDashboard < Administrate::BaseDashboard
     date_logged
     on_target
     protein_consumed
+    fats
+    carbs
     raw_message_content
-    steps
     user
     user_dietary_plan
     weight
