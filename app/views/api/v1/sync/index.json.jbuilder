@@ -15,21 +15,16 @@ else
   json.dietary_plan nil
 end
 
-if @active_program
-  json.active_program do
-    json.extract! @active_program, :id, :name, :duration_weeks
-    json.current_week @current_week
-  end
-else
-  json.active_program nil
-end
 
-if @active_routine
-  json.active_routine do
-    json.extract! @active_routine, :id, :name, :duration_weeks
+if @next_session
+  json.next_session do
+    json.session_id @next_session.id
+    json.status @next_session.status
+    json.workout_id @next_session.workout_id
+    json.workout_name @next_session.workout.name
   end
 else
-  json.active_routine nil
+  json.next_session nil
 end
 
 json.current_week_workouts do

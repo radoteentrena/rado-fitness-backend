@@ -21,8 +21,13 @@
             method: :post,
             data: { turbo_confirm: "¿Re-asignar programa a #{user.name}? Se buscará el mejor template disponible." },
             class: "button" %>
+        <%= button_to "Generar Link de Pago", admin_user_payment_link_path(user),
+            method: :post,
+            class: "button" %>
     </div>
   </div>
+
+  <div id="payment_link_result"></div>
 
   <%# Main Content Grid %>
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

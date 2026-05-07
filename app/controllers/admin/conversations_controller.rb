@@ -27,11 +27,7 @@ module Admin
       if @message.save
         @conversation.update(last_message_at: Time.current)
 
-<<<<<<< HEAD
-        NotifyUserOfCoachReplyJob.perform_later(@message.id) if defined?(NotifyUserOfCoachReplyJob)
-=======
         NotifyUserOfCoachReplyJob.perform_later(@message.id)
->>>>>>> ab438b10a1125919fc7d5c233de6bbffb321509a
 
         redirect_to admin_conversation_path(@conversation), notice: t('admin.conversations.message_sent')
       else
@@ -76,7 +72,7 @@ module Admin
           "COUNT(CASE WHEN messages.read_at IS NULL AND messages.sender_type = 'client' AND messages.discarded_at IS NULL THEN 1 END) AS unread_count"
         )
         .group("conversations.id")
-        .order("unread_count DESC, COALESCE(conversations.last_message_at, '1970-01-01') DESC")
+        .order(Arel.sql("unread_count DESC, COALESCE(conversations.last_message_at, '1970-01-01') DESC"))
     end
 
     def message_params

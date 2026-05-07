@@ -125,6 +125,34 @@ class User < ApplicationRecord
     )
   end
 
+  def generate_payment_token!
+    update!(
+      payment_link_token: SecureRandom.urlsafe_base64(32),
+      payment_link_expires_at: 30.days.from_now
+    )
+    payment_link_token
+  end
+
+  def payment_token_valid?
+    payment_link_token.present? && payment_link_expires_at&.future?
+  end
+
+  def days_trained
+    training_sessions.where(status: :completed).count
+  end
+
+  def streak
+    count = 0
+    training_sessions
+      .where(status: [ TrainingSession.statuses[:completed], TrainingSession.statuses[:skipped] ])
+      .order(session_number: :desc)
+      .each do |s|
+        break if s.skipped?
+        count += 1
+      end
+    count
+  end
+
   def latest_weight
     daily_metrics.where.not(weight: nil).order(date_logged: :desc).pick(:weight).truncate(2) if daily_metrics.exists?
   end
