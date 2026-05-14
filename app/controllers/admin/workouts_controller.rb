@@ -20,7 +20,9 @@ class Admin::WorkoutsController < Admin::ApplicationController
     if @workout.save
       redirect_to admin_routine_path(@routine), notice: "Workout was successfully created.", status: :see_other
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -31,7 +33,9 @@ class Admin::WorkoutsController < Admin::ApplicationController
     if @workout.update(workout_params)
       redirect_to admin_routine_path(@workout.routine), notice: "Workout was successfully updated.", status: :see_other
     else
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+      end
     end
   end
 

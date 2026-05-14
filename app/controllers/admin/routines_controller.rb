@@ -37,9 +37,9 @@ module Admin
           format.turbo_stream { render locals: { resource: resource, phase_id: params[:phase_id] } }
         end
       else
-        render :new, locals: {
-          page: Administrate::Page::Form.new(dashboard, resource),
-        }, status: :unprocessable_entity
+        respond_to do |format|
+          format.html { render :new, locals: { page: Administrate::Page::Form.new(dashboard, resource) }, status: :unprocessable_entity }
+        end
       end
     end
 
@@ -50,9 +50,9 @@ module Admin
           format.turbo_stream { render locals: { requested_resource: requested_resource } }
         end
       else
-        render :edit, locals: {
-          page: Administrate::Page::Form.new(dashboard, requested_resource),
-        }, status: :unprocessable_entity
+        respond_to do |format|
+          format.html { render :edit, locals: { page: Administrate::Page::Form.new(dashboard, requested_resource) }, status: :unprocessable_entity }
+        end
       end
     end
 
