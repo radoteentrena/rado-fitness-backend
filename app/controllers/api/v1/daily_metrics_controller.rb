@@ -1,13 +1,15 @@
 class Api::V1::DailyMetricsController < Api::V1::BaseController
   def index
-    page     = (params[:page] || 1).to_i
-    per_page = (params[:per_page] || 30).to_i.clamp(1, 100)
+    reference_date = if params[:month].present?
+      Date.strptime(params[:month], "%Y-%m") rescue Date.current
+    else
+      Date.current
+    end
 
-    all_metrics    = current_user.daily_metrics.order(date_logged: :desc)
-    @total_count   = all_metrics.count
-    @total_pages   = (@total_count.to_f / per_page).ceil
-    @current_page  = page
-    @metrics       = all_metrics.offset((page - 1) * per_page).limit(per_page)
+    @month   = reference_date.strftime("%Y-%m")
+    @metrics = current_user.daily_metrics
+      .where(date_logged: reference_date.beginning_of_month..reference_date.end_of_month)
+      .order(date_logged: :asc)
   end
 
   def create
