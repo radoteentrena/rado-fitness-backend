@@ -29,7 +29,9 @@ module Admin
       if @coach_alert.save
         redirect_to admin_coach_alerts_path, notice: "Alert created."
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
 
@@ -42,7 +44,9 @@ module Admin
       if @coach_alert.update(coach_alert_params)
         redirect_to admin_coach_alert_path(@coach_alert), notice: "Alert updated."
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.html { render :edit, status: :unprocessable_entity }
+        end
       end
     end
 
