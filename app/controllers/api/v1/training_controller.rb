@@ -151,6 +151,7 @@ class Api::V1::TrainingController < Api::V1::BaseController
           sets: we.sets,
           reps: we.reps,
           load: we.load,
+          intensity_technique: we.intensity_technique,
           early_rpe: we.early_rpe,
           last_rpe: we.last_rpe,
           warmup: we.warmup_sets.present?,
@@ -219,7 +220,8 @@ class Api::V1::TrainingController < Api::V1::BaseController
         prescribed: {
           sets: we.sets,
           reps: we.reps,
-          load: we.load
+          load: we.load,
+          intensity_technique: we.intensity_technique
         },
         actual_sets: log&.actual_sets
       }

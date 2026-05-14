@@ -33,7 +33,7 @@ json.current_week_workouts do
       json.extract! workout, :id, :name, :description, :day_number, :order_index
 
       json.exercises workout.workout_exercises.order(:order_index) do |workout_exercise|
-        json.extract! workout_exercise, :id, :sets, :reps, :load, :sub_option_one, :sub_option_two
+        json.extract! workout_exercise, :id, :sets, :reps, :load, :intensity_technique, :sub_option_one, :sub_option_two
 
         json.exercise do
           json.extract! workout_exercise.exercise, :id, :name, :muscle_group, :video_link, :description

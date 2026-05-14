@@ -18,5 +18,7 @@ class Api::V1::SyncController < Api::V1::BaseController
       workout_compliance: @user.calculate_workout_compliance_score,
       metric_compliance: @user.calculate_diet_consistency_score
     }
+
+    @user.daily_metrics.find_or_create_by(date_logged: Date.today)
   end
 end

@@ -3,7 +3,5 @@ json.metrics @metrics do |metric|
 end
 
 json.meta do
-  json.current_page @current_page
-  json.total_pages  @total_pages
-  json.total_count  @total_count
+  json.month @month
 end
