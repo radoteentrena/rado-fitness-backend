@@ -7,7 +7,7 @@ class Api::V1::ProgressPhotosController < Api::V1::BaseController
           id:        photo.id,
           date:      photo.date,
           note:      photo.note,
-          image_url: photo.image.attached? ? url_for(photo.image) : nil
+          image_url: photo.image.attached? ? rails_blob_url(photo.image, disposition: "inline") : nil
         }
       end
     }
@@ -21,7 +21,7 @@ class Api::V1::ProgressPhotosController < Api::V1::BaseController
         id: @photo.id,
         date: @photo.date,
         note: @photo.note,
-        image_url: url_for(@photo.image)
+        image_url: rails_blob_url(@photo.image, disposition: "inline")
       }, status: :created
     else
       render json: { errors: @photo.errors.full_messages }, status: :unprocessable_entity
