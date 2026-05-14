@@ -4,7 +4,7 @@
   <!-- Conversation Header -->
   <header class="conversation-header">
     <div class="header-content">
-      <h1><%= "#{@conversation.user.first_name} #{@conversation.user.last_name}" %></h1>
+      <h1><%= @conversation.user.first_name %> <%= @conversation.user.last_name %></h1>
       <div class="header-meta">
         <span class="meta-item"><%= @conversation.user.email %></span>
         <% if @conversation.last_message_at %>
