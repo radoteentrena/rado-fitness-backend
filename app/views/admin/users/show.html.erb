@@ -172,7 +172,7 @@
         </div>
 
         <%# Metrics Calendar %>
-        <%= render "admin/users/metrics_calendar", user: user %>
+        <%= render "admin/users/metrics_calendar", user: user, start_date: @start_date, view_type: @view_type, daily_metrics: @daily_metrics, current_weight: @current_weight, weight_trend: @weight_trend %>
 
 
 

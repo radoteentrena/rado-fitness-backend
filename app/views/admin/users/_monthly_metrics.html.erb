@@ -1,14 +1,14 @@
 <%# app/views/admin/users/_monthly_metrics.html.erb %>
 <%
-   start_of_month = @start_date.beginning_of_month
-   end_of_month = @start_date.end_of_month
+   start_of_month = start_date.beginning_of_month
+   end_of_month = start_date.end_of_month
 
    # Days to display (include padding for calendar grid)
    start_day = start_of_month.beginning_of_week
    end_day = end_of_month.end_of_week
    days = (start_day..end_day).to_a
 
-   metrics_by_date = @daily_metrics
+   metrics_by_date = daily_metrics
 
    # Monthly Averages
    total_calories = 0
@@ -42,7 +42,7 @@
     </div>
 
     <div class="flex items-center space-x-2">
-       <%= link_to admin_user_path(user, start_date: @start_date - 1.month, view_type: "month"), class: "p-1 rounded hover:bg-background-light dark:hover:bg-graphite text-graphite dark:text-muted" do %>
+       <%= link_to admin_user_path(user, start_date: start_date - 1.month, view_type: "month"), class: "p-1 rounded hover:bg-background-light dark:hover:bg-graphite text-graphite dark:text-muted" do %>
          <span class="material-symbols-outlined">chevron_left</span>
        <% end %>
 
@@ -50,7 +50,7 @@
          Today
        </div>
 
-       <%= link_to admin_user_path(user, start_date: @start_date + 1.month, view_type: "month"), class: "p-1 rounded hover:bg-background-light dark:hover:bg-graphite text-graphite dark:text-muted" do %>
+       <%= link_to admin_user_path(user, start_date: start_date + 1.month, view_type: "month"), class: "p-1 rounded hover:bg-background-light dark:hover:bg-graphite text-graphite dark:text-muted" do %>
          <span class="material-symbols-outlined">chevron_right</span>
        <% end %>
     </div>
@@ -76,10 +76,10 @@
     <div class="p-4 rounded-lg bg-background-light dark:bg-graphite">
        <span class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">Weight Trend</span>
        <div class="mt-1 flex items-baseline">
-          <span class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @current_weight || "-" %></span>
-          <% if @weight_trend %>
-            <span class="ml-2 text-sm font-bold <%= @weight_trend > 0 ? 'text-alert' : 'text-primary' %>">
-              <%= @weight_trend > 0 ? "▲" : "▼" %> <%= @weight_trend.abs %>
+          <span class="text-2xl font-bold text-blackish dark:text-whiteish"><%= current_weight || "-" %></span>
+          <% if weight_trend %>
+            <span class="ml-2 text-sm font-bold <%= weight_trend > 0 ? 'text-alert' : 'text-primary' %>">
+              <%= weight_trend > 0 ? "▲" : "▼" %> <%= weight_trend.abs %>
             </span>
           <% end %>
        </div>
