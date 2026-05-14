@@ -50,7 +50,9 @@
         <% resources.each do |resource| %>
           <tr class="bg-whiteish border-b border-shadow dark:bg-shadow dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50 js-table-row mb-5"
               <% if accessible_action?(resource, :show) %>
-                <%= %(tabindex=0 data-url=#{polymorphic_path([namespace, resource])} data-turbo=false) %>
+                tabindex="0"
+                data-url="<%= polymorphic_path([namespace, resource]) %>"
+                data-turbo="false"
               <% end %>
               >
             <% collection_presenter.attributes_for(resource).each do |attribute| %>

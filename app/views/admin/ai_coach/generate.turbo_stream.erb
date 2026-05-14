@@ -1,7 +1,7 @@
 <%= turbo_stream.replace "ai_coach_result" do %>
   <%= turbo_frame_tag "ai_coach_result" do %>
     <%= render partial: "admin/ai_coach/program_preview" %>
-    <script>
+    <script nonce="<%= content_security_policy_nonce %>">
       setTimeout(() => {
         const el = document.getElementById('ai_coach_result');
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
