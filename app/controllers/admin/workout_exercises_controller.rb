@@ -14,7 +14,9 @@ module Admin
       if @workout_exercise.save
         redirect_to admin_routine_path(@workout.routine), notice: "Exercise added."
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
 

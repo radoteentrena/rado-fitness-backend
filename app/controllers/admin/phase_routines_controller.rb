@@ -27,9 +27,9 @@ module Admin
           format.turbo_stream { render locals: { resource: resource } }
         end
       else
-        render :new, locals: {
-          page: Administrate::Page::Form.new(dashboard, resource),
-        }, status: :unprocessable_entity
+        respond_to do |format|
+          format.html { render :new, locals: { page: Administrate::Page::Form.new(dashboard, resource) }, status: :unprocessable_entity }
+        end
       end
     end
 

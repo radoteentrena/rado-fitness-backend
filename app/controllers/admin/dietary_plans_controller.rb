@@ -1,5 +1,28 @@
 module Admin
   class DietaryPlansController < Admin::ApplicationController
+    def create
+      resource = resource_class.new(resource_params)
+      authorize_resource(resource)
+
+      if resource.save
+        redirect_to [namespace, resource], notice: translate_with_resource("create.success")
+      else
+        respond_to do |format|
+          format.html { render :new, locals: { page: Administrate::Page::Form.new(dashboard, resource) }, status: :unprocessable_entity }
+        end
+      end
+    end
+
+    def update
+      if requested_resource.update(resource_params)
+        redirect_to [namespace, requested_resource], notice: translate_with_resource("update.success")
+      else
+        respond_to do |format|
+          format.html { render :edit, locals: { page: Administrate::Page::Form.new(dashboard, requested_resource) }, status: :unprocessable_entity }
+        end
+      end
+    end
+
     # Overwrite any of the RESTful controller actions to implement custom behavior
     # For example, you may want to send an email after a foo is updated.
     #
