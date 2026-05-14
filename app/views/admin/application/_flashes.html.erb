@@ -23,7 +23,7 @@ This partial renders flash messages on every page.
       <div class="flex items-center p-4 mb-4 text-sm <%= text_color %> rounded-r-lg shadow-sm <%= bg_color %> border-l-4 <%= border_color %>" role="alert">
          <span class="sr-only"><%= key.to_s.titleize %></span>
          <div>
-             <%= value.html_safe %>
+             <%= sanitize(value, tags: %w[strong em a br span], attributes: %w[href class]) %>
          </div>
       </div>
     <% end -%>

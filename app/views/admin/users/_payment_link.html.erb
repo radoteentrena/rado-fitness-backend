@@ -1,11 +1,13 @@
-<div class="flex items-center gap-3 p-4 bg-primary/10 border-2 border-primary rounded-none">
-  <input id="payment_link_url"
+<div class="flex items-center gap-3 p-4 bg-primary/10 border-2 border-primary rounded-none" data-controller="clipboard">
+  <input
+    data-clipboard-target="source"
     type="text"
     value="<%= url %>"
     readonly
-    class="flex-1 text-sm font-mono bg-transparent border-none outline-none text-blackish dark:text-whiteish truncate" />
+    class="flex-1 text-sm font-mono bg-transparent border-none outline-none text-blackish dark:text-whiteish truncate">
   <button
-    onclick="navigator.clipboard.writeText(document.getElementById('payment_link_url').value).then(() => { this.textContent = '¡Copiado!'; setTimeout(() => this.textContent = 'Copiar', 2000) })"
+    data-clipboard-target="button"
+    data-action="clipboard#copy"
     class="shrink-0 text-xs font-bold uppercase tracking-widest px-4 py-2 border-2 border-blackish dark:border-whiteish text-blackish dark:text-whiteish hover:bg-blackish hover:text-whiteish dark:hover:bg-whiteish dark:hover:text-blackish transition-colors">
     Copiar
   </button>

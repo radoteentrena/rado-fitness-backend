@@ -1,6 +1,6 @@
 <%# Single Flash Message Partial for Turbo Streams %>
 <div class="flex items-center p-4 mb-4 text-sm text-blackish dark:text-whiteish rounded-r-lg shadow-sm bg-whiteish dark:bg-shadow border-l-4 border-primary" role="alert">
   <div>
-    <span class="font-medium"><%= message.html_safe %></span>
+    <span class="font-medium"><%= sanitize(message, tags: %w[strong em a br span], attributes: %w[href class]) %></span>
   </div>
 </div>
