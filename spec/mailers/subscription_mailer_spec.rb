@@ -26,8 +26,17 @@ RSpec.describe SubscriptionMailer, type: :mailer do
       expect(mail.body.encoded).to include("High ticket")
     end
 
+    it "includes the dashboard URL with the configured host" do
+      expect(mail.body.encoded).to include("https://example.com")
+    end
+
     it "sends from the Rado address" do
       expect(mail.from).to eq(["info@radoteentrena.com"])
+    end
+
+    it "enqueues with deliver_later" do
+      expect { mail.deliver_later }
+        .to have_enqueued_mail(SubscriptionMailer, :confirmed)
     end
   end
 end
