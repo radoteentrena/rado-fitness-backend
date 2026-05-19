@@ -15,7 +15,7 @@ RSpec.describe WeeklyFeedbackMailer, type: :mailer do
     end
 
     before do
-      allow_any_instance_of(WeeklyFeedbackMailer).to receive(:app_host).and_return("example.com")
+      allow_any_instance_of(ApplicationMailer).to receive(:app_host).and_return("example.com")
     end
 
     it "sends to the user email" do

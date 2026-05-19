@@ -12,12 +12,4 @@ class WeeklyFeedbackMailer < ApplicationMailer
       subject: "Tu resumen semanal — Semana #{week_number}"
     )
   end
-
-  private
-
-  def app_host
-    host = Rails.application.credentials.dig(:app_host)
-    raise "Missing credential: app_host — required for weekly feedback mailer URLs" if host.blank?
-    host
-  end
 end

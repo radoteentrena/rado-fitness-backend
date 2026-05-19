@@ -7,7 +7,7 @@ RSpec.describe SubscriptionMailer, type: :mailer do
     let(:mail) { described_class.confirmed(user, subscription) }
 
     before do
-      allow_any_instance_of(SubscriptionMailer).to receive(:app_host).and_return("example.com")
+      allow_any_instance_of(ApplicationMailer).to receive(:app_host).and_return("example.com")
     end
 
     it "sends to the user email" do
@@ -49,7 +49,7 @@ RSpec.describe SubscriptionMailer, type: :mailer do
     let(:mail) { described_class.renewed(user, subscription) }
 
     before do
-      allow_any_instance_of(SubscriptionMailer).to receive(:app_host).and_return("example.com")
+      allow_any_instance_of(ApplicationMailer).to receive(:app_host).and_return("example.com")
     end
 
     it "sends to the user email" do
@@ -65,10 +65,11 @@ RSpec.describe SubscriptionMailer, type: :mailer do
     end
 
     it "includes the next renewal date" do
-      expect(mail.body.encoded).to include("19 de June de 2026")
+      expected = Time.zone.parse("2026-06-19 12:00:00").strftime("%d de %B de %Y")
+      expect(mail.body.encoded).to include(expected)
     end
 
-    it "includes the plan URL with the configured host" do
+    it "includes the dashboard URL with the configured host" do
       expect(mail.body.encoded).to include("https://example.com")
     end
 
