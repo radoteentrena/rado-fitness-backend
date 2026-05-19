@@ -14,6 +14,13 @@ Rack::Attack.throttle("auth/email", limit: 10, period: 1.hour) do |request|
   end
 end
 
+# Throttle onboarding form submissions by IP: 10 per hour
+Rack::Attack.throttle("onboarding/ip", limit: 10, period: 1.hour) do |request|
+  if request.path == "/onboarding" && request.post?
+    request.ip
+  end
+end
+
 Rack::Attack.throttled_responder = lambda do |env|
   [
     429,

@@ -90,10 +90,14 @@ class SubscriptionsController < ApplicationController
     status = params[:collection_status].presence || params[:status]
 
     case status
-    when "rejected", "cancelled"
-      redirect_to new_subscription_path, alert: "El pago fue rechazado. Verificá tus datos e intentá de nuevo."
     when "approved"
       redirect_to root_path, notice: "¡Pago confirmado! Tu suscripción ya está activa."
+    when "rejected", "cancelled"
+      redirect_to new_subscription_path, alert: "El pago fue rechazado. Verificá tus datos e intentá de nuevo."
+    when "pending", "in_process"
+      redirect_to root_path, notice: "Tu pago está siendo procesado. Te avisaremos cuando se confirme."
+    else
+      redirect_to root_path, notice: "Recibimos tu solicitud. Te contactaremos pronto."
     end
   end
 
