@@ -8,6 +8,16 @@ class ClientMailer < ApplicationMailer
     )
   end
 
+  def call_booked(user, appointment_time, calendar_url)
+    @user             = user
+    @appointment_time = appointment_time
+    @calendar_url     = calendar_url
+    mail(
+      to:      user.email,
+      subject: "Tu llamada está confirmada"
+    )
+  end
+
   private
 
   def app_host
