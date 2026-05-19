@@ -32,6 +32,8 @@ class ProcessPaymentEventJob < ApplicationJob
       amount = mp_data.dig("auto_recurring", "transaction_amount")
       amount_cents = amount ? (amount.to_f * 100).to_i : nil
 
+      is_new_subscription = sub.new_record?
+
       sub.assign_attributes(
         processor:            :mercadopago,
         plan_tier:            user.plan_tier,
@@ -57,6 +59,12 @@ class ProcessPaymentEventJob < ApplicationJob
 
       user.active!
       user.access_active!
+
+      if is_new_subscription
+        SubscriptionMailer.confirmed(user, sub).deliver_later
+      else
+        SubscriptionMailer.renewed(user, sub).deliver_later
+      end
     when "cancelled"
       sub = Subscription.find_by!(external_id: mp_id)
       sub.update!(status: :canceled, canceled_at: Time.current)
@@ -131,6 +139,7 @@ class ProcessPaymentEventJob < ApplicationJob
       )
       user.active!
       user.access_active!
+      SubscriptionMailer.confirmed(user, subscription).deliver_later
     when "rejected", "cancelled"
       Rails.logger.info "MP Checkout Pro payment #{payment["id"]} #{payment["status"]} " \
                         "for preference #{preference_id} — no action taken"
