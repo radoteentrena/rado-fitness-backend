@@ -42,6 +42,30 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       expect(sub.external_id).to eq(mp_sub_id)
       expect(user.reload).to be_active
     end
+
+    it "enqueues a confirmed email for a new subscription" do
+      expect {
+        described_class.perform_now(
+          processor: "mercadopago",
+          event_type: "preapproval",
+          payload: payload
+        )
+      }.to have_enqueued_mail(SubscriptionMailer, :confirmed)
+    end
+
+    context "when a subscription already exists for this user" do
+      before { create(:subscription, user: user, billing_type: :recurring, status: :active, external_id: mp_sub_id) }
+
+      it "enqueues a renewed email" do
+        expect {
+          described_class.perform_now(
+            processor: "mercadopago",
+            event_type: "preapproval",
+            payload: payload
+          )
+        }.to have_enqueued_mail(SubscriptionMailer, :renewed)
+      end
+    end
   end
 
   describe "mercadopago: payment rejected (recurring charge failure)" do
@@ -138,6 +162,39 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
         payload:    payload
       )
       expect(user.reload).to be_churned
+    end
+  end
+
+  describe "mercadopago: checkout pro payment approved" do
+    let!(:subscription) do
+      create(:subscription, user: user, status: :pending, mp_preference_id: "pref_123")
+    end
+    let(:payload) { { "type" => "payment", "data" => { "id" => "mp_payment_789" } } }
+
+    before do
+      sdk_double     = instance_double(Mercadopago::SDK)
+      payment_double = double
+      allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
+      allow(sdk_double).to receive(:payment).and_return(payment_double)
+      allow(payment_double).to receive(:get).with("mp_payment_789").and_return({
+        "response" => {
+          "id"            => "mp_payment_789",
+          "status"        => "approved",
+          "preference_id" => "pref_123",
+          "date_approved" => Time.current.iso8601,
+          "metadata"      => {}
+        }
+      })
+    end
+
+    it "enqueues a confirmed email" do
+      expect {
+        described_class.perform_now(
+          processor:  "mercadopago",
+          event_type: "payment",
+          payload:    payload
+        )
+      }.to have_enqueued_mail(SubscriptionMailer, :confirmed)
     end
   end
 end
