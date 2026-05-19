@@ -9,6 +9,16 @@ class SubscriptionMailer < ApplicationMailer
     )
   end
 
+  def renewed(user, subscription)
+    @user         = user
+    @subscription = subscription
+    @plan_url     = root_url(host: app_host, protocol: :https)
+    mail(
+      to:      user.email,
+      subject: "Suscripción renovada. Seguimos."
+    )
+  end
+
   private
 
   def app_host
