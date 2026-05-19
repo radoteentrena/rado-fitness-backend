@@ -1,6 +1,16 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
+  describe "callbacks" do
+    describe "after_create" do
+      it "enqueues a welcome email" do
+        expect {
+          create(:user)
+        }.to have_enqueued_mail(ClientMailer, :welcome)
+      end
+    end
+  end
+
   describe "omniauthable" do
     it { is_expected.to respond_to(:google_uid=) }
     it { is_expected.to respond_to(:provider=) }

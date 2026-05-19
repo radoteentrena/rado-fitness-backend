@@ -41,6 +41,7 @@ class User < ApplicationRecord
   # Callbacks
   before_validation :set_temporary_password, on: :create
   before_validation :strip_whitespace
+  after_create :send_welcome_email
 
   # Associations
   has_one_attached :avatar
@@ -183,6 +184,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def send_welcome_email
+    ClientMailer.welcome(self).deliver_later
+  end
 
   def set_temporary_password
     self.password = SecureRandom.hex(8) if password.blank?
