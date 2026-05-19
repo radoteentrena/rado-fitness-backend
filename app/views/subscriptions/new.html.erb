@@ -41,15 +41,15 @@
           <ul class="flex-1 flex flex-col gap-2.5 mb-7 list-none p-0">
             <li class="text-[13px] text-[#888] pl-4 relative leading-snug
                        before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
-              Placeholder beneficio uno
+              Rutina mensual estándar
             </li>
             <li class="text-[13px] text-[#888] pl-4 relative leading-snug
                        before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
-              Placeholder beneficio dos
+              Objetivos de macros personalizados
             </li>
             <li class="text-[13px] text-[#888] pl-4 relative leading-snug
                        before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
-              Placeholder beneficio tres
+              Acceso a la app de seguimiento
             </li>
           </ul>
           <%= f.submit "Elegir Basic",
@@ -87,15 +87,15 @@
             </li>
             <li class="text-[13px] text-[#888] pl-4 relative leading-snug
                        before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
-              Placeholder beneficio cuatro
+              Rutina personalizada según tus objetivos
             </li>
             <li class="text-[13px] text-[#888] pl-4 relative leading-snug
                        before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
-              Placeholder beneficio cinco
+              Ajustes del programa cada 2 semanas
             </li>
             <li class="text-[13px] text-[#888] pl-4 relative leading-snug
                        before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
-              Placeholder beneficio seis
+              Llamadas grupales con el coach
             </li>
           </ul>
           <%= f.submit "Elegir Medium",
@@ -128,11 +128,19 @@
             </li>
             <li class="text-[13px] text-[#888] pl-4 relative leading-snug
                        before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
-              Placeholder beneficio siete
+              Planificación dinámica semanal
             </li>
             <li class="text-[13px] text-[#888] pl-4 relative leading-snug
                        before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
-              Placeholder beneficio ocho
+              Chat directo con Rado (prioridad)
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Análisis de técnica en video
+            </li>
+            <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                       before:absolute before:left-0 before:content-['—'] before:text-[#3a3a3a] before:font-bold">
+              Auditoría de biofeedback semanal
             </li>
           </ul>
           <%= f.submit "Elegir High Ticket",
@@ -147,7 +155,7 @@
 
     <%# Footer note %>
     <p class="text-center mt-8 text-xs text-[#444] tracking-wide">
-      Al continuar aceptás los <a href="#" class="text-[#666] underline">términos y condiciones</a>.
+      Al continuar aceptás los <%= link_to "términos y condiciones", terms_path, class: "text-[#666] underline hover:text-[#999]" %>.
       Podés cancelar en cualquier momento.
     </p>
   </div>

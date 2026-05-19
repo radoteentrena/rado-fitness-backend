@@ -1,0 +1,76 @@
+<% content_for :seo_tags do %>
+  <meta name="robots" content="noindex, follow">
+<% end %>
+
+<header class="fixed w-full top-0 z-50 bg-black/95 backdrop-blur-sm border-b border-shadow-grey">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <%= link_to root_path, class: "flex items-center" do %>
+        <span class="font-display font-bold text-2xl uppercase tracking-tighter text-white">RADO<span class="text-saffron">TE</span><span class="text-white">ENTRENA</span></span>
+      <% end %>
+    </div>
+  </div>
+</header>
+
+<div class="bg-black text-white min-h-screen pt-24 pb-24 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-4xl font-display font-bold uppercase tracking-tight text-white mb-2">
+      Política de <span class="text-saffron">Privacidad</span>
+    </h1>
+    <p class="text-gray-500 text-sm mb-12 font-body">Última actualización: mayo 2026</p>
+
+    <div class="space-y-10 font-body text-gray-300 text-[15px] leading-relaxed">
+
+      <section>
+        <h2 class="text-lg font-display font-bold uppercase text-white mb-3">1. Datos que recopilamos</h2>
+        <p class="mb-3">Al registrarte recopilamos los datos que proporcionás en el formulario de onboarding: nombre, apellido, correo electrónico, teléfono, país y datos de condición física (peso, altura, nivel de experiencia, objetivos, etc.).</p>
+        <p>También recopilamos métricas de seguimiento que vos mismo registrás: peso diario, macros, sesiones completadas y fotos de progreso.</p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-display font-bold uppercase text-white mb-3">2. Cómo usamos tus datos</h2>
+        <ul class="space-y-2 list-none">
+          <li class="pl-4 relative before:absolute before:left-0 before:content-['—'] before:text-saffron before:font-bold">Para diseñar y personalizar tu programa de entrenamiento y nutrición.</li>
+          <li class="pl-4 relative before:absolute before:left-0 before:content-['—'] before:text-saffron before:font-bold">Para gestionar tu suscripción y procesar pagos a través de MercadoPago.</li>
+          <li class="pl-4 relative before:absolute before:left-0 before:content-['—'] before:text-saffron before:font-bold">Para enviarte notificaciones y actualizaciones relacionadas con tu plan.</li>
+          <li class="pl-4 relative before:absolute before:left-0 before:content-['—'] before:text-saffron before:font-bold">Para el análisis interno de adherencia y resultados (de forma agregada y anónima).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-display font-bold uppercase text-white mb-3">3. Fotos de progreso y redes sociales</h2>
+        <p>Las fotos de progreso que subís son de uso estrictamente privado para el seguimiento de tu coach. Solo se publican en redes sociales si otorgaste consentimiento explícito durante el registro. Podés revocar ese consentimiento en cualquier momento contactándonos.</p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-display font-bold uppercase text-white mb-3">4. Compartición de datos</h2>
+        <p>No vendemos ni cedemos tus datos a terceros. Los únicos proveedores externos que acceden a datos limitados son MercadoPago (procesamiento de pagos) y los servicios de infraestructura que alojan la aplicación.</p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-display font-bold uppercase text-white mb-3">5. Seguridad</h2>
+        <p>Toda la comunicación entre tu dispositivo y nuestros servidores está cifrada mediante HTTPS. Las contraseñas se almacenan con hashing seguro (bcrypt) y nunca se guardan en texto plano.</p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-display font-bold uppercase text-white mb-3">6. Tus derechos</h2>
+        <p>Podés solicitar en cualquier momento acceso, rectificación o eliminación de tus datos personales escribiéndonos a <a href="mailto:info@radoteentrena.com" class="text-saffron hover:underline">info@radoteentrena.com</a>. Respondemos en un plazo máximo de 10 días hábiles.</p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-display font-bold uppercase text-white mb-3">7. Cookies</h2>
+        <p>Usamos cookies de sesión necesarias para el funcionamiento de la aplicación (autenticación). No usamos cookies de rastreo publicitario.</p>
+      </section>
+
+      <section>
+        <h2 class="text-lg font-display font-bold uppercase text-white mb-3">8. Contacto</h2>
+        <p>Consultas sobre privacidad: <a href="mailto:info@radoteentrena.com" class="text-saffron hover:underline">info@radoteentrena.com</a></p>
+      </section>
+
+    </div>
+
+    <div class="mt-16 pt-8 border-t border-shadow-grey">
+      <%= link_to "← Volver al inicio", root_path, class: "text-sm text-gray-500 hover:text-saffron font-display font-bold uppercase tracking-widest transition-colors" %>
+    </div>
+  </div>
+</div>
