@@ -52,12 +52,6 @@ class ProcessPaymentEventJob < ApplicationJob
       end
       sub.save!
 
-      if is_new_subscription
-        SubscriptionMailer.confirmed(user, sub).deliver_later
-      else
-        SubscriptionMailer.renewed(user, sub).deliver_later
-      end
-
       # Cancel all other subscriptions for this user
       if sub.persisted?
         user.subscriptions.where.not(id: sub.id).update_all(status: :canceled)
@@ -65,6 +59,12 @@ class ProcessPaymentEventJob < ApplicationJob
 
       user.active!
       user.access_active!
+
+      if is_new_subscription
+        SubscriptionMailer.confirmed(user, sub).deliver_later
+      else
+        SubscriptionMailer.renewed(user, sub).deliver_later
+      end
     when "cancelled"
       sub = Subscription.find_by!(external_id: mp_id)
       sub.update!(status: :canceled, canceled_at: Time.current)

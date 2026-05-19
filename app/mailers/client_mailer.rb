@@ -17,12 +17,4 @@ class ClientMailer < ApplicationMailer
       subject: "Tu llamada está confirmada"
     )
   end
-
-  private
-
-  def app_host
-    host = Rails.application.credentials.dig(:app_host)
-    raise "Missing credential: app_host — required for client mailer URLs" if host.blank?
-    host
-  end
 end

@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe ClientMailer, type: :mailer do
   describe "#welcome" do
     before do
-      allow_any_instance_of(ClientMailer).to receive(:app_host).and_return("example.com")
+      allow_any_instance_of(ApplicationMailer).to receive(:app_host).and_return("example.com")
     end
 
     let(:user) { create(:user, first_name: "Carlos", email: "carlos@example.com") }
