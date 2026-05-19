@@ -2,11 +2,19 @@ require "rails_helper"
 
 RSpec.describe ClientMailer, type: :mailer do
   describe "#welcome" do
+    before do
+      allow_any_instance_of(ClientMailer).to receive(:app_host).and_return("example.com")
+    end
+
     let(:user) { create(:user, first_name: "Carlos", email: "carlos@example.com") }
     let(:mail) { described_class.welcome(user) }
 
     it "sends to the user email" do
       expect(mail.to).to eq(["carlos@example.com"])
+    end
+
+    it "sends from the Rado address" do
+      expect(mail.from).to eq(["info@radoteentrena.com"])
     end
 
     it "has the correct subject" do
