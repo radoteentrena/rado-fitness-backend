@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #1a1a1a; color: #e5e5e5; padding: 40px 20px;">
+  <div style="max-width: 560px; margin: 0 auto; background-color: #1a1a1a; border: 2px solid #333; padding: 40px;">
+
+    <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; color: #F5C228; margin-bottom: 18px;">
+      Rado Te Entrena
+    </div>
+
+    <h1 style="font-size: 17px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 14px; color: #fff;">
+      Suscripción renovada
+    </h1>
+
+    <p style="font-size: 13px; line-height: 1.6; color: #999; margin: 0 0 8px;">
+      Hola <strong style="color: #fff;"><%= @user.first_name %></strong>,
+    </p>
+
+    <p style="font-size: 13px; line-height: 1.6; color: #999; margin: 0 0 20px;">
+      Tu suscripción mensual se renovó correctamente. Tu acceso continúa activo.
+    </p>
+
+    <% if @subscription.current_period_end.present? %>
+    <div style="border-left: 2px solid #2f2f2f; padding-left: 14px; margin-bottom: 20px;">
+      <div style="font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">
+        Próxima renovación
+      </div>
+      <div style="font-size: 13px; color: #fff; font-weight: 700;">
+        <%= @subscription.current_period_end.strftime("%d de %B de %Y") %>
+      </div>
+    </div>
+    <% end %>
+
+    <a href="<%= @plan_url %>"
+       style="display: block; text-align: center; background-color: #F5C228; color: #111; border: 2px solid #F5C228; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; padding: 14px 24px; text-decoration: none; margin: 0 0 20px;">
+      Ver mi plan &#8594;
+    </a>
+
+    <p style="font-size: 11px; color: #444; line-height: 1.5; margin: 0;">
+      Si querés cancelar o cambiar tu plan, respondé este mail.
+    </p>
+
+  </div>
+</body>
+</html>
