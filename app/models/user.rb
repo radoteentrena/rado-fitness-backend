@@ -41,7 +41,7 @@ class User < ApplicationRecord
   # Callbacks
   before_validation :set_temporary_password, on: :create
   before_validation :strip_whitespace
-  after_create :send_welcome_email
+  after_commit :send_welcome_email, on: :create
 
   # Associations
   has_one_attached :avatar

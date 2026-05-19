@@ -3,10 +3,10 @@ require "rails_helper"
 RSpec.describe User, type: :model do
   describe "callbacks" do
     describe "after_create" do
-      it "enqueues a welcome email" do
-        expect {
-          create(:user)
-        }.to have_enqueued_mail(ClientMailer, :welcome)
+      it "enqueues a welcome email for the created user" do
+        user = nil
+        expect { user = create(:user) }
+          .to have_enqueued_mail(ClientMailer, :welcome).with(a_kind_of(User))
       end
     end
   end
