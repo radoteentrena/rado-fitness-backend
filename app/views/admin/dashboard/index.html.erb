@@ -178,4 +178,123 @@
         </div>
     </div>
   </div>
+
+  <!-- Calls Calendar -->
+  <div class="mb-8">
+    <div class="bg-whiteish border border-shadow rounded-3xl shadow-sm dark:border-graphite dark:bg-shadow overflow-hidden">
+      <div class="p-4 border-b border-shadow dark:border-graphite flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-whiteish">Llamadas Agendadas</h3>
+          <p class="text-[10px] text-graphite dark:text-whiteish/60 mt-0.5"><%= @calendar_month.strftime("%B %Y").upcase %></p>
+        </div>
+        <div class="flex items-center gap-1">
+          <%= link_to admin_root_path(month: (@calendar_month - 1.month).strftime("%Y-%m-%d")),
+                class: "w-8 h-8 flex items-center justify-center rounded-lg hover:bg-background-light dark:hover:bg-graphite transition-colors text-graphite dark:text-whiteish" do %>
+            <span class="material-symbols-outlined text-base">chevron_left</span>
+          <% end %>
+          <%= link_to admin_root_path(month: Date.today.strftime("%Y-%m-%d")),
+                class: "text-[10px] font-bold text-primary hover:underline px-2" do %>
+            HOY
+          <% end %>
+          <%= link_to admin_root_path(month: (@calendar_month + 1.month).strftime("%Y-%m-%d")),
+                class: "w-8 h-8 flex items-center justify-center rounded-lg hover:bg-background-light dark:hover:bg-graphite transition-colors text-graphite dark:text-whiteish" do %>
+            <span class="material-symbols-outlined text-base">chevron_right</span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_320px] divide-y xl:divide-y-0 xl:divide-x divide-shadow dark:divide-graphite">
+        <!-- Monthly grid -->
+        <div class="p-4">
+          <div class="grid grid-cols-7 mb-2">
+            <% %w[Dom Lun Mar Mié Jue Vie Sáb].each do |day| %>
+              <div class="text-center text-[10px] font-bold text-graphite dark:text-whiteish/50 uppercase py-1"><%= day %></div>
+            <% end %>
+          </div>
+
+          <%
+            first_day      = @calendar_month.beginning_of_month
+            last_day       = @calendar_month.end_of_month
+            leading_blanks = first_day.wday
+            total_cells    = leading_blanks + last_day.day
+            rows           = (total_cells.to_f / 7).ceil
+            today          = Date.today
+          %>
+
+          <div class="grid grid-cols-7 gap-y-1">
+            <% leading_blanks.times do %>
+              <div></div>
+            <% end %>
+
+            <% (1..last_day.day).each do |d| %>
+              <% date        = Date.new(@calendar_month.year, @calendar_month.month, d) %>
+              <% bookings    = @bookings_by_date[date] || [] %>
+              <% is_today    = date == today %>
+              <% has_booking = bookings.any? %>
+
+              <div class="flex flex-col items-center py-1 relative">
+                <span class="w-7 h-7 flex items-center justify-center text-sm font-medium <%= is_today ? 'rounded-full bg-primary text-white' : 'text-blackish dark:text-whiteish' %> <%= has_booking && !is_today ? 'font-bold' : '' %>">
+                  <%= d %>
+                </span>
+                <% if has_booking %>
+                  <div class="flex gap-0.5 mt-0.5">
+                    <% bookings.first(3).each do |booking| %>
+                      <span class="w-1.5 h-1.5 rounded-full <%= booking.confirmed? ? 'bg-primary' : 'bg-primary/40' %>"></span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Legend -->
+          <div class="flex items-center gap-4 mt-4 pt-3 border-t border-shadow dark:border-graphite">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-primary"></span>
+              <span class="text-[10px] text-graphite dark:text-whiteish/60">Confirmada</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-primary/40"></span>
+              <span class="text-[10px] text-graphite dark:text-whiteish/60">Pendiente</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming calls list -->
+        <div class="p-4">
+          <h4 class="text-[10px] font-bold uppercase tracking-wider text-graphite dark:text-whiteish/50 mb-3">Próximas llamadas</h4>
+
+          <% if @upcoming_bookings.any? %>
+            <div class="space-y-2">
+              <% @upcoming_bookings.each do |booking| %>
+                <%= link_to admin_user_path(booking.user), class: "flex items-start gap-3 p-2.5 rounded-xl hover:bg-background-light dark:hover:bg-graphite/50 transition-colors group block" do %>
+                  <div class="w-9 h-9 rounded-full bg-background-light dark:bg-graphite shrink-0 flex items-center justify-center font-bold text-sm text-graphite dark:text-whiteish">
+                    <%= booking.user.first_name[0].upcase %>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-blackish dark:text-whiteish truncate"><%= booking.user.name %></p>
+                    <p class="text-[10px] text-graphite dark:text-whiteish/60 truncate"><%= booking.user.email %></p>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span class="text-[10px] font-medium text-graphite dark:text-whiteish/70">
+                        <%= booking.scheduled_at.strftime("%-d %b · %H:%M") %>
+                      </span>
+                      <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold <%= booking.confirmed? ? 'bg-primary/20 text-primary' : 'bg-primary/10 text-primary/60' %>">
+                        <%= booking.confirmed? ? "CONF." : "PEND." %>
+                      </span>
+                    </div>
+                  </div>
+                  <span class="material-symbols-outlined text-shadow dark:text-muted text-base opacity-0 group-hover:opacity-100 transition-opacity self-center">chevron_right</span>
+                <% end %>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="flex flex-col items-center justify-center py-10 text-center">
+              <span class="material-symbols-outlined text-4xl text-graphite dark:text-whiteish/30 mb-2">calendar_today</span>
+              <p class="text-sm text-graphite dark:text-whiteish/50 font-medium">Sin llamadas próximas</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
