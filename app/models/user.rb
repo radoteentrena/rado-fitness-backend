@@ -47,6 +47,7 @@ class User < ApplicationRecord
   has_one_attached :avatar
 
   has_one :onboarding_profile, dependent: :destroy
+  has_one :booking, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   accepts_nested_attributes_for :onboarding_profile
   has_many :coach_alerts, dependent: :destroy
@@ -62,6 +63,10 @@ class User < ApplicationRecord
 
   def name
     "#{first_name} #{last_name}"
+  end
+
+  def medium_or_high_ticket?
+    medium? || high_ticket?
   end
 
   def active_subscription

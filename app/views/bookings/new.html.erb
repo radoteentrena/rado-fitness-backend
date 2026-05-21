@@ -1,0 +1,88 @@
+<% content_for :title, "Agendar llamada — Rado Fitness" %>
+<% content_for :no_header, true %>
+
+<div class="min-h-screen bg-black text-white flex items-center justify-center p-6">
+  <div class="w-full max-w-5xl border-2 border-white"
+       data-controller="booking-calendar"
+       data-available-dates="<%= @available_dates.map(&:iso8601).to_json %>">
+
+    <div class="grid grid-cols-1 md:grid-cols-[280px_1fr_280px]">
+
+      <%# ——— LEFT: Coach info ——— %>
+      <div class="border-b-2 md:border-b-0 md:border-r-2 border-white p-8 flex flex-col justify-between">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">Llamada de inicio</p>
+          <div class="w-16 h-16 border-2 border-saffron mb-6 flex items-center justify-center">
+            <span class="text-saffron font-display font-black text-2xl">R</span>
+          </div>
+          <h2 class="font-display font-black text-2xl uppercase tracking-tight text-white mb-2">Rado</h2>
+          <p class="text-gray-400 text-sm mb-6">Coach de transformación física de élite</p>
+
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 text-sm text-gray-300">
+              <span class="material-symbols-outlined text-saffron text-lg">schedule</span>
+              <span>60 minutos</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm text-gray-300">
+              <span class="material-symbols-outlined text-saffron text-lg">videocam</span>
+              <span>Google Meet</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <%= link_to "Hacer esto más tarde →", root_path,
+              class: "text-gray-500 text-sm hover:text-gray-300 transition-colors" %>
+        </div>
+      </div>
+
+      <%# ——— CENTER: Monthly calendar ——— %>
+      <div class="border-b-2 md:border-b-0 md:border-r-2 border-white p-8">
+        <%# Month navigation %>
+        <div class="flex items-center justify-between mb-5">
+          <button type="button"
+                  data-action="click->booking-calendar#prevMonth"
+                  data-booking-calendar-target="prevButton"
+                  class="p-1 text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-saffron disabled:opacity-25 disabled:cursor-not-allowed">
+            <span class="material-symbols-outlined" style="line-height:1;font-size:20px">chevron_left</span>
+          </button>
+          <p class="text-xs font-bold uppercase tracking-widest text-gray-400"
+             data-booking-calendar-target="monthLabel"></p>
+          <button type="button"
+                  data-action="click->booking-calendar#nextMonth"
+                  class="p-1 text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-saffron">
+            <span class="material-symbols-outlined" style="line-height:1;font-size:20px">chevron_right</span>
+          </button>
+        </div>
+
+        <%# Day-of-week headers %>
+        <div class="grid grid-cols-7 mb-2">
+          <% %w[D L M X J V S].each do |d| %>
+            <div class="text-center text-xs font-bold uppercase tracking-wide text-gray-600 py-1"><%= d %></div>
+          <% end %>
+        </div>
+
+        <%# Grid filled by Stimulus %>
+        <div class="grid grid-cols-7 gap-1" data-booking-calendar-target="calendarGrid"></div>
+      </div>
+
+      <%# ——— RIGHT: Time slots ——— %>
+      <div class="p-8 overflow-y-auto max-h-[480px]" data-booking-calendar-target="slotsPanel">
+        <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">Horarios disponibles</p>
+        <p class="text-gray-500 text-sm">Selecciona un día para ver los horarios.</p>
+      </div>
+
+    </div>
+
+    <%# Hidden form — submitted by Stimulus on confirm %>
+    <%= form_with url: booking_path, method: :post, data: { "booking-calendar-target": "form" } do |f| %>
+      <%= hidden_field_tag :scheduled_at, nil, data: { "booking-calendar-target": "scheduledAtInput" } %>
+      <button type="submit"
+        class="hidden w-full bg-saffron text-black font-display font-black text-sm uppercase tracking-widest py-4 border-2 border-saffron hover:-translate-y-px hover:-translate-x-px shadow-[6px_6px_0px_0px_#ffffff] hover:shadow-[8px_8px_0px_0px_#ffffff] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-white"
+        data-booking-calendar-target="confirmButton">
+        Confirmar horario
+      </button>
+    <% end %>
+
+  </div>
+</div>
