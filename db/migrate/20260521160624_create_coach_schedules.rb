@@ -16,10 +16,10 @@ class CreateCoachSchedules < ActiveRecord::Migration[8.0]
       [0, false], [1, true], [2, true], [3, true],
       [4, true],  [5, true], [6, false]
     ].each do |day, active|
-      execute <<~SQL
-        INSERT INTO coach_schedules (day_of_week, start_hour, end_hour, active, created_at, updated_at)
-        VALUES (#{day}, 9, 18, #{active}, NOW(), NOW())
-      SQL
+      execute(
+        "INSERT INTO coach_schedules (day_of_week, start_hour, end_hour, active, created_at, updated_at) " \
+        "VALUES (#{Integer(day)}, 9, 18, #{active ? 'TRUE' : 'FALSE'}, NOW(), NOW())"
+      )
     end
   end
 
