@@ -26,9 +26,10 @@
         <span class="text-white block">CONSTRUYE EL FÍSICO</span>
         <span class="text-saffron block italic">QUE SIEMPRE QUISISTE</span>
       </h1>
-      <p class="text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mx-0 font-light font-body">
-        Entrenamiento profesional diseñado para maximizar tu fuerza<br>
-        y <span class="text-saffron">esculpir tu estética.</span>
+      <p class="pl-3 text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mx-0 font-light font-body">
+        Entrenamiento y nutrición adaptados a tu vida.<br>
+        <span class="text-saffron italic">Sin fórmulas mágicas,</span><br>
+        solo resultados basados en datos.
       </p>
     </div>
 
@@ -45,18 +46,18 @@
   </div>
 
   <div class="relative" data-controller="carousel">
-    <div class="overflow-hidden h-screen">
+    <div class="overflow-hidden h-[70vh]">
       <div class="flex h-full carousel-track" data-carousel-target="track">
-        <div class="w-full h-full flex-shrink-0" data-carousel-target="slide">
+        <div class="w-full h-full shrink-0" data-carousel-target="slide">
           <%= image_tag "testimonial_1.png", alt: "Testimonio de alumno", class: "w-full h-full object-contain" %>
         </div>
-        <div class="w-full h-full flex-shrink-0" data-carousel-target="slide">
+        <div class="w-full h-full shrink-0" data-carousel-target="slide">
           <%= image_tag "testimonial_2.png", alt: "Testimonio de alumno", class: "w-full h-full object-contain" %>
         </div>
-        <div class="w-full h-full flex-shrink-0" data-carousel-target="slide">
+        <div class="w-full h-full shrink-0" data-carousel-target="slide">
           <%= image_tag "testimonial_3.png", alt: "Testimonio de alumno", class: "w-full h-full object-contain" %>
         </div>
-        <div class="w-full h-full flex-shrink-0" data-carousel-target="slide">
+        <div class="w-full h-full shrink-0" data-carousel-target="slide">
           <%= image_tag "testimonial_4.png", alt: "Testimonio de alumno", class: "w-full h-full object-contain" %>
         </div>
       </div>
@@ -81,7 +82,7 @@
         LOS PILARES DEL <span class="text-saffron">ÉXITO FÍSICO</span>
       </h2>
       <p class="max-w-2xl text-gray-400 font-body text-sm sm:text-base">
-        Dejá de entrenar sin rumbo. Aplico ciencia y esfuerzo para resultados visibles y duraderos.
+        Dejá de entrenar sin rumbo. A diferencia de otros servicios, yo te acompaño de cerca aplicando mis conocimientos y desarollando tu mindset para obtener <br> <span class="text-saffron italic">resultados verdaderos y duraderos.</span>
       </p>
     </div>
     <div class="grid md:grid-cols-3 divide-y divide-saffron md:divide-y-0 md:divide-x">
@@ -120,7 +121,7 @@
     <div class="flex flex-col lg:flex-row gap-16 items-center">
       <div class="lg:w-1/2 relative">
         <div class="absolute -inset-10 bg-saffron/5 blur-3xl transform rotate-3"></div>
-        <%= image_tag("rao.png", alt: "Coach Rado", class: "relative z-10 w-full shadow-2xl grayscale border-4 border-graphite", loading: "lazy")%>
+        <%= image_tag("rao.png", alt: "Coach Rado", class: "relative z-10 w-full shadow-2xl grayscale border-4 border-graphite", loading: "lazy") %>
       </div>
       <div class="lg:w-1/2">
         <h4 class="text-saffron font-bold uppercase tracking-widest text-xs mb-3 font-display">MI FILOSOFÍA</h4>
@@ -147,36 +148,41 @@
       <div class="lg:w-1/2 space-y-8">
         <div>
           <h2 class="text-4xl sm:text-5xl lg:text-[2.75rem] leading-tight font-display font-bold uppercase text-white mb-2">
-            COMIENZA CON <br/><span class="text-saffron">MI APP DE<br/>ENTRENAMIENTO</span>
+            COMIENZA CON <br><span class="text-saffron">MI APP DE<br>ENTRENAMIENTO</span>
           </h2>
         </div>
 
         <div>
-           <h4 class="text-sm font-display font-bold uppercase tracking-widest text-gray-300 mb-6 border-b border-saffron pb-2 inline-block">PROGRAMAS DE FUERZA Y ESTÉTICA</h4>
-           <p class="text-gray-400 text-[15px] font-body leading-relaxed mb-8">
-             He volcado toda mi experiencia en powerlifting y culturismo en esta aplicación. Accede a las rutinas exactas de hipertrofia y los ciclos de fuerza que utilizo para construir un físico de élite. Sin rellenos, solo entrenamiento efectivo.
-           </p>
+          <h4 class="text-sm font-display font-bold uppercase tracking-widest text-gray-300 mb-6 border-b border-saffron pb-2 inline-block">PROGRAMAS DE FUERZA Y/O ESTÉTICA</h4>
+          <p class="text-gray-400 text-[15px] font-body leading-relaxed mb-8">
+            Pasé los últimos 10 años aplicando los sistemas de entrenamiento de los referentes científicos del culturismo y nutrición mundial: <br>
+              <span class="text-saffron italic font-display">Greg Nuckols
+              - Eric Helms
+              - Jeff Nippard
+              - Brett Contreras - Dr. Mike Israetel - Omar Isuf</span><br>
+            El resultado es un método de alta presición validado por la ciencia y perfeccionado junto a cientos de clientes.
+          </p>
 
-           <ul class="space-y-4 font-body text-[15px] text-gray-300 mb-10">
-             <li class="flex items-center gap-3">
-               <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
-               Periodización para ganancias constantes
-             </li>
-             <li class="flex items-center gap-3">
-               <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
-               Técnica y ejecución detallada
-             </li>
-             <li class="flex items-center gap-3">
-               <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
-               Seguimiento de progreso real
-             </li>
-           </ul>
+          <ul class="space-y-4 font-body text-[15px] text-gray-300 mb-10">
+            <li class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
+              Periodización para ganancias constantes
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
+              Técnica y ejecución detallada
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-saffron text-[20px] fill-current">check_circle</span>
+              Seguimiento de progreso real
+            </li>
+          </ul>
         </div>
 
             <%= link_to "COMIENZA", new_onboarding_path, class: "inline-flex justify-center border-2 border-saffron bg-saffron py-4 px-12 text-lg font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
       </div>
       <div class="lg:w-5/12 relative flex justify-center lg:justify-end">
-        <%= image_tag("app.png", alt: "Fitness App Interface on Phone", class: "relative z-10 w-full max-w-[320px] mx-auto lg:mx-0 drop-shadow-2xl rounded-[2.5rem] shadow-saffron/10 shadow-3xl", loading: "lazy")%>
+        <%= image_tag("app.png", alt: "Fitness App Interface on Phone", class: "relative z-10 w-full max-w-[320px] mx-auto lg:mx-0 drop-shadow-2xl rounded-[2.5rem] shadow-saffron/10 shadow-3xl", loading: "lazy") %>
       </div>
     </div>
   </div>
@@ -197,7 +203,7 @@
           </span>
         </summary>
         <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
-          Sí. El programa adapta el volumen e intensidad a tu nivel actual. Sin embargo, requiere compromiso y constancia desde el primer día.
+          Para todos los niveles. El programa adapta el volumen e intensidad a tu nivel actual. Sin embargo, requiere compromiso y constancia desde el primer día.
         </p>
       </details>
 
@@ -209,7 +215,7 @@
           </span>
         </summary>
         <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
-          Entre 60 y 75 minutos. Nos centramos en calidad, no cantidad. Series efectivas, descansos adecuados y máxima intensidad en sesiones de 3 a 5 días por semana según el plan.
+          Adapto las rutinas al tiempo que dispongas, lo ideal sería entre 60 y 75 minutos. Nos centramos en calidad, no cantidad. Series efectivas, descansos adecuados y máxima intensidad en sesiones de 3 a 5 días por semana según el plan.
         </p>
       </details>
 
@@ -221,7 +227,55 @@
           </span>
         </summary>
         <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
-          No. Los suplementos son opcionales y solo para cubrir déficits. La base del éxito físico radica en un entrenamiento brutal, buena recuperación y nutrición adecuada basada en comida real.
+          No. Los suplementos son opcionales y solo para cubrir posibles deficiencias. La base del éxito físico radica en un entrenamiento brutal, buena recuperación y nutrición adecuada basada en comida real.
+        </p>
+      </details>
+
+      <details class="group bg-shadow-grey px-6 py-5 cursor-pointer marker:content-[''] border border-graphite">
+        <summary class="flex justify-between items-center font-bold text-gray-200">
+          <span>¿El programa incluye nutrición?</span>
+          <span class="transition group-open:rotate-180 text-saffron">
+            <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
+          </span>
+        </summary>
+        <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
+          Sí. Vas a recibir pautas nutricionales adaptadas a tus objetivos y estilo de vida: calorías, macros y estrategias para ajustar según tu progreso. Sin planes de dieta rígidos que nadie sostiene.
+        </p>
+      </details>
+
+      <details class="group bg-shadow-grey px-6 py-5 cursor-pointer marker:content-[''] border border-graphite">
+        <summary class="flex justify-between items-center font-bold text-gray-200">
+          <span>¿Cuándo voy a ver resultados?</span>
+          <span class="transition group-open:rotate-180 text-saffron">
+            <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
+          </span>
+        </summary>
+        <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
+          La mayoría nota diferencias en fuerza y composición a las 4–6 semanas. Los cambios visuales significativos llegan entre los 2 y 4 meses. No prometemos milagros — prometemos un método que funciona si vos lo hacés funcionar.
+        </p>
+      </details>
+
+      <details class="group bg-shadow-grey px-6 py-5 cursor-pointer marker:content-[''] border border-graphite">
+        <summary class="flex justify-between items-center font-bold text-gray-200">
+          <span>¿Puedo entrenar en casa o necesito gimnasio?</span>
+          <span class="transition group-open:rotate-180 text-saffron">
+            <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
+          </span>
+        </summary>
+        <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
+          El programa está diseñado para gimnasio con acceso a barras, mancuernas y máquinas. Si entrenás en casa con equipamiento básico, lo adaptamos — pero los resultados óptimos requieren herramientas adecuadas.
+        </p>
+      </details>
+
+      <details class="group bg-shadow-grey px-6 py-5 cursor-pointer marker:content-[''] border border-graphite">
+        <summary class="flex justify-between items-center font-bold text-gray-200">
+          <span>¿Qué pasa si tengo una lesión o limitación física?</span>
+          <span class="transition group-open:rotate-180 text-saffron">
+            <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20"><path d="M6 9l6 6 6-6"></path></svg>
+          </span>
+        </summary>
+        <p class="text-gray-400 mt-4 text-[15px] leading-relaxed group-open:animate-fadeIn">
+          Lo evaluamos en el onboarding. Las lesiones no son excusa para no progresar — son una variable más a gestionar. Modificamos ejercicios y cargas para que sigas avanzando sin agravar nada.
         </p>
       </details>
 
@@ -236,7 +290,8 @@
       NO ESPERES AL LUNES
     </h2>
     <p class="text-lg sm:text-xl text-black font-medium mb-10 max-w-xl mx-auto font-body">
-      El físico que deseas está al otro lado del dolor y la disciplina. Empieza hoy.
+      El físico que deseas está al otro lado del dolor y la disciplina. <br>
+      Completá el formulario, agendá una llamada 1:1 conmigo para recibir tu clase de nutrición y cómo usar mi sistema.
     </p>
       <%= link_to "COMIENZA", new_onboarding_path, class: "inline-flex justify-center border-2 border-black bg-black py-4 px-12 text-lg font-black uppercase tracking-widest text-white transition-all hover:bg-gray-900 focus:outline-none focus:ring-0 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_#000000] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
   </div>
