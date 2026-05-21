@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   resource :onboarding, only: [:new, :create], controller: 'onboarding'
   get 'onboarding/success', to: 'onboarding#success', as: :onboarding_success
 
+  resource :booking, only: [:new, :create, :show]
+  get "booking/availability", to: "booking_availability#show", as: :booking_availability
+
   get  "/pay/:token", to: "payments#show", as: :pay
 
   get  "subscription/new",        to: "subscriptions#new",        as: :new_subscription
@@ -59,6 +62,9 @@ Rails.application.routes.draw do
       resources :training_sessions, only: [ :show ]
       resources :subscription_cancellations, only: [:create]
       resources :subscriptions, only: [:index, :show]
+      resources :coach_schedules, only: [:index, :edit, :update]
+      get  "google_calendar/connect",  to: "google_calendar#connect",  as: :google_calendar_connect
+      get  "google_calendar/callback", to: "google_calendar#callback",  as: :google_calendar_callback
 
       get  "ai_coach",          to: "ai_coach#new",      as: :new_ai_coach
       post "ai_coach/generate", to: "ai_coach#generate", as: :generate_ai_coach
