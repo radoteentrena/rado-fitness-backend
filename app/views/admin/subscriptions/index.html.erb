@@ -1,0 +1,113 @@
+<%# Page Header %>
+<header class="px-4 pt-6 pb-4 mb-4 border-b border-shadow dark:border-graphite">
+  <h1 class="text-2xl font-bold text-blackish dark:text-whiteish">Subscriptions</h1>
+  <p class="text-sm text-graphite dark:text-muted mt-1">All client subscriptions — read only, managed via webhooks</p>
+</header>
+
+<%# Filter Bar %>
+<div class="px-4 pb-4">
+  <div class="bg-whiteish dark:bg-shadow p-4 rounded-lg border border-shadow dark:border-graphite shadow-sm">
+    <%= form_with url: admin_subscriptions_path, method: :get, class: "flex flex-wrap items-end gap-4" do |f| %>
+      <div class="flex flex-col space-y-1">
+        <%= f.label :status, "Status", class: "text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider" %>
+        <%= f.select :status,
+              Subscription.statuses.keys.map { |k| [k.humanize, k] },
+              { include_blank: "All Statuses", selected: params[:status] },
+              class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-40 p-2.5 dark:bg-graphite dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <div class="flex flex-col space-y-1">
+        <%= f.label :plan_tier, "Plan", class: "text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider" %>
+        <%= f.select :plan_tier,
+              Subscription.plan_tiers.keys.map { |k| [k.humanize, k] },
+              { include_blank: "All Plans", selected: params[:plan_tier] },
+              class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-40 p-2.5 dark:bg-graphite dark:border-graphite dark:text-whiteish" %>
+      </div>
+
+      <div class="flex gap-2">
+        <%= f.submit "Filter", class: "cursor-pointer text-whiteish bg-primary hover:bg-primary/90 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary dark:hover:bg-primary/90 focus:outline-none transition-colors" %>
+        <%= link_to "Clear", admin_subscriptions_path, class: "flex items-center justify-center text-graphite bg-whiteish border border-shadow hover:bg-background-light font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-shadow dark:text-whiteish dark:border-graphite dark:hover:bg-graphite transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%# Table %>
+<div class="px-4 pb-4">
+  <div class="bg-whiteish dark:bg-shadow rounded-xl border border-shadow dark:border-graphite shadow-sm overflow-hidden">
+    <% if resources.any? %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-graphite dark:text-slate-200">
+          <thead class="text-xs text-graphite uppercase bg-background-light dark:bg-graphite dark:text-whiteish">
+            <tr>
+              <th scope="col" class="px-4 py-3">Client</th>
+              <th scope="col" class="px-4 py-3">Plan</th>
+              <th scope="col" class="px-4 py-3">Amount</th>
+              <th scope="col" class="px-4 py-3">Status</th>
+              <th scope="col" class="px-4 py-3">Next Charge</th>
+              <th scope="col" class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% resources.each do |sub| %>
+              <%
+                status_classes = {
+                  "active"   => "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+                  "pending"  => "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+                  "past_due" => "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+                  "canceled" => "bg-background-light text-graphite dark:bg-graphite dark:text-muted"
+                }
+              %>
+              <tr class="border-b border-shadow dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50 transition-colors">
+                <td class="px-4 py-3">
+                  <div class="font-medium text-blackish dark:text-whiteish">
+                    <%= link_to sub.user.name, admin_user_path(sub.user), class: "hover:text-primary transition-colors" %>
+                  </div>
+                  <div class="text-xs text-graphite dark:text-muted"><%= sub.user.email %></div>
+                </td>
+                <td class="px-4 py-3 font-medium text-blackish dark:text-whiteish">
+                  <%= sub.plan_tier.humanize %>
+                  <% if sub.cancel_at_period_end? %>
+                    <span class="ml-1 text-xs text-graphite dark:text-muted">(cancels soon)</span>
+                  <% end %>
+                </td>
+                <td class="px-4 py-3 text-blackish dark:text-whiteish">
+                  <%= sub.currency %> <%= number_to_currency(sub.amount_in_dollars, unit: "") %>
+                </td>
+                <td class="px-4 py-3">
+                  <span class="inline-block px-2 py-0.5 text-xs font-bold rounded <%= status_classes[sub.status] || 'bg-graphite text-whiteish' %>">
+                    <%= sub.status.humanize %>
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-graphite dark:text-muted whitespace-nowrap">
+                  <% if sub.current_period_end? %>
+                    <%= sub.current_period_end.strftime("%d %b %Y") %>
+                  <% else %>
+                    —
+                  <% end %>
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <%= link_to "View", admin_subscription_path(sub), class: "font-medium text-primary hover:underline text-xs" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="w-16 h-16 rounded-full bg-background-light dark:bg-graphite flex items-center justify-center mb-4 border border-shadow dark:border-graphite">
+          <span class="material-symbols-outlined text-3xl text-graphite dark:text-muted">credit_card</span>
+        </div>
+        <p class="text-blackish dark:text-whiteish font-semibold">No subscriptions found</p>
+        <p class="text-sm text-graphite dark:text-muted mt-1">Try adjusting the filters.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <% if resources.respond_to?(:total_count) && resources.total_count > resources.limit_value %>
+    <div class="mt-4">
+      <%= paginate resources %>
+    </div>
+  <% end %>
+</div>

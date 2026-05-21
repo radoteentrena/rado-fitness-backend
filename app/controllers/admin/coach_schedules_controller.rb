@@ -2,7 +2,7 @@ module Admin
   class CoachSchedulesController < Admin::ApplicationController
     def index
       @page      = Administrate::Page::Collection.new(dashboard)
-      @resources = CoachSchedule.order(:day_of_week)
+      @resources = CoachSchedule.order(:day_of_week).page(params[:_page])
       render locals: { resources: @resources, page: @page, search_term: nil, show_search_bar: false }
     end
 
