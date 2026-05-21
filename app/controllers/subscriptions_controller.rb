@@ -91,7 +91,11 @@ class SubscriptionsController < ApplicationController
 
     case status
     when "approved"
-      redirect_to root_path, notice: "¡Pago confirmado! Tu suscripción ya está activa."
+      if current_user&.medium_or_high_ticket? && current_user.booking.nil?
+        redirect_to new_booking_path, notice: "¡Pago confirmado! Agendá tu llamada de inicio."
+      else
+        redirect_to root_path, notice: "¡Pago confirmado! Tu suscripción ya está activa."
+      end
     when "rejected", "cancelled"
       redirect_to new_subscription_path, alert: "El pago fue rechazado. Verificá tus datos e intentá de nuevo."
     when "pending", "in_process"

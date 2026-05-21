@@ -1,0 +1,31 @@
+<header class="fixed w-full top-0 z-50 bg-black/95 backdrop-blur-sm border-b border-shadow-grey">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex-shrink-0 flex items-center">
+        <%= link_to root_path, class: "flex items-center" do %>
+          <span class="font-display font-bold text-2xl uppercase tracking-tighter text-white">RADO<span class="text-saffron">TE</span><span class="text-white">ENTRENA</span></span>
+        <% end %>
+      </div>
+      <nav class="flex space-x-4 items-center">
+        <% if user_signed_in? %>
+          <% if current_user.medium_or_high_ticket? && current_user.booking.nil? %>
+            <%= link_to new_booking_path, class: "relative inline-flex items-center gap-2 border-2 border-saffron px-4 py-2 text-sm font-black uppercase tracking-widest text-saffron hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0px_0px_#ffffff] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-saffron" do %>
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-saffron opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-saffron"></span>
+              </span>
+              Agendar llamada
+            <% end %>
+          <% end %>
+          <% if ENV["ADMIN_EMAILS"]&.split(",")&.map(&:strip)&.include?(current_user.email) %>
+            <%= link_to "Dashboard", admin_root_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors" %>
+          <% end %>
+          <%= button_to "CERRAR SESIÓN", destroy_user_session_path, method: :delete, class: "border-2 border-saffron bg-saffron text-black font-display font-bold uppercase px-4 py-2 text-sm hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0px_0px_#ffffff] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-white" %>
+        <% else %>
+          <%= link_to "LOG IN", new_user_session_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors mr-4" %>
+          <%= link_to "COMIENZA", new_onboarding_path, class: "inline-flex justify-center border-2 border-saffron bg-saffron py-3 px-8 text-sm font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
+        <% end %>
+      </nav>
+    </div>
+  </div>
+</header>
