@@ -20,11 +20,12 @@ module GoogleCalendar
       client.fetch_access_token!
 
       credential = GoogleCredential.first_or_initialize
-      credential.update!(
+      attrs = {
         access_token: client.access_token,
-        refresh_token: client.refresh_token,
         expires_at: Time.current + client.expires_in.to_i.seconds
-      )
+      }
+      attrs[:refresh_token] = client.refresh_token if client.refresh_token.present?
+      credential.update!(attrs)
       credential
     end
 

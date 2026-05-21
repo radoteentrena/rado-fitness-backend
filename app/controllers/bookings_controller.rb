@@ -14,7 +14,14 @@ class BookingsController < ApplicationController
     unless slot_available?(scheduled_at)
       flash.now[:alert] = "El horario seleccionado ya no está disponible. Por favor elige otro."
       @available_dates = upcoming_working_dates
-      render :new, status: :unprocessable_entity and return
+      return render :new, status: :unprocessable_entity
+    end
+
+    @booking = current_user.build_booking(scheduled_at: scheduled_at, status: :confirmed)
+    unless @booking.valid?
+      flash.now[:alert] = "No se pudo confirmar el agendamiento."
+      @available_dates = upcoming_working_dates
+      return render :new, status: :unprocessable_entity
     end
 
     access_token = GoogleCalendar::Auth.fresh_access_token
@@ -24,20 +31,12 @@ class BookingsController < ApplicationController
       starts_at: scheduled_at
     )
 
-    @booking = current_user.build_booking(
-      scheduled_at: scheduled_at,
+    @booking.assign_attributes(
       google_event_id: result[:google_event_id],
-      meet_link: result[:meet_link],
-      status: :confirmed
+      meet_link: result[:meet_link]
     )
-
-    if @booking.save
-      redirect_to booking_path
-    else
-      flash.now[:alert] = "No se pudo confirmar el agendamiento."
-      @available_dates = upcoming_working_dates
-      render :new, status: :unprocessable_entity
-    end
+    @booking.save!
+    redirect_to booking_path
   rescue ArgumentError
     flash.now[:alert] = "Horario inválido."
     @available_dates = upcoming_working_dates

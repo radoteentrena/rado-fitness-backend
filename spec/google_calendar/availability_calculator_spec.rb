@@ -18,8 +18,8 @@ RSpec.describe GoogleCalendar::AvailabilityCalculator do
   context "when a slot is fully blocked by a busy interval" do
     let(:busy) do
       [{
-        start: date.to_time.change(hour: 10),
-        end:   date.to_time.change(hour: 11)
+        start: Time.zone.parse("#{date} 10:00:00"),
+        end:   Time.zone.parse("#{date} 11:00:00")
       }]
     end
 
@@ -32,8 +32,8 @@ RSpec.describe GoogleCalendar::AvailabilityCalculator do
   context "when a busy interval overlaps the start of a slot" do
     let(:busy) do
       [{
-        start: date.to_time.change(hour: 9, min: 30),
-        end:   date.to_time.change(hour: 10, min: 30)
+        start: Time.zone.parse("#{date} 09:30:00"),
+        end:   Time.zone.parse("#{date} 10:30:00")
       }]
     end
 
