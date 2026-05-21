@@ -1,0 +1,84 @@
+<%# Page Header %>
+<header class="px-4 pt-6 pb-4 mb-4 border-b border-shadow dark:border-graphite">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-blackish dark:text-whiteish">Coach Schedule</h1>
+      <p class="text-sm text-graphite dark:text-muted mt-1">Set your available hours for each day of the week</p>
+    </div>
+    <% credential = GoogleCredential.first %>
+    <% if credential&.refresh_token.present? %>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 px-3 py-2 bg-green-100 dark:bg-green-900/30 rounded-lg border border-green-200 dark:border-green-800">
+          <span class="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
+          <span class="text-xs font-semibold text-green-800 dark:text-green-400">Google Calendar conectado</span>
+        </div>
+        <%= link_to admin_google_calendar_connect_path, class: "flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish border border-shadow dark:border-graphite rounded-lg hover:bg-background-light dark:hover:bg-graphite transition-colors" do %>
+          <span class="material-symbols-outlined text-base">refresh</span>
+          Reconectar
+        <% end %>
+      </div>
+    <% else %>
+      <%= link_to admin_google_calendar_connect_path, class: "flex items-center gap-2 px-4 py-2 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-lg text-sm font-semibold text-blackish dark:text-whiteish hover:bg-background-light dark:hover:bg-graphite transition-colors shadow-sm flex-shrink-0" do %>
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Conectar Google Calendar
+      <% end %>
+    <% end %>
+  </div>
+</header>
+
+<%# Schedule Table %>
+<div class="px-4 pb-4">
+  <div class="bg-whiteish dark:bg-shadow rounded-xl border border-shadow dark:border-graphite shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-graphite dark:text-slate-200">
+        <thead class="text-xs text-graphite uppercase bg-background-light dark:bg-graphite dark:text-whiteish">
+          <tr>
+            <th scope="col" class="px-4 py-3">Day</th>
+            <th scope="col" class="px-4 py-3">Start</th>
+            <th scope="col" class="px-4 py-3">End</th>
+            <th scope="col" class="px-4 py-3">Duration</th>
+            <th scope="col" class="px-4 py-3">Status</th>
+            <th scope="col" class="px-4 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% resources.each do |schedule| %>
+            <tr class="border-b border-shadow dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50 transition-colors">
+              <td class="px-4 py-3 font-semibold text-blackish dark:text-whiteish">
+                <%= schedule.day_name %>
+              </td>
+              <td class="px-4 py-3 font-mono text-blackish dark:text-whiteish">
+                <%= format("%02d:00", schedule.start_hour) %>
+              </td>
+              <td class="px-4 py-3 font-mono text-blackish dark:text-whiteish">
+                <%= format("%02d:00", schedule.end_hour) %>
+              </td>
+              <td class="px-4 py-3 text-graphite dark:text-muted">
+                <%= schedule.end_hour - schedule.start_hour %>h
+              </td>
+              <td class="px-4 py-3">
+                <% if schedule.active %>
+                  <span class="inline-block px-2 py-0.5 text-xs font-bold rounded bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                    Active
+                  </span>
+                <% else %>
+                  <span class="inline-block px-2 py-0.5 text-xs font-bold rounded bg-background-light text-graphite dark:bg-graphite dark:text-muted">
+                    Inactive
+                  </span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-right">
+                <%= link_to "Edit", edit_admin_coach_schedule_path(schedule), class: "font-medium text-primary hover:underline text-xs" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
