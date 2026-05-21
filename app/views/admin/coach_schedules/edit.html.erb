@@ -1,0 +1,58 @@
+<%# Page Header %>
+<header class="px-4 pt-6 pb-4 mb-4 border-b border-shadow dark:border-graphite">
+  <div class="flex items-center gap-3">
+    <%= link_to admin_coach_schedules_path, class: "text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish transition-colors" do %>
+      <span class="material-symbols-outlined text-xl">arrow_back</span>
+    <% end %>
+    <div>
+      <h1 class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @resource.day_name %></h1>
+      <p class="text-sm text-graphite dark:text-muted mt-0.5">Edit available hours for this day</p>
+    </div>
+  </div>
+</header>
+
+<div class="px-4 pb-4 max-w-lg">
+  <div class="bg-whiteish dark:bg-shadow rounded-xl border border-shadow dark:border-graphite shadow-sm overflow-hidden">
+    <% if @resource.errors.any? %>
+      <div class="p-4 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-sm border-b border-shadow dark:border-graphite">
+        <ul class="list-disc pl-5 space-y-1">
+          <% @resource.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: [:admin, @resource], html: { class: "p-6 space-y-5" } do |f| %>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <%= f.label :start_hour, "Start Hour", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+          <%= f.select :start_hour,
+                (0..23).map { |h| [format("%02d:00", h), h] },
+                { selected: @resource.start_hour },
+                class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish font-mono" %>
+        </div>
+        <div>
+          <%= f.label :end_hour, "End Hour", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+          <%= f.select :end_hour,
+                (1..24).map { |h| [format("%02d:00", h), h] },
+                { selected: @resource.end_hour },
+                class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish font-mono" %>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 p-3 bg-background-light dark:bg-graphite rounded-lg border border-shadow dark:border-graphite">
+        <%= f.check_box :active, class: "w-4 h-4 text-primary bg-background-light border-shadow rounded focus:ring-primary dark:focus:ring-primary dark:ring-offset-shadow focus:ring-2 dark:bg-graphite dark:border-graphite cursor-pointer" %>
+        <div>
+          <%= f.label :active, "Active", class: "text-sm font-medium text-blackish dark:text-whiteish cursor-pointer" %>
+          <p class="text-xs text-graphite dark:text-muted">Clients can book sessions on this day</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-2 border-t border-shadow dark:border-graphite">
+        <%= link_to "Cancel", admin_coach_schedules_path, class: "px-4 py-2 text-sm font-medium text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish transition-colors" %>
+        <%= f.submit "Save Changes", class: "px-5 py-2 bg-primary text-blackish font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>
