@@ -18,7 +18,7 @@ class CoachScheduleDashboard < Administrate::BaseDashboard
 
   SHOW_PAGE_ATTRIBUTES = %i[id day_of_week start_hour end_hour active created_at updated_at].freeze
 
-  FORM_ATTRIBUTES = %i[day_of_week start_hour end_hour active].freeze
+  FORM_ATTRIBUTES = %i[start_hour end_hour active].freeze
 
   def display_resource(coach_schedule)
     "#{coach_schedule.day_name} #{coach_schedule.start_hour}:00–#{coach_schedule.end_hour}:00"

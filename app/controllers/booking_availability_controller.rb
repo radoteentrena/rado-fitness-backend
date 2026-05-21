@@ -3,10 +3,15 @@ class BookingAvailabilityController < ApplicationController
 
   def show
     date = Date.parse(params[:date])
-    schedule = CoachSchedule.find_by(day_of_week: date.wday, active: true)
 
-    if schedule.nil?
-      render json: { slots: [] } and return
+    valid_window = (Date.today + 1..Date.today + 7)
+    unless valid_window.include?(date)
+      return render json: { slots: [] }
+    end
+
+    schedule = CoachSchedule.find_by(day_of_week: date.wday, active: true)
+    unless schedule
+      return render json: { slots: [] }
     end
 
     access_token = GoogleCalendar::Auth.fresh_access_token

@@ -1,9 +1,6 @@
 <% content_for :title, "Agendar llamada — Rado Fitness" %>
-<% content_for :head do %>
-  <%= javascript_include_tag "booking_calendar_controller", defer: true %>
-<% end %>
 
-<div class="min-h-screen bg-black text-white flex items-center justify-center p-6">
+<div class="min-h-screen bg-black text-white flex items-center justify-center p-6 pt-24">
   <div class="w-full max-w-5xl border-2 border-white" data-controller="booking-calendar">
 
     <div class="grid grid-cols-1 md:grid-cols-[280px_1fr_280px]">
@@ -40,13 +37,6 @@
       <div class="border-b-2 md:border-b-0 md:border-r-2 border-white p-8">
         <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">Selecciona un día</p>
 
-        <div class="grid grid-cols-7 gap-1 mb-2">
-          <% %w[D L M X J V S].each do |d| %>
-            <div class="text-center text-xs text-gray-500 font-bold py-1"><%= d %></div>
-          <% end %>
-        </div>
-
-        <%# Next 7 days grid %>
         <div class="space-y-2">
           <% @available_dates.each do |date| %>
             <button

@@ -18,8 +18,8 @@ module GoogleCalendar
     private
 
     def generate_slots(date)
-      start_time = date.to_time.change(hour: @schedule.start_hour)
-      end_time   = date.to_time.change(hour: @schedule.end_hour)
+      start_time = Time.zone.parse("#{date} #{@schedule.start_hour}:00:00")
+      end_time   = Time.zone.parse("#{date} #{@schedule.end_hour}:00:00")
       slots = []
       current = start_time
       while current + SLOT_DURATION.minutes <= end_time
