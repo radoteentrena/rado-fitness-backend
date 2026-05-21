@@ -25,11 +25,14 @@
       </div>
       <nav class="flex space-x-4 items-center">
         <% if user_signed_in? %>
-          <%= link_to "Dashboard", admin_root_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors" %>
+          <% if admin_user? %>
+            <%= link_to "Dashboard", admin_root_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors" %>
+          <% end %>
+          <%= link_to "DESCARGAR APP", "#", class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors" %>
           <%= button_to "CERRAR SESIÓN", destroy_user_session_path, method: :delete, class: "bg-saffron text-black font-display font-bold uppercase px-4 py-2 text-sm hover:bg-yellow-400 transition-colors" %>
         <% else %>
-            <%= link_to "LOG IN", new_user_session_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors mr-4" %>
-            <%= link_to "COMIENZA", new_onboarding_path, class: "inline-flex justify-center border-2 border-saffron bg-saffron py-3 px-8 text-sm font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
+          <%= link_to "LOG IN", new_user_session_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors mr-4" %>
+          <%= link_to "COMIENZA", new_onboarding_path, class: "inline-flex justify-center border-2 border-saffron bg-saffron py-3 px-8 text-sm font-black uppercase tracking-widest text-black transition-all hover:bg-yellow-500 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
         <% end %>
       </nav>
     </div>
@@ -59,62 +62,72 @@
 </section>
 
 <%# Social Proof / Testimonials %>
-<section class="pb-16 pt-8 border-b border-shadow-grey bg-black">
-  <div class="w-full text-center">
-    <div class="flex justify-center items-center space-x-1 mb-4">
-      <% 5.times do %>
-        <span class="material-symbols-outlined text-saffron fill-current text-xl">star</span>
-      <% end %>
-    </div>
-    <p class="text-lg font-medium text-white mb-10 font-body">
-      Más de <span class="text-saffron font-bold">1000 Alumnos</span> han construido su mejor versión.
-    </p>
+<section class="pb-12 pt-8 border-b border-shadow-grey bg-black">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+    <h2 class="text-4xl sm:text-5xl font-display font-bold uppercase text-white">
+      CASOS DE <span class="text-saffron">ÉXITO</span>
+    </h2>
+  </div>
 
-    <div class="w-full grid grid-cols-2 md:grid-cols-4 aspect-auto">
-      <%= image_tag "testimonial_1.png", alt: "Testimonial 1", class: "w-full h-[400px] object-cover", loading: "lazy" %>
-      <%= image_tag "testimonial_2.png", alt: "Testimonial 2", class: "w-full h-[400px] object-cover", loading: "lazy" %>
-      <%= image_tag "testimonial_3.png", alt: "Testimonial 3", class: "w-full h-[400px] object-cover", loading: "lazy" %>
-      <%= image_tag "testimonial_4.png", alt: "Testimonial 4", class: "w-full h-[400px] object-cover", loading: "lazy" %>
+  <div class="relative" data-controller="carousel">
+    <div class="overflow-hidden h-screen">
+      <div class="flex h-full carousel-track" data-carousel-target="track">
+        <div class="w-full h-full flex-shrink-0" data-carousel-target="slide">
+          <%= image_tag "testimonial_1.png", alt: "Testimonio de alumno", class: "w-full h-full object-contain" %>
+        </div>
+        <div class="w-full h-full flex-shrink-0" data-carousel-target="slide">
+          <%= image_tag "testimonial_2.png", alt: "Testimonio de alumno", class: "w-full h-full object-contain" %>
+        </div>
+        <div class="w-full h-full flex-shrink-0" data-carousel-target="slide">
+          <%= image_tag "testimonial_3.png", alt: "Testimonio de alumno", class: "w-full h-full object-contain" %>
+        </div>
+        <div class="w-full h-full flex-shrink-0" data-carousel-target="slide">
+          <%= image_tag "testimonial_4.png", alt: "Testimonio de alumno", class: "w-full h-full object-contain" %>
+        </div>
+      </div>
+    </div>
+
+    <button data-action="click->carousel#prev" class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 border-2 border-saffron bg-black text-saffron flex items-center justify-center font-bold text-xl hover:bg-saffron hover:text-black transition-colors" aria-label="Anterior">‹</button>
+    <button data-action="click->carousel#next" class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 border-2 border-saffron bg-black text-saffron flex items-center justify-center font-bold text-xl hover:bg-saffron hover:text-black transition-colors" aria-label="Siguiente">›</button>
+
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+      <% 4.times do |i| %>
+        <button data-carousel-target="dot" data-index="<%= i %>" data-action="click->carousel#goTo" class="h-1.5 w-2 bg-white/40 transition-all duration-300" aria-label="Ir al testimonio <%= i + 1 %>"></button>
+      <% end %>
     </div>
   </div>
 </section>
 
 <%# Features Section %>
-<section class="py-24 bg-black">
+<section class="py-24 bg-shadow-grey">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-16">
+    <div class="mb-16 lg:mb-20">
       <h2 class="text-4xl sm:text-5xl font-display font-bold uppercase text-white mb-4">
         LOS PILARES DEL <span class="text-saffron">ÉXITO FÍSICO</span>
       </h2>
-      <p class="max-w-2xl mx-auto text-gray-400 font-body text-sm sm:text-base">
+      <p class="max-w-2xl text-gray-400 font-body text-sm sm:text-base">
         Dejá de entrenar sin rumbo. Aplico ciencia y esfuerzo para resultados visibles y duraderos.
       </p>
     </div>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="bg-shadow-grey p-10 border-t-4 border-saffron shadow-lg">
-        <div class="w-12 h-12 bg-[#2d281a] rounded-full flex items-center justify-center mb-6">
-          <span class="material-symbols-outlined text-saffron">fitness_center</span>
-        </div>
-        <h3 class="text-lg font-display font-bold uppercase mb-4 text-saffron">FUERZA REAL</h3>
-        <p class="text-gray-300 text-sm leading-relaxed font-body">
+    <div class="grid md:grid-cols-3 divide-y divide-saffron md:divide-y-0 md:divide-x">
+      <div class="py-10 md:py-0 md:pr-12 hover:scale-105 transition-transform duration-300">
+        <span class="font-display font-black text-[5rem] leading-none text-saffron opacity-60 block mb-6 select-none hover:opacity-100 transition-opacity duration-300">01</span>
+        <h3 class="text-xl font-display font-bold uppercase mb-4 text-white tracking-wide">FUERZA REAL</h3>
+        <p class="text-gray-400 text-sm leading-relaxed font-body">
           Incrementá tus cargas progresivamente y construí una base sólida de fuerza real.
         </p>
       </div>
-      <div class="bg-shadow-grey p-10 border-t-4 border-saffron shadow-lg">
-        <div class="w-12 h-12 bg-[#2d281a] rounded-full flex items-center justify-center mb-6">
-          <span class="material-symbols-outlined text-saffron">accessibility_new</span>
-        </div>
-        <h3 class="text-lg font-display font-bold uppercase mb-4 text-saffron">ESTÉTICA DESEADA</h3>
-        <p class="text-gray-300 text-sm leading-relaxed font-body">
+      <div class="py-10 md:py-0 md:px-12 hover:scale-105 transition-transform duration-300">
+        <span class="font-display font-black text-[5rem] leading-none text-saffron opacity-60 block mb-6 select-none hover:opacity-100 transition-opacity duration-300">02</span>
+        <h3 class="text-xl font-display font-bold uppercase mb-4 text-white tracking-wide">ESTÉTICA DESEADA</h3>
+        <p class="text-gray-400 text-sm leading-relaxed font-body">
           Vos me comunicás tu sentido de la estética y yo te armo el plan para lograrlo, priorizando un físico armonioso y atlético.
         </p>
       </div>
-      <div class="bg-shadow-grey p-10 border-t-4 border-saffron shadow-lg">
-        <div class="w-12 h-12 bg-[#2d281a] rounded-full flex items-center justify-center mb-6">
-          <span class="material-symbols-outlined text-saffron">psychology</span>
-        </div>
-        <h3 class="text-lg font-display font-bold uppercase mb-4 text-saffron">TRANSFORMACIÓN TOTAL</h3>
-        <p class="text-gray-300 text-sm leading-relaxed font-body">
+      <div class="py-10 md:py-0 md:pl-12 hover:scale-105 transition-transform duration-300">
+        <span class="font-display font-black text-[5rem] leading-none text-saffron opacity-60 block mb-6 select-none hover:opacity-100 transition-opacity duration-300">03</span>
+        <h3 class="text-xl font-display font-bold uppercase mb-4 text-white tracking-wide">TRANSFORMACIÓN TOTAL</h3>
+        <p class="text-gray-400 text-sm leading-relaxed font-body">
           El mindset es clave para todo aspecto de tu vida, aquí no es diferente. Vamos a construir tu disciplina para que puedas ser fiel a tus objetivos.
         </p>
       </div>
@@ -124,7 +137,11 @@
 
 <%# About/Evolution Section %>
 <section class="py-0 relative overflow-hidden bg-black border-t border-shadow-grey">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+  <div class="absolute inset-0 z-0">
+    <%= image_tag "entrenando.jpg", alt: "", class: "w-full h-full object-cover opacity-15 filter grayscale contrast-125" %>
+    <div class="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-black"></div>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
     <div class="flex flex-col lg:flex-row gap-16 items-center">
       <div class="lg:w-1/2 relative">
         <div class="absolute -inset-10 bg-saffron/5 blur-3xl transform rotate-3"></div>
@@ -160,7 +177,7 @@
         </div>
 
         <div>
-           <h4 class="text-sm font-display font-bold uppercase tracking-widest text-gray-300 mb-6 border-b border-gray-700 pb-2 inline-block">PROGRAMAS DE FUERZA Y ESTÉTICA</h4>
+           <h4 class="text-sm font-display font-bold uppercase tracking-widest text-gray-300 mb-6 border-b border-saffron pb-2 inline-block">PROGRAMAS DE FUERZA Y ESTÉTICA</h4>
            <p class="text-gray-400 text-[15px] font-body leading-relaxed mb-8">
              He volcado toda mi experiencia en powerlifting y culturismo en esta aplicación. Accede a las rutinas exactas de hipertrofia y los ciclos de fuerza que utilizo para construir un físico de élite. Sin rellenos, solo entrenamiento efectivo.
            </p>
@@ -197,7 +214,7 @@
       PREGUNTAS <span class="text-saffron">FRECUENTES</span>
     </h2>
     <div class="space-y-4 font-body">
-      <details class="group bg-shadow-grey px-6 py-5 rounded-md cursor-pointer marker:content-['']">
+      <details class="group bg-shadow-grey px-6 py-5 cursor-pointer marker:content-[''] border border-graphite">
         <summary class="flex justify-between items-center font-bold text-gray-200">
           <span>¿Es este programa para principiantes?</span>
           <span class="transition group-open:rotate-180 text-saffron">
@@ -209,7 +226,7 @@
         </p>
       </details>
 
-      <details class="group bg-shadow-grey px-6 py-5 rounded-md cursor-pointer marker:content-['']">
+      <details class="group bg-shadow-grey px-6 py-5 cursor-pointer marker:content-[''] border border-graphite">
         <summary class="flex justify-between items-center font-bold text-gray-200">
           <span>¿Cuánto tiempo necesito entrenar al día?</span>
           <span class="transition group-open:rotate-180 text-saffron">
@@ -221,7 +238,7 @@
         </p>
       </details>
 
-      <details class="group bg-shadow-grey px-6 py-5 rounded-md cursor-pointer marker:content-['']">
+      <details class="group bg-shadow-grey px-6 py-5 cursor-pointer marker:content-[''] border border-graphite">
         <summary class="flex justify-between items-center font-bold text-gray-200">
           <span>¿Necesito suplementos obligatorios?</span>
           <span class="transition group-open:rotate-180 text-saffron">
