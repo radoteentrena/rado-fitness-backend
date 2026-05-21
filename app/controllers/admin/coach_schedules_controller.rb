@@ -1,5 +1,5 @@
 module Admin
-  class CoachSchedulesController < ApplicationController
+  class CoachSchedulesController < Admin::ApplicationController
     def index
       @page      = Administrate::Page::Collection.new(dashboard)
       @resources = CoachSchedule.order(:day_of_week)
