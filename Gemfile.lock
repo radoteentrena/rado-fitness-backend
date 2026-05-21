@@ -642,7 +642,7 @@ DEPENDENCIES
   factory_bot_rails (~> 6.5)
   faker (~> 3.5)
   fcm (~> 2.0)
-  google-apis-calendar_v3
+  google-apis-calendar_v3 (~> 0.53.0)
   google-apis-drive_v3 (~> 0.46.0)
   google-apis-sheets_v4 (~> 0.46.0)
   google-cloud-storage (~> 1.58)
