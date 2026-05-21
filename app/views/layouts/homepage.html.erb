@@ -47,6 +47,7 @@
         </div>
       </div>
     <% end %>
+    <%= render "shared/header" unless content_for?(:no_header) %>
     <main>
       <%= yield %>
     </main>

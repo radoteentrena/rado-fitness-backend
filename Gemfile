@@ -101,6 +101,7 @@ gem "mercadopago-sdk", "~> 2.3"
 
 gem "google-apis-sheets_v4", "~> 0.46.0"
 gem "google-apis-drive_v3", "~> 0.46.0"
+gem "google-apis-calendar_v3", "~> 0.53.0"
 gem "googleauth", "~> 1.16"
 
 gem "fcm", "~> 2.0"

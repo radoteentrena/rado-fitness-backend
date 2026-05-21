@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_06_200000) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_21_161303) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -78,6 +78,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_06_200000) do
     t.index ["embedding"], name: "index_book_chunks_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
   end
 
+  create_table "bookings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "scheduled_at", null: false
+    t.string "google_event_id"
+    t.string "meet_link"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["scheduled_at"], name: "index_bookings_on_scheduled_at"
+    t.index ["user_id"], name: "index_bookings_on_user_id", unique: true
+  end
+
   create_table "books", force: :cascade do |t|
     t.string "title", null: false
     t.string "author"
@@ -96,6 +108,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_06_200000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_coach_alerts_on_user_id"
+  end
+
+  create_table "coach_schedules", force: :cascade do |t|
+    t.integer "day_of_week", null: false
+    t.integer "start_hour", default: 9, null: false
+    t.integer "end_hour", default: 18, null: false
+    t.boolean "active", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day_of_week"], name: "index_coach_schedules_on_day_of_week", unique: true
   end
 
   create_table "conversations", force: :cascade do |t|
@@ -160,6 +182,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_06_200000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_exercises_on_name_unique", unique: true
+  end
+
+  create_table "google_credentials", force: :cascade do |t|
+    t.text "access_token"
+    t.text "refresh_token"
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "messages", force: :cascade do |t|
@@ -408,6 +438,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_06_200000) do
   add_foreign_key "ai_conversations", "users"
   add_foreign_key "ai_messages", "ai_conversations"
   add_foreign_key "book_chunks", "books"
+  add_foreign_key "bookings", "users"
   add_foreign_key "coach_alerts", "users"
   add_foreign_key "conversations", "users"
   add_foreign_key "daily_metrics", "user_dietary_plans"
