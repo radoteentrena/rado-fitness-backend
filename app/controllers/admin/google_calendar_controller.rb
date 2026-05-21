@@ -1,5 +1,5 @@
 module Admin
-  class GoogleCalendarController < ApplicationController
+  class GoogleCalendarController < Admin::ApplicationController
     def connect
       redirect_to GoogleCalendar::Auth.authorization_url, allow_other_host: true
     end

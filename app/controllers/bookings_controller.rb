@@ -52,7 +52,7 @@ class BookingsController < ApplicationController
 
   def require_eligible_plan
     unless current_user.medium_or_high_ticket?
-      redirect_to root_path
+      redirect_to root_path, alert: "Necesitas un plan Medium o High Ticket para agendar una llamada."
     end
   end
 
