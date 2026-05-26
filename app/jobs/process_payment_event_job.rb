@@ -68,6 +68,13 @@ class ProcessPaymentEventJob < ApplicationJob
       user.active!
       user.access_active!
 
+      Turbo::StreamsChannel.broadcast_append_to(
+        "admin_payment_events",
+        target: "admin_toast_container",
+        partial: "admin/shared/payment_toast",
+        locals: { toast_type: :authorized, message: "#{user.email} — suscripción activada" }
+      )
+
       if is_new_subscription
         SubscriptionMailer.confirmed(user, sub).deliver_later
       else
@@ -77,6 +84,13 @@ class ProcessPaymentEventJob < ApplicationJob
       sub = Subscription.find_by!(external_id: mp_id)
       sub.update!(status: :canceled, canceled_at: Time.current)
       user.churned!
+
+      Turbo::StreamsChannel.broadcast_append_to(
+        "admin_payment_events",
+        target: "admin_toast_container",
+        partial: "admin/shared/payment_toast",
+        locals: { toast_type: :cancelled, message: "#{user.email} — suscripción cancelada" }
+      )
       if sub.current_period_end.nil? || sub.current_period_end <= Time.current
         user.access_locked!
       else

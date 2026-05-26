@@ -1,0 +1,5 @@
+<div class="toast-fadeout pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border-2 shadow-offset text-sm font-semibold
+  <%= toast_type == :authorized ? 'bg-primary text-blackish border-blackish' : 'bg-whiteish dark:bg-shadow text-graphite dark:text-muted border-shadow dark:border-graphite' %>">
+  <span class="material-symbols-outlined text-base"><%= toast_type == :authorized ? 'check_circle' : 'cancel' %></span>
+  <span><%= message %></span>
+</div>
