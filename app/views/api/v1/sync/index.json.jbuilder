@@ -4,6 +4,14 @@ json.user do
   json.avatar_url @user.avatar.attached? ? url_for(@user.avatar) : nil
 end
 
+if @active_program
+  json.active_program do
+    json.extract! @active_program, :id, :name
+  end
+else
+  json.active_program nil
+end
+
 json.recent_metrics @metrics
 
 if @dietary_plan
