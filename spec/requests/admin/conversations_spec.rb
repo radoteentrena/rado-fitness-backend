@@ -31,22 +31,37 @@ RSpec.describe "Admin Conversations", type: :request do
     end
   end
 
+  describe "GET #show — marks messages read" do
+    let!(:unread_msg) { create(:message, conversation: conversation, sender_type: :client, read_at: nil, content: "hello") }
+    let!(:coach_msg)  { create(:message, conversation: conversation, sender_type: :coach, read_at: nil, content: "reply") }
+
+    it "sets read_at on unread client messages" do
+      get admin_conversation_path(conversation)
+      expect(unread_msg.reload.read_at).to be_present
+    end
+
+    it "does not set read_at on coach messages" do
+      get admin_conversation_path(conversation)
+      expect(coach_msg.reload.read_at).to be_nil
+    end
+  end
+
   describe "POST #create_message" do
     context "with text message" do
       it "creates a new message" do
         expect {
-          post "/admin/conversations/#{conversation.id}/create_message", params: { content: "Test message" }
+          post "/admin/conversations/#{conversation.id}/create_message", params: { conversation: { content: "Test message" } }
         }.to change { conversation.messages.count }.by(1)
       end
 
       it "sets sender_type to coach" do
-        post "/admin/conversations/#{conversation.id}/create_message", params: { content: "Test message" }
+        post "/admin/conversations/#{conversation.id}/create_message", params: { conversation: { content: "Test message" } }
         message = conversation.messages.last
         expect(message.sender_type).to eq("coach")
       end
 
       it "redirects to conversation show page" do
-        post "/admin/conversations/#{conversation.id}/create_message", params: { content: "Test message" }
+        post "/admin/conversations/#{conversation.id}/create_message", params: { conversation: { content: "Test message" } }
         expect(response).to redirect_to(admin_conversation_path(conversation))
       end
     end
@@ -56,13 +71,13 @@ RSpec.describe "Admin Conversations", type: :request do
         voice_data = "data:audio/webm;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA=="
 
         expect {
-          post "/admin/conversations/#{conversation.id}/create_message", params: { voice_data: voice_data }
+          post "/admin/conversations/#{conversation.id}/create_message", params: { conversation: { content: "" }, voice_data: voice_data }
         }.to change { conversation.messages.count }.by(1)
       end
 
       it "attaches voice note to message" do
         voice_data = "data:audio/webm;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA=="
-        post "/admin/conversations/#{conversation.id}/create_message", params: { voice_data: voice_data }
+        post "/admin/conversations/#{conversation.id}/create_message", params: { conversation: { content: "" }, voice_data: voice_data }
         message = conversation.messages.last
         expect(message.voice_note).to be_attached
       end
@@ -70,7 +85,7 @@ RSpec.describe "Admin Conversations", type: :request do
 
     context "with invalid data" do
       it "shows error when neither content nor voice data provided" do
-        post "/admin/conversations/#{conversation.id}/create_message", params: {}
+        post "/admin/conversations/#{conversation.id}/create_message", params: { conversation: { content: "" } }
         expect(response).to redirect_to(admin_conversation_path(conversation))
         expect(flash[:alert]).to include("Error")
       end

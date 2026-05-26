@@ -2,6 +2,7 @@ module Admin
   class ConversationsController < Admin::ApplicationController
     before_action :set_conversation, only: [:show, :create_message, :delete_message]
     before_action :load_conversations, only: [:index, :show]
+    before_action :load_users_without_conversation, only: [:new]
 
     layout :resolve_layout
 
@@ -10,8 +11,25 @@ module Admin
 
     def show
       @conversation.update(read_by_coach_at: Time.current)
+      @conversation.messages.where(sender_type: :client, read_at: nil).update_all(read_at: Time.current)
+      Turbo::StreamsChannel.broadcast_update_to "admin_nav",
+        target: "unread_messages_badge",
+        partial: "admin/shared/unread_messages_badge"
       @messages = @conversation.messages.not_deleted.chronological
       @message = Message.new
+    end
+
+    def new
+    end
+
+    def create
+      user = User.find(params[:user_id])
+      conversation = Conversation.find_or_create_by!(user: user)
+      redirect_to admin_conversation_path(conversation)
+    rescue ActiveRecord::RecordNotFound
+      redirect_to new_admin_conversation_path, alert: "Usuario no encontrado."
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to new_admin_conversation_path, alert: e.message
     end
 
     def create_message
@@ -50,10 +68,8 @@ module Admin
 
     def resolve_layout
       case action_name
-      when 'index'
+      when 'index', 'show'
         'conversations'
-      when 'show'
-        request.headers['turbo-frame'] == 'conversation-detail' ? false : 'conversations'
       else
         nil
       end
@@ -74,6 +90,10 @@ module Admin
         )
         .group("conversations.id")
         .order(Arel.sql("unread_count DESC, COALESCE(conversations.last_message_at, '1970-01-01') DESC"))
+    end
+
+    def load_users_without_conversation
+      @users = User.where.not(id: Conversation.select(:user_id)).order(:email)
     end
 
     def message_params

@@ -26,6 +26,10 @@ class ProcessPaymentEventJob < ApplicationJob
 
     unless user
       Rails.logger.error("[ProcessPaymentEventJob] No user for external_reference=#{mp_data["external_reference"]} mp_id=#{mp_id}")
+      Sentry.capture_message(
+        "ProcessPaymentEventJob: no user for external_reference=#{mp_data["external_reference"]} mp_id=#{mp_id}",
+        level: :error
+      )
       return
     end
 
@@ -64,6 +68,13 @@ class ProcessPaymentEventJob < ApplicationJob
       user.active!
       user.access_active!
 
+      Turbo::StreamsChannel.broadcast_append_to(
+        "admin_payment_events",
+        target: "admin_toast_container",
+        partial: "admin/shared/payment_toast",
+        locals: { toast_type: :authorized, message: "#{user.email} — suscripción activada" }
+      )
+
       if is_new_subscription
         SubscriptionMailer.confirmed(user, sub).deliver_later
       else
@@ -73,6 +84,13 @@ class ProcessPaymentEventJob < ApplicationJob
       sub = Subscription.find_by!(external_id: mp_id)
       sub.update!(status: :canceled, canceled_at: Time.current)
       user.churned!
+
+      Turbo::StreamsChannel.broadcast_append_to(
+        "admin_payment_events",
+        target: "admin_toast_container",
+        partial: "admin/shared/payment_toast",
+        locals: { toast_type: :cancelled, message: "#{user.email} — suscripción cancelada" }
+      )
       if sub.current_period_end.nil? || sub.current_period_end <= Time.current
         user.access_locked!
       else
@@ -157,6 +175,7 @@ class ProcessPaymentEventJob < ApplicationJob
     sdk.preapproval.get(id)["response"]
   rescue StandardError => e
     Rails.logger.error("[ProcessPaymentEventJob] MP API error fetching preapproval #{id}: #{e.message}")
+    Sentry.capture_exception(e)
     raise
   end
 
@@ -171,5 +190,6 @@ class ProcessPaymentEventJob < ApplicationJob
     )
   rescue StandardError => e
     Rails.logger.error("[ProcessPaymentEventJob] Could not create CoachAlert for user #{user&.id}: #{e.message}")
+    Sentry.capture_exception(e)
   end
 end

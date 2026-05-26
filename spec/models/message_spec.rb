@@ -47,6 +47,22 @@ RSpec.describe Message, type: :model do
     end
   end
 
+  describe "ActionCable broadcast" do
+    let(:conversation) { create(:conversation) }
+
+    it "broadcasts to admin_nav when a client message is created" do
+      expect {
+        create(:message, conversation: conversation, sender_type: :client, content: "hola")
+      }.to have_broadcasted_to("admin_nav").from_channel(Turbo::StreamsChannel)
+    end
+
+    it "does not broadcast when a coach message is created" do
+      expect {
+        create(:message, conversation: conversation, sender_type: :coach, content: "reply")
+      }.not_to have_broadcasted_to("admin_nav").from_channel(Turbo::StreamsChannel)
+    end
+  end
+
   describe "enums" do
     it { is_expected.to define_enum_for(:sender_type).backed_by_column_of_type(:string).with_values(client: "client", coach: "coach", system: "system") }
   end

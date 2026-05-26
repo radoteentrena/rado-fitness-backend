@@ -1,0 +1,22 @@
+<aside class="conversations-sidebar">
+  <div class="sidebar-header">
+    <h2>Conversaciones</h2>
+    <%= link_to new_admin_conversation_path, data: { turbo_frame: "modal_frame" }, class: "flex items-center justify-center w-8 h-8 rounded-lg text-blackish bg-primary hover:bg-primary/90 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40", title: "Nueva conversación", aria: { label: "Nueva conversación" } do %>
+      <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+    <% end %>
+  </div>
+
+  <%= turbo_frame_tag "modal_frame" %>
+
+  <div class="conversations-list" id="conversations-list">
+    <% if @conversations.empty? %>
+      <div class="conversations-empty">
+        <p>Sin conversaciones aún</p>
+      </div>
+    <% else %>
+      <% @conversations.each do |conversation| %>
+        <%= render 'conversation_item', conversation: conversation %>
+      <% end %>
+    <% end %>
+  </div>
+</aside>

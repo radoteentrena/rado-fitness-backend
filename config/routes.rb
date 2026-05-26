@@ -20,7 +20,7 @@ Rails.application.routes.draw do
           post  :send_message
         end
       end
-      resources :conversations, only: [:index, :show] do
+      resources :conversations, only: [:index, :show, :new, :create] do
         post :create_message
         delete :delete_message
       end

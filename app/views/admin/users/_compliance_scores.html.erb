@@ -1,0 +1,24 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-primary/30">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-primary/20 dark:bg-graphite text-primary dark:text-primary">
+                 <span class="material-symbols-outlined text-2xl">fitness_center</span>
+            </div>
+            <div class="ml-4">
+                <dt class="text-sm font-medium text-graphite dark:text-muted">Workout Compliance (S%)</dt>
+                <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.workout_compliance_score.present? ? "#{user.workout_compliance_score}%" : "—" %></dd>
+            </div>
+        </div>
+    </div>
+    <div class="bg-whiteish dark:bg-shadow p-6 rounded-xl shadow-sm border border-shadow dark:border-primary/30">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-primary/10 dark:bg-graphite text-primary dark:text-primary">
+                 <span class="material-symbols-outlined text-2xl">restaurant_menu</span>
+            </div>
+            <div class="ml-4">
+                <dt class="text-sm font-medium text-graphite dark:text-muted">Diet Adherence (M%)</dt>
+                <dd class="text-2xl font-bold text-blackish dark:text-whiteish"><%= user.diet_adherence_score.present? ? "#{user.diet_adherence_score}%" : "—" %></dd>
+            </div>
+        </div>
+    </div>
+</div>
