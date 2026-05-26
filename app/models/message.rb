@@ -15,6 +15,7 @@ class Message < ApplicationRecord
 
   scope :not_deleted, -> { where(discarded_at: nil) }
   scope :chronological, -> { order(created_at: :asc) }
+  scope :unread_from_clients, -> { where(sender_type: :client, read_at: nil, discarded_at: nil) }
 
   include Discard::Model
 

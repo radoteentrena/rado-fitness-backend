@@ -8,7 +8,7 @@ Sentry.init do |config|
     ex = hint[:exception]
     return nil if ex.is_a?(ActionController::RoutingError)
     return nil if ex.is_a?(ActionController::UnknownFormat)
-    return nil if ex.is_a?(ActiveRecord::RecordNotFound)
+    return nil if ex.is_a?(ActiveRecord::RecordNotFound) && hint[:rack_env].present?
     event
   end
 end

@@ -93,8 +93,7 @@ module Admin
     end
 
     def load_users_without_conversation
-      existing_user_ids = Conversation.pluck(:user_id)
-      @users = User.where.not(id: existing_user_ids).order(:email)
+      @users = User.where.not(id: Conversation.select(:user_id)).order(:email)
     end
 
     def message_params
