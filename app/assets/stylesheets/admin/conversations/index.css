@@ -40,6 +40,9 @@ html.dark {
   padding: 1.5rem;
   border-bottom: 2px solid var(--idx-sidebar-border);
   background: var(--idx-header-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .sidebar-header h2 {
