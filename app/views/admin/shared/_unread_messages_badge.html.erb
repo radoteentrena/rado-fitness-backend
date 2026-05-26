@@ -1,0 +1,6 @@
+<% unread_count = Message.where(sender_type: :client, read_at: nil, discarded_at: nil).count %>
+<% if unread_count > 0 %>
+  <span class="ml-auto inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 text-xs font-bold text-blackish bg-primary rounded-full">
+    <%= unread_count %>
+  </span>
+<% end %>
