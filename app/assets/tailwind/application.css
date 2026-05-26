@@ -161,4 +161,14 @@
   .icon-filled {
     font-variation-settings: 'FILL' 1;
   }
+
+  @keyframes toast-fade {
+    0%   { opacity: 1; transform: translateY(0); }
+    70%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(8px); }
+  }
+
+  .toast-fadeout {
+    animation: toast-fade 5s ease-in-out forwards;
+  }
 }
