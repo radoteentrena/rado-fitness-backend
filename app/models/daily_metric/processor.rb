@@ -78,8 +78,20 @@ class DailyMetric
 
     def refresh_user_scores
       @metric.user.refresh_compliance_scores!
+      broadcast_compliance_scores
     rescue StandardError => e
       Rails.logger.error("[DailyMetric::Processor] Score refresh error for user #{@metric.user_id}: #{e.message}")
+    end
+
+    def broadcast_compliance_scores
+      Turbo::StreamsChannel.broadcast_update_to(
+        "user_compliance_#{@metric.user_id}",
+        target: "user_compliance_scores_#{@metric.user_id}",
+        partial: "admin/users/compliance_scores",
+        locals: { user: @metric.user.reload }
+      )
+    rescue StandardError => e
+      Rails.logger.error("[DailyMetric::Processor] Broadcast error for user #{@metric.user_id}: #{e.message}")
     end
   end
 end
