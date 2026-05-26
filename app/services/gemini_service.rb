@@ -8,6 +8,27 @@ class GeminiService
     @base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent"
   end
 
+  def generate_weekly_feedback(name:, workouts:, diet_adherence:, weight:, week:)
+    prompt = <<~PROMPT
+      Eres un coach de fitness de alto nivel, directo y exigente. Escribe 2-3 oraciones en español para el resumen semanal del cliente.
+
+      Datos de la semana:
+      - Cliente: #{name}
+      - Semana del programa: #{week}
+      - Entrenamientos completados: #{workouts}
+      - Adherencia a la dieta: #{diet_adherence}%
+      - Peso actual: #{weight} kg
+
+      El tono debe ser directo y motivador, sin condescendencia ni emojis. No incluyas saludo ni despedida. Solo el mensaje.
+    PROMPT
+
+    response = call_gemini(prompt)
+    response&.strip.presence || "Semana #{week} registrada. Seguí el proceso."
+  rescue => e
+    Rails.logger.error("GeminiService#generate_weekly_feedback Error: #{e.message}")
+    "Semana #{week} registrada. Seguí el proceso."
+  end
+
   def parse_metrics(text)
     prompt = <<~PROMPT
       You are a specialized nutrition assistant.
