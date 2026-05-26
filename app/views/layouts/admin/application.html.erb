@@ -18,6 +18,8 @@
 </head>
 <body class="bg-background-light dark:bg-blackish text-blackish dark:text-whiteish min-h-screen" data-controller="sidebar">
   <%= turbo_stream_from "admin_nav" %>
+  <%= turbo_stream_from "admin_payment_events" %>
+  <div id="admin_toast_container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
   <%= render "icons" %>
 
   <nav id="admin-navbar" class="fixed top-0 z-50 w-full bg-whiteish/80 dark:bg-shadow/80 backdrop-blur-md border-b border-shadow dark:border-graphite">
