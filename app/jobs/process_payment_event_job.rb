@@ -1,11 +1,10 @@
 class ProcessPaymentEventJob < ApplicationJob
   queue_as :default
 
+  retry_on StandardError, attempts: 3, wait: :polynomially_longer
+
   def perform(processor:, event_type:, payload:)
     handle_mercadopago(event_type, payload) if processor == "mercadopago"
-  rescue StandardError => e
-    Rails.logger.error "ProcessPaymentEventJob error [#{processor}/#{event_type}]: #{e.message}"
-    raise
   end
 
   private
@@ -23,7 +22,12 @@ class ProcessPaymentEventJob < ApplicationJob
     mp_id   = payload.dig("data", "id")
     mp_data = fetch_mp_preapproval(mp_id)
     status  = mp_data["status"]
-    user    = User.find_by!(id: mp_data["external_reference"])
+    user    = User.find_by(id: mp_data["external_reference"])
+
+    unless user
+      Rails.logger.error("[ProcessPaymentEventJob] No user for external_reference=#{mp_data["external_reference"]} mp_id=#{mp_id}")
+      return
+    end
 
     case status
     when "authorized"
@@ -141,13 +145,31 @@ class ProcessPaymentEventJob < ApplicationJob
       user.access_active!
       SubscriptionMailer.confirmed(user, subscription).deliver_later
     when "rejected", "cancelled"
-      Rails.logger.info "MP Checkout Pro payment #{payment["id"]} #{payment["status"]} " \
-                        "for preference #{preference_id} — no action taken"
+      create_payment_alert(
+        user,
+        "Pago #{payment["status"]} en MercadoPago (preference: #{preference_id}, payment: #{payment["id"]})."
+      )
     end
   end
 
   def fetch_mp_preapproval(id)
     sdk = Mercadopago::SDK.new(Rails.application.credentials.dig(:mercadopago, :access_token))
     sdk.preapproval.get(id)["response"]
+  rescue StandardError => e
+    Rails.logger.error("[ProcessPaymentEventJob] MP API error fetching preapproval #{id}: #{e.message}")
+    raise
+  end
+
+  def create_payment_alert(user, message)
+    return unless user
+
+    CoachAlert.create!(
+      user:     user,
+      category: :payment_failed,
+      message:  message,
+      status:   :pending
+    )
+  rescue StandardError => e
+    Rails.logger.error("[ProcessPaymentEventJob] Could not create CoachAlert for user #{user&.id}: #{e.message}")
   end
 end
