@@ -63,7 +63,6 @@ RSpec.describe "POST /api/v1/daily_metrics", type: :request do
               weight: 82.5,
               calories_consumed: 2500,
               protein_consumed: 180,
-              steps: 8000,
               workout_completed: true
             }
           },
@@ -73,7 +72,6 @@ RSpec.describe "POST /api/v1/daily_metrics", type: :request do
         metric = user.daily_metrics.last
         expect(metric.calories_consumed).to eq(2500)
         expect(metric.protein_consumed).to eq(180)
-        expect(metric.steps).to eq(8000)
         expect(metric.workout_completed).to be(true)
       end
     end

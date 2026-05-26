@@ -12,10 +12,17 @@ module Admin
     def authenticate_admin
       authenticate_user!
 
-      allowed_emails = ENV["ADMIN_EMAILS"]&.split(",")&.map(&:strip) || []
-      unless allowed_emails.include?(current_user.email)
+      unless current_user.admin_role.present?
         flash[:alert] = "You are not authorized to access this page."
         redirect_to root_path
+      end
+    end
+
+    def require_super_admin
+      return redirect_to(root_path) unless current_user
+      unless current_user.admin_super_admin?
+        flash[:alert] = "This action requires super admin access."
+        redirect_to admin_root_path
       end
     end
 
