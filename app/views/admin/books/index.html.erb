@@ -1,0 +1,52 @@
+<header class="px-4 pt-6 pb-4 mb-4 border-b border-shadow dark:border-graphite">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-blackish dark:text-whiteish">Knowledge Base</h1>
+      <p class="text-sm text-graphite dark:text-muted mt-1">PDF books ingested for AI coaching context</p>
+    </div>
+    <%= link_to "Upload Book", new_admin_book_path,
+          class: "border-2 border-primary bg-primary text-black font-bold uppercase px-4 py-2 text-sm hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0px_0px_#2F2F2F] transition-all duration-150" %>
+  </div>
+</header>
+
+<div class="px-4">
+  <% if @books.empty? %>
+    <div class="text-center py-16 text-graphite dark:text-muted">
+      <p class="text-lg font-semibold">No books uploaded yet</p>
+      <p class="text-sm mt-1">Upload a PDF to build the AI coaching knowledge base</p>
+    </div>
+  <% else %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left">
+        <thead class="text-xs uppercase text-graphite dark:text-muted border-b border-shadow dark:border-graphite">
+          <tr>
+            <th class="px-4 py-3">Title</th>
+            <th class="px-4 py-3">Author</th>
+            <th class="px-4 py-3">Chunks</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Uploaded</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @books.each do |book| %>
+            <tr class="border-b border-shadow dark:border-graphite hover:bg-whiteish dark:hover:bg-shadow">
+              <td class="px-4 py-3 font-semibold text-blackish dark:text-whiteish"><%= book.title %></td>
+              <td class="px-4 py-3 text-graphite dark:text-muted"><%= book.author.presence || "—" %></td>
+              <td class="px-4 py-3 text-graphite dark:text-muted"><%= book.chunks_count %></td>
+              <td class="px-4 py-3">
+                <span class="<%= ingestion_status_class(book.ingestion_status) %> text-xs font-bold uppercase px-2 py-1">
+                  <%= book.ingestion_status %>
+                </span>
+              </td>
+              <td class="px-4 py-3 text-graphite dark:text-muted text-xs"><%= book.created_at.strftime("%d/%m/%Y") %></td>
+              <td class="px-4 py-3">
+                <%= link_to "Ver", admin_book_path(book), class: "text-primary font-semibold hover:underline text-xs" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>
