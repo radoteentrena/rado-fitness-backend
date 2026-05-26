@@ -31,6 +31,21 @@ RSpec.describe "Admin Conversations", type: :request do
     end
   end
 
+  describe "GET #show — marks messages read" do
+    let!(:unread_msg) { create(:message, conversation: conversation, sender_type: :client, read_at: nil, content: "hello") }
+    let!(:coach_msg)  { create(:message, conversation: conversation, sender_type: :coach, read_at: nil, content: "reply") }
+
+    it "sets read_at on unread client messages" do
+      get admin_conversation_path(conversation)
+      expect(unread_msg.reload.read_at).to be_present
+    end
+
+    it "does not set read_at on coach messages" do
+      get admin_conversation_path(conversation)
+      expect(coach_msg.reload.read_at).to be_nil
+    end
+  end
+
   describe "POST #create_message" do
     context "with text message" do
       it "creates a new message" do
