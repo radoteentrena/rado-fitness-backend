@@ -37,6 +37,7 @@ class DailyMetric
       @metric.weight            ||= parsed_data["weight"]
     rescue StandardError => e
       Rails.logger.error("[DailyMetric::Processor] AI parse error for metric #{@metric.id}: #{e.message}")
+      Sentry.capture_exception(e)
     end
 
     def calculate_compliance
