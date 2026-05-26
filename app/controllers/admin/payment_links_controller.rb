@@ -1,5 +1,7 @@
 module Admin
   class PaymentLinksController < Admin::ApplicationController
+    before_action :require_super_admin
+
     def create
       user = User.find(params[:user_id])
       token = user.generate_payment_token!

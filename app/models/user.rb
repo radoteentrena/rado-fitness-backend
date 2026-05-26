@@ -13,6 +13,7 @@ class User < ApplicationRecord
   enum :access_status, { active: 0, locked: 1 }, default: :active, prefix: :access
   enum :plan_tier, { basic: 0, medium: 1, high_ticket: 2 }
   enum :category, { pelele: 0, civil: 1, soldado: 2 }
+  enum :admin_role, { super_admin: 0, assistant: 1 }, prefix: :admin
 
   # Validations
   validates :first_name, presence: true, length: { maximum: 50 }

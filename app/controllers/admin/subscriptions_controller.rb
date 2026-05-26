@@ -1,5 +1,7 @@
 module Admin
   class SubscriptionsController < Admin::ApplicationController
+    before_action :require_super_admin
+
     def index
       scope = Subscription.includes(:user).order(created_at: :desc)
       scope = scope.where(status: params[:status])       if params[:status].present?
