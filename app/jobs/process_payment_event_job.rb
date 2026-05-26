@@ -26,6 +26,10 @@ class ProcessPaymentEventJob < ApplicationJob
 
     unless user
       Rails.logger.error("[ProcessPaymentEventJob] No user for external_reference=#{mp_data["external_reference"]} mp_id=#{mp_id}")
+      Sentry.capture_message(
+        "ProcessPaymentEventJob: no user for external_reference=#{mp_data["external_reference"]} mp_id=#{mp_id}",
+        level: :error
+      )
       return
     end
 
@@ -157,6 +161,7 @@ class ProcessPaymentEventJob < ApplicationJob
     sdk.preapproval.get(id)["response"]
   rescue StandardError => e
     Rails.logger.error("[ProcessPaymentEventJob] MP API error fetching preapproval #{id}: #{e.message}")
+    Sentry.capture_exception(e)
     raise
   end
 
@@ -171,5 +176,6 @@ class ProcessPaymentEventJob < ApplicationJob
     )
   rescue StandardError => e
     Rails.logger.error("[ProcessPaymentEventJob] Could not create CoachAlert for user #{user&.id}: #{e.message}")
+    Sentry.capture_exception(e)
   end
 end
