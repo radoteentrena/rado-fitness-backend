@@ -33,7 +33,7 @@ class Api::V1::MessagesController < Api::V1::BaseController
   private
 
   def check_messaging_tier
-    return if current_user.plan_tier.in?(%i[medium high_ticket])
+    return if current_user.medium? || current_user.high_ticket?
     render json: { error: 'Plan does not include messaging' }, status: :unauthorized
   end
 
