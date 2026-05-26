@@ -71,6 +71,8 @@ Rails.application.routes.draw do
       post "ai_coach/refine",   to: "ai_coach#refine",   as: :refine_ai_coach
       post "ai_coach/approve",  to: "ai_coach#approve",  as: :approve_ai_coach
 
+      resources :books, only: [:index, :new, :create, :show]
+
       root to: "dashboard#index"
       get "dashboard", to: "dashboard#index"
     end
