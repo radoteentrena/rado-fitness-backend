@@ -17,6 +17,7 @@ module RadoFitness
     config.autoload_lib(ignore: %w[assets tasks])
 
     config.middleware.use Rack::Attack
+    config.i18n.default_locale = :es
 
     # Configuration for the application, engines, and railties goes here.
     #
