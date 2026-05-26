@@ -4,6 +4,8 @@ class Message < ApplicationRecord
 
   enum :sender_type, { client: "client", coach: "coach", system: "system" }
 
+  after_create_commit :broadcast_unread_badge, if: :client?
+
   has_one_attached :voice_note
 
   validates :conversation_id, presence: true
@@ -15,4 +17,12 @@ class Message < ApplicationRecord
   scope :chronological, -> { order(created_at: :asc) }
 
   include Discard::Model
+
+  private
+
+  def broadcast_unread_badge
+    broadcast_update_to "admin_nav",
+      target: "unread_messages_badge",
+      partial: "admin/shared/unread_messages_badge"
+  end
 end
