@@ -84,6 +84,8 @@ class DailyMetric
     end
 
     def broadcast_compliance_scores
+      # reload required — refresh_compliance_scores! writes to DB but doesn't mutate
+      # the in-memory user object, so the partial would render stale scores without it.
       Turbo::StreamsChannel.broadcast_update_to(
         "user_compliance_#{@metric.user_id}",
         target: "user_compliance_scores_#{@metric.user_id}",
