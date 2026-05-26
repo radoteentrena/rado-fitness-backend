@@ -37,6 +37,7 @@ class DailyMetric
       @metric.weight            ||= parsed_data["weight"]
     rescue StandardError => e
       Rails.logger.error("[DailyMetric::Processor] AI parse error for metric #{@metric.id}: #{e.message}")
+      Sentry.capture_exception(e)
     end
 
     def calculate_compliance
@@ -77,8 +78,22 @@ class DailyMetric
 
     def refresh_user_scores
       @metric.user.refresh_compliance_scores!
+      broadcast_compliance_scores
     rescue StandardError => e
       Rails.logger.error("[DailyMetric::Processor] Score refresh error for user #{@metric.user_id}: #{e.message}")
+    end
+
+    def broadcast_compliance_scores
+      # reload required — refresh_compliance_scores! writes to DB but doesn't mutate
+      # the in-memory user object, so the partial would render stale scores without it.
+      Turbo::StreamsChannel.broadcast_update_to(
+        "user_compliance_#{@metric.user_id}",
+        target: "user_compliance_scores_#{@metric.user_id}",
+        partial: "admin/users/compliance_scores",
+        locals: { user: @metric.user.reload }
+      )
+    rescue StandardError => e
+      Rails.logger.error("[DailyMetric::Processor] Broadcast error for user #{@metric.user_id}: #{e.message}")
     end
   end
 end

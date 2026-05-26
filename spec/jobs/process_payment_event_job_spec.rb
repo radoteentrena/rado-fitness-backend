@@ -197,4 +197,90 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       }.to have_enqueued_mail(SubscriptionMailer, :confirmed)
     end
   end
+
+  describe "Sentry: user not found" do
+    let(:payload) { { "data" => { "id" => "mp_sub_999" } } }
+
+    before do
+      sdk_double = instance_double(Mercadopago::SDK)
+      preapproval_double = double
+      allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
+      allow(sdk_double).to receive(:preapproval).and_return(preapproval_double)
+      allow(preapproval_double).to receive(:get).with("mp_sub_999").and_return({
+        "response" => {
+          "id" => "mp_sub_999",
+          "status" => "authorized",
+          "external_reference" => "99999999",
+          "payer_id" => "payer_x"
+        }
+      })
+      allow(Sentry).to receive(:capture_message)
+    end
+
+    it "calls Sentry.capture_message when user is not found" do
+      described_class.perform_now(processor: "mercadopago", event_type: "preapproval", payload: payload)
+      expect(Sentry).to have_received(:capture_message).with(
+        a_string_matching(/no user/i),
+        level: :error
+      )
+    end
+  end
+
+  describe "Sentry: MP API error" do
+    let(:payload) { { "data" => { "id" => "mp_sub_bad" } } }
+
+    before do
+      sdk_double = instance_double(Mercadopago::SDK)
+      preapproval_double = double
+      allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
+      allow(sdk_double).to receive(:preapproval).and_return(preapproval_double)
+      allow(preapproval_double).to receive(:get).and_raise(StandardError, "timeout")
+      allow(Sentry).to receive(:capture_exception)
+    end
+
+    it "calls Sentry.capture_exception on MP API error" do
+      described_class.perform_now(processor: "mercadopago", event_type: "preapproval", payload: payload)
+      expect(Sentry).to have_received(:capture_exception)
+    end
+  end
+
+  describe "payment toast broadcast" do
+    let(:mp_sub_id) { "mp_sub_toast" }
+    let(:payload) { { "data" => { "id" => mp_sub_id } } }
+
+    def stub_preapproval(status)
+      sdk_double = instance_double(Mercadopago::SDK)
+      preapproval_double = double
+      allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
+      allow(sdk_double).to receive(:preapproval).and_return(preapproval_double)
+      allow(preapproval_double).to receive(:get).with(mp_sub_id).and_return({
+        "response" => {
+          "id" => mp_sub_id,
+          "status" => status,
+          "external_reference" => user.id.to_s,
+          "payer_id" => "payer_x"
+        }
+      })
+      allow(Turbo::StreamsChannel).to receive(:broadcast_append_to)
+    end
+
+    it "broadcasts authorized toast when preapproval is authorized" do
+      stub_preapproval("authorized")
+      described_class.perform_now(processor: "mercadopago", event_type: "preapproval", payload: payload)
+      expect(Turbo::StreamsChannel).to have_received(:broadcast_append_to).with(
+        "admin_payment_events",
+        hash_including(target: "admin_toast_container", locals: hash_including(toast_type: :authorized))
+      )
+    end
+
+    it "broadcasts cancelled toast when preapproval is cancelled" do
+      stub_preapproval("cancelled")
+      create(:subscription, user: user, external_id: mp_sub_id, status: :active)
+      described_class.perform_now(processor: "mercadopago", event_type: "preapproval", payload: payload)
+      expect(Turbo::StreamsChannel).to have_received(:broadcast_append_to).with(
+        "admin_payment_events",
+        hash_including(target: "admin_toast_container", locals: hash_including(toast_type: :cancelled))
+      )
+    end
+  end
 end
