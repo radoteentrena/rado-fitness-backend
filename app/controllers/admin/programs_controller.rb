@@ -1,5 +1,9 @@
 module Admin
   class ProgramsController < Admin::ApplicationController
+    def apply_collection_includes(collection)
+      collection.includes(:user)
+    end
+
     def create
       resource = resource_class.new(resource_params)
       authorize_resource(resource)

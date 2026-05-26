@@ -67,6 +67,7 @@ module Admin
     def load_conversations
       @conversations = Conversation
         .left_joins(:messages)
+        .preload(:user)
         .select(
           "conversations.*",
           "COUNT(CASE WHEN messages.read_at IS NULL AND messages.sender_type = 'client' AND messages.discarded_at IS NULL THEN 1 END) AS unread_count"
