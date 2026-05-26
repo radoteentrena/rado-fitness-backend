@@ -8,6 +8,7 @@ module Admin
 
     def show
       @book = Book.find(params[:id])
+      @sample_chunks = @book.book_chunks.limit(5)
     end
 
     def new

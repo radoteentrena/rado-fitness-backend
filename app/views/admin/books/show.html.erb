@@ -32,11 +32,11 @@
     </div>
   </div>
 
-  <% if @book.book_chunks.any? %>
+  <% if @sample_chunks.any? %>
     <div>
       <h2 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-muted mb-3">Sample Chunks</h2>
       <div class="space-y-2">
-        <% @book.book_chunks.limit(5).each do |chunk| %>
+        <% @sample_chunks.each do |chunk| %>
           <div class="border border-shadow dark:border-graphite p-3 text-xs text-graphite dark:text-muted">
             <span class="font-bold text-blackish dark:text-whiteish">p.<%= chunk.page_number %></span>
             <%= truncate(chunk.content, length: 200) %>

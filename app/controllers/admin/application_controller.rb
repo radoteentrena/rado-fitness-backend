@@ -19,6 +19,7 @@ module Admin
     end
 
     def require_super_admin
+      return redirect_to(root_path) unless current_user
       unless current_user.admin_super_admin?
         flash[:alert] = "This action requires super admin access."
         redirect_to admin_root_path

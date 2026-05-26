@@ -1,6 +1,8 @@
 class DailyComplianceCheckJob < ApplicationJob
   queue_as :default
 
+  retry_on StandardError, attempts: 2, wait: :polynomially_longer
+
   LOW_COMPLIANCE_THRESHOLD = 50
   INACTIVITY_DAYS          = 3
 
