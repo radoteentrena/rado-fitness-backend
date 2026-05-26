@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_21_161303) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_26_190927) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -97,6 +97,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_21_161303) do
     t.integer "chunks_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "ingestion_status", default: 0, null: false
   end
 
   create_table "coach_alerts", force: :cascade do |t|
@@ -392,6 +393,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_21_161303) do
     t.integer "access_status", default: 0, null: false
     t.string "payment_link_token"
     t.datetime "payment_link_expires_at"
+    t.integer "admin_role"
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true

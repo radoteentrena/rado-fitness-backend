@@ -1,0 +1,48 @@
+<header class="px-4 pt-6 pb-4 mb-4 border-b border-shadow dark:border-graphite">
+  <h1 class="text-2xl font-bold text-blackish dark:text-whiteish">Upload Book</h1>
+  <p class="text-sm text-graphite dark:text-muted mt-1">PDF will be chunked and embedded for AI coaching context</p>
+</header>
+
+<div class="px-4 max-w-lg">
+  <%= form_with model: [:admin, @book], multipart: true do |f| %>
+    <% if @book.errors.any? %>
+      <div class="mb-4 p-4 border-2 border-red-500 bg-red-50 dark:bg-red-900/20">
+        <ul class="text-sm text-red-600 dark:text-red-400 list-disc pl-4">
+          <% @book.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="space-y-4">
+      <div>
+        <%= f.label :title, "Title", class: "block text-xs font-bold uppercase tracking-wider text-graphite dark:text-muted mb-1" %>
+        <%= f.text_field :title,
+              class: "w-full border-2 border-shadow dark:border-graphite bg-white dark:bg-graphite text-blackish dark:text-whiteish px-3 py-2 text-sm focus:outline-none focus:border-primary",
+              placeholder: "e.g. Starting Strength" %>
+      </div>
+
+      <div>
+        <%= f.label :author, "Author", class: "block text-xs font-bold uppercase tracking-wider text-graphite dark:text-muted mb-1" %>
+        <%= f.text_field :author,
+              class: "w-full border-2 border-shadow dark:border-graphite bg-white dark:bg-graphite text-blackish dark:text-whiteish px-3 py-2 text-sm focus:outline-none focus:border-primary",
+              placeholder: "e.g. Mark Rippetoe" %>
+      </div>
+
+      <div>
+        <%= f.label :pdf, "PDF File", class: "block text-xs font-bold uppercase tracking-wider text-graphite dark:text-muted mb-1" %>
+        <%= f.file_field :pdf,
+              accept: "application/pdf",
+              class: "w-full text-sm text-graphite dark:text-muted file:mr-4 file:py-2 file:px-4 file:border-2 file:border-shadow file:bg-whiteish file:text-blackish file:font-bold file:uppercase file:text-xs file:cursor-pointer hover:file:bg-saffron hover:file:border-saffron" %>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <%= f.submit "Upload & Ingest",
+              class: "border-2 border-primary bg-primary text-black font-bold uppercase px-6 py-2 text-sm cursor-pointer hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0px_0px_#2F2F2F] transition-all duration-150" %>
+        <%= link_to "Cancel", admin_books_path,
+              class: "border-2 border-shadow dark:border-graphite text-graphite dark:text-muted font-bold uppercase px-6 py-2 text-sm hover:bg-whiteish dark:hover:bg-shadow transition-all duration-150" %>
+      </div>
+    </div>
+  <% end %>
+</div>

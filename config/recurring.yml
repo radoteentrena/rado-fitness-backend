@@ -23,4 +23,13 @@ production:
     timezone: "America/Argentina/Buenos_Aires"
   payment_reminder:
     class: PaymentReminderJob
-    schedule: "0 12 * * *"
+    schedule: at 9am every day
+    timezone: "America/Argentina/Buenos_Aires"
+  weekly_feedback:
+    class: WeeklyFeedbackJob
+    schedule: at 8am every monday
+    timezone: "America/Argentina/Buenos_Aires"
+  daily_compliance_check:
+    class: DailyComplianceCheckJob
+    schedule: at 7am every day
+    timezone: "America/Argentina/Buenos_Aires"

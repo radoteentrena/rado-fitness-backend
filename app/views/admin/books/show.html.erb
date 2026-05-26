@@ -1,0 +1,51 @@
+<header class="px-4 pt-6 pb-4 mb-4 border-b border-shadow dark:border-graphite">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-blackish dark:text-whiteish"><%= @book.title %></h1>
+      <p class="text-sm text-graphite dark:text-muted mt-1"><%= @book.author.presence || "Unknown author" %></p>
+    </div>
+    <span class="<%= ingestion_status_class(@book.ingestion_status) %> text-xs font-bold uppercase px-3 py-1 border-2">
+      <%= @book.ingestion_status %>
+    </span>
+  </div>
+</header>
+
+<div class="px-4 space-y-6">
+  <div class="grid grid-cols-3 gap-4">
+    <div class="border-2 border-shadow dark:border-graphite p-4">
+      <p class="text-xs font-bold uppercase tracking-wider text-graphite dark:text-muted">Chunks</p>
+      <p class="text-3xl font-bold text-blackish dark:text-whiteish mt-1"><%= @book.chunks_count %></p>
+    </div>
+    <div class="border-2 border-shadow dark:border-graphite p-4">
+      <p class="text-xs font-bold uppercase tracking-wider text-graphite dark:text-muted">Uploaded</p>
+      <p class="text-lg font-bold text-blackish dark:text-whiteish mt-1"><%= @book.created_at.strftime("%d/%m/%Y") %></p>
+    </div>
+    <div class="border-2 border-shadow dark:border-graphite p-4">
+      <p class="text-xs font-bold uppercase tracking-wider text-graphite dark:text-muted">PDF</p>
+      <p class="text-sm font-bold text-blackish dark:text-whiteish mt-1">
+        <% if @book.pdf.attached? %>
+          <%= link_to "Download", url_for(@book.pdf), class: "text-primary hover:underline" %>
+        <% else %>
+          No file
+        <% end %>
+      </p>
+    </div>
+  </div>
+
+  <% if @sample_chunks.any? %>
+    <div>
+      <h2 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-muted mb-3">Sample Chunks</h2>
+      <div class="space-y-2">
+        <% @sample_chunks.each do |chunk| %>
+          <div class="border border-shadow dark:border-graphite p-3 text-xs text-graphite dark:text-muted">
+            <span class="font-bold text-blackish dark:text-whiteish">p.<%= chunk.page_number %></span>
+            <%= truncate(chunk.content, length: 200) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= link_to "← Back to Books", admin_books_path,
+        class: "text-sm text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish font-semibold" %>
+</div>
