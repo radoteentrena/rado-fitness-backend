@@ -68,10 +68,8 @@ module Admin
 
     def resolve_layout
       case action_name
-      when 'index'
+      when 'index', 'show'
         'conversations'
-      when 'show'
-        request.headers['turbo-frame'] == 'conversation-detail' ? false : 'conversations'
       else
         nil
       end
