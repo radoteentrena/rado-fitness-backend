@@ -1,6 +1,8 @@
 class WeeklyFeedbackJob < ApplicationJob
   queue_as :default
 
+  retry_on StandardError, attempts: 2, wait: :polynomially_longer
+
   def perform
     User.active.find_each do |user|
       process_user(user)

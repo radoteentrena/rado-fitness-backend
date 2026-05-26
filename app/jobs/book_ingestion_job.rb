@@ -1,6 +1,7 @@
 class BookIngestionJob < ApplicationJob
   queue_as :default
 
+  discard_on ActiveRecord::RecordNotFound
   retry_on StandardError, attempts: 2, wait: :polynomially_longer
 
   def perform(book_id)
