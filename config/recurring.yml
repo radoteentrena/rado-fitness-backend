@@ -29,3 +29,7 @@ production:
     class: WeeklyFeedbackJob
     schedule: at 8am every monday
     timezone: "America/Argentina/Buenos_Aires"
+  daily_compliance_check:
+    class: DailyComplianceCheckJob
+    schedule: at 7am every day
+    timezone: "America/Argentina/Buenos_Aires"
