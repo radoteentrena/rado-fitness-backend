@@ -10,6 +10,10 @@ module Admin
 
     def show
       @conversation.update(read_by_coach_at: Time.current)
+      @conversation.messages.where(sender_type: :client, read_at: nil).update_all(read_at: Time.current)
+      Turbo::StreamsChannel.broadcast_update_to "admin_nav",
+        target: "unread_messages_badge",
+        partial: "admin/shared/unread_messages_badge"
       @messages = @conversation.messages.not_deleted.chronological
       @message = Message.new
     end
