@@ -148,23 +148,13 @@ RSpec.describe "Training API", type: :request do
         expect(json).to have_key("next_session")
       end
 
-      context "with exercise_logs" do
-        it "creates ExerciseLog records" do
-          expect {
-            post "/api/v1/training/complete",
-              params: {
-                exercise_logs: [
-                  {
-                    workout_exercise_id: workout_exercise.id,
-                    actual_sets: [ { reps: 8, weight: 100, rpe: 7 } ]
-                  }
-                ]
-              },
-              headers: auth_headers(user)
-          }.to change(ExerciseLog, :count).by(1)
+      it "accepts optional notes param" do
+        post "/api/v1/training/complete",
+          params: { notes: "Felt strong today" },
+          headers: auth_headers(user)
 
-          expect(response).to have_http_status(:ok)
-        end
+        expect(response).to have_http_status(:ok)
+        expect(in_progress_session.reload.notes).to eq("Felt strong today")
       end
     end
   end
@@ -220,11 +210,10 @@ RSpec.describe "Training API", type: :request do
     end
 
     context "with no completed sessions" do
-      it "returns 200 with empty sessions array and zero total_count" do
+      it "returns 200 with empty sessions array" do
         get "/api/v1/training/history", headers: auth_headers(user)
         expect(response).to have_http_status(:ok)
         expect(json["sessions"]).to eq([])
-        expect(json["meta"]["total_count"]).to eq(0)
       end
     end
 
@@ -249,7 +238,7 @@ RSpec.describe "Training API", type: :request do
       end
     end
 
-    context "with pagination" do
+    context "with multiple completed sessions" do
       before do
         3.times do |i|
           create(:training_session,
@@ -262,16 +251,18 @@ RSpec.describe "Training API", type: :request do
         end
       end
 
-      it "respects page and per_page params" do
-        get "/api/v1/training/history",
-          params: { page: 1, per_page: 2 },
-          headers: auth_headers(user)
-
+      it "returns all sessions for the current month" do
+        get "/api/v1/training/history", headers: auth_headers(user)
         expect(response).to have_http_status(:ok)
-        expect(json["sessions"].length).to eq(2)
-        expect(json["meta"]["total_count"]).to eq(3)
-        expect(json["meta"]["total_pages"]).to eq(2)
-        expect(json["meta"]["current_page"]).to eq(1)
+        expect(json["sessions"].length).to eq(3)
+      end
+
+      it "filters by month param" do
+        get "/api/v1/training/history",
+          params: { month: Date.current.strftime("%Y-%m") },
+          headers: auth_headers(user)
+        expect(response).to have_http_status(:ok)
+        expect(json["sessions"].length).to eq(3)
       end
     end
   end
