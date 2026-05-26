@@ -45,6 +45,9 @@ gem "image_processing", "~> 1.2"
 # Google Cloud Storage for Active Storage
 gem "google-cloud-storage", "~> 1.58", require: false
 
+gem "sentry-ruby"
+gem "sentry-rails"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
