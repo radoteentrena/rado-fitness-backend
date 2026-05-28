@@ -83,15 +83,9 @@ module Admin
     def destroy
       program = Program.find(params[:id])
       user = program.user
+      name = program.name
       program.destroy!
-      redirect_to admin_programs_path, notice: "Programa \"#{program.name}\" eliminado correctamente."
-    end
-
-    def remove_user
-      program = Program.find(params[:id])
-      user = program.user
-      program.destroy!
-      redirect_to(user ? admin_user_path(user) : admin_programs_path, notice: "Programa eliminado correctamente.")
+      redirect_to(user ? admin_user_path(user) : admin_programs_path, notice: "Programa \"#{name}\" eliminado correctamente.")
     end
   end
 end

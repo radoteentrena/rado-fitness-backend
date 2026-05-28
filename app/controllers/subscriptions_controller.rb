@@ -110,7 +110,10 @@ class SubscriptionsController < ApplicationController
 
   def activate_one_time_subscription_if_pending
     preference_id = params[:preference_id]
-    return unless preference_id.present?
+    collection_id  = params[:collection_id]
+
+    # collection_id is the MP payment ID — only present on a real payment redirect
+    return unless preference_id.present? && collection_id.present? && collection_id != "null"
 
     subscription = current_user.subscriptions.find_by(
       mp_preference_id: preference_id,

@@ -180,7 +180,7 @@
                                          <span class="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded border border-primary/20">Week <%= program.current_week %></span>
                                     </div>
                                 </div>
-                                <%= button_to remove_user_admin_program_path(program), method: :delete,
+                                <%= button_to admin_program_path(program), method: :delete,
                                     data: { turbo_confirm: "¿Estás seguro de querer borrar el programa \"#{program.name}\" a #{user.name}?" },
                                     class: "p-2 text-graphite hover:text-red-500 dark:text-muted dark:hover:text-red-400 hover:cursor-pointer transition-colors rounded focus:outline-none focus:ring-2 focus:ring-red-400",
                                     title: "Remover programa" do %>
