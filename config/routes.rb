@@ -35,7 +35,6 @@ Rails.application.routes.draw do
         end
         member do
           post :sync_sheet
-          delete :remove_user
         end
       end
       resources :routines do
