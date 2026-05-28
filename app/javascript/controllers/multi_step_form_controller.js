@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["step", "progress", "progressBar", "nextButton", "submitButton", "previousButton"]
+  static targets = ["step", "progress", "progressBar", "nextButton", "submitButton", "previousButton", "phoneField", "phonePrefixSelect", "phoneNumberInput"]
 
   connect() {
     this.storageKey = `multi-step-form-${window.location.pathname}`
@@ -26,14 +26,24 @@ export default class extends Controller {
     }
   }
 
-  next(event) {
+  async next(event) {
     event.preventDefault()
     if (this.currentStep >= this.stepTargets.length - 1) return
-    if (this.validateCurrentStep()) {
-      this.currentStep++
-      this.saveStep()
-      this.showCurrentStep()
+    if (!this.validateCurrentStep()) return
+
+    const emailInput = this.stepTargets[this.currentStep].querySelector('input[data-email-check="true"]')
+    if (emailInput) {
+      const exists = await this.checkEmailExists(emailInput.value)
+      if (exists) {
+        window.location.href = `/onboarding/email_exists?email=${encodeURIComponent(emailInput.value)}`
+        return
+      }
     }
+
+    this.currentStep++
+    this.saveStep()
+    this.showCurrentStep()
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
   previous(event) {
@@ -45,6 +55,44 @@ export default class extends Controller {
     this.currentStep--
     this.saveStep()
     this.showCurrentStep()
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+  async checkEmailExists(email) {
+    try {
+      const token = document.querySelector('meta[name="csrf-token"]')?.content
+      const response = await fetch("/onboarding/check_email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": token },
+        body: JSON.stringify({ email })
+      })
+      const data = await response.json()
+      return data.exists
+    } catch {
+      return false
+    }
+  }
+
+  syncPhone() {
+    const prefix = this.hasPhonePrefixSelectTarget ? this.phonePrefixSelectTarget.value : ""
+    const number = this.hasPhoneNumberInputTarget ? this.phoneNumberInputTarget.value.trim() : ""
+    if (this.hasPhoneFieldTarget) {
+      this.phoneFieldTarget.value = `${prefix}${number}`
+    }
+  }
+
+  filterSelect(event) {
+    const query = event.target.value.toLowerCase()
+    const targetId = event.target.dataset.targetSelect
+    const select = document.getElementById(targetId)
+    if (!select) return
+
+    let firstVisible = null
+    Array.from(select.options).forEach(option => {
+      const matches = option.text.toLowerCase().includes(query)
+      option.hidden = !matches
+      if (matches && !firstVisible) firstVisible = option
+    })
   }
 
   showCurrentStep() {
@@ -235,8 +283,21 @@ export default class extends Controller {
        }
     })
 
+    // Check searchable-select fields (hidden input must have a value)
+    const searchableSelects = currentStepElement.querySelectorAll('[data-searchable-select-target="hidden"]')
+    searchableSelects.forEach(hidden => {
+      if (!hidden.value) {
+        isValid = false
+        const textInput = hidden.closest('[data-controller="searchable-select"]')?.querySelector('[data-searchable-select-target="input"]')
+        if (textInput) {
+          if (!firstInvalidInput) firstInvalidInput = textInput
+          addErrorStyling(textInput, [textInput])
+        }
+      }
+    })
+
     if (firstInvalidInput) {
-      firstInvalidInput.reportValidity()
+      firstInvalidInput.focus()
     }
 
     return isValid

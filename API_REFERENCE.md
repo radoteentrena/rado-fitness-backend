@@ -334,6 +334,16 @@ Para que los clientes suban y vean sus fotos semanales.
   }
   ```
 
+### Eliminar una Foto
+
+- **Endpoint:** `DELETE /progress_photos/:id`
+- **Headers:** `Authorization: Bearer <token>`
+- **Si anda bien (Status 204):** Sin body.
+- **Si no existe o no es tuya (Status 404):**
+  ```json
+  { "error": "Photo not found" }
+  ```
+
 ---
 
 ## 6. Entrenamientos (Training Sessions)

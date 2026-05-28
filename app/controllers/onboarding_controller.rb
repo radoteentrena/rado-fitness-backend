@@ -24,6 +24,27 @@ class OnboardingController < ApplicationController
     end
   end
 
+  def check_email
+    email = params[:email].to_s.strip.downcase
+    user = User.find_by(email: email)
+
+    if user
+      ClientMailer.payment_link(user).deliver_later
+      render json: { exists: true }
+    else
+      render json: { exists: false }
+    end
+  end
+
+  def email_exists
+    @email = params[:email].to_s.strip.downcase
+    user = User.find_by(email: @email)
+    if user
+      token = user.payment_token_valid? ? user.payment_link_token : user.generate_payment_token!
+      @payment_url = pay_url(token: token)
+    end
+  end
+
   def success
   end
 

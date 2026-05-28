@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   resource :onboarding, only: [:new, :create], controller: 'onboarding'
-  get 'onboarding/success', to: 'onboarding#success', as: :onboarding_success
+  get  'onboarding/success',      to: 'onboarding#success',      as: :onboarding_success
+  get  'onboarding/email_exists', to: 'onboarding#email_exists', as: :onboarding_email_exists
+  post 'onboarding/check_email',  to: 'onboarding#check_email',  as: :onboarding_check_email
 
   resource :booking, only: [:new, :create, :show]
   get "booking/availability", to: "booking_availability#show", as: :booking_availability
@@ -98,7 +100,7 @@ Rails.application.routes.draw do
       resources :exercises, only: [ :index ]
       resources :messages, only: [ :index, :create ]
       resources :daily_metrics, only: [ :index, :create ]
-      resources :progress_photos, only: [ :index, :create ]
+      resources :progress_photos, only: [ :index, :create, :destroy ]
 
       put "users/avatar",   to: "users#update_avatar"
       get "users/progress", to: "users#progress"

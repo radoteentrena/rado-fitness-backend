@@ -23,8 +23,20 @@
           </div>
         <% end %>
 
-        <!-- Step 1: Datos Personales -->
+        <!-- Step 1: Correo electrónico (email check) -->
         <div data-multi-step-form-target="step" class="space-y-10">
+          <div class="text-center mb-10">
+            <h2 class="text-3xl font-bold text-saffron">Empecemos</h2>
+          </div>
+          <div>
+            <%= f.label :email, "Correo electrónico", class: "block text-xl font-bold text-whiteish mb-3" %>
+            <%= f.email_field :email, required: true, data: { "email-check": true }, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-white-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            <p class="mt-3 text-sm text-gray-500">Si ya tenés cuenta, te enviamos el link de pago directo a tu correo.</p>
+          </div>
+        </div>
+
+        <!-- Step 2: Datos Personales -->
+        <div data-multi-step-form-target="step" class="hidden space-y-10">
           <div class="text-center mb-10">
              <h2 class="text-3xl font-bold text-saffron">Datos Personales</h2>
           </div>
@@ -83,14 +95,17 @@
             </div>
 
             <div>
-              <%= p.label :height, "Estatura (ej. 1,80 cm)", class: "block text-xl font-bold text-whiteish mb-3" %>
-              <%= p.text_field :height, placeholder: "Ej: 1,80 cm", required: true, maxlength: 20, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-white-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+              <%= p.label :height, "Estatura", class: "block text-xl font-bold text-whiteish mb-3" %>
+              <%= p.text_field :height, placeholder: "Ej: 183cm", required: true, maxlength: 20, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-white-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
             </div>
           </div>
         </div>
 
-        <!-- Step 4: Contacto -->
+        <!-- Step 4 onwards: uses second fields_for block for onboarding_profile -->
         <% end %>
+        <%= f.fields_for :onboarding_profile do |p| %>
+
+        <!-- Step 4: Contacto -->
         <div data-multi-step-form-target="step" class="hidden space-y-10">
           <div class="text-center mb-10">
              <h2 class="text-3xl font-bold text-saffron">Contacto</h2>
@@ -98,16 +113,28 @@
 
           <div class="space-y-8">
             <div>
-              <%= f.label :email, "Correo electrónico", class: "block text-xl font-bold text-whiteish mb-3" %>
-              <%= f.email_field :email, required: true, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-white-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+              <label class="block text-xl font-bold text-whiteish mb-3">Celular</label>
+              <div class="flex gap-2">
+                <select id="phone_prefix_select"
+                        data-multi-step-form-target="phonePrefixSelect"
+                        data-action="change->multi-step-form#syncPhone"
+                        class="w-1/4 shrink-0 appearance-none rounded-none border-2 border-primary/50 bg-graphite px-3 py-5 text-xl text-white focus:border-saffron focus:outline-none focus:ring-0 transition-all">
+                  <% CountriesHelper::PHONE_PREFIXES.each do |label, value| %>
+                    <option value="<%= value %>"<% if value == "+54" %> selected<% end %>><%= label %></option>
+                  <% end %>
+                </select>
+                <input type="tel"
+                       id="phone_number_input"
+                       autocomplete="tel"
+                       data-multi-step-form-target="phoneNumberInput"
+                       data-action="input->multi-step-form#syncPhone"
+                       required
+                       placeholder="412 123 4567"
+                       maxlength="20"
+                       class="w-3/4 min-w-0 appearance-none rounded-none border-2 border-primary/50 bg-graphite px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all">
+              </div>
+              <%= f.hidden_field :phone, data: { "multi-step-form-target": "phoneField" }, value: "" %>
             </div>
-
-            <div>
-              <%= f.label :phone, "Celular (Agrega prefijo de país ext. +58)", class: "block text-xl font-bold text-whiteish mb-3" %>
-              <%= f.telephone_field :phone, required: true, maxlength: 20, pattern: "\\+?[\\d\\s\\-()]{7,20}", title: "Debe contener entre 7 y 20 números. Ej: +58 412 1234567", class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-white-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
-            </div>
-
-            <%= f.fields_for :onboarding_profile do |p| %>
             <div>
               <%= p.label :instagram, "Cuenta de Instagram (Opcional)", class: "block text-xl font-bold text-whiteish mb-3" %>
               <div class="flex">
@@ -125,22 +152,22 @@
           </div>
 
           <div class="space-y-4">
-             <label class="block text-xl font-bold text-whiteish mb-6">¿Cuál es tu objetivo principal con el entrenamiento?</label>
+             <label class="block text-xl font-bold text-whiteish mb-6">¿Cuáles <span class="text-saffron uppercase">SON</span> tus objetivos? (podés elegir varios)</label>
              <div class="checkbox-group space-y-4" data-required="true">
-               <% ['Estética', 'Estética y Fuerza', 'Fuerza y Atletismo', 'Estética y Atletismo', 'Fuerza'].each do |goal| %>
+               <% ['Salud', 'Estética', 'Fuerza', 'Atletismo'].each do |goal| %>
                  <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-graphite cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
                     <%= p.check_box :goals, { multiple: true, class: "bg-graphite w-6 h-6 rounded-none text-saffron border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black" }, goal, nil %>
                     <span class="text-xl font-medium text-white"><%= goal %></span>
                  </label>
                <% end %>
                <label class="flex items-center gap-5 p-6 border-2 border-primary/50 bg-graphite cursor-pointer transition-all duration-200 [&:has(:checked)]:border-saffron [&:has(:checked)]:bg-graphite [&:has(:checked)]:shadow-[6px_6px_0px_0px_#F5C34A] [&:has(:checked)]:-translate-y-1 [&:has(:checked)]:-translate-x-1">
-                  <%= p.check_box :goals, { multiple: true, class: "bg-graphite w-6 h-6 rounded-none text-saffron border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black", id: "goals-otro-checkbox", data: { action: "change->multi-step-form#toggleGoalsOther" } }, "Otro", nil %>
-                  <span class="text-xl font-medium text-white">Otro</span>
+                  <%= p.check_box :goals, { multiple: true, class: "bg-graphite w-6 h-6 rounded-none text-saffron border-2 border-gray-500 focus:ring-saffron focus:ring-offset-black", id: "goals-otro-checkbox", data: { action: "change->multi-step-form#toggleGoalsOther" } }, "Otros", nil %>
+                  <span class="text-xl font-medium text-white">Otros</span>
                </label>
              </div>
 
              <div id="goals-other-container" class="hidden conditional-field pt-2">
-               <%= p.label :goals_other, "Describe tu objetivo", class: "block text-xl font-bold text-whiteish mb-3" %>
+               <%= p.label :goals_other, "¿Cuáles son esos otros objetivos?", class: "block text-xl font-bold text-whiteish mb-3" %>
                <%= p.text_field :goals_other, maxlength: 100, placeholder: "Ej: Preparación para competencia", data: { conditional_required: true }, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
              </div>
           </div>
@@ -252,8 +279,8 @@
 
           <div class="space-y-12">
             <div>
-              <%= p.label :injuries, "¿Tienes alguna lesión o molestia? (Si no, escribe 'Ninguna')", class: "block text-xl font-bold text-whiteish mb-3" %>
-              <%= p.text_area :injuries, rows: 3, required: true, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-graphite px-6 py-5 text-xl text-white placeholder-white-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+              <%= p.label :injuries, "¿Tienes alguna lesión o molestia?", class: "block text-xl font-bold text-whiteish mb-3" %>
+              <%= p.text_area :injuries, rows: 3, placeholder: "Describe cualquier lesión o molestia actual", class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-graphite px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
             </div>
 
             <div>
@@ -396,14 +423,29 @@
             <h2 class="text-3xl font-bold text-saffron">¿Desde dónde nos escribís?</h2>
           </div>
 
-          <div class="space-y-3">
-            <%= p.select :country,
-                  [["Argentina", "AR"], ["Estados Unidos", "US"], ["Chile", "CL"],
-                   ["Colombia", "CO"], ["México", "MX"], ["Brasil", "BR"],
-                   ["Otro", "OTHER"]],
-                  { prompt: "Seleccioná tu país" },
-                  required: true,
-                  class: "w-full bg-black border-2 border-primary/50 text-white px-6 py-5 text-xl font-medium focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all appearance-none rounded-none" %>
+          <div data-controller="searchable-select" class="relative">
+            <input type="text"
+                   autocomplete="off"
+                   placeholder="Buscar país..."
+                   data-searchable-select-target="input"
+                   data-action="input->searchable-select#filter focus->searchable-select#open"
+                   class="block w-full appearance-none rounded-none border-2 border-primary/50 bg-graphite px-6 py-5 text-xl text-white placeholder-gray-500 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all">
+
+            <%= p.hidden_field :country, data: { "searchable-select-target": "hidden" } %>
+
+            <div data-searchable-select-target="list"
+                 class="hidden absolute z-20 w-full bg-graphite border-2 border-t-0 border-primary/50 max-h-64 overflow-y-auto">
+              <% CountriesHelper::COUNTRIES.each do |name, code| %>
+                <button type="button"
+                        data-searchable-select-target="option"
+                        data-action="click->searchable-select#select"
+                        data-name="<%= name %>"
+                        data-value="<%= code %>"
+                        class="block w-full text-left px-6 py-4 text-lg text-white hover:bg-graphite hover:text-saffron transition-colors border-b border-gray-800 last:border-b-0">
+                  <%= name %>
+                </button>
+              <% end %>
+            </div>
           </div>
         </div>
 
