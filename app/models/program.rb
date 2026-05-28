@@ -3,6 +3,7 @@ class Program < ApplicationRecord
   has_many :phases, -> { order(order_index: :asc) }, dependent: :destroy
   has_many :routines, through: :phases
   has_many :user_dietary_plans, through: :phases
+  has_many :training_sessions, dependent: :destroy
 
   def current_week
     ((Date.current - created_at.to_date).to_i / 7) + 1

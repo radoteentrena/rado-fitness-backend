@@ -159,6 +159,7 @@ class ProcessPaymentEventJob < ApplicationJob
         access_expires_at: approved_at + 1.month,
         status:            :active
       )
+      user.update!(plan_tier: subscription.plan_tier)
       user.active!
       user.access_active!
       SubscriptionMailer.confirmed(user, subscription).deliver_later
