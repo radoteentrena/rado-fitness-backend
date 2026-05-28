@@ -161,7 +161,8 @@ class User < ApplicationRecord
   end
 
   def latest_weight
-    daily_metrics.where.not(weight: nil).order(date_logged: :desc).pick(:weight).truncate(2) if daily_metrics.exists?
+    weight = daily_metrics.where.not(weight: nil).order(date_logged: :desc).pick(:weight)
+    weight&.truncate(2)
   end
 
   def weight_trend(days_ago = 7)
