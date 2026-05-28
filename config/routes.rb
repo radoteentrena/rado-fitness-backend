@@ -51,7 +51,8 @@ Rails.application.routes.draw do
         end
       end
       resources :users do
-        resource :program_assignment, only: [ :create ]
+        resource :program_assignment, only: [ :new, :create ]
+        resource :dietary_plan_assignment, only: [ :new, :create ]
         resource :payment_link, only: [ :create ]
       end
       resources :user_dietary_plans, except: [ :index, :show ]

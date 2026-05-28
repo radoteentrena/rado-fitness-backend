@@ -29,5 +29,14 @@ module Admin
         }, status: :unprocessable_entity
       end
     end
+
+    def destroy
+      udp = UserDietaryPlan.find(params[:id])
+      user = udp.user
+      dietary_plan = udp.dietary_plan
+      udp.destroy!
+      dietary_plan&.destroy!
+      redirect_to admin_user_path(user), notice: "Plan alimenticio eliminado correctamente."
+    end
   end
 end

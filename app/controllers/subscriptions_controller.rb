@@ -91,6 +91,7 @@ class SubscriptionsController < ApplicationController
 
     case status
     when "approved"
+      activate_one_time_subscription_if_pending
       if current_user&.medium_or_high_ticket? && current_user.booking.nil?
         redirect_to new_booking_path, notice: "¡Pago confirmado! Agendá tu llamada de inicio."
       else
@@ -106,6 +107,24 @@ class SubscriptionsController < ApplicationController
   end
 
   private
+
+  def activate_one_time_subscription_if_pending
+    preference_id = params[:preference_id]
+    return unless preference_id.present?
+
+    subscription = current_user.subscriptions.find_by(
+      mp_preference_id: preference_id,
+      billing_type:     :one_time,
+      status:           :pending
+    )
+    return unless subscription
+
+    subscription.update!(status: :active, access_expires_at: Time.current + 1.month)
+    current_user.subscriptions.where.not(id: subscription.id).update_all(status: :canceled)
+    current_user.update!(plan_tier: subscription.plan_tier)
+    current_user.active!
+    current_user.access_active!
+  end
 
   def validated_plan_tier
     tier = params[:plan_tier]

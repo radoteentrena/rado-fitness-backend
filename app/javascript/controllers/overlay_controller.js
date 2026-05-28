@@ -12,6 +12,10 @@ export default class extends Controller {
     }
   }
 
+  disconnect() {
+    document.body.classList.remove("overflow-hidden")
+  }
+
   open() {
     this.overlayTarget.classList.remove("hidden")
     this.overlayTarget.classList.add("flex")
