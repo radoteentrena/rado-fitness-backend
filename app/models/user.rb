@@ -90,14 +90,16 @@ class User < ApplicationRecord
   end
 
   # S% - Session Compliance (Workouts)
-  # Based on the last 7 days vs Target
+  # Based on the last 7 days vs Target. Returns nil when no program is assigned.
   def calculate_workout_compliance_score
+    return nil unless active_program
+
     completed_last_7_days = training_sessions.completed
                                              .where(completed_at: 6.days.ago.beginning_of_day..Time.current)
                                              .count
 
     target = target_workouts_per_week
-    return 0 if target.zero?
+    return nil if target.zero?
 
     ((completed_last_7_days.to_f / target) * 100).clamp(0, 100).round
   end
