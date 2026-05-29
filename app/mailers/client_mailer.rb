@@ -13,7 +13,7 @@ class ClientMailer < ApplicationMailer
 
   def payment_link(user)
     @user        = user
-    token        = user.generate_payment_token!
+    token        = user.payment_token_valid? ? user.payment_link_token : user.generate_payment_token!
     @payment_url = pay_url(token: token, host: app_host, protocol: :https)
     mail(
       to:      user.email,

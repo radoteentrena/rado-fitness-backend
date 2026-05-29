@@ -21,6 +21,22 @@ Rack::Attack.throttle("onboarding/ip", limit: 10, period: 1.hour) do |request|
   end
 end
 
+# Throttle email existence checks: 20 per hour per IP
+Rack::Attack.throttle("onboarding/check_email/ip", limit: 20, period: 1.hour) do |request|
+  if request.path == "/onboarding/check_email" && request.post?
+    request.ip
+  end
+end
+
+# Throttle email existence checks per email: 5 per hour (prevents targeted enumeration)
+Rack::Attack.throttle("onboarding/check_email/email", limit: 5, period: 1.hour) do |request|
+  if request.path == "/onboarding/check_email" && request.post?
+    body = request.body.read
+    request.body.rewind
+    JSON.parse(body)["email"].to_s.downcase.strip.presence rescue nil
+  end
+end
+
 Rack::Attack.throttled_responder = lambda do |env|
   [
     429,
