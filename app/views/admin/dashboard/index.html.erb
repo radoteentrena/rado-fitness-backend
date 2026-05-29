@@ -95,7 +95,7 @@
                                 </td>
                                 <td class="px-4 py-3 font-medium text-blackish dark:text-whiteish whitespace-nowrap"><%= alert.user.name %></td>
                                 <td class="px-4 py-3 truncate max-w-xs"><%= alert.message %></td>
-                                <td class="px-4 py-3"><%= time_ago_in_words(alert.created_at) %> ago</td>
+                                <td class="px-4 py-3"><%= I18n.with_locale(:en) { time_ago_in_words(alert.created_at) } %> ago</td>
                                 <td class="px-4 py-3">
                                     <%= link_to "View", admin_coach_alert_path(alert), class: "font-medium text-primary hover:underline" %>
                                 </td>
@@ -166,7 +166,7 @@
                               </div>
                               <div>
                                   <p class="text-sm font-bold text-blackish dark:text-whiteish"><%= user.email %></p>
-                                  <p class="text-[10px] text-graphite dark:text-whiteish/70">Joined <%= time_ago_in_words(user.created_at) %> ago</p>
+                                  <p class="text-[10px] text-graphite dark:text-whiteish/70">Joined <%= I18n.with_locale(:en) { time_ago_in_words(user.created_at) } %> ago</p>
                               </div>
                           </div>
                           <span class="material-symbols-outlined text-shadow dark:text-muted">chevron_right</span>
