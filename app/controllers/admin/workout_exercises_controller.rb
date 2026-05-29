@@ -9,10 +9,10 @@ module Admin
 
     def create
       @workout_exercise = @workout.workout_exercises.build(workout_exercise_params)
-      @workout_exercise.order_index = @workout.workout_exercises.count + 1
+      @workout_exercise.order_index = (@workout.workout_exercises.maximum(:order_index) || 0) + 1
 
       if @workout_exercise.save
-        redirect_to admin_routine_path(@workout.routine), notice: "Exercise added."
+        redirect_to admin_routine_path(@workout.routine, workout_id: @workout.id), notice: "Exercise added."
       else
         respond_to do |format|
           format.html { render :new, status: :unprocessable_entity }
@@ -22,7 +22,7 @@ module Admin
 
     def edit
       unless turbo_frame_request?
-        redirect_to admin_routine_path(@workout_exercise.workout.routine)
+        redirect_to admin_routine_path(@workout_exercise.workout.routine, workout_id: @workout_exercise.workout.id)
       end
     end
 

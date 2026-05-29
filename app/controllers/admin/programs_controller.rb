@@ -69,6 +69,12 @@ module Admin
 
     # See https://administrate-demo.herokuapp.com/customizing_controller_actions
     # for more information
+    def remove_user
+      program = Program.find(params[:id])
+      program.update!(user_id: nil)
+      redirect_to admin_program_path(program), notice: "Usuario removido del programa."
+    end
+
     def sync_sheet
       program = Program.find(params[:id])
       service = Google::SheetsService.new(program)
