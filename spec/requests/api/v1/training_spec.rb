@@ -5,9 +5,10 @@ RSpec.describe "Training API", type: :request do
   let(:user)             { create(:user, status: :active) }
   let(:program)          { create(:program, user: user) }
   let(:phase)            { create(:phase, program: program, order_index: 1, duration_weeks: 4) }
-  let(:routine)          { create(:routine, user: user) }
+  let(:routine)          { create(:routine) }
   let!(:phase_routine)   { create(:phase_routine, phase: phase, routine: routine, order_index: 1) }
   let(:workout)          { create(:workout, routine: routine, order_index: 1) }
+  let!(:workout_b)       { create(:workout, routine: routine, name: "Day B", order_index: 2) }
   let(:exercise)         { create(:exercise) }
   let!(:workout_exercise) { create(:workout_exercise, workout: workout, exercise: exercise) }
 
@@ -102,6 +103,71 @@ RSpec.describe "Training API", type: :request do
         post "/api/v1/training/start", headers: auth_headers(user)
         expect(response).to have_http_status(:ok)
         expect(json["session"]["status"]).to eq("in_progress")
+      end
+    end
+
+    context "with workout_id matching the current pending session" do
+      before { pending_session }
+
+      it "starts that session and returns 200" do
+        post "/api/v1/training/start",
+          params: { workout_id: workout.id },
+          headers: auth_headers(user)
+
+        expect(response).to have_http_status(:ok)
+        expect(json["session"]["status"]).to eq("in_progress")
+      end
+    end
+
+    context "with workout_id for a different workout in the same routine (user ahead of schedule)" do
+      before { pending_session }
+
+      it "returns 404 — cannot skip ahead to a workout with no session" do
+        post "/api/v1/training/start",
+          params: { workout_id: workout_b.id },
+          headers: auth_headers(user)
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "with a stale in_progress session after routine reassignment" do
+      let(:new_routine)    { create(:routine) }
+      let!(:new_workout_a) { create(:workout, routine: new_routine, name: "New Day A", order_index: 1) }
+
+      before do
+        # Session was started on the old routine
+        in_progress_session
+        # Coach reassigns the phase to a new routine
+        phase_routine.update!(routine: new_routine)
+      end
+
+      it "reconciles and returns the updated session when called without workout_id" do
+        post "/api/v1/training/start", headers: auth_headers(user)
+
+        expect(response).to have_http_status(:ok)
+        expect(json["session"]["status"]).to eq("in_progress")
+        expect(in_progress_session.reload.routine_id).to eq(new_routine.id)
+        expect(in_progress_session.reload.workout_id).to eq(new_workout_a.id)
+      end
+
+      it "reconciles and returns the updated session when called with the new workout_id" do
+        post "/api/v1/training/start",
+          params: { workout_id: new_workout_a.id },
+          headers: auth_headers(user)
+
+        expect(response).to have_http_status(:ok)
+        expect(in_progress_session.reload.workout_id).to eq(new_workout_a.id)
+      end
+
+      it "returns 404 when called with a workout_id that doesn't match after reconcile" do
+        other_workout = create(:workout, routine: new_routine, name: "New Day B", order_index: 2)
+
+        post "/api/v1/training/start",
+          params: { workout_id: other_workout.id },
+          headers: auth_headers(user)
+
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
