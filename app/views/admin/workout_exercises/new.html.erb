@@ -17,8 +17,8 @@
       <% end %>
 
       <%
-        all_exercises = Exercise.order(:muscle_group, :name)
-        selected_exercise = all_exercises.find_by(id: @workout_exercise.exercise_id)
+        all_exercises = Exercise.order(:muscle_group, :name).to_a
+        selected_exercise = all_exercises.find { |e| e.id == @workout_exercise.exercise_id }
       %>
       <div data-controller="searchable-select" class="relative">
         <%= f.label :exercise_id, "Ejercicio", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
@@ -46,6 +46,7 @@
               <button type="button"
                       data-searchable-select-target="option"
                       data-name="<%= exercise.name %> <%= exercise.muscle_group %>"
+                      data-display="<%= exercise.name %>"
                       data-value="<%= exercise.id %>"
                       data-action="click->searchable-select#select"
                       class="w-full text-left px-4 py-2 text-sm text-blackish dark:text-whiteish hover:bg-primary/10 hover:text-primary flex items-center justify-between gap-2">

@@ -6,7 +6,6 @@ export default class extends Controller {
 
   connect() {
     this.dragging = null
-    this.placeholder = null
   }
 
   dragstart(event) {
