@@ -102,7 +102,7 @@ class Api::V1::TrainingController < Api::V1::BaseController
     @training_session = if workout_id.present?
       current_user.training_sessions
         .where(workout_id: workout_id, status: [ TrainingSession.statuses[:pending], TrainingSession.statuses[:in_progress] ])
-        .first
+        .first || TrainingSession.current_for(current_user)
     else
       TrainingSession.current_for(current_user)
     end

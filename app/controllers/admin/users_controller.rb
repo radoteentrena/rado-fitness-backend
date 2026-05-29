@@ -99,7 +99,7 @@ module Admin
     def show
       authorize_resource(requested_resource)
 
-      @start_date = params[:start_date] ? Date.parse(params[:start_date]) : Date.today.beginning_of_week
+      @start_date = params[:start_date] ? Date.parse(params[:start_date]) : Date.current.beginning_of_week
       @view_type = params[:view_type] || "week"
 
       range = if @view_type == "month"

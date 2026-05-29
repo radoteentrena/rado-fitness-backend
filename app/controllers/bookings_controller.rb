@@ -63,7 +63,7 @@ class BookingsController < ApplicationController
   def upcoming_working_dates
     active_days = CoachSchedule.where(active: true).pluck(:day_of_week)
     (1..7).filter_map do |offset|
-      date = Date.today + offset
+      date = Date.current + offset
       date if active_days.include?(date.wday)
     end
   end
