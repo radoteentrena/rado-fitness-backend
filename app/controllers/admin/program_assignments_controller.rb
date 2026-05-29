@@ -2,7 +2,7 @@ module Admin
   class ProgramAssignmentsController < Admin::ApplicationController
     def new
       @user = User.find(params[:user_id])
-      @templates = Program.where(user_id: nil).order(:name)
+      @templates = Program.where(user_id: nil).includes(:phases).order(:name)
       render layout: false
     end
 
@@ -11,6 +11,9 @@ module Admin
 
       if params[:program_id].present?
         program = Program.find(params[:program_id])
+        if program.user.present?
+          redirect_to admin_user_path(user), alert: "El programa ya está asignado a otro usuario." and return
+        end
         program.update!(user: user)
         TrainingProgressionService.create_initial_session(user, program)
         redirect_to admin_user_path(user), notice: "Programa \"#{program.name}\" asignado."

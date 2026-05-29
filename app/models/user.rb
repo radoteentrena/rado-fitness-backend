@@ -193,11 +193,14 @@ class User < ApplicationRecord
   private
 
   def send_welcome_email
-    ClientMailer.welcome(self).deliver_later
+    ClientMailer.welcome(self, @temp_password).deliver_later
   end
 
   def set_temporary_password
-    self.password = SecureRandom.hex(8) if password.blank?
+    if password.blank?
+      @temp_password = SecureRandom.hex(8)
+      self.password = @temp_password
+    end
   end
 
   def strip_whitespace

@@ -4,6 +4,7 @@ class Program < ApplicationRecord
   has_many :routines, through: :phases
   has_many :user_dietary_plans, through: :phases
   has_many :training_sessions, dependent: :destroy
+  has_many :ai_conversations, dependent: :nullify
 
   def current_week
     ((Date.current - created_at.to_date).to_i / 7) + 1

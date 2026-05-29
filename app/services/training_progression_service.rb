@@ -29,6 +29,8 @@ class TrainingProgressionService
       raise ArgumentError, "La sesión no está en estado pendiente (estado actual: #{training_session.status})"
     end
 
+    reconcile_stale_routine!(training_session)
+
     training_session.update!(
       status: :in_progress,
       started_at: Time.current
@@ -113,9 +115,13 @@ class TrainingProgressionService
     user = completed_or_skipped_session.user
     program = completed_or_skipped_session.program
     phase = completed_or_skipped_session.phase
-    routine = completed_or_skipped_session.routine
     current_workout = completed_or_skipped_session.workout
     current_cycle = completed_or_skipped_session.cycle_number
+
+    # Re-resolve the primary routine from the phase rather than trusting the
+    # reference frozen on the session — guards against stale routine_id when
+    # a routine is reassigned after sessions have been created.
+    routine = primary_routine_for_phase(phase)
 
     ordered_workouts = routine.workouts.order(order_index: :asc).to_a
     current_index = ordered_workouts.index { |w| w.id == current_workout.id }
@@ -199,6 +205,14 @@ class TrainingProgressionService
       session_number: next_session_number,
       status: :pending
     )
+  end
+
+  def self.reconcile_stale_routine!(training_session)
+    current_primary = primary_routine_for_phase(training_session.phase)
+    return if training_session.routine_id == current_primary.id
+
+    first_workout = current_primary.workouts.order(order_index: :asc).first
+    training_session.update!(routine: current_primary, workout: first_workout)
   end
 
   def self.next_session_number_for(user)

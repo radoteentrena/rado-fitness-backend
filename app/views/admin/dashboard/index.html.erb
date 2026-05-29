@@ -3,8 +3,8 @@
   <div class="grid grid-cols-1 gap-4 mb-4">
       <div class="flex justify-between items-end">
         <div>
-           <p class="text-sm font-medium text-graphite dark:text-muted"><%= Date.today.strftime("%A, %B %d, %Y") %></p>
-           <h1 class="text-2xl font-semibold text-blackish dark:text-whiteish">Admin Dashboard</h1>
+          <p class="text-sm font-medium text-graphite dark:text-muted"><%= Date.today.strftime("%A, %B %d, %Y") %></p>
+          <h1 class="text-2xl font-semibold text-blackish dark:text-whiteish">Admin Dashboard</h1>
         </div>
       </div>
   </div>
@@ -13,54 +13,54 @@
   <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2 lg:grid-cols-4">
     <!-- Total Users -->
     <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
-       <div class="flex items-center">
-          <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-graphite bg-background-light rounded-xl dark:bg-graphite dark:text-whiteish">
-             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
+      <div class="flex items-center">
+          <div class="inline-flex shrink-0 justify-center items-center w-12 h-12 text-graphite bg-background-light rounded-xl dark:bg-graphite dark:text-whiteish">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
           </div>
           <div class="ml-4">
-             <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @total_users %></h3>
-             <p class="font-light text-graphite dark:text-slate-200">Total Users</p>
+            <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @total_users %></h3>
+            <p class="font-light text-graphite dark:text-slate-200">Total Users</p>
           </div>
-       </div>
+      </div>
     </div>
 
     <!-- Active Clients -->
     <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
         <div class="flex items-center">
-            <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-primary bg-primary/10 rounded-xl">
-               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+            <div class="inline-flex shrink-0 justify-center items-center w-12 h-12 text-primary bg-primary/10 rounded-xl">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
             </div>
             <div class="ml-4">
-               <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @active_clients_count %></h3>
-               <p class="font-light text-graphite dark:text-slate-200">Active Clients</p>
+              <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @active_clients_count %></h3>
+              <p class="font-light text-graphite dark:text-slate-200">Active Clients</p>
             </div>
-         </div>
+        </div>
     </div>
 
     <!-- Low Compliance -->
     <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
-         <div class="flex items-center">
-             <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-primary bg-background-light rounded-xl dark:bg-graphite">
+        <div class="flex items-center">
+            <div class="inline-flex shrink-0 justify-center items-center w-12 h-12 text-primary bg-background-light rounded-xl dark:bg-graphite">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-             </div>
-             <div class="ml-4">
+            </div>
+            <div class="ml-4">
                 <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @low_compliance_users_count %></h3>
                 <p class="font-light text-graphite dark:text-slate-200">Low Compliance</p>
-             </div>
+            </div>
           </div>
-     </div>
+    </div>
 
-     <!-- Pending Alerts -->
-     <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
+    <!-- Pending Alerts -->
+    <div class="border border-shadow rounded-2xl shadow-sm dark:border-graphite p-4 bg-whiteish dark:bg-shadow">
           <div class="flex items-center">
-              <div class="inline-flex flex-shrink-0 justify-center items-center w-12 h-12 text-primary bg-background-light rounded-xl dark:bg-graphite">
-                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+              <div class="inline-flex shrink-0 justify-center items-center w-12 h-12 text-primary bg-background-light rounded-xl dark:bg-graphite">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
               </div>
               <div class="ml-4">
-                 <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @pending_alerts.count %></h3>
-                 <p class="font-light text-graphite dark:text-slate-200">Pending Alerts</p>
+                <h3 class="mb-2 text-xl font-bold text-blackish dark:text-whiteish"><%= @pending_alerts.count %></h3>
+                <p class="font-light text-graphite dark:text-slate-200">Pending Alerts</p>
               </div>
-           </div>
+          </div>
       </div>
   </div>
 
@@ -95,7 +95,7 @@
                                 </td>
                                 <td class="px-4 py-3 font-medium text-blackish dark:text-whiteish whitespace-nowrap"><%= alert.user.name %></td>
                                 <td class="px-4 py-3 truncate max-w-xs"><%= alert.message %></td>
-                                <td class="px-4 py-3"><%= time_ago_in_words(alert.created_at) %> ago</td>
+                                <td class="px-4 py-3"><%= I18n.with_locale(:en) { time_ago_in_words(alert.created_at) } %> ago</td>
                                 <td class="px-4 py-3">
                                     <%= link_to "View", admin_coach_alert_path(alert), class: "font-medium text-primary hover:underline" %>
                                 </td>
@@ -118,16 +118,16 @@
         <!-- User Growth Chart -->
         <div class="flex-1 bg-whiteish border border-shadow rounded-3xl shadow-sm dark:border-graphite p-4 dark:bg-shadow">
           <div class="flex items-center justify-between mb-4">
-            <div class="flex-shrink-0">
-               <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-whiteish">User Growth</h3>
-               <span class="text-[10px] text-graphite font-medium dark:text-whiteish">LAST 7 DAYS</span>
+            <div class="shrink-0">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-whiteish">User Growth</h3>
+              <span class="text-[10px] text-graphite font-medium dark:text-whiteish">LAST 7 DAYS</span>
             </div>
           </div>
           <div id="main-chart"
-               data-controller="admin--charts"
-               data-admin--charts-target="chart"
-               data-admin--charts-series-value="<%= @chart_data[:series].to_json %>"
-               data-admin--charts-categories-value="<%= @chart_data[:categories].to_json %>">
+              data-controller="admin--charts"
+              data-admin--charts-target="chart"
+              data-admin--charts-series-value="<%= @chart_data[:series].to_json %>"
+              data-admin--charts-categories-value="<%= @chart_data[:categories].to_json %>">
           </div>
         </div>
     </div>
@@ -136,37 +136,37 @@
     <div class="space-y-4">
         <!-- Quick Actions -->
         <div class="bg-transparent dark:bg-transparent p-0">
-             <h3 class="text-sm font-bold uppercase tracking-wider text-graphite mb-3 dark:text-whiteish">Quick Actions</h3>
-             <div class="grid grid-cols-2 gap-3">
-                 <%= link_to "users/new", class: "flex items-center justify-center gap-2 bg-blackish text-whiteish py-3 rounded-2xl font-semibold text-sm shadow-lg hover:bg-shadow transition dark:bg-primary dark:text-blackish dark:hover:bg-primary/90 dark:hover:text-blackish" do %>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-graphite mb-3 dark:text-whiteish">Quick Actions</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <%= link_to "users/new", class: "flex items-center justify-center gap-2 bg-blackish text-whiteish py-3 rounded-2xl font-semibold text-sm shadow-lg hover:bg-shadow transition dark:bg-primary dark:text-blackish dark:hover:bg-primary/90 dark:hover:text-blackish" do %>
                     <span class="material-symbols-outlined text-base">person_add</span>
                     Add New Client
-                 <% end %>
-                 <%= link_to "user_dietary_plans", class: "flex items-center justify-center gap-2 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite py-3 rounded-2xl font-semibold text-sm shadow-sm hover:bg-background-light dark:hover:bg-shadow/50 transition dark:text-whiteish" do %>
+                <% end %>
+                <%= link_to "user_dietary_plans", class: "flex items-center justify-center gap-2 bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite py-3 rounded-2xl font-semibold text-sm shadow-sm hover:bg-background-light dark:hover:bg-shadow/50 transition dark:text-whiteish" do %>
                     <span class="material-symbols-outlined text-base">restaurant_menu</span>
                     Nutrition Plans
-                 <% end %>
-             </div>
+                <% end %>
+            </div>
         </div>
 
         <!-- Recent Users -->
         <div class="bg-whiteish border border-shadow rounded-3xl shadow-sm dark:border-graphite dark:bg-shadow">
             <div class="p-4 flex items-center justify-between border-b border-shadow dark:border-graphite/50">
-               <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-whiteish">Recent Users</h3>
-               <%= link_to "VIEW ALL", admin_users_path, class: "text-xs font-bold text-primary hover:underline" %>
+              <h3 class="text-sm font-bold uppercase tracking-wider text-graphite dark:text-whiteish">Recent Users</h3>
+              <%= link_to "VIEW ALL", admin_users_path, class: "text-xs font-bold text-primary hover:underline" %>
             </div>
             <ul role="list" class="divide-y divide-blackish/50 dark:divide-primary">
                 <% @recent_users.each do |user| %>
                 <%= link_to [:admin, user], class: "block" do %>
                   <li class="p-4 hover:bg-background-light dark:hover:bg-shadow/50 transition-colors cursor-pointer">
                       <div class="flex items-center justify-between">
-                           <div class="flex items-center gap-3">
+                          <div class="flex items-center gap-3">
                               <div class="w-10 h-10 rounded-full bg-background-light dark:bg-graphite flex items-center justify-center font-bold text-graphite dark:text-whiteish">
                                   <%= user.email[0].upcase rescue "?" %>
                               </div>
                               <div>
                                   <p class="text-sm font-bold text-blackish dark:text-whiteish"><%= user.email %></p>
-                                  <p class="text-[10px] text-graphite dark:text-whiteish/70">Joined <%= time_ago_in_words(user.created_at) %> ago</p>
+                                  <p class="text-[10px] text-graphite dark:text-whiteish/70">Joined <%= I18n.with_locale(:en) { time_ago_in_words(user.created_at) } %> ago</p>
                               </div>
                           </div>
                           <span class="material-symbols-outlined text-shadow dark:text-muted">chevron_right</span>

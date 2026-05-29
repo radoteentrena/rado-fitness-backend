@@ -46,7 +46,7 @@ module Admin
     def update
       if requested_resource.update(resource_params)
         respond_to do |format|
-          format.html { redirect_to [namespace, requested_resource], notice: translate_with_resource("update.success") }
+          format.html { redirect_back_or_to [namespace, requested_resource], notice: translate_with_resource("update.success") }
           format.turbo_stream { render locals: { requested_resource: requested_resource } }
         end
       else
