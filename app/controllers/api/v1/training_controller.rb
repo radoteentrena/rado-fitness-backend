@@ -102,7 +102,13 @@ class Api::V1::TrainingController < Api::V1::BaseController
     @training_session = if workout_id.present?
       current_user.training_sessions
         .where(workout_id: workout_id, status: [ TrainingSession.statuses[:pending], TrainingSession.statuses[:in_progress] ])
-        .first || TrainingSession.current_for(current_user)
+        .first || begin
+          candidate = TrainingSession.current_for(current_user)
+          if candidate
+            TrainingProgressionService.reconcile_stale_routine!(candidate)
+            candidate.workout_id.to_s == workout_id.to_s ? candidate : nil
+          end
+        end
     else
       TrainingSession.current_for(current_user)
     end
