@@ -10,16 +10,26 @@ class TrainingProgressionService
     primary_routine = primary_routine_for_phase(first_phase)
     first_workout = primary_routine.workouts.order(order_index: :asc).first
 
-    TrainingSession.create!(
-      user: user,
-      program: program,
-      phase: first_phase,
-      routine: primary_routine,
-      workout: first_workout,
-      cycle_number: 1,
-      session_number: 1,
-      status: :pending
-    )
+    ActiveRecord::Base.transaction do
+      user.training_sessions
+          .where(status: [ TrainingSession.statuses[:pending], TrainingSession.statuses[:in_progress] ])
+          .update_all(
+            status: TrainingSession.statuses[:skipped],
+            skipped_at: Time.current,
+            skip_reason: "Superseded by new program assignment"
+          )
+
+      TrainingSession.create!(
+        user: user,
+        program: program,
+        phase: first_phase,
+        routine: primary_routine,
+        workout: first_workout,
+        cycle_number: 1,
+        session_number: next_session_number_for(user),
+        status: :pending
+      )
+    end
   end
 
   def self.start_session(training_session)
