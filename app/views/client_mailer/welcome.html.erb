@@ -22,14 +22,44 @@
       Tu registro fue exitoso. El siguiente paso es activar tu acceso eligiendo un plan de entrenamiento.
     </p>
 
+    <% if @temp_password.present? %>
+    <div style="background-color: #111; border: 1px solid #F5C228; padding: 16px 20px; margin: 0 0 20px;">
+      <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #F5C228; margin: 0 0 8px;">
+        Tu contraseña temporal
+      </p>
+      <p style="font-size: 18px; font-weight: 900; color: #fff; letter-spacing: 0.08em; margin: 0 0 8px; font-family: monospace;">
+        <%= @temp_password %>
+      </p>
+      <p style="font-size: 11px; color: #666; margin: 0;">
+        Podés cambiarla desde tu perfil una vez que ingreses.
+      </p>
+    </div>
+    <% end %>
+
     <p style="font-size: 12px; color: #555; margin: 0 0 20px;">
       Si ya elegiste un plan y realizaste el pago, te llegará otro correo confirmando tu acceso en los próximos minutos.
     </p>
 
     <a href="<%= @subscription_url %>"
-       style="display: block; text-align: center; background-color: #F5C228; color: #111; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; padding: 14px 24px; text-decoration: none; margin: 0 0 20px; border: 2px solid #F5C228;">
+       style="display: block; text-align: center; background-color: #F5C228; color: #111; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; padding: 14px 24px; text-decoration: none; margin: 0 0 28px; border: 2px solid #F5C228;">
       Activar mi acceso &#8594;
     </a>
+
+    <div style="border-top: 1px solid #333; padding-top: 20px; margin-bottom: 16px;">
+      <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #666; margin: 0 0 12px;">
+        Descargá la app
+      </p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="<%= @app_store_url %>"
+           style="display: inline-block; background-color: #222; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 18px; text-decoration: none; border: 1px solid #444;">
+          &#xF8FF; App Store
+        </a>
+        <a href="<%= @play_store_url %>"
+           style="display: inline-block; background-color: #222; color: #fff; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 18px; text-decoration: none; border: 1px solid #444;">
+          ▶ Google Play
+        </a>
+      </div>
+    </div>
 
     <p style="font-size: 11px; color: #444; line-height: 1.5; margin: 0;">
       Asegurate de mover este correo a tu bandeja principal para no perderte ninguna actualización de tu programa.

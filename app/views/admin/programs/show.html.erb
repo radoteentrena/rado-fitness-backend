@@ -71,7 +71,7 @@
 
                     <% if program.last_synced_at %>
                         <p class="text-xs text-center text-graphite dark:text-muted">
-                            Last synced: <%= time_ago_in_words(program.last_synced_at) %> ago
+                            Last synced: <%= I18n.with_locale(:en) { time_ago_in_words(program.last_synced_at) } %> ago
                         </p>
                     <% end %>
                  </div>

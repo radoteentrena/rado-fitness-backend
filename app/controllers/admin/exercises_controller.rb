@@ -1,5 +1,11 @@
 module Admin
   class ExercisesController < Admin::ApplicationController
+    def scoped_resource
+      scope = super
+      scope = scope.where(muscle_group: params[:muscle_group]) if params[:muscle_group].present?
+      scope
+    end
+
     def create
       resource = resource_class.new(resource_params)
       authorize_resource(resource)

@@ -28,6 +28,14 @@ class Api::V1::ProgressPhotosController < Api::V1::BaseController
     end
   end
 
+  def destroy
+    photo = current_user.progress_photos.find(params[:id])
+    photo.destroy
+    head :no_content
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Photo not found" }, status: :not_found
+  end
+
   private
 
   def photo_params

@@ -16,10 +16,46 @@
         </div>
       <% end %>
 
-      <div>
-        <%= f.label :exercise_id, "Exercise", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
-        <% grouped = Exercise.order(:muscle_group, :name).group_by(&:muscle_group) %>
-        <%= f.select :exercise_id, grouped_options_for_select(grouped.map { |group, exercises| [group.to_s.titleize, exercises.map { |e| [e.name, e.id] }] }, @workout_exercise.exercise_id), { include_blank: "Select an exercise..." }, class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+      <%
+        all_exercises = Exercise.order(:muscle_group, :name).to_a
+        selected_exercise = all_exercises.find { |e| e.id == @workout_exercise.exercise_id }
+      %>
+      <div data-controller="searchable-select" class="relative">
+        <%= f.label :exercise_id, "Ejercicio", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
+
+        <input type="text"
+               placeholder="Buscar por nombre o grupo muscular..."
+               autocomplete="off"
+               value="<%= selected_exercise&.name %>"
+               data-searchable-select-target="input"
+               data-action="focus->searchable-select#open input->searchable-select#filter"
+               class="w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary text-sm">
+
+        <input type="hidden"
+               name="workout_exercise[exercise_id]"
+               value="<%= @workout_exercise.exercise_id %>"
+               data-searchable-select-target="hidden">
+
+        <div data-searchable-select-target="list"
+             class="hidden absolute z-50 mt-1 w-full max-h-72 overflow-y-auto bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-lg shadow-xl">
+          <% all_exercises.group_by(&:muscle_group).each do |group, exercises| %>
+            <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-muted bg-background-light dark:bg-graphite/60 sticky top-0">
+              <%= group %>
+            </div>
+            <% exercises.each do |exercise| %>
+              <button type="button"
+                      data-searchable-select-target="option"
+                      data-name="<%= exercise.name %> <%= exercise.muscle_group %>"
+                      data-display="<%= exercise.name %>"
+                      data-value="<%= exercise.id %>"
+                      data-action="click->searchable-select#select"
+                      class="w-full text-left px-4 py-2 text-sm text-blackish dark:text-whiteish hover:bg-primary/10 hover:text-primary flex items-center justify-between gap-2">
+                <span><%= exercise.name %></span>
+                <span class="text-xs text-muted shrink-0"><%= exercise.muscle_group %></span>
+              </button>
+            <% end %>
+          <% end %>
+        </div>
       </div>
 
       <div class="grid grid-cols-3 gap-4">
@@ -52,7 +88,7 @@
         </div>
         <div>
           <%= f.label :load, "Load", class: "block text-xs uppercase text-muted mb-1 font-bold tracking-wider" %>
-          <%= f.text_field :load, placeholder: "e.g. 50kg", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
+          <%= f.text_field :load, placeholder: "ej. 50kg, Ajustar al RIR", class: "w-full bg-background-light dark:bg-graphite/50 border border-shadow dark:border-graphite rounded-lg px-3 py-2 text-blackish dark:text-whiteish focus:ring-primary focus:border-primary" %>
         </div>
       </div>
 
@@ -62,7 +98,7 @@
       </div>
 
       <div class="flex items-center justify-end gap-3 pt-4 border-t border-shadow dark:border-graphite">
-        <%= link_to "Cancel", admin_routine_path(@workout.routine), data: { turbo_frame: "_top" }, class: "px-4 py-2 text-sm font-medium text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish transition-colors" %>
+        <%= link_to "Cancel", admin_routine_path(@workout.routine, workout_id: @workout.id), data: { turbo_frame: "_top" }, class: "px-4 py-2 text-sm font-medium text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish transition-colors" %>
         <%= f.submit "Add Exercise", class: "px-5 py-2 bg-primary text-blackish font-bold text-sm rounded-lg hover:bg-primary/90 transition-colors cursor-pointer" %>
       </div>
     <% end %>
