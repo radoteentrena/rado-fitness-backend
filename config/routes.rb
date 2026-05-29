@@ -36,7 +36,8 @@ Rails.application.routes.draw do
           post :apply
         end
         member do
-          post :sync_sheet
+          post  :sync_sheet
+          delete :remove_user
         end
       end
       resources :routines do
@@ -45,6 +46,7 @@ Rails.application.routes.draw do
       resources :phase_routines, except: [ :index, :show ]
       resources :workouts, except: [ :index, :new, :create ] do
         resources :workout_exercises, only: [ :new, :create ]
+        patch :reorder_exercises, on: :member
       end
       resources :workout_exercises, only: [ :edit, :update, :destroy ] do
         member do

@@ -1,8 +1,10 @@
 class Exercise < ApplicationRecord
   MUSCLE_GROUPS = [
-    "Pecho", "Espalda", "Hombros", "Bíceps", "Tríceps",
+    "Pecho", "Espalda", "Hombros", "Trapecio",
+    "Bíceps", "Tríceps", "Antebrazos", "Brazos",
     "Cuádriceps", "Isquiotibiales", "Glúteos", "Pantorrillas",
-    "Core", "Trapecio", "Full Body"
+    "Piernas", "Abductores", "Aductores",
+    "Core", "Full Body"
   ].freeze
 
   has_many :workout_exercises

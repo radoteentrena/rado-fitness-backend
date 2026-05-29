@@ -1,6 +1,6 @@
 class Admin::WorkoutsController < Admin::ApplicationController
   before_action :set_routine, only: [ :new, :create ]
-  before_action :set_workout, only: [ :edit, :update, :destroy ]
+  before_action :set_workout, only: [ :edit, :update, :destroy, :reorder_exercises ]
 
   def new
     @workout = @routine.workouts.build
@@ -24,6 +24,13 @@ class Admin::WorkoutsController < Admin::ApplicationController
         format.html { render :new, status: :unprocessable_entity }
       end
     end
+  end
+
+  def reorder_exercises
+    Array(params[:order]).each_with_index do |exercise_id, index|
+      @workout.workout_exercises.where(id: exercise_id).update_all(order_index: index + 1)
+    end
+    head :ok
   end
 
   def edit
