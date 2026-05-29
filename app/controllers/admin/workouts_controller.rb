@@ -18,7 +18,7 @@ class Admin::WorkoutsController < Admin::ApplicationController
     end
 
     if @workout.save
-      redirect_to admin_routine_path(@routine), notice: "Workout was successfully created.", status: :see_other
+      redirect_to admin_routine_path(@routine, workout_id: @workout.id), notice: "Workout was successfully created.", status: :see_other
     else
       respond_to do |format|
         format.html { render :new, status: :unprocessable_entity }

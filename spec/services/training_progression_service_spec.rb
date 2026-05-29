@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe TrainingProgressionService do
+  # ─── Shared program structure ───────────────────────────────────────────────
   let(:user)    { create(:user, status: :active) }
   let(:program) { create(:program, user: user) }
   let(:phase)   { create(:phase, program: program, order_index: 1, duration_weeks: 4) }
@@ -9,6 +10,7 @@ RSpec.describe TrainingProgressionService do
   let!(:workout_a) { create(:workout, routine: routine, name: "Day A", order_index: 1) }
   let!(:workout_b) { create(:workout, routine: routine, name: "Day B", order_index: 2) }
 
+  # ─── create_initial_session ─────────────────────────────────────────────────
   describe ".create_initial_session" do
     it "creates a pending session on the first workout of the primary routine" do
       session = described_class.create_initial_session(user, program)
@@ -16,6 +18,8 @@ RSpec.describe TrainingProgressionService do
       expect(session).to be_persisted
       expect(session.status).to eq("pending")
       expect(session.workout).to eq(workout_a)
+      expect(session.routine).to eq(routine)
+      expect(session.phase).to eq(phase)
     end
 
     it "closes any existing pending sessions before creating the new one" do
@@ -68,15 +72,20 @@ RSpec.describe TrainingProgressionService do
 
     it "raises if the phase has no duration_weeks" do
       phase.update!(duration_weeks: nil)
-      expect { described_class.create_initial_session(user, program) }.to raise_error(ArgumentError, /duration_weeks/)
+
+      expect { described_class.create_initial_session(user, program) }
+        .to raise_error(ArgumentError, /duration_weeks/)
     end
 
     it "raises if the phase has no routines" do
       phase_routine.destroy
-      expect { described_class.create_initial_session(user, program) }.to raise_error(ArgumentError, /rutinas asignadas/)
+
+      expect { described_class.create_initial_session(user, program) }
+        .to raise_error(ArgumentError, /rutinas asignadas/)
     end
   end
 
+  # ─── start_session ──────────────────────────────────────────────────────────
   describe ".start_session" do
     context "with a pending session" do
       let(:session) do
@@ -112,10 +121,13 @@ RSpec.describe TrainingProgressionService do
         let(:new_routine)  { create(:routine) }
         let!(:new_workout) { create(:workout, routine: new_routine, name: "New Day A", order_index: 1) }
 
-        before { phase_routine.update!(routine: new_routine) }
+        before do
+          phase_routine.update!(routine: new_routine)
+        end
 
         it "reconciles the stale routine even on an in_progress session" do
           described_class.start_session(session)
+
           expect(session.reload.routine).to eq(new_routine)
           expect(session.reload.workout).to eq(new_workout)
         end
@@ -132,11 +144,13 @@ RSpec.describe TrainingProgressionService do
       end
 
       it "raises ArgumentError" do
-        expect { described_class.start_session(session) }.to raise_error(ArgumentError, /pendiente/)
+        expect { described_class.start_session(session) }
+          .to raise_error(ArgumentError, /pendiente/)
       end
     end
   end
 
+  # ─── reconcile_stale_routine! ───────────────────────────────────────────────
   describe ".reconcile_stale_routine!" do
     let(:session) do
       create(:training_session,
@@ -151,8 +165,8 @@ RSpec.describe TrainingProgressionService do
     end
 
     it "updates routine and resets to first workout when routine has changed" do
-      new_routine = create(:routine)
-      new_workout = create(:workout, routine: new_routine, name: "New A", order_index: 1)
+      new_routine  = create(:routine)
+      new_workout  = create(:workout, routine: new_routine, name: "New A", order_index: 1)
       phase_routine.update!(routine: new_routine)
 
       described_class.reconcile_stale_routine!(session)
@@ -162,6 +176,7 @@ RSpec.describe TrainingProgressionService do
     end
   end
 
+  # ─── advance_progression ────────────────────────────────────────────────────
   describe "progression after completing a session" do
     let(:session) do
       create(:training_session,
@@ -174,8 +189,11 @@ RSpec.describe TrainingProgressionService do
     it "creates a pending session for the next workout in the routine" do
       result = described_class.complete_session(session)
 
-      expect(result[:next_session].workout).to eq(workout_b)
-      expect(result[:next_session].status).to eq("pending")
+      next_session = result[:next_session]
+      expect(next_session).to be_persisted
+      expect(next_session.status).to eq("pending")
+      expect(next_session.workout).to eq(workout_b)
+      expect(next_session.cycle_number).to eq(1)
     end
 
     it "cycles back to the first workout after the last one in the routine" do
@@ -185,10 +203,12 @@ RSpec.describe TrainingProgressionService do
         status: :in_progress, started_at: 30.minutes.ago,
         cycle_number: 1, session_number: 2)
 
+      # Simulate incomplete phase: 2 workouts * 4 weeks = 8 total, only 1 completed so far
       result = described_class.complete_session(last_session)
 
-      expect(result[:next_session].workout).to eq(workout_a)
-      expect(result[:next_session].cycle_number).to eq(2)
+      next_session = result[:next_session]
+      expect(next_session.workout).to eq(workout_a)
+      expect(next_session.cycle_number).to eq(2)
     end
   end
 end
