@@ -4,7 +4,7 @@ class BookingAvailabilityController < ApplicationController
   def show
     date = Date.parse(params[:date])
 
-    valid_window = (Date.today + 1..Date.today + 7)
+    valid_window = (Date.current + 1..Date.current + 7)
     unless valid_window.include?(date)
       return render json: { slots: [] }
     end

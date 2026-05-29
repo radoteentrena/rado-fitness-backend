@@ -13,7 +13,7 @@ class Api::V1::DailyMetricsController < Api::V1::BaseController
   end
 
   def create
-    @metric = current_user.daily_metrics.find_or_initialize_by(date_logged: metric_params[:date_logged] || Date.today)
+    @metric = current_user.daily_metrics.find_or_initialize_by(date_logged: metric_params[:date_logged] || Date.current)
 
     if @metric.update(metric_params)
       render "api/v1/daily_metrics/show", status: :ok

@@ -92,20 +92,20 @@ class User < ApplicationRecord
   # S% - Session Compliance (Workouts)
   # Based on the last 7 days vs Target
   def calculate_workout_compliance_score
-    last_7_days_metrics = daily_metrics.where(date_logged: 6.days.ago.to_date..Date.today)
-                                       .where(workout_completed: true)
-                                       .count
+    completed_last_7_days = training_sessions.completed
+                                             .where(completed_at: 6.days.ago.beginning_of_day..Time.current)
+                                             .count
 
     target = target_workouts_per_week
     return 0 if target.zero?
 
-    ((last_7_days_metrics.to_f / target) * 100).clamp(0, 100).round
+    ((completed_last_7_days.to_f / target) * 100).clamp(0, 100).round
   end
 
   # M% - Metric Compliance (Diet Consistency)
   # Did they log at all? (Last 30 days)
   def calculate_diet_consistency_score
-    last_30_days_count = daily_metrics.where(date_logged: 29.days.ago.to_date..Date.today)
+    last_30_days_count = daily_metrics.where(date_logged: 29.days.ago.to_date..Date.current)
                                       .where(compliant: true)
                                       .count
 
@@ -115,7 +115,7 @@ class User < ApplicationRecord
   # M% - Metric Adherence (Diet Accuracy)
   # Of the days they logged, how many were on target?
   def calculate_diet_adherence_score
-    relevant_metrics = daily_metrics.where(date_logged: 29.days.ago.to_date..Date.today)
+    relevant_metrics = daily_metrics.where(date_logged: 29.days.ago.to_date..Date.current)
                                     .where(compliant: true)
 
     logged_count = relevant_metrics.count
@@ -181,7 +181,7 @@ class User < ApplicationRecord
 
   def self.recent_growth_data(days = 7)
     data = where("created_at > ?", days.days.ago).group("DATE(created_at)").count
-    (days.days.ago.to_date..Date.today).each { |date| data[date] ||= 0 }
+    (days.days.ago.to_date..Date.current).each { |date| data[date] ||= 0 }
     sorted_data = data.sort.to_h
 
     {
