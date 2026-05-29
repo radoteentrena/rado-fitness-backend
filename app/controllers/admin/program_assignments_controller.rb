@@ -11,7 +11,9 @@ module Admin
 
       if params[:program_id].present?
         program = Program.find(params[:program_id])
-        raise "El programa ya está asignado a otro usuario." if program.user.present?
+        if program.user.present?
+          redirect_to admin_user_path(user), alert: "El programa ya está asignado a otro usuario." and return
+        end
         program.update!(user: user)
         TrainingProgressionService.create_initial_session(user, program)
         redirect_to admin_user_path(user), notice: "Programa \"#{program.name}\" asignado."
