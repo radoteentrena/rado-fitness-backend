@@ -21,7 +21,7 @@ class UserAlertJob < ApplicationJob
       # Prevent duplicate pending alerts for the same category
       return if user.coach_alerts.pending.where(category: :missed_workout).exists?
 
-      days_dry = last_workout ? (Date.today - last_workout.date_logged).to_i : "infinity"
+      days_dry = last_workout ? (Date.current - last_workout.date_logged).to_i : "infinity"
 
       CoachAlert.create!(
         user: user,
