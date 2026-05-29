@@ -23,13 +23,13 @@ class TrainingProgressionService
   end
 
   def self.start_session(training_session)
-    return training_session if training_session.in_progress?
-
-    unless training_session.pending?
+    unless training_session.pending? || training_session.in_progress?
       raise ArgumentError, "La sesión no está en estado pendiente (estado actual: #{training_session.status})"
     end
 
     reconcile_stale_routine!(training_session)
+
+    return training_session if training_session.in_progress?
 
     training_session.update!(
       status: :in_progress,

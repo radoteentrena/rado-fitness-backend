@@ -14,9 +14,9 @@ module Admin
       @chart_data = User.recent_growth_data
 
       @calendar_month = begin
-        params[:month] ? Date.parse(params[:month]).beginning_of_month : Date.today.beginning_of_month
+        params[:month] ? Date.parse(params[:month]).beginning_of_month : Date.current.beginning_of_month
       rescue ArgumentError
-        Date.today.beginning_of_month
+        Date.current.beginning_of_month
       end
 
       month_bookings = Booking.where(

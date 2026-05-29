@@ -22,7 +22,7 @@ class DailyComplianceCheckJob < ApplicationJob
     return if last_log.nil?
     return if last_log >= INACTIVITY_DAYS.days.ago.to_date
 
-    days_since = (Date.today - last_log).to_i
+    days_since = (Date.current - last_log).to_i
     return if alert_exists?(user, :missed_workout, since: INACTIVITY_DAYS.days.ago)
 
     CoachAlert.create!(
