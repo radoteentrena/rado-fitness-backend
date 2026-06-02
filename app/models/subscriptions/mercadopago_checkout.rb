@@ -14,20 +14,12 @@ module Subscriptions
         Rails.application.credentials.dig(:mercadopago, :access_token)
       )
 
-      back_url = Rails.application.routes.url_helpers.subscriptions_processing_url(
-        host:     Rails.application.credentials.dig(:app_host),
-        protocol: :https
-      )
-      preapproval_data = {
-        "preapproval_plan_id" => plan_id,
-        "payer_email"         => @user.email,
-        "external_reference"  => @user.id.to_s,
-        "back_url"            => back_url
-      }
-      response = sdk.preapproval.create(preapproval_data)
+      response = sdk.preapproval_plan.get(pid)
 
-      if response[:status] == 201
-        { success: true, redirect_url: response[:response]["init_point"] }
+      if response[:status] == 200
+        init_point = response[:response]["init_point"]
+        redirect_url = "#{init_point}?payer_email=#{CGI.escape(@user.email)}"
+        { success: true, redirect_url: redirect_url }
       else
         Rails.logger.error "MP checkout error for user #{@user.id}: #{response.inspect}"
         { success: false, error: "MercadoPago error (status #{response[:status]})" }
