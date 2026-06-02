@@ -14,12 +14,17 @@ module Subscriptions
         Rails.application.credentials.dig(:mercadopago, :access_token)
       )
 
-      response = sdk.preapproval.create(
+      back_url = Rails.application.routes.url_helpers.subscriptions_processing_url(
+        host:     Rails.application.credentials.dig(:app_host),
+        protocol: :https
+      )
+      preapproval_data = {
         "preapproval_plan_id" => plan_id,
         "payer_email"         => @user.email,
         "external_reference"  => @user.id.to_s,
-        "back_url"            => Rails.application.routes.url_helpers.subscriptions_processing_url(host: Rails.application.credentials.dig(:app_host))
-      )
+        "back_url"            => back_url
+      }
+      response = sdk.preapproval.create(preapproval_data)
 
       if response[:status] == 201
         { success: true, redirect_url: response[:response]["init_point"] }
@@ -28,7 +33,7 @@ module Subscriptions
         { success: false, error: "MercadoPago error (status #{response[:status]})" }
       end
     rescue StandardError => e
-      Rails.logger.error "MP checkout exception for user #{@user.id}: #{e.class}: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+      Rails.logger.error "MP checkout exception for user #{@user.id}: #{e.message}"
       { success: false, error: e.message }
     end
 
