@@ -28,7 +28,7 @@ module Subscriptions
         { success: false, error: "MercadoPago error (status #{response[:status]})" }
       end
     rescue StandardError => e
-      Rails.logger.error "MP checkout exception for user #{@user.id}: #{e.message}"
+      Rails.logger.error "MP checkout exception for user #{@user.id}: #{e.class}: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
       { success: false, error: e.message }
     end
 
