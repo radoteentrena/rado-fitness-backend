@@ -18,7 +18,8 @@ module Subscriptions
 
       if response[:status] == 200
         init_point = response[:response]["init_point"]
-        redirect_url = "#{init_point}?payer_email=#{CGI.escape(@user.email)}"
+        separator = init_point.include?("?") ? "&" : "?"
+        redirect_url = "#{init_point}#{separator}payer_email=#{CGI.escape(@user.email)}"
         { success: true, redirect_url: redirect_url }
       else
         Rails.logger.error "MP checkout error for user #{@user.id}: #{response.inspect}"
