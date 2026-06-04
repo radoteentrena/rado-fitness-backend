@@ -1,0 +1,126 @@
+<section
+  class="bg-black border-b border-shadow-grey"
+  data-controller="before-after"
+  aria-label="Transformaciones de clientes"
+>
+  <div class="ba-grid">
+
+    <%# ── LEFT: story ── %>
+    <div>
+
+      <%# Eyebrow %>
+      <div style="display:inline-flex;align-items:center;gap:11px;color:#F5C228;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.22em;margin-bottom:26px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M17 3l4 4-4 4"/><path d="M21 7H7"/>
+          <path d="M7 21l-4-4 4-4"/><path d="M3 17h14"/>
+        </svg>
+        Antes y Después
+      </div>
+
+      <%# Headline %>
+      <h2 class="text-white font-display font-black uppercase" style="font-size:clamp(46px,5.4vw,78px);line-height:0.96;letter-spacing:-0.02em;margin:0 0 46px;">
+        Esfuerzo Real.<br>Resultados Reales.
+      </h2>
+
+      <%# Story card %>
+      <div style="background:linear-gradient(180deg,#161616,#101010);border:1px solid rgba(255,255,255,0.08);border-radius:22px;padding:34px 36px 30px;">
+
+        <h3
+          class="font-display font-bold uppercase text-white"
+          style="font-size:clamp(20px,1.7vw,27px);line-height:1.12;letter-spacing:-0.01em;margin:0 0 12px;"
+          data-before-after-target="storyTitle"
+        >Cargando...</h3>
+
+        <p
+          class="font-body"
+          style="color:#8A8A8A;font-size:17px;font-weight:400;margin:0 0 30px;"
+          data-before-after-target="storySub"
+        ></p>
+
+        <table class="w-full" style="border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th class="text-left" style="padding:0 0 14px;color:#6A6A6A;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.14em;">Métrica</th>
+              <th class="text-right" style="padding:0 0 14px;color:#6A6A6A;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.14em;">Antes</th>
+              <th class="text-right" style="padding:0 0 14px;color:#fff;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.14em;">Después</th>
+            </tr>
+          </thead>
+          <tbody data-before-after-target="metricBody"></tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <%# ── RIGHT: stage ── %>
+    <div class="flex flex-col">
+
+      <%# Client nav %>
+      <div style="display:flex;align-items:center;justify-content:center;gap:26px;margin-bottom:26px;">
+
+        <button
+          class="ba-arrow"
+          data-action="click->before-after#prev"
+          aria-label="Cliente anterior"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+
+        <div class="ba-client-id" style="text-align:center;min-width:240px;">
+          <p
+            class="font-display font-black uppercase text-white"
+            style="font-size:24px;letter-spacing:0.02em;line-height:1.1;margin:0;"
+            data-before-after-target="clientName"
+          ></p>
+          <div
+            class="font-body"
+            style="color:#F5C228;font-size:14px;font-weight:600;letter-spacing:0.04em;margin-top:5px;"
+            data-before-after-target="clientIg"
+          ></div>
+        </div>
+
+        <button
+          class="ba-arrow"
+          data-action="click->before-after#next"
+          aria-label="Siguiente cliente"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </button>
+
+      </div>
+
+      <%# Photo pair %>
+      <div class="ba-pair">
+
+        <%# Before shot %>
+        <div class="ba-shot" style="border:1px solid rgba(255,255,255,0.08);">
+          <span class="ba-tag ba-tag--before">Antes</span>
+          <%= image_tag "testimonial_1.png",
+                alt: "Antes",
+                class: "ba-img ba-img--before",
+                data: { "before-after-target": "imgBefore" } %>
+        </div>
+
+        <%# After shot %>
+        <div class="ba-shot" style="border:1.5px solid #F5C228;box-shadow:0 0 0 1px rgba(245,194,40,0.25),0 18px 50px rgba(245,194,40,0.14);">
+          <span class="ba-tag ba-tag--after">Después</span>
+          <%= image_tag "testimonial_2.png",
+                alt: "Después",
+                class: "ba-img ba-img--after",
+                data: { "before-after-target": "imgAfter" } %>
+        </div>
+
+      </div>
+
+      <%# Dots %>
+      <div
+        class="ba-dots"
+        data-before-after-target="dots"
+      ></div>
+
+    </div>
+  </div>
+</section>
