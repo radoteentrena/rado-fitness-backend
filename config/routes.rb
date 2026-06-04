@@ -128,6 +128,9 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  resource  :account,                      only: [:show, :update]
+  resource  :account_cancellation_request, only: [:create]
+
   get "terminos",   to: "pages#terms",   as: :terms
   get "privacidad", to: "pages#privacy",  as: :privacy
 

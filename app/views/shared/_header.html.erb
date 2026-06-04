@@ -32,6 +32,7 @@
           <% if admin_user? %>
             <%= link_to "Dashboard", admin_root_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors" %>
           <% end %>
+          <%= link_to "Mi Cuenta", account_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors" %>
           <%= button_to "CERRAR SESIÓN", destroy_user_session_path, method: :delete, class: "border-2 border-saffron bg-saffron text-black font-display font-bold uppercase px-4 py-2 text-sm hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0px_0px_#ffffff] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-white" %>
         <% else %>
           <%= link_to "LOG IN", new_user_session_path, class: "text-white hover:text-saffron font-display font-medium uppercase text-sm transition-colors mr-4" %>

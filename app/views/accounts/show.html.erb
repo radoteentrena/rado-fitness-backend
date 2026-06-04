@@ -1,0 +1,171 @@
+<% content_for :title, "Mi Cuenta — Rado Fitness" %>
+
+<div class="min-h-screen bg-black pt-32 pb-20">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <%# Page header %>
+    <div class="mb-12 border-b border-graphite pb-8">
+      <p class="text-xs font-display font-semibold uppercase tracking-[0.2em] text-saffron mb-2">
+        Panel de cliente
+      </p>
+
+      <h1 class="text-4xl sm:text-5xl font-display font-bold uppercase text-white">
+        HOLA, <%= current_user.first_name.upcase %>
+      </h1>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+      <%# Left column: profile + subscription %>
+      <div class="lg:col-span-2 space-y-6">
+
+        <%# Profile card %>
+        <div class="border-2 border-graphite p-6">
+          <h2 class="text-xs font-display font-bold uppercase tracking-widest text-saffron mb-6">
+            Tu perfil
+          </h2>
+
+          <div class="space-y-4">
+            <div>
+              <p class="text-[10px] font-display uppercase tracking-widest text-gray-600 mb-1">Nombre</p>
+              <p class="text-white font-body font-medium"><%= current_user.name %></p>
+            </div>
+
+            <div class="border-t border-graphite pt-4">
+              <p class="text-[10px] font-display uppercase tracking-widest text-gray-600 mb-1">Email</p>
+              <p class="text-white font-body font-medium break-all"><%= current_user.email %></p>
+            </div>
+
+            <div class="border-t border-graphite pt-4">
+              <p class="text-[10px] font-display uppercase tracking-widest text-gray-600 mb-1">Teléfono</p>
+              <p class="text-white font-body font-medium"><%= current_user.phone %></p>
+            </div>
+
+            <div class="border-t border-graphite pt-4">
+              <p class="text-[10px] font-display uppercase tracking-widest text-gray-600 mb-1">Plan</p>
+              <% if current_user.plan_tier.present? %>
+                <span class="inline-block border-2 border-saffron px-3 py-1 text-xs font-display font-black uppercase tracking-widest text-saffron">
+                  <%= current_user.plan_tier.humanize %>
+                </span>
+              <% else %>
+                <p class="text-gray-500 font-body text-sm">Sin plan asignado</p>
+              <% end %>
+            </div>
+          </div>
+
+          <p class="mt-6 text-[11px] text-gray-600 font-body leading-relaxed">
+            Para modificar tu nombre, email o teléfono contactá a Rado directamente.
+          </p>
+        </div>
+
+        <%# Subscription card %>
+        <div class="border-2 border-graphite p-6">
+          <h2 class="text-xs font-display font-bold uppercase tracking-widest text-saffron mb-6">
+            Suscripción
+          </h2>
+
+          <% if @subscription %>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <p class="text-[10px] font-display uppercase tracking-widest text-gray-600">Estado</p>
+                <% status_styles = {
+                  "active"   => "border-green-500 text-green-400",
+                  "pending"  => "border-saffron text-saffron",
+                  "past_due" => "border-red-500 text-red-400",
+                  "canceled" => "border-graphite text-gray-500"
+                } %>
+                <span class="border-2 <%= status_styles[@subscription.status] || "border-graphite text-gray-400" %> px-2 py-0.5 text-[10px] font-display font-black uppercase tracking-wider">
+                  <%= @subscription.status.humanize %>
+                </span>
+              </div>
+
+              <div class="border-t border-graphite pt-4 flex items-center justify-between">
+                <p class="text-[10px] font-display uppercase tracking-widest text-gray-600">Plan</p>
+                <p class="text-white font-body text-sm font-medium"><%= @subscription.plan_tier.humanize %></p>
+              </div>
+
+              <% if @subscription.frequency.present? %>
+                <div class="border-t border-graphite pt-4 flex items-center justify-between">
+                  <p class="text-[10px] font-display uppercase tracking-widest text-gray-600">Frecuencia</p>
+                  <p class="text-white font-body text-sm font-medium"><%= @subscription.frequency.humanize %></p>
+                </div>
+              <% end %>
+
+              <% if @subscription.active? %>
+                <div class="border-t border-graphite pt-6">
+                  <%= button_to account_cancellation_request_path,
+                        method: :post,
+                        data: { turbo_confirm: "¿Seguro que querés solicitar la cancelación? Rado se pondrá en contacto para confirmar." },
+                        class: "w-full text-center border-2 border-red-600 text-red-500 py-3 text-xs font-display font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all duration-150 hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0px_0px_#dc2626] active:translate-y-px active:translate-x-px active:shadow-none" do %>
+                    Solicitar cancelación
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-gray-500 font-body text-sm leading-relaxed">
+              No tenés una suscripción activa en este momento.
+            </p>
+          <% end %>
+        </div>
+
+      </div>
+
+      <%# Right column: password change %>
+      <div class="lg:col-span-3">
+        <div class="border-2 border-graphite p-6 sm:p-8">
+          <h2 class="text-xs font-display font-bold uppercase tracking-widest text-saffron mb-6">
+            Cambiar contraseña
+          </h2>
+
+          <%= form_with model: current_user, url: account_path, method: :patch, class: "space-y-6" do |f| %>
+
+            <% if current_user.errors.any? %>
+              <div class="border-2 border-red-500 bg-red-500/10 px-4 py-3">
+                <ul class="space-y-1">
+                  <% current_user.errors.full_messages.each do |msg| %>
+                    <li class="text-red-400 text-sm font-body"><%= msg %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <div>
+              <%= f.label :current_password, "Contraseña actual",
+                    class: "block text-[10px] font-display uppercase tracking-widest text-gray-400 mb-2" %>
+              <%= f.password_field :current_password,
+                    autocomplete: "current-password",
+                    class: "w-full bg-black border-2 border-graphite text-white font-body text-sm px-4 py-3 focus:outline-none focus:border-saffron transition-colors placeholder-gray-700",
+                    placeholder: "••••••••" %>
+            </div>
+
+            <div>
+              <%= f.label :password, "Nueva contraseña",
+                    class: "block text-[10px] font-display uppercase tracking-widest text-gray-400 mb-2" %>
+              <%= f.password_field :password,
+                    autocomplete: "new-password",
+                    class: "w-full bg-black border-2 border-graphite text-white font-body text-sm px-4 py-3 focus:outline-none focus:border-saffron transition-colors placeholder-gray-700",
+                    placeholder: "Mínimo 8 caracteres" %>
+            </div>
+
+            <div>
+              <%= f.label :password_confirmation, "Confirmar nueva contraseña",
+                    class: "block text-[10px] font-display uppercase tracking-widest text-gray-400 mb-2" %>
+              <%= f.password_field :password_confirmation,
+                    autocomplete: "new-password",
+                    class: "w-full bg-black border-2 border-graphite text-white font-body text-sm px-4 py-3 focus:outline-none focus:border-saffron transition-colors placeholder-gray-700",
+                    placeholder: "Repetí la nueva contraseña" %>
+            </div>
+
+            <div class="pt-2">
+              <%= f.submit "GUARDAR CONTRASEÑA",
+                    class: "w-full sm:w-auto border-2 border-saffron bg-saffron text-black py-4 px-10 text-xs font-display font-black uppercase tracking-widest hover:bg-yellow-400 transition-all duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none cursor-pointer" %>
+            </div>
+
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
