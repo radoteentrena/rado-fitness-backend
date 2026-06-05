@@ -155,10 +155,19 @@ class ProcessPaymentEventJob < ApplicationJob
 
       approved_at = payment["date_approved"].present? ? Time.parse(payment["date_approved"]) : Time.current
 
-      subscription.update!(
-        access_expires_at: approved_at + 1.month,
-        status:            :active
-      )
+      if subscription.promo_link.present?
+        subscription.update!(
+          access_expires_at: approved_at + 3.months,
+          status:            :active
+        )
+        create_promo_conversion(subscription, approved_at)
+      else
+        subscription.update!(
+          access_expires_at: approved_at + 1.month,
+          status:            :active
+        )
+      end
+
       user.update!(plan_tier: subscription.plan_tier)
       user.active!
       user.access_active!
@@ -178,6 +187,25 @@ class ProcessPaymentEventJob < ApplicationJob
     Rails.logger.error("[ProcessPaymentEventJob] MP API error fetching preapproval #{id}: #{e.message}")
     Sentry.capture_exception(e)
     raise
+  end
+
+  def create_promo_conversion(subscription, _approved_at)
+    promo_link = subscription.promo_link
+    full_price = Subscriptions::Pricing.promo_base_price(
+      subscription.plan_tier.to_sym, argentina: false
+    )
+
+    PromoConversion.find_or_create_by!(referred_user: subscription.user) do |pc|
+      pc.promo_link              = promo_link
+      pc.subscription            = subscription
+      pc.plan_tier               = subscription.plan_tier
+      pc.currency                = subscription.currency
+      pc.full_price_cents        = (full_price * 100).to_i
+      pc.paid_amount_cents       = subscription.amount_cents
+      pc.promoter_earnings_cents = (full_price * 100 * 0.25).to_i
+    end
+  rescue ActiveRecord::RecordNotUnique
+    Rails.logger.warn "[ProcessPaymentEventJob] Duplicate promo conversion for user #{subscription.user_id} — skipped"
   end
 
   def create_payment_alert(user, message)
