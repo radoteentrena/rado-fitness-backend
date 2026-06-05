@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  processor: mercadopago
+  plan_tier: medium
+  status: active
+  billing_type: recurring
+  frequency: monthly

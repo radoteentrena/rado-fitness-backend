@@ -1,5 +1,6 @@
 class Subscription < ApplicationRecord
   belongs_to :user
+  belongs_to :promo_link, optional: true
 
   enum :processor, { mercadopago: 0 }
   enum :plan_tier, { basic: 0, medium: 1, high_ticket: 2 }

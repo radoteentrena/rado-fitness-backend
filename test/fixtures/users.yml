@@ -2,9 +2,23 @@
 
 one:
   email: one@example.com
+  encrypted_password: "$2a$12$k.9RNBUNxDGWMCyMGFLfPuXZiVyNHOdBkVZyUCmvdXMrTBQ/UWHAG"
+  first_name: Test
+  last_name: One
+  phone: "+1234567890"
+  status: active
+  plan_tier: high_ticket
+  category: soldado
 
 two:
   email: two@example.com
+  encrypted_password: "$2a$12$k.9RNBUNxDGWMCyMGFLfPuXZiVyNHOdBkVZyUCmvdXMrTBQ/UWHAG"
+  first_name: Test
+  last_name: Two
+  phone: "+0987654321"
+  status: active
+  plan_tier: high_ticket
+  category: soldado
 
 admin_user:
   email: admin@example.com

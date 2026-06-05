@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
+  name: MyString One
   video_link: MyString
   muscle_group: MyString
   description: MyText
 
 two:
-  name: MyString
+  name: MyString Two
   video_link: MyString
   muscle_group: MyString
   description: MyText
