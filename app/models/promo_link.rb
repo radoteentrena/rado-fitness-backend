@@ -13,7 +13,7 @@ class PromoLink < ApplicationRecord
     Rails.application.routes.url_helpers.new_onboarding_url(
       promo: code,
       host: Rails.application.credentials.dig(:app_host) || "localhost:3000",
-      protocol: :https
+      protocol: Rails.env.production? ? :https : :http
     )
   end
 
@@ -28,6 +28,7 @@ class PromoLink < ApplicationRecord
   private
 
   def generate_code
+    return if code.present?
     loop do
       self.code = SecureRandom.alphanumeric(8).upcase
       break unless PromoLink.exists?(code: code)

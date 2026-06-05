@@ -62,6 +62,7 @@ class User < ApplicationRecord
   has_many :progress_photos, dependent: :destroy
   has_many :training_sessions, dependent: :destroy
   has_many :promo_links, dependent: :destroy
+  has_many :promoter_conversions, through: :promo_links, source: :promo_conversions
   has_many :referred_conversions, class_name: "PromoConversion",
                                   foreign_key: :referred_user_id,
                                   dependent: :destroy
