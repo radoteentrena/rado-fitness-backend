@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_05_000434) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_05_002356) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -303,7 +303,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_05_000434) do
     t.datetime "updated_at", null: false
     t.index ["promo_link_id"], name: "index_promo_conversions_on_promo_link_id"
     t.index ["referred_user_id"], name: "index_promo_conversions_on_referred_user_id", unique: true
-    t.index ["subscription_id"], name: "index_promo_conversions_on_subscription_id"
+    t.index ["subscription_id"], name: "index_promo_conversions_on_subscription_id", unique: true
   end
 
   create_table "promo_links", force: :cascade do |t|

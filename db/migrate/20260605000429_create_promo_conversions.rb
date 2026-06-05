@@ -2,6 +2,7 @@ class CreatePromoConversions < ActiveRecord::Migration[8.0]
   def change
     create_table :promo_conversions do |t|
       t.references :promo_link,    null: false, foreign_key: true
+      # Each user may only be referred once — they get the promo deal once in their lifetime.
       t.references :referred_user, null: false, foreign_key: { to_table: :users }, index: { unique: true }
       t.references :subscription,  null: false, foreign_key: true
       t.string  :plan_tier,               null: false
