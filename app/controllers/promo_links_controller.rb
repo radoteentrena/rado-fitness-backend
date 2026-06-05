@@ -3,14 +3,18 @@ class PromoLinksController < ApplicationController
   before_action :require_promoter
 
   def create
-    @promo_link = current_user.promo_links.build(
-      label: params.require(:promo_link).permit(:label)[:label]
-    )
+    label = params.require(:promo_link).permit(:label)[:label].to_s.strip
+    if label.blank?
+      redirect_to account_path(tab: "campaign"), alert: "El nombre del enlace no puede estar vacío."
+      return
+    end
+
+    @promo_link = current_user.promo_links.build(label: label)
 
     if @promo_link.save
       redirect_to account_path(tab: "campaign"), notice: "Enlace creado correctamente."
     else
-      redirect_to account_path(tab: "campaign"), alert: "Error al crear el enlace."
+      redirect_to account_path(tab: "campaign"), alert: @promo_link.errors.full_messages.join(", ")
     end
   end
 
