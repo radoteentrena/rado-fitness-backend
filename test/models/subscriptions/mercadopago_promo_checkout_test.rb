@@ -35,6 +35,10 @@ class Subscriptions::MercadoPagoPromoCheckoutTest < ActiveSupport::TestCase
     assert sub.monthly?
     assert_equal "USD", sub.currency
     assert_equal @promo_link, sub.promo_link
+    assert_equal "pref_123", sub.mp_preference_id
+    expected_cents = Subscriptions::Pricing.promo_price(:medium, argentina: false) * 100
+    assert_equal expected_cents, sub.amount_cents
+    assert_equal 0, PromoConversion.count  # created later by webhook job on payment confirmation
   end
 
   test "returns failure hash on MP error" do
