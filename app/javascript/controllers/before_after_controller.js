@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
+// TODO: replace with real client data before launch
 const CLIENTS = [
   {
     name: "Marcos Reyes", ig: "@marcos.lifts",
@@ -7,9 +8,8 @@ const CLIENTS = [
     sub: "Profesional ocupado que retomó el control de su cuerpo.",
     before: "/assets/testimonial_1.png", after: "/assets/testimonial_2.png",
     metrics: [
-      { label: "Peso",        before: "105 kg",  after: "80 kg"  },
-      { label: "Grasa corp.", before: "31%",     after: "14%"    },
-      { label: "Masa muscular",  before: "60 kg",   after: "130 kg" },
+      { label: "Peso",        before: "105 kg", after: "80 kg" },
+      { label: "Grasa corp.", before: "31%",    after: "14%"   },
     ],
   },
   {
@@ -18,9 +18,8 @@ const CLIENTS = [
     sub: "Recuperó su cuerpo —y su confianza— en 8 meses.",
     before: "/assets/testimonial_3.png", after: "/assets/testimonial_4.png",
     metrics: [
-      { label: "Peso muerto", before: "40 kg",  after: "100 kg" },
-      { label: "Grasa corp.", before: "31%",     after: "14%"    },
-      { label: "Masa muscular",  before: "60 kg",   after: "130 kg" },
+      { label: "Peso muerto", before: "40 kg", after: "100 kg" },
+      { label: "Grasa corp.", before: "31%",   after: "14%"    },
     ],
   },
   {
@@ -29,9 +28,7 @@ const CLIENTS = [
     sub: "Doce meses de hipertrofia disciplinada con Rado.",
     before: "/assets/testimonial_1.png", after: "/assets/testimonial_3.png",
     metrics: [
-      { label: "Peso",        before: "65 kg",  after: "83 kg"  },
-      { label: "Grasa corp.", before: "31%",     after: "14%"    },
-      { label: "Masa muscular",  before: "60 kg",   after: "130 kg" },
+      { label: "Peso", before: "65 kg", after: "83 kg" },
     ],
   },
 ]

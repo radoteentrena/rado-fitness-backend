@@ -137,7 +137,7 @@ module Admin
 
     def create_promo_link
       resource = resource_class.find(params[:id])
-      link = resource.promo_links.build(label: params[:label].to_s.strip)
+      link = resource.promo_links.build(label: params.permit(:label)[:label].to_s.strip)
       if link.save
         redirect_to admin_user_path(resource), notice: "Enlace '#{link.label}' creado."
       else
