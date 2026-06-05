@@ -6,6 +6,12 @@ class AccountsController < ApplicationController
 
   def show
     @subscription = current_user.active_subscription
+    if current_user.promoter?
+      @promo_links   = current_user.promo_links.order(created_at: :desc)
+      @pending_cents = current_user.promoter_pending_earnings_cents
+      @total_cents   = current_user.promoter_total_earnings_cents
+      @tab           = params[:tab] == "campaign" ? "campaign" : "profile"
+    end
   end
 
   def update

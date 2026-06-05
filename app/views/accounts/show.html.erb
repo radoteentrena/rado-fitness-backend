@@ -14,6 +14,16 @@
       </h1>
     </div>
 
+    <% if current_user.promoter? %>
+      <div class="flex border-b-2 border-graphite mb-8">
+        <%= link_to "Mi Perfil", account_path,
+              class: "px-6 py-3 text-xs font-black uppercase tracking-widest transition-colors #{@tab == 'profile' ? 'text-saffron border-b-2 border-saffron -mb-px' : 'text-graphite hover:text-white'}" %>
+        <%= link_to "Mi Campaña", account_path(tab: "campaign"),
+              class: "px-6 py-3 text-xs font-black uppercase tracking-widest transition-colors #{@tab == 'campaign' ? 'text-saffron border-b-2 border-saffron -mb-px' : 'text-graphite hover:text-white'}" %>
+      </div>
+    <% end %>
+
+    <% if !current_user.promoter? || @tab == "profile" %>
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
 
       <%# Left column: profile + subscription %>
@@ -167,5 +177,67 @@
       </div>
 
     </div>
+    <% end %>
+
+    <% if current_user.promoter? && @tab == "campaign" %>
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="border-2 border-graphite p-5">
+          <div class="text-graphite text-xs uppercase tracking-widest mb-2">Clientes referidos</div>
+          <div class="text-4xl font-black text-white"><%= @promo_links.sum { |l| l.promo_conversions.count } %></div>
+        </div>
+        <div class="border-2 border-graphite p-5">
+          <div class="text-graphite text-xs uppercase tracking-widest mb-2">Ganado total</div>
+          <div class="text-4xl font-black text-saffron">US$<%= "%.2f" % (@total_cents / 100.0) %></div>
+        </div>
+        <div class="border-2 border-saffron p-5">
+          <div class="text-saffron text-xs uppercase tracking-widest mb-2">Por cobrar</div>
+          <div class="text-4xl font-black text-saffron">US$<%= "%.2f" % (@pending_cents / 100.0) %></div>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xs font-black uppercase tracking-widest text-graphite">Mis enlaces</h2>
+        <%= form_with url: promo_links_path, method: :post, class: "flex gap-2" do |f| %>
+          <%= f.text_field "promo_link[label]", placeholder: "Nombre de la campaña",
+                class: "border-2 border-graphite bg-transparent text-white text-sm px-3 py-2 focus:outline-none focus:border-saffron w-44" %>
+          <%= f.submit "+ Nuevo enlace",
+                class: "border-2 border-saffron text-saffron font-black uppercase text-xs px-4 py-2 hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0_0_#ffffff] transition-all cursor-pointer bg-transparent" %>
+        <% end %>
+      </div>
+
+      <% if @promo_links.any? %>
+        <div class="border-2 border-graphite divide-y divide-graphite">
+          <% @promo_links.each do |link| %>
+            <div class="p-4 flex items-center gap-4">
+              <div class="flex-1 min-w-0">
+                <div class="font-black text-white text-sm uppercase tracking-widest mb-1"><%= link.label %></div>
+                <div class="flex items-center gap-3">
+                  <span class="text-saffron text-xs font-mono truncate"><%= link.full_url %></span>
+                  <button
+                    onclick="navigator.clipboard.writeText('<%= j(link.full_url) %>').then(() => this.textContent = '¡Copiado!')"
+                    class="text-graphite text-xs uppercase tracking-widest hover:text-white shrink-0">
+                    Copiar
+                  </button>
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <div class="text-white font-bold"><%= link.promo_conversions.count %> referido<%= link.promo_conversions.count == 1 ? "" : "s" %></div>
+                <div class="text-saffron text-sm">US$<%= "%.2f" % (link.total_earnings_cents / 100.0) %></div>
+              </div>
+              <% if link.active %>
+                <%= button_to "Desactivar", promo_link_path(link), method: :patch,
+                      data: { turbo_confirm: "¿Desactivar este enlace? Los usuarios con el link no podrán usarlo más." },
+                      class: "text-graphite text-xs uppercase hover:text-white shrink-0 bg-transparent border-0 cursor-pointer" %>
+              <% else %>
+                <span class="text-graphite text-xs uppercase">Inactivo</span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-graphite text-sm">Aún no tienes enlaces. Crea uno arriba para empezar.</p>
+      <% end %>
+    <% end %>
+
   </div>
 </div>
