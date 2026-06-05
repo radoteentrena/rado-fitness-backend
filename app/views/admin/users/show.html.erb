@@ -41,6 +41,18 @@
       <%= button_to "Generar Link de Pago", admin_user_payment_link_path(user),
             method: :post,
             class: "button" %>
+
+      <% if user.promoter? %>
+        <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-graphite border border-graphite">
+          ✓ Promotor
+        </span>
+      <% else %>
+        <%= button_to "Ascender a Promotor",
+              promote_admin_user_path(user),
+              method: :post,
+              data: { turbo_confirm: "¿Convertir a #{user.name} en Promotor? Podrá crear enlaces de invitación." },
+              class: "button" %>
+      <% end %>
     </div>
   </div>
 
@@ -531,6 +543,91 @@
       </div>
     <% end %>
   </div>
+
+  <% if user.promoter? %>
+    <% pending_cents = user.promoter_pending_earnings_cents %>
+    <% total_cents   = user.promoter_total_earnings_cents %>
+    <% paid_cents    = user.promoter_paid_earnings_cents %>
+
+    <div class="bg-whiteish dark:bg-shadow rounded-xl border border-shadow dark:border-primary/30 p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold dark:text-whiteish">Campaña Promotor</h2>
+        <div class="flex gap-3">
+          <%= form_with url: create_promo_link_admin_user_path(user), method: :post, class: "flex gap-2" do |f| %>
+            <%= f.text_field :label, placeholder: "Nombre del enlace (ej. Instagram)",
+                  class: "border border-graphite px-3 py-1 text-sm bg-transparent dark:text-whiteish focus:outline-none focus:ring-1 focus:ring-primary-500",
+                  required: true %>
+            <%= f.submit "+ Nuevo enlace", class: "button text-sm" %>
+          <% end %>
+
+          <% if pending_cents > 0 %>
+            <%= button_to "Marcar todo como pagado — US$#{"%.2f" % (pending_cents / 100.0)}",
+                  payout_promoter_admin_user_path(user),
+                  method: :post,
+                  data: { turbo_confirm: "¿Confirmar pago de US$#{"%.2f" % (pending_cents / 100.0)} a #{user.first_name}?" },
+                  class: "button" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="border border-shadow dark:border-graphite p-4">
+          <div class="text-xs text-graphite uppercase tracking-widest mb-1">Total ganado</div>
+          <div class="text-2xl font-black dark:text-saffron">US$<%= "%.2f" % (total_cents / 100.0) %></div>
+        </div>
+        <div class="border border-shadow dark:border-graphite p-4">
+          <div class="text-xs text-graphite uppercase tracking-widest mb-1">Ya pagado</div>
+          <div class="text-2xl font-black dark:text-whiteish">US$<%= "%.2f" % (paid_cents / 100.0) %></div>
+        </div>
+        <div class="border-2 border-saffron p-4">
+          <div class="text-xs text-saffron uppercase tracking-widest mb-1">Pendiente</div>
+          <div class="text-2xl font-black text-saffron">US$<%= "%.2f" % (pending_cents / 100.0) %></div>
+        </div>
+      </div>
+
+      <% conversions = PromoConversion.joins(:promo_link)
+                                      .where(promo_links: { user_id: user.id })
+                                      .includes(:referred_user, :promo_link)
+                                      .order(created_at: :desc) %>
+
+      <% if conversions.any? %>
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-xs text-graphite uppercase tracking-widest border-b border-shadow dark:border-graphite">
+              <th class="pb-2 text-left font-medium">Fecha</th>
+              <th class="pb-2 text-left font-medium">Cliente</th>
+              <th class="pb-2 text-left font-medium">Plan</th>
+              <th class="pb-2 text-left font-medium">Pagó</th>
+              <th class="pb-2 text-left font-medium">Comisión</th>
+              <th class="pb-2 text-left font-medium">Campaña</th>
+              <th class="pb-2 text-left font-medium">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% conversions.each do |conv| %>
+              <tr class="border-b border-shadow/30 dark:border-graphite/30 py-2">
+                <td class="py-2 dark:text-whiteish"><%= conv.created_at.strftime("%d/%m/%Y") %></td>
+                <td class="py-2 dark:text-whiteish"><%= conv.referred_user.email %></td>
+                <td class="py-2 dark:text-whiteish uppercase text-xs"><%= conv.plan_tier %></td>
+                <td class="py-2 dark:text-whiteish">US$<%= "%.2f" % (conv.paid_amount_cents / 100.0) %></td>
+                <td class="py-2 text-saffron font-bold">US$<%= "%.2f" % (conv.promoter_earnings_cents / 100.0) %></td>
+                <td class="py-2 dark:text-whiteish text-xs"><%= conv.promo_link.label %></td>
+                <td class="py-2">
+                  <% if conv.paid_at %>
+                    <span class="text-xs text-green-400">Pagado <%= conv.paid_at.strftime("%d/%m/%Y") %></span>
+                  <% else %>
+                    <span class="text-xs text-saffron">Pendiente</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="text-sm text-graphite">No hay conversiones aún.</p>
+      <% end %>
+    </div>
+  <% end %>
 </div>
 
 <%= turbo_frame_tag "modal_frame" %>

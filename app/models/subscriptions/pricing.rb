@@ -5,6 +5,21 @@ module Subscriptions
 
     DISCOUNTS = { monthly: 1.0, quarterly: 0.95, yearly: 0.90 }.freeze
 
+    PROMO_DISCOUNT = 0.75
+    PROMOTER_RATE  = 0.25
+
+    def self.promo_base_price(plan_tier, argentina:)
+      base_price(plan_tier, argentina: argentina) * 3
+    end
+
+    def self.promo_price(plan_tier, argentina:)
+      (promo_base_price(plan_tier, argentina: argentina) * PROMO_DISCOUNT).round
+    end
+
+    def self.promoter_earnings(plan_tier, argentina:)
+      (promo_base_price(plan_tier, argentina: argentina) * PROMOTER_RATE).round
+    end
+
     def self.base_price(plan_tier, argentina:)
       table = argentina ? PRICES_ARS : PRICES_USD
       table.fetch(plan_tier.to_sym) { raise ArgumentError, "Invalid plan_tier: #{plan_tier}" }

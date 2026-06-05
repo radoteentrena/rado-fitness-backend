@@ -61,6 +61,26 @@ class User < ApplicationRecord
   has_many :conversations, dependent: :destroy
   has_many :progress_photos, dependent: :destroy
   has_many :training_sessions, dependent: :destroy
+  has_many :promo_links, dependent: :destroy
+  has_many :promoter_conversions, through: :promo_links, source: :promo_conversions
+  has_many :referred_conversions, class_name: "PromoConversion",
+                                  foreign_key: :referred_user_id,
+                                  dependent: :destroy
+
+  def promoter_pending_earnings_cents
+    promo_links.joins(:promo_conversions)
+               .merge(PromoConversion.pending)
+               .sum("promo_conversions.promoter_earnings_cents")
+  end
+
+  def promoter_total_earnings_cents
+    promo_links.joins(:promo_conversions)
+               .sum("promo_conversions.promoter_earnings_cents")
+  end
+
+  def promoter_paid_earnings_cents
+    promoter_total_earnings_cents - promoter_pending_earnings_cents
+  end
 
   def name
     "#{first_name} #{last_name}"

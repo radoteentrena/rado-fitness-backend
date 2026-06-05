@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_26_190927) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_05_002356) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "vector"
@@ -289,6 +289,34 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_26_190927) do
     t.index ["user_id"], name: "index_progress_photos_on_user_id"
   end
 
+  create_table "promo_conversions", force: :cascade do |t|
+    t.bigint "promo_link_id", null: false
+    t.bigint "referred_user_id", null: false
+    t.bigint "subscription_id", null: false
+    t.string "plan_tier", null: false
+    t.string "currency", null: false
+    t.integer "full_price_cents", null: false
+    t.integer "paid_amount_cents", null: false
+    t.integer "promoter_earnings_cents", null: false
+    t.datetime "paid_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["promo_link_id"], name: "index_promo_conversions_on_promo_link_id"
+    t.index ["referred_user_id"], name: "index_promo_conversions_on_referred_user_id", unique: true
+    t.index ["subscription_id"], name: "index_promo_conversions_on_subscription_id", unique: true
+  end
+
+  create_table "promo_links", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "code", null: false
+    t.string "label", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_promo_links_on_code", unique: true
+    t.index ["user_id"], name: "index_promo_links_on_user_id"
+  end
+
   create_table "routines", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -321,8 +349,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_26_190927) do
     t.datetime "reminded_at"
     t.datetime "past_due_since"
     t.string "mp_preference_id"
+    t.bigint "promo_link_id"
     t.index ["mp_preference_id"], name: "index_subscriptions_on_mp_preference_id", unique: true, where: "(mp_preference_id IS NOT NULL)"
     t.index ["processor"], name: "index_subscriptions_on_processor"
+    t.index ["promo_link_id"], name: "index_subscriptions_on_promo_link_id"
     t.index ["status"], name: "index_subscriptions_on_status"
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
@@ -394,6 +424,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_26_190927) do
     t.string "payment_link_token"
     t.datetime "payment_link_expires_at"
     t.integer "admin_role"
+    t.boolean "promoter", default: false, null: false
     t.index ["auth_token"], name: "index_users_on_auth_token", unique: true
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -456,7 +487,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_26_190927) do
   add_foreign_key "phases", "programs"
   add_foreign_key "programs", "users"
   add_foreign_key "progress_photos", "users"
+  add_foreign_key "promo_conversions", "promo_links"
+  add_foreign_key "promo_conversions", "subscriptions"
+  add_foreign_key "promo_conversions", "users", column: "referred_user_id"
+  add_foreign_key "promo_links", "users"
   add_foreign_key "routines", "users"
+  add_foreign_key "subscriptions", "promo_links"
   add_foreign_key "subscriptions", "users"
   add_foreign_key "training_sessions", "phases"
   add_foreign_key "training_sessions", "programs"

@@ -81,6 +81,11 @@ module Google
           scope: SCOPE,
           refresh_token: ENV["GOOGLE_REFRESH_TOKEN"]
         )
+      elsif ENV["GOOGLE_CREDENTIALS_JSON"].present?
+        Google::Auth::ServiceAccountCredentials.make_creds(
+          json_key_io: StringIO.new(ENV["GOOGLE_CREDENTIALS_JSON"]),
+          scope: SCOPE
+        )
       elsif ENV["GOOGLE_APPLICATION_CREDENTIALS"].present?
         Google::Auth.get_application_default(SCOPE)
       elsif File.exist?("config/google_credentials.json")
