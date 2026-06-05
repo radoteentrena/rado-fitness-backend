@@ -1,0 +1,112 @@
+<div class="bg-blackish min-h-screen font-display py-20 px-6">
+  <div class="max-w-3xl mx-auto">
+
+    <header class="text-center mb-14">
+      <span class="block text-[11px] font-bold tracking-[0.15em] uppercase text-saffron mb-4">
+        Oferta exclusiva
+      </span>
+      <h1 class="text-[42px] font-black uppercase text-whiteish leading-[1.05] tracking-tight mb-3">
+        Tu plan de 3 meses
+      </h1>
+      <p class="text-[15px] text-[#888] tracking-wide">
+        25% de descuento · Pago único
+      </p>
+    </header>
+
+    <% if flash[:alert] %>
+      <div class="max-w-2xl mx-auto mb-8 border-2 border-red-500 p-4 text-red-400 text-sm text-center">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <%= form_with url: promo_subscription_path, method: :post do |f| %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+
+        <%# Medium plan card %>
+        <label class="cursor-pointer block">
+          <%= f.radio_button :plan_tier, "medium", class: "sr-only peer", id: "plan_medium" %>
+          <div class="border-2 border-graphite peer-checked:border-saffron peer-checked:shadow-[6px_6px_0_0_#F5C228]
+                      relative flex flex-col p-8
+                      hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#2F2F2F]
+                      transition-all duration-100">
+            <p class="text-[11px] font-bold tracking-[0.18em] uppercase text-saffron mb-4">Coaching</p>
+            <div class="mb-1">
+              <span class="text-[52px] font-black text-whiteish leading-none">
+                <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span><%= @prices[:medium][:discounted] %>
+              </span>
+            </div>
+            <p class="text-[13px] text-[#555] font-medium mt-1 mb-1">
+              <span class="line-through">US$<%= @prices[:medium][:full_price] %></span>
+              &nbsp;USD · 3 meses · pago único
+            </p>
+            <div class="w-8 h-0.5 bg-saffron opacity-40 my-5"></div>
+            <ul class="flex-1 flex flex-col gap-2.5 list-none p-0">
+              <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                         before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+                Programa personalizado
+              </li>
+              <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                         before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+                Seguimiento semanal
+              </li>
+              <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                         before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+                Acceso a la app
+              </li>
+            </ul>
+          </div>
+        </label>
+
+        <%# High ticket plan card %>
+        <label class="cursor-pointer block">
+          <%= f.radio_button :plan_tier, "high_ticket", class: "sr-only peer", id: "plan_high_ticket" %>
+          <div class="border-2 border-graphite peer-checked:border-saffron peer-checked:shadow-[6px_6px_0_0_#F5C228]
+                      relative flex flex-col p-8
+                      hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#2F2F2F]
+                      transition-all duration-100">
+            <p class="text-[11px] font-bold tracking-[0.18em] uppercase text-saffron mb-4">Élite</p>
+            <div class="mb-1">
+              <span class="text-[52px] font-black text-whiteish leading-none">
+                <span class="text-[22px] font-bold text-[#888] align-top mt-2.5 inline-block">$</span><%= @prices[:high_ticket][:discounted] %>
+              </span>
+            </div>
+            <p class="text-[13px] text-[#555] font-medium mt-1 mb-1">
+              <span class="line-through">US$<%= @prices[:high_ticket][:full_price] %></span>
+              &nbsp;USD · 3 meses · pago único
+            </p>
+            <div class="w-8 h-0.5 bg-saffron opacity-40 my-5"></div>
+            <ul class="flex-1 flex flex-col gap-2.5 list-none p-0">
+              <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                         before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+                Todo lo de Coaching
+              </li>
+              <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                         before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+                Llamada con el coach
+              </li>
+              <li class="text-[13px] text-[#888] pl-4 relative leading-snug
+                         before:absolute before:left-0 before:content-['—'] before:text-saffron before:opacity-50 before:font-bold">
+                Plan nutricional
+              </li>
+            </ul>
+          </div>
+        </label>
+
+      </div>
+
+      <div class="text-center">
+        <%= f.submit "Continuar al pago →",
+              class: "w-auto inline-flex py-3.5 px-10 text-xs font-black tracking-[0.14em] uppercase
+                      bg-saffron border-2 border-saffron text-blackish cursor-pointer
+                      hover:shadow-[6px_6px_0px_0px_#fff]
+                      hover:-translate-x-0.5 hover:-translate-y-0.5
+                      transition-all duration-100" %>
+      </div>
+    <% end %>
+
+    <p class="text-center mt-8 text-xs text-[#444] tracking-wide">
+      Al continuar aceptás los <%= link_to "términos y condiciones", terms_path, class: "text-[#666] underline hover:text-[#999]" %>.
+    </p>
+
+  </div>
+</div>
