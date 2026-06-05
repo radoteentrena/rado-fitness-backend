@@ -5,7 +5,7 @@ class PromoSubscriptionsController < ApplicationController
 
   def new
     @promo_link = PromoLink.active.find_by(code: session[:promo_code])
-    redirect_to new_subscription_path unless @promo_link
+    redirect_to(new_subscription_path) and return unless @promo_link
 
     @prices = {
       medium: {
