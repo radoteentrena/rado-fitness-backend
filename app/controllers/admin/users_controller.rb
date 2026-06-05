@@ -119,5 +119,30 @@ module Admin
         page: Administrate::Page::Show.new(dashboard, requested_resource)
       }
     end
+
+    def promote
+      resource = resource_class.find(params[:id])
+      resource.update!(promoter: true)
+      redirect_to admin_user_path(resource), notice: "#{resource.name} ahora es Promotor."
+    end
+
+    def payout_promoter
+      resource = resource_class.find(params[:id])
+      PromoConversion
+        .joins(:promo_link)
+        .where(promo_links: { user_id: resource.id }, paid_at: nil)
+        .update_all(paid_at: Time.current)
+      redirect_to admin_user_path(resource), notice: "Comisiones marcadas como pagadas."
+    end
+
+    def create_promo_link
+      resource = resource_class.find(params[:id])
+      link = resource.promo_links.build(label: params[:label].to_s.strip)
+      if link.save
+        redirect_to admin_user_path(resource), notice: "Enlace '#{link.label}' creado."
+      else
+        redirect_to admin_user_path(resource), alert: "Error: #{link.errors.full_messages.join(', ')}"
+      end
+    end
   end
 end
