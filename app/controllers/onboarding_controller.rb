@@ -6,6 +6,11 @@ class OnboardingController < ApplicationController
   def new
     @user = User.new
     @user.build_onboarding_profile
+
+    if params[:promo].present?
+      promo_link = PromoLink.active.find_by(code: params[:promo].to_s.upcase)
+      session[:promo_code] = promo_link.code if promo_link
+    end
   end
 
   def create
@@ -18,7 +23,14 @@ class OnboardingController < ApplicationController
 
     if @user.save
       sign_in(@user)
-      redirect_to new_subscription_path
+      if ENV["BETA_MODE"] == "true"
+        @user.update_columns(status: User.statuses[:active])
+        redirect_to onboarding_success_path
+      elsif session[:promo_code].present?
+        redirect_to new_promo_subscription_path
+      else
+        redirect_to new_subscription_path
+      end
     else
       render :new, status: :unprocessable_entity
     end

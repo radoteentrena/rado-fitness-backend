@@ -9,6 +9,13 @@ Rails.application.routes.draw do
 
   get  "/pay/:token", to: "payments#show", as: :pay
 
+  # Promo subscription checkout
+  get  "promo_subscription/new",  to: "promo_subscriptions#new",   as: :new_promo_subscription
+  post "promo_subscription",      to: "promo_subscriptions#create", as: :promo_subscription
+
+  # Promo links (promoter creates from /account)
+  resources :promo_links, only: [:create, :update]
+
   get  "subscription/new",        to: "subscriptions#new",        as: :new_subscription
   get  "subscription/frequency",  to: "subscriptions#frequency",  as: :subscription_frequency
   post "subscription",            to: "subscriptions#create",     as: :subscriptions
@@ -57,6 +64,11 @@ Rails.application.routes.draw do
         resource :program_assignment, only: [ :new, :create ]
         resource :dietary_plan_assignment, only: [ :new, :create ]
         resource :payment_link, only: [ :create ]
+        member do
+          post :promote
+          post :payout_promoter
+          post :create_promo_link
+        end
       end
       resources :user_dietary_plans, except: [ :index, :show ]
       resources :assignments, only: [ :new, :create ]
