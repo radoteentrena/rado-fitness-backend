@@ -13,7 +13,7 @@ const CLIENTS = [
   {
     name: "Luis", ig: "@luis_povina",
     title: "Perdió 25kg de grasa",
-    sub: "Luego de aprender la teoría, logramos aplicar conceptos que en solo 8 meses de seguimiento personalizado para poder transformar su físico y su vida.",
+    sub: "Luego de aprender la teoría, logramos aplicar conceptos que, en solo 8 meses de seguimiento personalizado, logramos transformar su físico y su vida.",
     metrics: [
       {label: "Peso", before: "118kg", after: "87kg"},
       {label: "Grasa corp.", before: "35%", after: "14%"},
