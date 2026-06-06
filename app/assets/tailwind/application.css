@@ -155,8 +155,6 @@
     display: block;
     transition: opacity .35s ease;
   }
-  .ba-img--before { filter: grayscale(1) brightness(0.62) contrast(1.08); }
-  .ba-img--after  { filter: grayscale(1) brightness(1.0)  contrast(1.16); }
 
   .ba-tag {
     position: absolute;

@@ -1,67 +1,96 @@
 <section
   class="bg-black border-b border-shadow-grey"
   data-controller="before-after"
+  data-before-after-images-value="<%= [
+    { before: asset_path('martu_antes.jpg'),  after: asset_path('martu_despues.jpg') },
+    { before: asset_path('luis_antes.jpeg'),  after: asset_path('luis_despues.jpeg') },
+    { before: asset_path('cami_antes.jpeg'),  after: asset_path('cami_despues.jpeg') },
+    { before: asset_path('cheky_antes.jpeg'), after: asset_path('cheky_despues.jpeg') },
+    { before: asset_path('benja_antes.jpeg'), after: asset_path('benja_despues.jpeg') },
+    { before: asset_path('fede_antes.jpeg'),  after: asset_path('fede_despues.jpeg') },
+  ].to_json %>"
   aria-label="Transformaciones de clientes"
 >
   <div class="ba-grid">
-
     <%# ── LEFT: story ── %>
     <div>
-
       <%# Eyebrow %>
       <div class="ba-eyebrow">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M17 3l4 4-4 4"/><path d="M21 7H7"/>
-          <path d="M7 21l-4-4 4-4"/><path d="M3 17h14"/>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M17 3l4 4-4 4" />
+          <path d="M21 7H7" />
+          <path d="M7 21l-4-4 4-4" />
+          <path d="M3 17h14" />
         </svg>
         Antes y Después
       </div>
 
       <%# Headline %>
       <h2 class="ba-headline text-white font-display font-black uppercase">
-        Esfuerzo Real.<br>Resultados Reales.
+        Casos de
+        <br>
+        <span class="text-saffron">éxito</span>
       </h2>
 
       <%# Story card %>
       <div class="ba-story-card">
-
         <h3
           class="ba-story-title font-display font-bold uppercase text-white"
           data-before-after-target="storyTitle"
-        >Cargando...</h3>
+        >
+          Cargando...
+        </h3>
 
-        <p
-          class="ba-story-sub font-body"
-          data-before-after-target="storySub"
-        ></p>
+        <p class="ba-story-sub font-body" data-before-after-target="storySub"></p>
 
         <table class="ba-metrics w-full">
           <thead>
             <tr>
               <th class="ba-metric-th text-left">Métrica</th>
               <th class="ba-metric-th text-right">Antes</th>
-              <th class="ba-metric-th ba-metric-th--after text-right">Después</th>
+
+              <th class="ba-metric-th ba-metric-th--after text-right">
+                Después
+              </th>
             </tr>
           </thead>
+
           <tbody data-before-after-target="metricBody"></tbody>
         </table>
-
       </div>
     </div>
 
     <%# ── RIGHT: stage ── %>
     <div class="flex flex-col">
-
       <%# Client nav %>
       <div class="ba-client-nav">
-
         <button
           class="ba-arrow"
           data-action="click->before-after#prev"
           aria-label="Cliente anterior"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M15 18l-6-6 6-6"/>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
 
@@ -70,6 +99,7 @@
             class="ba-client-name font-display font-black uppercase text-white"
             data-before-after-target="clientName"
           ></p>
+
           <div
             class="ba-client-ig font-body"
             data-before-after-target="clientIg"
@@ -81,20 +111,29 @@
           data-action="click->before-after#next"
           aria-label="Siguiente cliente"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 18l6-6-6-6"/>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M9 18l6-6-6-6" />
           </svg>
         </button>
-
       </div>
 
       <%# Photo pair %>
       <div class="ba-pair">
-
         <%# Before shot %>
         <div class="ba-shot ba-shot--before">
           <span class="ba-tag ba-tag--before">Antes</span>
-          <%= image_tag "testimonial_1.png",
+
+          <%= image_tag "martu_antes.jpg",
                 alt: "Antes",
                 class: "ba-img ba-img--before",
                 data: { "before-after-target": "imgBefore" } %>
@@ -103,20 +142,16 @@
         <%# After shot %>
         <div class="ba-shot ba-shot--after">
           <span class="ba-tag ba-tag--after">Después</span>
-          <%= image_tag "testimonial_2.png",
+
+          <%= image_tag "martu_despues.jpg",
                 alt: "Después",
                 class: "ba-img ba-img--after",
                 data: { "before-after-target": "imgAfter" } %>
         </div>
-
       </div>
 
       <%# Dots %>
-      <div
-        class="ba-dots"
-        data-before-after-target="dots"
-      ></div>
-
+      <div class="ba-dots" data-before-after-target="dots"></div>
     </div>
   </div>
 </section>
