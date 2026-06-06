@@ -22,7 +22,9 @@ class GeoIp
 
   def self.fetch_country_code(ip)
     uri = URI(ENDPOINT % URI.encode_uri_component(ip))
-    response = Net::HTTP.get_response(uri)
+    response = Net::HTTP.start(uri.host, uri.port, open_timeout: 2, read_timeout: 2) do |http|
+      http.get(uri.request_uri)
+    end
     JSON.parse(response.body)["countryCode"]
   rescue StandardError
     nil

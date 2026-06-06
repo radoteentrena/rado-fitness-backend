@@ -2,36 +2,57 @@ import { Controller } from "@hotwired/stimulus"
 
 const CLIENTS = [
   {
-    name: "Marcos Reyes", ig: "@marcos.lifts",
-    title: "Perdió 25 kg sin dejar de comer",
-    sub: "Profesional ocupado que retomó el control de su cuerpo.",
-    before: "/assets/testimonial_1.png", after: "/assets/testimonial_2.png",
+    name: "Martu", ig: "@martuojedax",
+    title: "De gymbro a afiliada de Gymshark",
+    sub: "Este cambio fue sentarme con ella y explicarle la teoría de cómo cambiar la composición corporal. Ponerle un orden de importancia a la información y juntos crear un plan que se ajustó a su estilo de vida.",
     metrics: [
-      { label: "Peso",        before: "105 kg",  after: "80 kg"  },
-      { label: "Grasa corp.", before: "31%",     after: "14%"    },
-      { label: "Masa muscular",  before: "60 kg",   after: "130 kg" },
+      {label: "Peso", before: "61kg", after: "52kg"},
+      {label: "Grasa corp.", before: "24%", after: "18%"},
     ],
   },
   {
-    name: "Sofía Herrera", ig: "@sofia.strong",
-    title: "Fuerza real después de dos embarazos",
-    sub: "Recuperó su cuerpo —y su confianza— en 8 meses.",
-    before: "/assets/testimonial_3.png", after: "/assets/testimonial_4.png",
+    name: "Luis", ig: "@luis_povina",
+    title: "Perdió 25kg de grasa",
+    sub: "Luego de aprender la teoría, logramos aplicar conceptos que en solo 8 meses de seguimiento personalizado para poder transformar su físico y su vida.",
     metrics: [
-      { label: "Peso muerto", before: "40 kg",  after: "100 kg" },
-      { label: "Grasa corp.", before: "31%",     after: "14%"    },
-      { label: "Masa muscular",  before: "60 kg",   after: "130 kg" },
+      {label: "Peso", before: "118kg", after: "87kg"},
+      {label: "Grasa corp.", before: "35%", after: "14%"},
     ],
   },
   {
-    name: "Diego Torres", ig: "@diego.builds",
-    title: "De flaco a listo para el escenario",
-    sub: "Doce meses de hipertrofia disciplinada con Rado.",
-    before: "/assets/testimonial_1.png", after: "/assets/testimonial_3.png",
+    name: "Cami", ig: "@camiocampob",
+    title: "Cambió su físico comiendo más",
+    sub: "Después de varios intentos de dietas estrictas y frustraciones, nos sentamos a repasar la teoría de la nutrición y a través de la confianza depositada en mi método, logró comer más y verse mejor.",
     metrics: [
-      { label: "Peso",        before: "65 kg",  after: "83 kg"  },
-      { label: "Grasa corp.", before: "31%",     after: "14%"    },
-      { label: "Masa muscular",  before: "60 kg",   after: "130 kg" },
+      {label: "Peso", before: "60kg", after: "60kg"},
+      {label: "Grasa corp.", before: "27%", after: "22%"},
+    ],
+  },
+  {
+    name: "Cheky", ig: "@checkz_",
+    title: "Plan llegar al verano",
+    sub: "Acá el objetivo estaba claro, bajar el porcentaje de grasa para verse mejor en una fecha específica. En sólo tres meses el plan fue ejecutado a la perfección.",
+    metrics: [
+      {label: "Peso", before: "68kg", after: "63kg"},
+      {label: "Grasa corp.", before: "18%", after: "10%"},
+    ],
+  },
+    {
+    name: "Benja", ig: "@benjaz",
+    title: "Transformación de composición corporal en 8 meses",
+    sub: "Este cambio se basó en un deficit calórico sostenido, enfocado en preservar y mejorar su masa muscular.",
+    metrics: [
+      {label: "Peso", before: "106kg", after: "82kg"},
+      {label: "Grasa corp.", before: "32%", after: "16%"},
+    ],
+  },
+  {
+    name: "Fede", ig: "@fedearga92",
+    title: "Caso de éxito en 3 años",
+    sub: "Hábitos inteligentes para mantenerse motivado, con un entrenamiento y plan de nutrición acorde a su estilo de vida. No para de ponerla.",
+    metrics: [
+      {label: "Peso", before: "90kg", after: "68kg"},
+      {label: "Grasa corp.", before: "30%", after: "18%"},
     ],
   },
 ]
@@ -43,7 +64,7 @@ export default class extends Controller {
     "imgBefore", "imgAfter",
     "dots"
   ]
-  static values = { index: { type: Number, default: 0 } }
+  static values = { index: { type: Number, default: 0 }, images: Array }
 
   connect() {
     this.buildDots()
@@ -82,8 +103,9 @@ export default class extends Controller {
     this.clientIgTarget.textContent   = c.ig
     this.storyTitleTarget.textContent = c.title
     this.storySubTarget.textContent   = c.sub
-    this.imgBeforeTarget.src = c.before
-    this.imgAfterTarget.src  = c.after
+    const imgs = this.imagesValue[this.indexValue] || {}
+    this.imgBeforeTarget.src = imgs.before || ""
+    this.imgAfterTarget.src  = imgs.after  || ""
     this.metricBodyTarget.innerHTML = c.metrics.map(m =>
       `<tr>
         <td class="text-left font-medium text-white py-[18px] border-t border-white/10 text-[17px]">${m.label}</td>

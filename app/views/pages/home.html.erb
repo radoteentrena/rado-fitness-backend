@@ -72,22 +72,17 @@
       </p>
     </div>
 
-    <%= image_tag("entrenando.jpg", alt: "Coach Rado", class: "relative z-10 w-[40%] shadow-2xl") %>
+    <%= image_tag("entrenando.jpg", alt: "Coach Rado", class: "relative z-10 w-[50%] shadow-2xl") %>
   </div>
 </section>
 
 <%# Stats Bar %>
 <div class="bg-saffron border-b border-white">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-    <div
-      class="
-        grid grid-cols-2 md:grid-cols-4 gap-6 divide-y divide-white
-        md:divide-y-0 md:divide-x md:divide-white
-      "
-    >
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
       <div class="flex flex-col items-center text-center py-4 md:py-0 md:px-6">
         <span class="text-3xl font-display font-black tracking-tight text-white">
-          +200
+          +1500
         </span>
 
         <span
@@ -292,28 +287,64 @@
       </div>
 
       <div class="lg:w-1/2">
-        <%= render "shared/section_label", content: "Mi filosofía" %>
+        <%= render "shared/section_label", content: "Sobre Mí" %>
 
         <h2
           class="
             text-4xl sm:text-5xl lg:text-5xl font-display font-bold
-            uppercase text-white mb-8 border-b border-shadow-grey pb-8
+            uppercase text-white mb-4 border-b border-shadow-grey pb-4
           "
         >
-          FUERZA + ESTÉTICA
+          MI FILOSOFÍA
         </h2>
 
         <div class="prose prose-lg text-gray-300 font-body text-[15px] leading-relaxed">
           <p class="mb-5">
-            Durante años, vi personas fuertes pero sin forma, o estéticas. Me
-            negué a aceptar ese compromiso.
+            Mi historia con el entrenamiento empezó a los 15 años. Mi hermano
+            mayor me llevo al gimnasio y desde entonces nunca paré de ir, no
+            recuerdo porque era tan disciplinado a esa edad, solo recuerdo que
+            siempre me hacía sentir bien y lo disfrutaba. Hoy para mí, entrenar
+            no es solo una herramienta para cambiar el cuerpo; es mi cable a
+            tierra, mi paz mental y una parte fundamental de quién soy, incluso
+            en esos momentos donde no persigo un objetivo competitivo
+            específico. El movimiento y la disciplina son mi estilo de vida.
           </p>
 
           <p class="mb-5">
-            Desarrollé un método que fusiona el powerlifting con el culturismo
-            de alta frecuencia. El resultado es un físico que no solo impone
-            presencia, sino que rinde al máximo nivel. No entrenamos para
-            "participar", entrenamos para dominar.
+            Mi camino como preparador empezó a los 21 años, entrenando de forma
+            gratuita a mis amigos cercanos y compañeros de gimnasio (gymbros).
+            Esa etapa fue crucial: me permitió volcar los libros a la realidad,
+            entender la individualidad de cada cuerpo y, sobre todo, generar la
+            confianza ciega de que lo que hacía, funcionaba. Con el tiempo, esa
+            experiencia se transformó en la estructura sólida y profesional que
+            hoy me permite cobrar por mis servicios con total seguridad. Como
+            auténtico apasionado del nicho fitness, consumo contenido e
+            investigación diariamente. He visto crecer desde cero a los mayores
+            referentes de la industria y he sido testigo directo de cómo han
+            evolucionado los estándares de entrenamiento y nutrición en esta
+            última década. No me quedé estancado: estudié, analicé la evidencia
+            de los autores más respetados del mundo y fui adaptando cada cambio
+            científico a la práctica real con mis alumnos.
+          </p>
+
+          <h2
+            class="
+              text-4xl sm:text-5xl lg:text-5xl font-display font-bold
+              uppercase text-white mt-4 border-shadow-grey pt-4 mb-4 border-b pb-4
+            "
+          >
+            MI FORMACIÓN
+          </h2>
+
+          <p class="mb-5">
+            Elegí formarme en la NCSF (National Council on Strength &amp;
+            Fitness), una de las instituciones más prestigiosas y reconocidas a
+            nivel internacional en las ciencias del ejercicio. Allí me
+            certifiqué como Entrenador Personal y, posteriormente, decidí
+            especializarme con su curso de Nutrición Deportiva. Elegí la NCSF
+            porque su rigor científico y sus altos estándares de exigencia me
+            brindaron las herramientas conceptuales necesarias para abordar la
+            salud y el rendimiento de mis clientes con la máxima seriedad.
           </p>
         </div>
       </div>
@@ -447,11 +478,11 @@
 
         <div class="flex items-baseline gap-1 mb-8">
           <span class="text-lg font-medium text-gray-400">
-            <%= @argentina ? "ARS" : "USD" %>
+            <%= Subscriptions::Pricing.currency(argentina: @argentina) %>
           </span>
 
           <span class="text-5xl font-display font-black tracking-tighter text-white">
-            <%= @argentina ? "14.000" : "10" %>
+            <%= @argentina ? number_with_delimiter(@prices[:basic], delimiter: ".") : @prices[:basic] %>
           </span>
         </div>
 
@@ -542,11 +573,11 @@
 
         <div class="flex items-baseline gap-1 mb-8">
           <span class="text-lg font-medium text-gray-400">
-            <%= @argentina ? "ARS" : "USD" %>
+            <%= Subscriptions::Pricing.currency(argentina: @argentina) %>
           </span>
 
           <span class="text-5xl font-display font-black tracking-tighter text-white">
-            <%= @argentina ? "70.000" : "60" %>
+            <%= @argentina ? number_with_delimiter(@prices[:medium], delimiter: ".") : @prices[:medium] %>
           </span>
         </div>
 
@@ -629,11 +660,11 @@
 
         <div class="flex items-baseline gap-1 mb-8">
           <span class="text-lg font-medium text-gray-400">
-            <%= @argentina ? "ARS" : "USD" %>
+            <%= Subscriptions::Pricing.currency(argentina: @argentina) %>
           </span>
 
           <span class="text-5xl font-display font-black tracking-tighter text-white">
-            <%= @argentina ? "140.000" : "120" %>
+            <%= @argentina ? number_with_delimiter(@prices[:high_ticket], delimiter: ".") : @prices[:high_ticket] %>
           </span>
         </div>
 
@@ -698,8 +729,9 @@
     </div>
 
     <p class="text-center text-xs text-gray-600 font-body mt-10">
-      Todos los precios en <%= @argentina ? "ARS" : "USD" %> · Pago mensual sin
-      permanencia · Cancelá cuando quieras
+      Todos los precios en
+      <%= Subscriptions::Pricing.currency(argentina: @argentina) %> · Pago
+      mensual sin permanencia · Cancelá cuando quieras
     </p>
   </div>
 </section>

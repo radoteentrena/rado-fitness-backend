@@ -16,6 +16,7 @@ class WorkoutExercise < ApplicationRecord
 
   belongs_to :workout
   belongs_to :exercise
+  has_many :exercise_logs, dependent: :nullify
 
   validates :sets, :reps, presence: true
 end
