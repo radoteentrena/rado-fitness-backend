@@ -4,12 +4,13 @@ class Admin::WorkoutsController < Admin::ApplicationController
 
   def new
     @workout = @routine.workouts.build
+    @program_id = params[:program_id]
   end
 
   def create
     @workout = @routine.workouts.build(workout_params)
+    @program_id = params[:program_id]
 
-    # Auto-assign day number/order index logic
     if @workout.day_number.blank?
       @workout.day_number = (@routine.workouts.maximum(:day_number) || 0) + 1
     end
@@ -17,10 +18,12 @@ class Admin::WorkoutsController < Admin::ApplicationController
       @workout.order_index = (@routine.workouts.maximum(:order_index) || 0) + 1
     end
 
-    if @workout.save
-      redirect_to admin_routine_path(@routine, workout_id: @workout.id), notice: "Workout was successfully created.", status: :see_other
-    else
-      respond_to do |format|
+    respond_to do |format|
+      if @workout.save
+        format.turbo_stream
+        format.html { redirect_to admin_routine_path(@routine, workout_id: @workout.id), notice: "Workout was successfully created.", status: :see_other }
+      else
+        format.turbo_stream { render :new, status: :unprocessable_entity }
         format.html { render :new, status: :unprocessable_entity }
       end
     end
@@ -63,6 +66,6 @@ class Admin::WorkoutsController < Admin::ApplicationController
   end
 
   def workout_params
-    params.require(:workout).permit(:name, :description, :day_number, :order_index)
+    params.require(:workout).permit(:name, :description, :order_index)
   end
 end
