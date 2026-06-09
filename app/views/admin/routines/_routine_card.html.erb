@@ -27,7 +27,10 @@
       <%= link_to edit_admin_routine_path(routine), data: { turbo_frame: "modal_frame" }, class: "text-graphite hover:text-primary dark:text-muted dark:hover:text-primary p-1 rounded hover:bg-background-light dark:hover:bg-blackish", title: "Edit Routine" do %>
         <span class="material-symbols-outlined text-sm">edit</span>
       <% end %>
-      <%= button_to admin_routine_path(routine), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this routine?" }, class: "text-graphite hover:text-red-600 dark:text-muted dark:hover:text-red-400 p-1 rounded hover:bg-background-light dark:hover:bg-blackish cursor-pointer", title: "Delete Routine" do %>
+      <%= link_to new_admin_routine_workout_path(routine, program_id: phase_routine.phase.program_id), data: { turbo_frame: "modal_frame" }, class: "text-graphite hover:text-primary dark:text-muted dark:hover:text-primary p-1 rounded hover:bg-background-light dark:hover:bg-blackish", title: "Add Workout Day" do %>
+        <span class="material-symbols-outlined text-sm">playlist_add</span>
+      <% end %>
+      <%= button_to admin_phase_routine_path(phase_routine), method: :delete, data: { turbo_confirm: "Are you sure you want to remove this routine from the phase?" }, class: "text-graphite hover:text-red-600 dark:text-muted dark:hover:text-red-400 p-1 rounded hover:bg-background-light dark:hover:bg-blackish cursor-pointer", title: "Remove from Phase" do %>
         <span class="material-symbols-outlined text-sm">delete</span>
       <% end %>
     </div>
