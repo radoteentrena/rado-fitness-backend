@@ -9,7 +9,11 @@ class Program < ApplicationRecord
   before_destroy :prevent_deletion_if_assigned_to_user
 
   def current_week
-    ((Date.current - created_at.to_date).to_i / 7) + 1
+    user&.training_sessions
+        &.where(program: self, status: [ TrainingSession.statuses[:pending], TrainingSession.statuses[:in_progress] ])
+        &.order(created_at: :asc)
+        &.first
+        &.cycle_number || ((Date.current - created_at.to_date).to_i / 7) + 1
   end
 
   def current_routine

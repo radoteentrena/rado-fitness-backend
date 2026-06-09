@@ -153,6 +153,7 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
     },
     "dietary_plan": {
       "id": 3,
+      "dietary_plan_id": 10,
       "calories_target": 2800,
       "protein_target": 200,
       "fats_target": 80,
@@ -167,7 +168,9 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
       "session_id": 12,
       "status": "pending",
       "workout_id": 10,
-      "workout_name": "Upper Body - Pull"
+      "workout_name": "Upper Body - Pull",
+      "cycle_number": 2,
+      "day_number": 1
     },
     "current_week_workouts": [
       {
@@ -200,7 +203,7 @@ Este es el principal. Lo llamás apenas la app carga o cuando el usuario hace lo
 
 **Notas:**
 - `user.avatar_url` es la URL de la foto de perfil del usuario. Puede ser `null` si no tiene foto.
-- `next_session` es el próximo entrenamiento pendiente del usuario — la primera `TrainingSession` con status `pending` o `in_progress`. Usalo en el home para mostrar "Hoy: Upper Body - Pull". Será `null` si no hay programa activo o si no quedan sesiones pendientes. El campo `status` puede ser `"pending"` (todavía no arrancó) o `"in_progress"` (arrancó pero no completó) — usalo para mostrar "Empezar" vs "Continuar". Pasá `workout_id` al endpoint `POST /training/start` para iniciar la sesión.
+- `next_session` es el próximo entrenamiento pendiente del usuario — la primera `TrainingSession` con status `pending` o `in_progress`. Usalo en el home para mostrar "Hoy: Upper Body - Pull". Será `null` si no hay programa activo o si no quedan sesiones pendientes. El campo `status` puede ser `"pending"` (todavía no arrancó) o `"in_progress"` (arrancó pero no completó) — usalo para mostrar "Empezar" vs "Continuar". Pasá `workout_id` al endpoint `POST /training/start` para iniciar la sesión. `cycle_number` es la semana actual dentro de la fase (semana 1, 2, 3…) — usalo para mostrar "Semana X". `day_number` es el día del workout dentro de la rutina — usalo para mostrar "Día Y".
 
 ---
 

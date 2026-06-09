@@ -16,7 +16,7 @@ json.recent_metrics @metrics
 
 if @dietary_plan
   json.dietary_plan do
-    json.extract! @dietary_plan, :id, :calories_target, :protein_target, :fats_target, :carbs_target, :notes, :start_date, :end_date, :active
+    json.extract! @dietary_plan, :id, :dietary_plan_id, :calories_target, :protein_target, :fats_target, :carbs_target, :notes, :start_date, :end_date, :active
     json.logged_weight @user.daily_metrics.exists?(date_logged: Date.today, weight: ..Float::INFINITY)
   end
 else
@@ -30,6 +30,8 @@ if @next_session
     json.status @next_session.status
     json.workout_id @next_session.workout_id
     json.workout_name @next_session.workout.name
+    json.cycle_number @next_session.cycle_number
+    json.day_number @next_session.workout.day_number
   end
 else
   json.next_session nil
