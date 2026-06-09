@@ -1,57 +1,149 @@
+<% builder_program_id = params[:program_id] || Phase.find_by(id: params[:phase_id] || resource.phase_id)&.program_id %>
+<% current_phase_id = params[:phase_id] || resource.phase_id %>
+<% current_phase_name = Phase.find_by(id: current_phase_id)&.name || "Selected Phase" %>
+
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-blackish/50 backdrop-blur-sm p-4">
-  <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-shadow dark:border-graphite">
+  <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-shadow dark:border-graphite"
+       data-controller="phase-routine-modal"
+       data-phase-routine-modal-screen-value="<%= defined?(modal_screen) ? modal_screen : 'choice' %>">
+
     <%# Header %>
     <div class="flex items-center justify-between p-4 border-b border-shadow dark:border-graphite bg-background-light dark:bg-graphite">
-      <h3 class="text-lg font-semibold text-blackish dark:text-whiteish">
-        Add Routine to Phase
-      </h3>
-      <% builder_program_id = params[:program_id] || Phase.find_by(id: params[:phase_id] || resource.phase_id)&.program_id %>
-      <%= link_to (builder_program_id ? admin_program_builder_path(builder_program_id) : admin_programs_path), class: "text-graphite hover:text-blackish dark:text-muted dark:hover:text-whiteish transition-colors" do %>
+      <h3 class="text-lg font-semibold text-blackish dark:text-whiteish">Add Routine to Phase</h3>
+      <%= link_to (builder_program_id ? admin_program_builder_path(builder_program_id) : admin_programs_path),
+          data: { turbo_frame: "_top" },
+          class: "text-graphite hover:text-blackish dark:text-muted dark:hover:text-whiteish transition-colors" do %>
         <span class="material-symbols-outlined">close</span>
       <% end %>
     </div>
 
-    <%# Form %>
-    <%= form_for([namespace, resource], html: { class: "p-6 space-y-6", data: { turbo_frame: "_top" } }) do |f| %>
-      <% if resource.errors.any? %>
-        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/50 dark:text-red-300" role="alert">
-          <ul class="list-disc pl-5 space-y-1">
-            <% resource.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
+    <%# — Screen: Choice — %>
+    <div data-phase-routine-modal-target="choiceScreen" class="p-6">
+      <p class="text-sm text-graphite dark:text-muted mb-5">How would you like to add a routine to <span class="font-semibold text-blackish dark:text-whiteish"><%= current_phase_name %></span>?</p>
+      <div class="grid grid-cols-2 gap-4">
 
-      <div class="grid grid-cols-1 gap-6">
-        <%# Phase ID (Hidden if passed via params, otherwise select) %>
-        <div class="col-span-1">
-          <% if params[:phase_id] || resource.phase_id %>
-            <%= f.hidden_field :phase_id, value: params[:phase_id] || resource.phase_id %>
-            <%= hidden_field_tag :program_id, Phase.find_by(id: params[:phase_id] || resource.phase_id)&.program_id %>
-            <%= f.label :phase_id, "Assigning to Phase", class: "block mb-2 text-sm font-medium text-graphite dark:text-muted" %>
-            <div class="bg-whiteish border border-shadow text-graphite text-sm rounded-lg block w-full p-2.5 dark:bg-blackish dark:border-graphite dark:text-muted cursor-not-allowed">
-              <%= Phase.find_by(id: params[:phase_id] || resource.phase_id)&.name || "Selected Phase" %>
-            </div>
-          <% else %>
-            <%= f.label :phase_id, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-            <%= f.select :phase_id, Phase.all.map { |p| [p.name, p.id] }, { include_blank: "Select Phase" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish" %>
-          <% end %>
+        <%# Card: Select Existing %>
+        <button type="button"
+                data-action="click->phase-routine-modal#selectExisting"
+                class="group flex flex-col items-center justify-center p-6 border-2 border-shadow dark:border-graphite rounded-lg cursor-pointer hover:border-primary dark:hover:border-primary hover:shadow-[6px_6px_0_0_var(--color-primary)] transition-all bg-background-light dark:bg-blackish text-left">
+          <span class="material-symbols-outlined text-3xl text-primary mb-3">library_books</span>
+          <span class="text-sm font-semibold text-blackish dark:text-whiteish">Select Existing</span>
+          <span class="text-xs text-graphite dark:text-muted mt-1 text-center">Add a routine you've already built</span>
+        </button>
+
+        <%# Card: Create New %>
+        <button type="button"
+                data-action="click->phase-routine-modal#selectNew"
+                class="group flex flex-col items-center justify-center p-6 border-2 border-shadow dark:border-graphite rounded-lg cursor-pointer hover:border-primary dark:hover:border-primary hover:shadow-[6px_6px_0_0_var(--color-primary)] transition-all bg-background-light dark:bg-blackish text-left">
+          <span class="material-symbols-outlined text-3xl text-primary mb-3">add_circle</span>
+          <span class="text-sm font-semibold text-blackish dark:text-whiteish">Create New</span>
+          <span class="text-xs text-graphite dark:text-muted mt-1 text-center">Build a new routine from scratch</span>
+        </button>
+
+      </div>
+    </div>
+
+    <%# — Screen: Select Existing — %>
+    <div data-phase-routine-modal-target="existingScreen" class="hidden">
+      <div class="px-6 pt-4">
+        <button type="button"
+                data-action="click->phase-routine-modal#back"
+                class="flex items-center text-sm text-graphite dark:text-muted hover:text-primary dark:hover:text-primary transition-colors mb-4">
+          <span class="material-symbols-outlined text-sm mr-1">arrow_back</span>
+          Back
+        </button>
+      </div>
+
+      <%= form_for([:admin, resource], html: { class: "px-6 pb-6 space-y-5", data: { turbo_frame: "_top" } }) do |f| %>
+        <% if resource.errors.any? %>
+          <div class="p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/50 dark:text-red-300 border border-red-200 dark:border-red-800">
+            <ul class="list-disc pl-5 space-y-1">
+              <% resource.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= f.hidden_field :phase_id, value: current_phase_id %>
+        <%= hidden_field_tag :program_id, builder_program_id %>
+
+        <div>
+          <label class="block mb-2 text-sm font-medium text-graphite dark:text-muted">Assigning to Phase</label>
+          <div class="bg-whiteish border border-shadow text-graphite text-sm rounded-lg block w-full p-2.5 dark:bg-blackish dark:border-graphite dark:text-muted cursor-not-allowed">
+            <%= current_phase_name %>
+          </div>
         </div>
 
-        <%# Routine ID (Select existing Routine) %>
-        <div class="col-span-1">
+        <div>
           <%= f.label :routine_id, "Select Routine", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-          <%= f.select :routine_id, Routine.all.order(:name).map { |r| ["#{r.name}#{' (Template)' if r.is_template?}", r.id] }, { include_blank: "Select Routine to Add" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish", required: true %>
+          <%= f.select :routine_id,
+              Routine.all.order(:name).map { |r| ["#{r.name}#{' (Template)' if r.is_template?}", r.id] },
+              { include_blank: "Select Routine to Add" },
+              class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish",
+              required: true %>
           <p class="mt-2 text-sm text-graphite dark:text-muted">Select an existing routine to add it to this phase.</p>
         </div>
+
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-shadow dark:border-graphite">
+          <%= link_to "Cancel",
+              (builder_program_id ? admin_program_builder_path(builder_program_id) : admin_programs_path),
+              data: { turbo_frame: "_top" },
+              class: "text-blackish bg-whiteish border border-shadow focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 hover:bg-background-light hover:text-primary focus:z-10 dark:bg-shadow dark:text-muted dark:border-graphite dark:hover:text-whiteish dark:hover:bg-graphite" %>
+          <%= f.submit "Add Routine", class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary/90 cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+
+    <%# — Screen: Create New Routine — %>
+    <div data-phase-routine-modal-target="newScreen" class="hidden">
+      <div class="px-6 pt-4">
+        <button type="button"
+                data-action="click->phase-routine-modal#back"
+                class="flex items-center text-sm text-graphite dark:text-muted hover:text-primary dark:hover:text-primary transition-colors mb-4">
+          <span class="material-symbols-outlined text-sm mr-1">arrow_back</span>
+          Back
+        </button>
       </div>
 
-      <%# Footer %>
-      <div class="flex items-center justify-end space-x-3 pt-4 border-t border-shadow dark:border-graphite">
-        <%= link_to "Cancel", (builder_program_id ? admin_program_builder_path(builder_program_id) : admin_programs_path), class: "text-blackish bg-whiteish border border-shadow focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 hover:bg-background-light hover:text-primary focus:z-10 dark:bg-shadow dark:text-muted dark:border-graphite dark:hover:text-whiteish dark:hover:bg-graphite", data: { turbo_frame: "_top" } %>
-        <%= f.submit "Add Routine", class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary/90 cursor-pointer" %>
-      </div>
-    <% end %>
+      <% error_message = defined?(new_routine_error) ? new_routine_error : nil %>
+      <form action="<%= admin_phase_routines_path %>" method="post"
+            class="px-6 pb-6 space-y-5"
+            data-turbo-frame="_top">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <%= hidden_field_tag "phase_routine[phase_id]", current_phase_id %>
+        <%= hidden_field_tag :program_id, builder_program_id %>
+        <%= hidden_field_tag :new_routine_name_mode, "1" %>
+
+        <% if error_message %>
+          <div class="p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/50 dark:text-red-300 border border-red-200 dark:border-red-800" role="alert">
+            <%= error_message %>
+          </div>
+        <% end %>
+
+        <div>
+          <label for="new_routine_name" class="block mb-2 text-sm font-medium text-blackish dark:text-whiteish">Routine Name</label>
+          <input type="text"
+                 id="new_routine_name"
+                 name="new_routine_name"
+                 placeholder="e.g. Upper Lower Split"
+                 required
+                 autocomplete="off"
+                 class="bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-blackish dark:border-graphite dark:placeholder-graphite dark:text-whiteish">
+        </div>
+
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-shadow dark:border-graphite">
+          <%= link_to "Cancel",
+              (builder_program_id ? admin_program_builder_path(builder_program_id) : admin_programs_path),
+              data: { turbo_frame: "_top" },
+              class: "text-blackish bg-whiteish border border-shadow focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 hover:bg-background-light hover:text-primary focus:z-10 dark:bg-shadow dark:text-muted dark:border-graphite dark:hover:text-whiteish dark:hover:bg-graphite" %>
+          <button type="submit"
+                  class="text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary/90 cursor-pointer">
+            Create &amp; Add
+          </button>
+        </div>
+      </form>
+    </div>
+
   </div>
 </div>
