@@ -1,3 +1,3 @@
-<%= turbo_stream.replace "modal_frame" do %>
-  <%= render "form", workout: @workout, routine: @routine %>
+<%= turbo_stream.update "modal_frame" do %>
+  <%= render "modal_form", workout: @workout, routine: @routine, program_id: @program_id %>
 <% end %>
