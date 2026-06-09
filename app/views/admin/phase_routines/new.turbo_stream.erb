@@ -1,0 +1,6 @@
+<%= turbo_stream.update "modal_frame" do %>
+  <%= render "modal_form",
+      resource: page.resource,
+      modal_screen: defined?(modal_screen) ? modal_screen : "choice",
+      new_routine_error: defined?(new_routine_error) ? new_routine_error : nil %>
+<% end %>

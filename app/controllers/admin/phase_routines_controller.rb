@@ -1,23 +1,62 @@
 module Admin
   class PhaseRoutinesController < Admin::ApplicationController
-    # Overwrite any of the RESTful controller actions to implement custom behavior
-    # For example, you may want to send an email after a foo is updated.
-    #
-    # def update
-    #   super
-    #   send_foo_updated_email(requested_resource)
-    # end
+    def destroy
+      resource = requested_resource
+      phase = resource.phase
+      resource.destroy!
 
-    # Override this method to specify custom lookup behavior.
-    # This will be used to set the resource for the `show`, `edit`, and `update`
-    # actions.
-    #
-    # def find_resource(param)
-    #   Foo.find_by!(slug: param)
-    # end
+      respond_to do |format|
+        format.turbo_stream { render locals: { resource: resource, phase: phase } }
+        format.html { redirect_to admin_program_builder_path(program_id: phase.program_id), notice: "Routine removed from phase." }
+      end
+    end
 
-    # The result of this lookup will be available as `requested_resource`
     def create
+      if params[:new_routine_name_mode].present?
+        create_new_routine_and_assign
+      else
+        create_existing_routine_assignment
+      end
+    end
+
+    private
+
+    def create_new_routine_and_assign
+      phase = Phase.find(params[:phase_routine][:phase_id])
+      program = phase.program
+
+      if params[:new_routine_name].blank?
+        raise ActiveRecord::RecordInvalid.new(Routine.new.tap { |r| r.errors.add(:name, "can't be blank") })
+      end
+
+      ActiveRecord::Base.transaction do
+        routine = Routine.create!(
+          name: params[:new_routine_name],
+          is_template: false,
+          user: program.user
+        )
+        @resource = PhaseRoutine.create!(phase: phase, routine: routine)
+      end
+
+      respond_to do |format|
+        format.turbo_stream { render :create, locals: { resource: @resource } }
+        format.html { redirect_to admin_program_builder_path(program_id: phase.program_id), notice: "Routine created and added." }
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      new_resource = resource_class.new
+      error_locals = {
+        page: Administrate::Page::Form.new(dashboard, new_resource),
+        modal_screen: "new",
+        new_routine_error: e.message
+      }
+
+      respond_to do |format|
+        format.turbo_stream { render :new, locals: error_locals, status: :unprocessable_entity }
+        format.html { render :new, locals: error_locals, status: :unprocessable_entity }
+      end
+    end
+
+    def create_existing_routine_assignment
       resource = resource_class.new(resource_params)
       authorize_resource(resource)
 
@@ -32,30 +71,5 @@ module Admin
         end
       end
     end
-
-    # Override this if you have certain roles that require a subset
-    # this will be used to set the records shown on the `index` action.
-    #
-    # def scoped_resource
-    #   if current_user.super_admin?
-    #     resource_class
-    #   else
-    #     resource_class.with_less_stuff
-    #   end
-    # end
-
-    # Override `resource_params` if you want to transform the submitted
-    # data before it's persisted. For example, the following would turn all
-    # empty values into nil values. It uses other APIs such as `resource_class`
-    # and `dashboard`:
-    #
-    # def resource_params
-    #   params.require(resource_class.model_name.param_key).
-    #     permit(dashboard.permitted_attributes(action_name)).
-    #     transform_values { |value| value == "" ? nil : value }
-    # end
-
-    # See https://administrate-demo.herokuapp.com/customizing_controller_actions
-    # for more information
   end
 end
