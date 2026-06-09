@@ -44,7 +44,7 @@
 
           <div id="<%= dom_id(phase) %>_routines" class="space-y-2 min-h-[2rem]">
             <% if phase.phase_routines.any? %>
-              <% phase.phase_routines.includes(:routine).each do |phase_routine| %>
+              <% phase.phase_routines.each do |phase_routine| %>
                 <%= render partial: "admin/routines/routine_card", locals: { routine: phase_routine.routine, phase_routine: phase_routine } %>
               <% end %>
             <% else %>

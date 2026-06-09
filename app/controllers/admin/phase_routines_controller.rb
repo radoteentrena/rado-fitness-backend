@@ -24,14 +24,15 @@ module Admin
     def create_new_routine_and_assign
       phase = Phase.find(params[:phase_routine][:phase_id])
       program = phase.program
+      routine_name = params.permit(:new_routine_name)[:new_routine_name]
 
-      if params[:new_routine_name].blank?
+      if routine_name.blank?
         raise ActiveRecord::RecordInvalid.new(Routine.new.tap { |r| r.errors.add(:name, "can't be blank") })
       end
 
       ActiveRecord::Base.transaction do
         routine = Routine.create!(
-          name: params[:new_routine_name],
+          name: routine_name,
           is_template: false,
           user: program.user
         )

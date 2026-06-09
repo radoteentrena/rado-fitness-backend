@@ -15,6 +15,10 @@ class Api::V1::TrainingController < Api::V1::BaseController
 
   # POST /api/v1/training/start
   def start
+    if (wid = params[:workout_id]).present? && @training_session.workout_id.to_s != wid.to_s
+      requested = @training_session.routine.workouts.find_by(id: wid)
+      @training_session.update!(workout: requested) if requested
+    end
     result = TrainingProgressionService.start_session(@training_session)
     render json: { session: serialize_full_session(result) }
   rescue ArgumentError => e
@@ -108,7 +112,6 @@ class Api::V1::TrainingController < Api::V1::BaseController
           if candidate
             TrainingProgressionService.reconcile_stale_routine!(candidate)
             requested_workout = candidate.routine.workouts.find_by(id: workout_id)
-            candidate.update!(workout: requested_workout) if requested_workout
             requested_workout ? candidate : nil
           end
         end
