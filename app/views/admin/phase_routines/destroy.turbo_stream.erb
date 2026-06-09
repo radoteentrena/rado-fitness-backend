@@ -1,0 +1,7 @@
+<%= turbo_stream.remove dom_id(resource.routine) %>
+
+<% if phase.routines.none? %>
+  <%= turbo_stream.append "#{dom_id(phase)}_routines" do %>
+    <p id="<%= dom_id(phase) %>_no_routines" class="text-xs text-graphite dark:text-muted italic border border-dashed border-shadow dark:border-graphite rounded-lg p-2 text-center bg-whiteish/50 dark:bg-shadow/20">No routines assigned.</p>
+  <% end %>
+<% end %>
