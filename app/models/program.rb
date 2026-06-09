@@ -6,8 +6,14 @@ class Program < ApplicationRecord
   has_many :training_sessions, dependent: :destroy
   has_many :ai_conversations, dependent: :nullify
 
+  before_destroy :prevent_deletion_if_assigned_to_user
+
   def current_week
-    ((Date.current - created_at.to_date).to_i / 7) + 1
+    user&.training_sessions
+        &.where(program: self, status: [ TrainingSession.statuses[:pending], TrainingSession.statuses[:in_progress] ])
+        &.order(created_at: :asc)
+        &.first
+        &.cycle_number || ((Date.current - created_at.to_date).to_i / 7) + 1
   end
 
   def current_routine
@@ -40,6 +46,15 @@ class Program < ApplicationRecord
       TrainingProgressionService.create_initial_session(target_user, new_program)
 
       new_program
+    end
+  end
+
+  private
+
+  def prevent_deletion_if_assigned_to_user
+    if user_id.present?
+      errors.add(:base, "Cannot delete a program assigned to a user. Unassign it first.")
+      throw(:abort)
     end
   end
 end

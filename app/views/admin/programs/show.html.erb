@@ -22,9 +22,9 @@
     <div class="flex space-x-3">
         <% if program.user %>
           <%= button_to remove_user_admin_program_path(program), method: :delete,
-              data: { turbo_confirm: "¿Estás seguro de querer borrar el programa \"#{program.name}\" a #{program.user.name}?" },
+              data: { turbo_confirm: "¿Estás seguro de querer desasignar el programa \"#{program.name}\" de #{program.user.name}?" },
               class: "p-2 text-graphite cursor-pointer hover:text-red-500 dark:text-muted dark:hover:text-red-400 bg-background-light border border-shadow dark:bg-shadow dark:border-graphite rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-400",
-              title: "Remover programa del usuario" do %>
+              title: "Desasignar programa del usuario" do %>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
             </svg>

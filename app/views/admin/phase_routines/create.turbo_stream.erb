@@ -1,5 +1,5 @@
 <%= turbo_stream.append "phase_#{resource.phase_id}_routines" do %>
-  <%= render partial: "admin/routines/routine_card", object: resource.routine, as: :routine, locals: { phase_id: resource.phase_id } %>
+  <%= render partial: "admin/routines/routine_card", locals: { routine: resource.routine, phase_routine: resource } %>
 <% end %>
 
 <%= turbo_stream.remove "phase_#{resource.phase_id}_no_routines" %>

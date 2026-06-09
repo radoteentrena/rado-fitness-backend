@@ -407,10 +407,10 @@
                     </div>
                   </div>
 
-                  <%= button_to admin_program_path(program), method: :delete,
-                                    data: { turbo_confirm: "¿Estás seguro de querer borrar el programa \"#{program.name}\" a #{user.name}?" },
+                  <%= button_to remove_user_admin_program_path(program), method: :delete,
+                                    data: { turbo_confirm: "¿Estás seguro de querer desasignar el programa \"#{program.name}\" de #{user.name}?" },
                                     class: "p-2 text-graphite hover:text-red-500 dark:text-muted dark:hover:text-red-400 hover:cursor-pointer transition-colors rounded focus:outline-none focus:ring-2 focus:ring-red-400",
-                                    title: "Eliminar programa" do %>
+                                    title: "Desasignar programa" do %>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="w-5 h-5"

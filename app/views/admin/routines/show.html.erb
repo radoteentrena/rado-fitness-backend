@@ -26,6 +26,7 @@
       </div>
       <div class="flex items-center gap-2">
          <%= link_to new_admin_routine_workout_path(@routine),
+               data: { turbo_frame: "modal_frame" },
                class: "p-2 bg-saffron text-blackish rounded-lg hover:bg-blackish transition-colors hover:text-saffron",
                title: "Add Workout Day" do %>
            <span class="material-symbols-outlined text-xl">add</span>

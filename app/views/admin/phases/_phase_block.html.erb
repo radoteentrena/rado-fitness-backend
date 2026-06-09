@@ -43,8 +43,10 @@
           </div>
 
           <div id="<%= dom_id(phase) %>_routines" class="space-y-2 min-h-[2rem]">
-            <% if phase.routines.any? %>
-              <%= render partial: "admin/routines/routine_card", collection: phase.routines, as: :routine %>
+            <% if phase.phase_routines.any? %>
+              <% phase.phase_routines.each do |phase_routine| %>
+                <%= render partial: "admin/routines/routine_card", locals: { routine: phase_routine.routine, phase_routine: phase_routine } %>
+              <% end %>
             <% else %>
               <p id="<%= dom_id(phase) %>_no_routines" class="text-xs text-graphite dark:text-muted italic border border-dashed border-shadow dark:border-graphite rounded-lg p-2 text-center bg-whiteish/50 dark:bg-shadow/20">No routines assigned.</p>
             <% end %>

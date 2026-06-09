@@ -90,8 +90,23 @@ module Admin
       program = Program.find(params[:id])
       user = program.user
       name = program.name
-      program.destroy!
-      redirect_to(user ? admin_user_path(user) : admin_programs_path, notice: "Programa \"#{name}\" eliminado correctamente.")
+      
+      if program.destroy
+        redirect_to(user ? admin_user_path(user) : admin_programs_path, notice: "Programa \"#{name}\" eliminado correctamente.")
+      else
+        redirect_to(admin_program_path(program), alert: program.errors.full_messages.to_sentence)
+      end
+    end
+
+    def remove_user
+      program = Program.find(params[:id])
+      user = program.user
+      
+      if user && program.update(user: nil)
+        redirect_to admin_user_path(user), notice: "Programa desasignado correctamente. Ahora es un template."
+      else
+        redirect_to admin_programs_path, alert: "No se pudo desasignar el programa."
+      end
     end
   end
 end

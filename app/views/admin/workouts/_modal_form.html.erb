@@ -1,0 +1,58 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-blackish/50 backdrop-blur-sm p-4">
+  <div class="bg-whiteish dark:bg-shadow rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-shadow dark:border-graphite">
+
+    <div class="flex items-center justify-between p-4 border-b border-shadow dark:border-graphite bg-background-light dark:bg-graphite">
+      <div>
+        <h3 class="text-lg font-semibold text-blackish dark:text-whiteish">New Workout Day</h3>
+        <p class="text-sm text-graphite dark:text-muted mt-0.5"><%= routine.name %></p>
+      </div>
+      <%= link_to (program_id ? admin_program_builder_path(program_id: program_id) : admin_routine_path(routine)),
+          data: { turbo_frame: "_top" },
+          class: "text-graphite hover:text-blackish dark:text-muted dark:hover:text-whiteish transition-colors" do %>
+        <span class="material-symbols-outlined">close</span>
+      <% end %>
+    </div>
+
+    <%= form_with model: [:admin, workout],
+        url: admin_routine_workouts_path(routine),
+        html: { class: "p-6 space-y-5", data: { turbo_frame: "_top" } } do |f| %>
+
+      <%= hidden_field_tag :program_id, program_id %>
+
+      <% if workout.errors.any? %>
+        <div class="p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/50 dark:text-red-300 border border-red-200 dark:border-red-800" role="alert">
+          <ul class="list-disc pl-5 space-y-1">
+            <% workout.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :name, "Workout Name", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+        <%= f.text_field :name,
+            placeholder: "e.g. Upper Body Push",
+            required: true,
+            class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-blackish dark:border-graphite dark:placeholder-graphite dark:text-whiteish" %>
+      </div>
+
+      <div>
+        <%= f.label :description, "Description (Optional)", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
+        <%= f.text_area :description,
+            rows: 3,
+            placeholder: "e.g. Focus on chest and shoulders",
+            class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-blackish dark:border-graphite dark:placeholder-graphite dark:text-whiteish resize-none" %>
+      </div>
+
+      <div class="flex items-center justify-end space-x-3 pt-4 border-t border-shadow dark:border-graphite">
+        <%= link_to "Cancel",
+            (program_id ? admin_program_builder_path(program_id: program_id) : admin_routine_path(routine)),
+            data: { turbo_frame: "_top" },
+            class: "text-blackish bg-whiteish border border-shadow focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 hover:bg-background-light hover:text-primary focus:z-10 dark:bg-shadow dark:text-muted dark:border-graphite dark:hover:text-whiteish dark:hover:bg-graphite" %>
+        <%= f.submit "Create Workout",
+            class: "text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/20 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary dark:hover:bg-primary/90 cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>
