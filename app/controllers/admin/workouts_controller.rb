@@ -5,6 +5,10 @@ class Admin::WorkoutsController < Admin::ApplicationController
   def new
     @workout = @routine.workouts.build
     @program_id = params[:program_id]
+    respond_to do |format|
+      format.turbo_stream
+      format.html
+    end
   end
 
   def create

@@ -6,6 +6,8 @@ class Routine < ApplicationRecord
   has_many :workout_exercises, through: :workouts
   has_many :exercises, through: :workout_exercises
 
+  before_destroy :prevent_deletion_if_assigned_to_user
+
   scope :templates, -> { where(is_template: true) }
 
   def clone_to_user(target_user)
@@ -33,4 +35,13 @@ class Routine < ApplicationRecord
   end
 
   validates :name, presence: true
+
+  private
+
+  def prevent_deletion_if_assigned_to_user
+    if user_id.present?
+      errors.add(:base, "Cannot delete a routine assigned to a user. Unassign it first.")
+      throw(:abort)
+    end
+  end
 end
