@@ -18,7 +18,8 @@ class Workout < ApplicationRecord
       next unless first_phase.id == pr.phase.id
 
       TrainingProgressionService.create_initial_session(program.user, program)
-    rescue ArgumentError
+    rescue ArgumentError => e
+      Rails.logger.warn("[Workout#bootstrap_initial_session] #{e.message}")
       next
     end
   end

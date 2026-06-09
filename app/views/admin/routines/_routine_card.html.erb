@@ -1,6 +1,4 @@
 <%# app/views/admin/routines/_routine_card.html.erb %>
-<% phase_routine ||= routine.phase_routines.find_by(phase_id: phase.id) if defined?(phase) %>
-
 <%= turbo_frame_tag dom_id(routine) do %>
   <div
     class="

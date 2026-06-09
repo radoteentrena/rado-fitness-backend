@@ -24,6 +24,7 @@ class PhaseRoutine < ApplicationRecord
     return unless first_phase.id == phase.id
 
     TrainingProgressionService.create_initial_session(user, program)
-  rescue ArgumentError
+  rescue ArgumentError => e
+    Rails.logger.warn("[PhaseRoutine#bootstrap_initial_session] #{e.message}")
   end
 end

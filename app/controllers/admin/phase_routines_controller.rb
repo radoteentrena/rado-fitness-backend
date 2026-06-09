@@ -47,7 +47,7 @@ module Admin
       error_locals = {
         page: Administrate::Page::Form.new(dashboard, new_resource),
         modal_screen: "new",
-        new_routine_error: e.message
+        new_routine_error: e.record.errors.full_messages.to_sentence
       }
 
       respond_to do |format|

@@ -7,10 +7,6 @@ export default class extends Controller {
 
   static targets = ["choiceScreen", "existingScreen", "newScreen"]
 
-  connect() {
-    this.screenValueChanged(this.screenValue)
-  }
-
   screenValueChanged(value) {
     this.choiceScreenTargets.forEach(el => el.classList.toggle("hidden", value !== "choice"))
     this.existingScreenTargets.forEach(el => el.classList.toggle("hidden", value !== "existing"))
