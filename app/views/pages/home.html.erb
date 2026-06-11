@@ -146,7 +146,7 @@
 <%= render "pages/before_after" %>
 
 <%# Features Section %>
-<section class="py-24 bg-shadow-grey">
+<section id="metodo" class="py-24 bg-shadow-grey">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-16 lg:mb-20">
       <%= render "shared/section_label", content: "El método" %>
@@ -192,7 +192,7 @@
             tracking-wide
           "
         >
-          EMPATÍA Y ADAPTACIÓN ABSOLUTA
+          ADAPTACIÓN A MEDIDA
         </h3>
 
         <p class="text-gray-400 text-sm leading-relaxed font-body">
@@ -225,7 +225,7 @@
             tracking-wide
           "
         >
-          EDUCACIÓN CIENTÍFICA COMO BASE
+          EDUCACIÓN COMO BASE
         </h3>
 
         <p class="text-gray-400 text-sm leading-relaxed font-body">
@@ -258,7 +258,7 @@
             tracking-wide
           "
         >
-          SOSTENIBILIDAD Y RESULTADOS REALES
+          PRÁCTICAS SOSTENIBLES
         </h3>
 
         <p class="text-gray-400 text-sm leading-relaxed font-body">
@@ -272,14 +272,17 @@
 </section>
 
 <%# About/Evolution Section %>
-<section class="py-0 relative overflow-hidden bg-black border-t border-shadow-grey">
+<section
+  id="sobre"
+  class="py-0 relative overflow-hidden bg-black border-t border-shadow-grey"
+>
   <div class="absolute inset-0 z-0">
     <%= image_tag "entrenando.jpg", alt: "", class: "w-full h-full object-cover opacity-15 filter grayscale contrast-125" %>
 
     <div class="absolute inset-0 bg-linear-to-r from-black via-black/60 to-black"></div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
+  <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-4 py-24 relative z-10">
     <div class="flex flex-col lg:flex-row gap-16 items-center">
       <div class="lg:w-1/2 relative">
         <div class="absolute -inset-10 bg-saffron/5 blur-3xl transform rotate-3"></div>
@@ -289,14 +292,14 @@
       <div class="lg:w-1/2">
         <%= render "shared/section_label", content: "Sobre Mí" %>
 
-        <h2
+        <h3
           class="
-            text-4xl sm:text-5xl lg:text-5xl font-display font-bold
+            text-xl sm:text-l lg:text-2xl font-display font-bold
             uppercase text-white mb-4 border-b border-shadow-grey pb-4
           "
         >
-          MI FILOSOFÍA
-        </h2>
+          MIS INICIOS
+        </h3>
 
         <div class="prose prose-lg text-gray-300 font-body text-[15px] leading-relaxed">
           <p class="mb-5">
@@ -309,6 +312,37 @@
             en esos momentos donde no persigo un objetivo competitivo
             específico. El movimiento y la disciplina son mi estilo de vida.
           </p>
+
+          <h3
+            class="
+              text-xl sm:text-l lg:text-2xl font-display font-bold
+              uppercase text-white mb-4 border-b border-shadow-grey pb-4
+            "
+          >
+            Mi formación: NCSF -
+            <br>
+            <span class="text-saffron text-l sm:text-base lg:text-xl">Numero de certificación 2727462</span>
+          </h3>
+
+          <p class="mb-5">
+            Elegí formarme en la NCSF (National Council on Strength &amp;
+            Fitness), una de las instituciones más prestigiosas y reconocidas a
+            nivel internacional en las ciencias del ejercicio. Allí me
+            certifiqué como Entrenador Personal y, posteriormente, decidí
+            especializarme con su curso de Nutrición Deportiva. Elegí la NCSF
+            porque su rigor científico y sus altos estándares de exigencia me
+            brindaron las herramientas conceptuales necesarias para abordar la
+            salud y el rendimiento de mis clientes con la máxima seriedad.
+          </p>
+
+          <h3
+            class="
+              text-xl sm:text-l lg:text-2xl font-display font-bold
+              uppercase text-white mt-4 border-shadow-grey pt-4 mb-4 border-b pb-4
+            "
+          >
+            Mi trayectoria como entrenador
+          </h3>
 
           <p class="mb-5">
             Mi camino como preparador empezó a los 21 años, entrenando de forma
@@ -326,31 +360,49 @@
             de los autores más respetados del mundo y fui adaptando cada cambio
             científico a la práctica real con mis alumnos.
           </p>
-
-          <h2
-            class="
-              text-4xl sm:text-5xl lg:text-5xl font-display font-bold
-              uppercase text-white mt-4 border-shadow-grey pt-4 mb-4 border-b pb-4
-            "
-          >
-            MI FORMACIÓN
-          </h2>
-
-          <p class="mb-5">
-            Elegí formarme en la NCSF (National Council on Strength &amp;
-            Fitness), una de las instituciones más prestigiosas y reconocidas a
-            nivel internacional en las ciencias del ejercicio. Allí me
-            certifiqué como Entrenador Personal y, posteriormente, decidí
-            especializarme con su curso de Nutrición Deportiva. Elegí la NCSF
-            porque su rigor científico y sus altos estándares de exigencia me
-            brindaron las herramientas conceptuales necesarias para abordar la
-            salud y el rendimiento de mis clientes con la máxima seriedad.
-          </p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<div class="bg-saffron border-y-2 border-black">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12">
+      <div class="flex items-start gap-4 shrink-0">
+        <span
+          class="
+            font-display font-black leading-[0.8] tracking-tighter
+            text-black text-7xl sm:text-8xl lg:text-[7rem]
+          "
+        >
+          10
+        </span>
+
+        <span
+          class="
+            font-display font-black uppercase leading-[0.95] tracking-tight
+            text-black text-2xl sm:text-3xl lg:text-4xl pt-1 sm:pt-2
+          "
+        >
+          Años de
+          <br>
+          Experiencia
+          <br>
+          a tu Servicio
+        </span>
+      </div>
+
+      <div class="hidden lg:block self-stretch w-0.5 bg-black/40"></div>
+
+      <p class="font-body text-black text-base sm:text-lg leading-relaxed max-w-2xl">
+        Es este recorrido el que me da la confianza absoluta para hablarte con
+        honestidad, guiarte con base científica y, por encima de todo,
+        <span class="font-bold decoration-2">prometerte y garantizarte resultados reales.</span>
+      </p>
+    </div>
+  </div>
+</div>
 
 <%# App/Coach Section %>
 <section class="py-24 bg-shadow-grey">
@@ -418,7 +470,51 @@
       </div>
 
       <div class="lg:w-5/12 relative flex justify-center lg:justify-end">
-        <%= image_tag("app.png", alt: "Fitness App Interface on Phone", class: "relative z-10 w-full max-w-[320px] mx-auto lg:mx-0 drop-shadow-2xl rounded-[2.5rem] shadow-saffron/10 shadow-3xl", loading: "lazy") %>
+        <div
+          data-controller="phone-showcase"
+          class="relative z-10 w-full max-w-[380px] mx-auto lg:mx-0"
+        >
+          <div
+            class="
+              absolute -left-[3px] top-24 h-8 w-[3px] rounded-l-sm
+              bg-graphite
+            "
+            aria-hidden="true"
+          ></div>
+
+          <div
+            class="
+              absolute -left-[3px] top-36 h-12 w-[3px] rounded-l-sm
+              bg-graphite
+            "
+            aria-hidden="true"
+          ></div>
+
+          <div
+            class="
+              absolute -right-[3px] top-32 h-16 w-[3px] rounded-r-sm
+              bg-graphite
+            "
+            aria-hidden="true"
+          ></div>
+
+          <div
+            class="
+              relative bg-black border-2 border-graphite rounded-[2.75rem]
+              p-2.5 drop-shadow-2xl shadow-saffron/10 shadow-2xl
+            "
+          >
+            <div class="overflow-hidden rounded-4xl bg-black">
+              <div data-phone-showcase-target="track" class="flex">
+                <%= image_tag "phone_1.png", alt: "App de entrenamiento — inicio del día con entreno y nutrición", class: "w-full shrink-0", loading: "lazy", data: { phone_showcase_target: "slide" } %>
+                <%= image_tag "phone_2.png", alt: "App de entrenamiento — pantalla del programa", class: "w-full shrink-0", loading: "lazy", data: { phone_showcase_target: "slide" } %>
+                <%= image_tag "phone_3.png", alt: "App de entrenamiento — pantalla de seguimiento", class: "w-full shrink-0", loading: "lazy", data: { phone_showcase_target: "slide" } %>
+                <%= image_tag "phone_4.png", alt: "App de entrenamiento — registro de series y peso", class: "w-full shrink-0", loading: "lazy", data: { phone_showcase_target: "slide" } %>
+                <%= image_tag "phone_1.png", alt: "", aria: { hidden: "true" }, class: "w-full shrink-0", loading: "lazy", data: { phone_showcase_target: "slide" } %>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -605,7 +701,7 @@
               check_circle
             </span>
 
-            <span class="text-gray-300">Check-ins semanales con Rado</span>
+            <span class="text-gray-300">Check-ins quincenales con Rado</span>
           </li>
 
           <li class="flex items-start gap-3 border-b border-graphite pb-4">
@@ -618,9 +714,7 @@
               check_circle
             </span>
 
-            <span class="text-gray-300">
-              Ajuste de cargas y volumen mensual
-            </span>
+            <span class="text-gray-300"> Ajustes mensuales del programa </span>
           </li>
 
           <li class="flex items-start gap-3">
@@ -634,7 +728,7 @@
             </span>
 
             <span class="text-gray-300">
-              Plan nutricional completo con macros
+              Plan nutricional completo con seguimiento
             </span>
           </li>
         </ul>
@@ -692,7 +786,7 @@
               check_circle
             </span>
 
-            <span class="text-gray-300">Llamadas 1:1 ilimitadas con Rado</span>
+            <span class="text-gray-300">Llamadas 1:1 mensuales con Rado</span>
           </li>
 
           <li class="flex items-start gap-3 border-b border-graphite pb-4">
@@ -705,7 +799,7 @@
               check_circle
             </span>
 
-            <span class="text-gray-300">Prioridad de respuesta en 24h</span>
+            <span class="text-gray-300">Prioridad de respuesta</span>
           </li>
 
           <li class="flex items-start gap-3">
@@ -718,9 +812,7 @@
               check_circle
             </span>
 
-            <span class="text-gray-300">
-              Análisis de composición corporal mensual
-            </span>
+            <span class="text-gray-300"> Acceso a la comunidad </span>
           </li>
         </ul>
 
@@ -737,7 +829,7 @@
 </section>
 
 <%# FAQ Section %>
-<section class="py-24 bg-graphite">
+<section id="faq" class="py-24 bg-graphite">
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col items-center mb-12">
       <%= render "shared/section_label", content: "Dudas" %>
@@ -1082,6 +1174,18 @@
         <ul class="flex flex-col gap-4">
           <li>
             <%= link_to "Inicio", root_path, class: "text-sm text-gray-500 hover:text-saffron transition-colors font-body" %>
+          </li>
+
+          <li>
+            <a
+              href="#sobre"
+              class="
+                text-sm text-gray-500 hover:text-saffron transition-colors
+                font-body
+              "
+            >
+              Sobre mí
+            </a>
           </li>
 
           <li>
