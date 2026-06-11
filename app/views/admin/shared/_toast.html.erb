@@ -1,0 +1,20 @@
+<%#
+  Single admin toast. Locals:
+    message (String)
+    type    ("success" | "error")
+%>
+<%
+  if type == "error"
+    variant = "border-blackish dark:border-graphite shadow-[4px_4px_0px_0px_#040307] dark:shadow-[4px_4px_0px_0px_#2F2F2F]"
+    icon = "✕"
+    icon_color = "text-blackish dark:text-whiteish"
+  else
+    variant = "border-primary shadow-[4px_4px_0px_0px_#F5C228]"
+    icon = "✓"
+    icon_color = "text-primary"
+  end
+%>
+<div class="toast-fadeout pointer-events-auto flex items-center gap-3 px-4 py-3 border-2 bg-whiteish text-blackish dark:bg-blackish dark:text-whiteish text-sm font-semibold <%= variant %>" role="status">
+  <span class="text-base leading-none <%= icon_color %>"><%= icon %></span>
+  <span><%= message %></span>
+</div>
