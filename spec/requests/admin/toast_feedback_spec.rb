@@ -15,6 +15,22 @@ RSpec.describe "Admin toast feedback", type: :request do
     expect(response.body).to include("confirm-trigger")
   end
 
+  it "routes the programs index delete through the confirm modal, not native confirm" do
+    create(:program, user: nil)
+    get admin_programs_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("confirm-trigger")
+    expect(response.body).not_to include("no se puede deshacer")
+  end
+
+  it "routes the exercises index delete through the confirm modal, not native confirm" do
+    create(:exercise)
+    get admin_exercises_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("confirm-trigger")
+    expect(response.body).not_to include("no se puede deshacer")
+  end
+
   it "moves a destroy notice into flash[:toast] as success" do
     exercise = create(:exercise)
     delete admin_exercise_path(exercise)
