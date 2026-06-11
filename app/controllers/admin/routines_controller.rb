@@ -56,6 +56,16 @@ module Admin
       end
     end
 
+    def destroy
+      if requested_resource.user_id.present?
+        redirect_to admin_routines_path,
+          alert: "No se pudo eliminar: la rutina está asignada a un usuario. Desasígnala primero."
+      else
+        requested_resource.destroy
+        redirect_to admin_routines_path, notice: "Rutina eliminada."
+      end
+    end
+
     # Override this if you have certain roles that require a subset
     # this will be used to set the records shown on the `index` action.
     #

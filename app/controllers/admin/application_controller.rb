@@ -6,6 +6,9 @@
 # you're free to overwrite the RESTful controller actions.
 module Admin
   class ApplicationController < Administrate::ApplicationController
+    include Toastable
+    helper Admin::ConfirmDeleteHelper
+
     before_action :authenticate_admin
     layout "admin/application"
 

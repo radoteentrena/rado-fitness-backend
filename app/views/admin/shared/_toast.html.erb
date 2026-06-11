@@ -1,0 +1,20 @@
+<%#
+  Single admin toast. Locals:
+    message (String)
+    type    ("success" | "error")
+%>
+<%
+  if type == "error"
+    accent = "border-l-red-500"
+    icon = "error"
+    icon_color = "text-red-500"
+  else
+    accent = "border-l-primary"
+    icon = "check_circle"
+    icon_color = "text-primary"
+  end
+%>
+<div class="toast-fadeout pointer-events-auto flex items-center gap-3 p-4 rounded-lg shadow-lg border border-shadow dark:border-graphite border-l-4 <%= accent %> bg-whiteish dark:bg-shadow text-blackish dark:text-whiteish text-sm font-medium" role="status">
+  <span class="material-symbols-outlined text-lg leading-none <%= icon_color %>"><%= icon %></span>
+  <span><%= message %></span>
+</div>
