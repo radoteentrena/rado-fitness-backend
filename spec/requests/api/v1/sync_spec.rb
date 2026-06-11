@@ -25,6 +25,12 @@ RSpec.describe "GET /api/v1/sync", type: :request do
         "metric_compliance"
       )
     end
+
+    it "does not create an empty daily metric as a side effect" do
+      expect {
+        get "/api/v1/sync", headers: auth_headers(user)
+      }.not_to change(DailyMetric, :count)
+    end
   end
 
   context "when authenticated with a program, phase, routine, and workouts" do
