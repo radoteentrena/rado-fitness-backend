@@ -8,6 +8,13 @@ RSpec.describe "Admin toast feedback", type: :request do
     allow_any_instance_of(Admin::ApplicationController).to receive(:current_user).and_return(admin_user)
   end
 
+  it "renders the admin routines index with delete links using confirm_delete_data" do
+    create(:routine)
+    get admin_routines_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("confirm-trigger")
+  end
+
   it "moves a destroy notice into flash[:toast] as success" do
     exercise = create(:exercise)
     delete admin_exercise_path(exercise)

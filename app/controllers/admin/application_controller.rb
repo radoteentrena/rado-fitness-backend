@@ -7,6 +7,7 @@
 module Admin
   class ApplicationController < Administrate::ApplicationController
     include Toastable
+    helper Admin::ConfirmDeleteHelper
 
     before_action :authenticate_admin
     layout "admin/application"
