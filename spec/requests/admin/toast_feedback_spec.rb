@@ -15,4 +15,25 @@ RSpec.describe "Admin toast feedback", type: :request do
     expect(flash[:toast]["type"]).to eq("success")
     expect(flash[:notice]).to be_blank
   end
+
+  it "blocks deleting an assigned program with an error toast" do
+    program = create(:program, user: create(:user))
+    delete admin_program_path(program)
+    expect(Program.exists?(program.id)).to be(true)
+    expect(flash[:toast]["type"]).to eq("error")
+  end
+
+  it "deletes an unassigned program template with a success toast" do
+    program = create(:program, user: nil)
+    delete admin_program_path(program)
+    expect(Program.exists?(program.id)).to be(false)
+    expect(flash[:toast]["type"]).to eq("success")
+  end
+
+  it "blocks deleting an assigned routine with an error toast" do
+    routine = create(:routine, user: create(:user))
+    delete admin_routine_path(routine)
+    expect(Routine.exists?(routine.id)).to be(true)
+    expect(flash[:toast]["type"]).to eq("error")
+  end
 end
