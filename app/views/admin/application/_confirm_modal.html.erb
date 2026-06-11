@@ -2,40 +2,44 @@
 <dialog id="confirm-modal"
         data-controller="confirm-modal"
         data-confirm-modal-target="dialog"
-        class="m-auto w-full max-w-[480px] bg-transparent backdrop:bg-blackish/85">
-  <div class="bg-whiteish dark:bg-[#1a1a1a] border-2 border-blackish dark:border-graphite shadow-[6px_6px_0px_0px_#F5C228] p-7">
-    <div class="w-9 h-9 bg-primary flex items-center justify-center mb-4 text-blackish font-black text-lg">!</div>
-
-    <h2 id="confirm-title"
-        data-confirm-modal-target="title"
-        class="text-lg font-extrabold uppercase tracking-wide text-blackish dark:text-whiteish mb-2"></h2>
+        aria-labelledby="confirm-title"
+        class="m-auto w-full max-w-md bg-transparent backdrop:bg-blackish/70">
+  <div class="bg-whiteish dark:bg-shadow border border-shadow dark:border-graphite rounded-xl shadow-xl p-6">
+    <div class="flex items-center gap-3 mb-3">
+      <span class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/15 text-primary shrink-0">
+        <span class="material-symbols-outlined">warning</span>
+      </span>
+      <h2 id="confirm-title"
+          data-confirm-modal-target="title"
+          class="text-lg font-bold text-blackish dark:text-whiteish">Confirmar acción</h2>
+    </div>
 
     <p id="confirm-message"
        data-confirm-modal-target="message"
-       class="text-sm text-graphite dark:text-muted mb-1">¿Seguro que quieres eliminar esto?</p>
+       class="text-sm text-graphite dark:text-muted">¿Seguro que quieres eliminar esto?</p>
 
     <div id="confirm-warning"
          data-confirm-modal-target="warning"
-         class="hidden text-sm font-semibold text-primary bg-primary/10 border border-primary/30 px-3 py-2.5 mt-4 mb-1"></div>
+         class="hidden text-sm text-primary bg-primary/10 border border-primary/20 rounded-lg px-4 py-3 mt-2"></div>
 
     <div class="flex justify-end gap-3 mt-6">
       <div data-confirm-modal-target="confirmFooter" class="flex gap-3">
         <button type="button"
                 data-action="confirm-modal#cancel"
-                class="px-5 py-2 text-xs font-bold uppercase tracking-wide bg-transparent border-2 border-shadow dark:border-graphite text-graphite dark:text-muted hover:text-blackish dark:hover:text-whiteish">
+                class="px-4 py-2 text-sm font-medium rounded-lg bg-transparent border border-shadow dark:border-graphite text-graphite dark:text-muted hover:bg-background-light dark:hover:bg-graphite dark:hover:text-whiteish transition-colors">
           Cancelar
         </button>
         <button type="button"
                 data-confirm-modal-target="submit"
                 data-action="confirm-modal#confirm"
-                class="px-5 py-2 text-xs font-bold uppercase tracking-wide bg-blackish text-whiteish dark:bg-whiteish dark:text-blackish border-2 border-blackish dark:border-whiteish shadow-[4px_4px_0px_0px_#2F2F2F] disabled:opacity-50">
+                class="px-4 py-2 text-sm font-semibold rounded-lg bg-graphite text-whiteish hover:bg-blackish dark:hover:bg-whiteish dark:hover:text-blackish transition-colors disabled:opacity-50">
           Sí, eliminar
         </button>
       </div>
       <div data-confirm-modal-target="blockFooter" class="hidden">
         <button type="button"
                 data-action="confirm-modal#cancel"
-                class="px-5 py-2 text-xs font-bold uppercase tracking-wide bg-blackish text-whiteish dark:bg-whiteish dark:text-blackish border-2 border-blackish dark:border-whiteish">
+                class="px-4 py-2 text-sm font-semibold rounded-lg bg-primary text-blackish hover:bg-primary/90 transition-colors">
           Entendido
         </button>
       </div>
