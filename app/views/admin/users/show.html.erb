@@ -162,9 +162,21 @@
             Current Dietary Plan
           </h3>
 
-          <%= link_to "Asignar Plan", new_admin_user_dietary_plan_assignment_path(user),
-                  data: { turbo_frame: "modal_frame" },
-                  class: "text-sm font-medium text-primary hover:underline" %>
+          <div class="flex items-center gap-3">
+            <%= link_to new_admin_user_dietary_plan_assignment_path(user),
+                    data: { turbo_frame: "modal_frame" },
+                    class: "inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline" do %>
+              <span class="material-symbols-outlined text-base">playlist_add</span>
+              Asignar Plan
+            <% end %>
+
+            <%= link_to new_admin_user_custom_dietary_plan_path(user),
+                    data: { turbo_frame: "modal_frame" },
+                    title: "Crear plan personalizado",
+                    class: "p-1 text-primary hover:bg-primary/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary" do %>
+              <span class="material-symbols-outlined text-xl">add</span>
+            <% end %>
+          </div>
         </div>
 
         <% if (active_plan = user.user_dietary_plans.active.last) %>
@@ -217,107 +229,52 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              <div
-                class="
-                  col-span-2 p-4 rounded-lg border border-shadow
-                  dark:border-primary/30 text-center
-                "
-              >
-                <span
-                  class="
-                    block text-xs font-bold text-graphite dark:text-muted
-                    uppercase tracking-wider
-                  "
-                >
-                  Calories
-                </span>
+            <%= form_with model: active_plan, url: admin_user_dietary_plan_path(active_plan), method: :patch,
+                          data: { controller: "macro-calculator", turbo_frame: "_top" } do |f| %>
+              <%= hidden_field_tag :return_to_user, "1" %>
 
-                <span
-                  class="
-                    block mt-1 text-2xl font-bold text-blackish
-                    dark:text-whiteish
-                  "
-                >
-                  <%= active_plan.calories_target %>
-                </span>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2 p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
+                  <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">
+                    Calories
+                  </span>
+                  <%= f.number_field :calories_target,
+                        data: { macro_calculator_target: "calories", action: "input->macro-calculator#caloriesChanged" },
+                        class: "block w-full mt-1 text-2xl font-bold text-center text-blackish dark:text-whiteish bg-transparent border-0 p-0 focus:ring-2 focus:ring-primary rounded" %>
+                </div>
+
+                <div class="p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
+                  <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">
+                    Protein (g)
+                  </span>
+                  <%= f.number_field :protein_target,
+                        data: { macro_calculator_target: "protein", action: "input->macro-calculator#macroChanged" },
+                        class: "block w-full mt-1 text-2xl font-bold text-center text-blackish dark:text-whiteish bg-transparent border-0 p-0 focus:ring-2 focus:ring-primary rounded" %>
+                </div>
+
+                <div class="p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
+                  <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">
+                    Fats (g)
+                  </span>
+                  <%= f.number_field :fats_target,
+                        data: { macro_calculator_target: "fats", action: "input->macro-calculator#macroChanged" },
+                        class: "block w-full mt-1 text-2xl font-bold text-center text-blackish dark:text-whiteish bg-transparent border-0 p-0 focus:ring-2 focus:ring-primary rounded" %>
+                </div>
+
+                <div class="col-span-2 p-4 rounded-lg border border-shadow dark:border-primary/30 text-center">
+                  <span class="block text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">
+                    Carbs (g)
+                  </span>
+                  <%= f.number_field :carbs_target,
+                        data: { macro_calculator_target: "carbs", action: "input->macro-calculator#macroChanged" },
+                        class: "block w-full mt-1 text-2xl font-bold text-center text-blackish dark:text-whiteish bg-transparent border-0 p-0 focus:ring-2 focus:ring-primary rounded" %>
+                </div>
               </div>
 
-              <div
-                class="
-                  p-4 rounded-lg border border-shadow dark:border-primary/30
-                  text-center
-                "
-              >
-                <span
-                  class="
-                    block text-xs font-bold text-graphite dark:text-muted
-                    uppercase tracking-wider
-                  "
-                >
-                  Protein
-                </span>
-
-                <span
-                  class="
-                    block mt-1 text-2xl font-bold text-blackish
-                    dark:text-whiteish
-                  "
-                >
-                  <%= active_plan.protein_target %>g
-                </span>
-              </div>
-
-              <div
-                class="
-                  p-4 rounded-lg border border-shadow dark:border-primary/30
-                  text-center
-                "
-              >
-                <span
-                  class="
-                    block text-xs font-bold text-graphite dark:text-muted
-                    uppercase tracking-wider
-                  "
-                >
-                  Fats
-                </span>
-
-                <span
-                  class="
-                    block mt-1 text-2xl font-bold text-blackish
-                    dark:text-whiteish
-                  "
-                >
-                  <%= active_plan.fats_target %>g
-                </span>
-              </div>
-
-              <div
-                class="
-                  col-span-2 p-4 rounded-lg border border-shadow
-                  dark:border-primary/30 text-center
-                "
-              >
-                <span
-                  class="
-                    block text-xs font-bold text-graphite dark:text-muted
-                    uppercase tracking-wider
-                  "
-                >
-                  Carbs
-                </span>
-
-                <span
-                  class="
-                    block mt-1 text-2xl font-bold text-blackish
-                    dark:text-whiteish
-                  "
-                >
-                  <%= active_plan.carbs_target %>g
-                </span>
-              </div>
-            </div>
+              <%= f.submit "Guardar",
+                    data: { macro_calculator_target: "save" },
+                    class: "hidden w-full mt-3 text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/20 font-bold rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer" %>
+            <% end %>
 
             <% if active_plan.notes.present? %>
               <div

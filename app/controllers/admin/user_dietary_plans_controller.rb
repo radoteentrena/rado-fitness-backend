@@ -19,9 +19,13 @@ module Admin
 
     def update
       if requested_resource.update(resource_params)
-        respond_to do |format|
-          format.html { redirect_to [namespace, requested_resource], notice: translate_with_resource("update.success") }
-          format.turbo_stream { render locals: { requested_resource: requested_resource } }
+        if params[:return_to_user]
+          redirect_to admin_user_path(requested_resource.user), status: :see_other, notice: "Plan alimenticio actualizado."
+        else
+          respond_to do |format|
+            format.html { redirect_to [namespace, requested_resource], notice: translate_with_resource("update.success") }
+            format.turbo_stream { render locals: { requested_resource: requested_resource } }
+          end
         end
       else
         render :edit, locals: {
