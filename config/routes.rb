@@ -63,6 +63,7 @@ Rails.application.routes.draw do
       resources :users do
         resource :program_assignment, only: [ :new, :create ]
         resource :dietary_plan_assignment, only: [ :new, :create ]
+        resource :custom_dietary_plan, only: [ :new, :create ]
         resource :payment_link, only: [ :create ]
         member do
           post :promote

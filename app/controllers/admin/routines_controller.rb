@@ -56,12 +56,17 @@ module Admin
       end
     end
 
-    # Override this if you have certain roles that require a subset
-    # this will be used to set the records shown on the `index` action.
-    #
-    # def scoped_resource
-    #   resource_class.templates
-    # end
+    def apply_collection_includes(collection)
+      collection.includes(:workouts)
+    end
+
+    def scoped_resource
+      scope = super.where(is_template: true)
+      scope = scope.where("name ILIKE ?", "%#{params[:gender]}%")  if params[:gender].present?
+      scope = scope.where("name ILIKE ?", "%#{params[:focus]}%")   if params[:focus].present?
+      scope = scope.where("name ILIKE ?", "%#{params[:level]}%")   if params[:level].present?
+      scope
+    end
 
     # Override `resource_params` if you want to transform the submitted
     # data before it's persisted. For example, the following would turn all

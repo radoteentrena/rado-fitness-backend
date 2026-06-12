@@ -8,6 +8,10 @@ class Routine < ApplicationRecord
 
   before_destroy :prevent_deletion_if_assigned_to_user
 
+  FOCUSES = ["Fuerza", "Estética", "Salud", "Atletismo"].freeze
+  LEVELS  = ["Principiante", "Intermedio", "Avanzado"].freeze
+  GENDERS = ["Hombre", "Mujer"].freeze
+
   scope :templates, -> { where(is_template: true) }
 
   def clone_to_user(target_user)

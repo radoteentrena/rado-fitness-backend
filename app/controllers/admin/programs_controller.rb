@@ -1,7 +1,11 @@
 module Admin
   class ProgramsController < Admin::ApplicationController
+    def scoped_resource
+      super.where(user_id: nil)
+    end
+
     def apply_collection_includes(collection)
-      collection.includes(:user)
+      collection.includes(phases: { phase_routines: :routine })
     end
 
     def create

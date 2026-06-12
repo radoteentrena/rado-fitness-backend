@@ -4,7 +4,7 @@ class AiCoachService
     @embedder = EmbeddingService.new
   end
 
-  def generate_program(objectives:, user: nil, mode: "program")
+  def generate_program(objectives:, user: nil, mode: "program", gender: nil, focus: nil, level: nil)
     book_context    = retrieve_context(objectives)
     client_profile  = build_client_profile(user)
     exercises_list  = Rails.cache.fetch("exercises_list", expires_in: 1.hour) do
@@ -17,7 +17,10 @@ class AiCoachService
       book_context:   book_context,
       client_profile: client_profile,
       exercises_list: exercises_list,
-      mode:           mode
+      mode:           mode,
+      gender:         gender,
+      focus:          focus,
+      level:          level
     )
 
     response_text   = @gemini.call(system_prompt, user_prompt)
@@ -178,6 +181,15 @@ class AiCoachService
       IMPORTANT: All program names, descriptions, and instructions MUST be written in Spanish.
       This includes the program name, routine names, workout descriptions, exercise instructions,
       and dietary plan information. The audience is Argentine/Spanish-speaking clients.
+
+      ROUTINE NAMING CONVENTION — MANDATORY:
+      Every routine "name" field MUST begin with the classification tags in this exact format:
+      "[Género] [Objetivo] [Nivel] — [Descripción breve]"
+      - Género must be exactly one of: #{Routine::GENDERS.join(', ')}
+      - Objetivo must be exactly one of: #{Routine::FOCUSES.join(', ')}
+      - Nivel must be exactly one of: #{Routine::LEVELS.join(', ')}
+      Example: "Hombre Fuerza Intermedio — Upper/Lower 4 días"
+      This applies to ALL routines regardless of generation mode.
     BASE
 
     return base unless mode == "program_chat"
@@ -205,12 +217,20 @@ class AiCoachService
     CHAT
   end
 
-  def build_generation_prompt(objectives:, book_context:, client_profile:, exercises_list:, mode:)
+  def build_generation_prompt(objectives:, book_context:, client_profile:, exercises_list:, mode:, gender: nil, focus: nil, level: nil)
     json_schema = generation_json_schema(mode)
+    classification_tags = [ gender, focus, level ].compact
 
     <<~PROMPT
       #{client_profile}
 
+      #{ if classification_tags.any?
+           "ROUTINE CLASSIFICATION (REQUIRED — must appear in every routine name):\n" \
+           "- Género: #{gender || 'not specified'}\n" \
+           "- Objetivo: #{focus || 'not specified'}\n" \
+           "- Nivel: #{level || 'not specified'}\n" \
+           "Every routine name MUST start with: \"#{classification_tags.join(' ')} — \"\n"
+         end }
       COACH'S OBJECTIVES:
       #{objectives}
 

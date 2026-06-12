@@ -61,4 +61,4 @@ CLAUDE.md
 .agent/workflows
 .github
 /qa
-.agents
+.agents.DS_Store
