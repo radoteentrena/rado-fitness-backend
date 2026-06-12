@@ -15,7 +15,7 @@
                   <% end %>
               </div>
               <!-- Modal body -->
-              <%= form_for([:admin, resource], html: { class: "space-y-4" }) do |f| %>
+              <%= form_for([:admin, resource], html: { class: "space-y-4", data: { controller: "macro-calculator" } }) do |f| %>
                   <div class="grid gap-4 mb-4 sm:grid-cols-2">
                       <div class="sm:col-span-2">
                           <%= f.label :name, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
@@ -23,19 +23,19 @@
                       </div>
                       <div>
                           <%= f.label :calories_target, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-                          <%= f.number_field :calories_target, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "2500" %>
+                          <%= f.number_field :calories_target, data: { macro_calculator_target: "calories", action: "input->macro-calculator#caloriesChanged" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "2500" %>
                       </div>
                       <div>
                           <%= f.label :protein_target, "Protein Target (g)", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-                          <%= f.number_field :protein_target, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "180" %>
+                          <%= f.number_field :protein_target, data: { macro_calculator_target: "protein", action: "input->macro-calculator#macroChanged" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "180" %>
                       </div>
                       <div>
                           <%= f.label :fats_target, "Fats Target (g)", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-                          <%= f.number_field :fats_target, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "70" %>
+                          <%= f.number_field :fats_target, data: { macro_calculator_target: "fats", action: "input->macro-calculator#macroChanged" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "70" %>
                       </div>
                       <div>
                           <%= f.label :carbs_target, "Carbs Target (g)", class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
-                          <%= f.number_field :carbs_target, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "300" %>
+                          <%= f.number_field :carbs_target, data: { macro_calculator_target: "carbs", action: "input->macro-calculator#macroChanged" }, class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:placeholder-graphite dark:text-whiteish dark:focus:ring-primary dark:focus:border-primary", placeholder: "300" %>
                       </div>
                       <div class="sm:col-span-2">
                           <%= f.label :description, class: "block mb-2 text-sm font-medium text-blackish dark:text-whiteish" %>
