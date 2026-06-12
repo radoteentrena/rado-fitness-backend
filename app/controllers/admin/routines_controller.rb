@@ -56,6 +56,10 @@ module Admin
       end
     end
 
+    def apply_collection_includes(collection)
+      collection.includes(:workouts)
+    end
+
     def scoped_resource
       scope = super.where(is_template: true)
       scope = scope.where("name ILIKE ?", "%#{params[:gender]}%")  if params[:gender].present?

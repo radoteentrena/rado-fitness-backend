@@ -17,9 +17,9 @@ module Admin
       end
 
       redirect_to admin_user_path(user), notice: "Plan alimenticio personalizado creado."
-    rescue => e
+    rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error("CustomDietaryPlan error for user #{params[:user_id]}: #{e.message}")
-      redirect_to admin_user_path(params[:user_id]), alert: "Error al crear plan: #{e.message}"
+      redirect_to admin_user_path(params[:user_id]), alert: "Error al crear plan: #{e.record.errors.full_messages.to_sentence}"
     end
 
     private
