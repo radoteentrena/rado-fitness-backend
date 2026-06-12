@@ -165,9 +165,9 @@
           <div class="flex items-center gap-3">
             <%= link_to new_admin_user_dietary_plan_assignment_path(user),
                     data: { turbo_frame: "modal_frame" },
-                    class: "inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline" do %>
-              <span class="material-symbols-outlined text-base">playlist_add</span>
-              Asignar Plan
+                    title: "Asignar plan",
+                    class: "p-1 text-primary hover:bg-primary/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary" do %>
+              <span class="material-symbols-outlined text-xl">playlist_add</span>
             <% end %>
 
             <%= link_to new_admin_user_custom_dietary_plan_path(user),
