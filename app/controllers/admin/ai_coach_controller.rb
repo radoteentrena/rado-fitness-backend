@@ -14,8 +14,11 @@ module Admin
 
       result = service.generate_program(
         objectives: params[:objectives],
-        user: user,
-        mode: params[:mode] || "program"
+        user:       user,
+        mode:       params[:mode] || "program",
+        gender:     params[:gender].presence,
+        focus:      params[:focus].presence,
+        level:      params[:level].presence
       )
 
       @conversation = result[:conversation]

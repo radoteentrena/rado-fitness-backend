@@ -1,69 +1,83 @@
 <div class="relative overflow-x-auto bg-whiteish dark:bg-shadow shadow-xs rounded-xl border border-shadow dark:border-graphite mx-4">
-  <table class="w-full text-sm text-left rtl:text-right text-graphite dark:text-muted">
-    <thead class="text-sm text-blackish dark:text-whiteish bg-background-light dark:bg-graphite border-b border-shadow dark:border-graphite">
+  <table class="w-full text-sm text-left text-graphite dark:text-muted">
+    <thead class="text-xs text-blackish uppercase border-b border-graphite bg-background-light dark:bg-graphite dark:text-whiteish">
       <tr>
-        <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
-          <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :id, label: "ID", page: page, collection_field_name: local_assigns[:collection_field_name] %>
-        </th>
-        <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
-          <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :name, page: page, collection_field_name: local_assigns[:collection_field_name] %>
-        </th>
-        <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
-          <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :duration_weeks, label: "Duration (Weeks)", page: page, collection_field_name: local_assigns[:collection_field_name] %>
-        </th>
-        <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
-          <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :user, label: "Assigned To", page: page, collection_field_name: local_assigns[:collection_field_name] %>
-        </th>
-        <th scope="col" class="px-6 py-3 font-medium cursor-pointer hover:bg-background-light dark:hover:bg-shadow">
-          <%= render "admin/application/sortable_header", collection_presenter: collection_presenter, attr_name: :google_sheet_link, label: "Google Sheet", page: page, collection_field_name: local_assigns[:collection_field_name] %>
-        </th>
-        <th scope="col" class="px-6 py-3 font-medium">
-          <span class="sr-only">Edit</span>
-        </th>
+        <th scope="col" class="px-6 py-3 w-full">Programa</th>
+        <th scope="col" class="px-6 py-3 whitespace-nowrap">Rutinas</th>
+        <th scope="col" class="px-6 py-3 whitespace-nowrap">Fases</th>
+        <th scope="col" class="px-6 py-3 whitespace-nowrap">Duración</th>
+        <th scope="col" class="px-6 py-3"></th>
       </tr>
     </thead>
     <tbody>
       <% resources.each do |resource| %>
-        <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-whiteish/50 hover:bg-background-light dark:hover:bg-shadow/50">
-          <th scope="row" class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
-            <%= resource.id %>
-          </th>
-          <td class="px-6 py-4 font-medium text-blackish dark:text-whiteish whitespace-nowrap">
-            <%= link_to resource.name, admin_program_path(resource), class: "hover:text-primary transition-colors" %>
-          </td>
+        <% routines = resource.phases.flat_map { |p| p.phase_routines.map(&:routine) }.compact.uniq(&:id) %>
+        <tr class="bg-whiteish dark:bg-shadow border-b border-shadow dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50">
+
+          <%# Program name %>
           <td class="px-6 py-4">
-            <%= resource.duration_weeks %>
+            <%= link_to resource.name, admin_program_path(resource),
+                class: "font-medium text-blackish dark:text-whiteish hover:text-primary dark:hover:text-primary transition-colors" %>
           </td>
+
+          <%# Attached routines %>
           <td class="px-6 py-4">
-             <% if resource.user.present? %>
-                <%= link_to resource.user.name, admin_user_path(resource.user), class: "hover:text-primary transition-colors dark:text-primary" %>
-             <% else %>
-                <span class="bg-primary/20 text-primary text-xs font-medium px-2.5 py-0.5 rounded border border-primary/20">Template</span>
-             <% end %>
-          </td>
-          <td class="px-6 py-4">
-            <% if resource.google_sheet_link.present? %>
-                <a href="<%= resource.google_sheet_link %>" target="_blank" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">
-                    <span class="material-symbols-outlined">table_view</span>
-                </a>
+            <% if routines.any? %>
+              <div class="flex flex-col gap-1">
+                <% routines.each do |routine| %>
+                  <%= link_to routine.name, admin_routine_path(routine), data: { turbo: false },
+                      class: "text-xs text-graphite dark:text-muted hover:text-primary dark:hover:text-primary transition-colors truncate max-w-[220px] block" %>
+                <% end %>
+              </div>
             <% else %>
-                <span class="text-muted">–</span>
+              <span class="text-graphite dark:text-muted">—</span>
             <% end %>
           </td>
 
-          <td class="px-6 py-4 text-right">
-            <div class="flex items-center justify-end gap-3">
-              <%= link_to "Edit", edit_admin_program_path(resource), data: { turbo_frame: "modal_frame" }, class: "font-medium text-primary dark:text-primary hover:underline" %>
+          <%# Phases count %>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center gap-1.5 text-graphite dark:text-muted">
+              <span class="material-symbols-outlined text-base">schema</span>
+              <%= resource.phases.size %>
+            </div>
+          </td>
+
+          <%# Duration %>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <% if resource.duration_weeks.present? %>
+              <div class="flex items-center gap-1.5 text-graphite dark:text-muted">
+                <span class="material-symbols-outlined text-base">calendar_month</span>
+                <%= resource.duration_weeks %> sem.
+              </div>
+            <% else %>
+              <span class="text-graphite dark:text-muted">—</span>
+            <% end %>
+          </td>
+
+          <%# Actions %>
+          <td class="px-6 py-4">
+            <div class="flex items-center justify-end gap-1">
+              <%= link_to admin_program_path(resource),
+                  title: "Ver programa",
+                  class: "p-1.5 rounded text-graphite hover:text-primary dark:text-muted dark:hover:text-primary hover:bg-background-light dark:hover:bg-blackish transition-colors" do %>
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+              <% end %>
+
+              <%= link_to edit_admin_program_path(resource), data: { turbo_frame: "modal_frame" },
+                  title: "Editar programa",
+                  class: "p-1.5 rounded text-graphite hover:text-primary dark:text-muted dark:hover:text-primary hover:bg-background-light dark:hover:bg-blackish transition-colors" do %>
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+              <% end %>
+
               <%= button_to admin_program_path(resource), method: :delete,
+                  title: "Eliminar programa",
                   data: { turbo_confirm: "¿Eliminar el programa \"#{resource.name}\"? Esta acción no se puede deshacer." },
-                  class: "p-1 text-graphite hover:text-red-500 dark:text-muted dark:hover:text-red-400 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-red-400",
-                  title: "Eliminar programa" do %>
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" />
-                </svg>
+                  class: "p-1.5 rounded text-graphite hover:text-red-500 dark:text-muted dark:hover:text-red-400 hover:bg-background-light dark:hover:bg-blackish transition-colors cursor-pointer bg-transparent border-0" do %>
+                <span class="material-symbols-outlined text-[18px]">delete</span>
               <% end %>
             </div>
           </td>
+
         </tr>
       <% end %>
     </tbody>

@@ -33,27 +33,88 @@
           </select>
         </div>
 
-        <!-- Step 2: Objectives -->
+        <!-- Step 2: Routine Classification -->
+        <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-6">
+          <h2 class="text-lg font-semibold text-blackish dark:text-whiteish mb-1 flex items-center gap-2">
+            <span class="bg-primary text-blackish w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">2</span>
+            Clasificación de la Rutina
+          </h2>
+          <p class="text-xs text-graphite dark:text-muted mb-4 ml-9">Estos valores se incluyen automáticamente en el nombre de cada rutina generada para que queden filtrables en la biblioteca.</p>
+
+          <div class="grid grid-cols-3 gap-4">
+            <div>
+              <label for="gender" class="block text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider mb-1.5">Género</label>
+              <select name="gender" id="gender"
+                class="w-full rounded-xl border border-shadow dark:border-graphite bg-background-light dark:bg-blackish text-blackish dark:text-whiteish px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition">
+                <option value="">— Sin especificar</option>
+                <% Routine::GENDERS.each do |g| %>
+                  <option value="<%= g %>"><%= g %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div>
+              <label for="focus" class="block text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider mb-1.5">Objetivo</label>
+              <select name="focus" id="focus"
+                class="w-full rounded-xl border border-shadow dark:border-graphite bg-background-light dark:bg-blackish text-blackish dark:text-whiteish px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition">
+                <option value="">— Sin especificar</option>
+                <% Routine::FOCUSES.each do |f| %>
+                  <option value="<%= f %>"><%= f %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div>
+              <label for="level" class="block text-xs font-semibold text-graphite dark:text-muted uppercase tracking-wider mb-1.5">Nivel</label>
+              <select name="level" id="level"
+                class="w-full rounded-xl border border-shadow dark:border-graphite bg-background-light dark:bg-blackish text-blackish dark:text-whiteish px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition">
+                <option value="">— Sin especificar</option>
+                <% Routine::LEVELS.each do |l| %>
+                  <option value="<%= l %>"><%= l %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Objectives -->
         <div class="bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-6 mb-6">
           <h2 class="text-lg font-semibold text-blackish dark:text-whiteish mb-4 flex items-center gap-2">
-            <span class="bg-primary text-blackish w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">2</span>
-            Objectives & Preferences
+            <span class="bg-primary text-blackish w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold">3</span>
+            Prompt de Objetivos
           </h2>
 
+          <!-- Prompt Guide -->
+          <div class="mb-4 rounded-xl border border-primary/30 bg-primary/5 dark:bg-primary/10 p-4">
+            <p class="text-xs font-semibold text-primary uppercase tracking-wider mb-2">Guía de prompt</p>
+            <ul class="text-xs text-graphite dark:text-muted space-y-1.5 list-none">
+              <li><span class="font-semibold text-blackish dark:text-whiteish">Días/semana:</span> indicar cuántos días entrena (ej: 4 días/semana)</li>
+              <li><span class="font-semibold text-blackish dark:text-whiteish">Split:</span> tipo de división (ej: Upper/Lower, Push/Pull/Legs, Full Body)</li>
+              <li><span class="font-semibold text-blackish dark:text-whiteish">Duración:</span> semanas del bloque o programa (ej: 8 semanas)</li>
+              <li><span class="font-semibold text-blackish dark:text-whiteish">Énfasis muscular:</span> grupos prioritarios (ej: pecho y hombros)</li>
+              <li><span class="font-semibold text-blackish dark:text-whiteish">Restricciones:</span> lesiones, equipamiento, tiempo por sesión</li>
+              <li><span class="font-semibold text-blackish dark:text-whiteish">Observaciones extra:</span> cualquier detalle específico del cliente</li>
+            </ul>
+            <p class="mt-3 text-xs text-graphite dark:text-muted border-t border-primary/20 pt-2">
+              <span class="font-semibold text-blackish dark:text-whiteish">Ejemplo:</span>
+              4 días/semana, Upper/Lower, 8 semanas de acumulación. Énfasis en pecho y dorsales. Sin lesiones. 60 min por sesión.
+            </p>
+          </div>
+
           <textarea name="objectives" id="objectives" rows="5" required
-            placeholder="Describe the training goals, e.g.:&#10;- Build muscle mass, focus on upper body&#10;- 4 training days per week&#10;- Intermediate level, 2 years experience&#10;- Client wants to compete in 6 months"
+            placeholder="4 días/semana, Upper/Lower, 8 semanas de acumulación. Énfasis en pecho y dorsales. Sin lesiones. 60 min por sesión."
             class="w-full rounded-xl border border-shadow dark:border-graphite bg-background-light dark:bg-blackish text-blackish dark:text-whiteish px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition resize-y"></textarea>
 
           <!-- Generation Mode -->
           <div class="mt-4">
-            <label class="text-sm font-medium text-graphite dark:text-muted mb-3 block">Generate:</label>
+            <label class="text-sm font-medium text-graphite dark:text-muted mb-3 block">Generar:</label>
             <div class="flex flex-col sm:flex-row gap-6">
               <label class="flex items-start gap-3 cursor-pointer group">
                 <input type="radio" name="mode" value="program" checked
                   class="mt-1 w-4 h-4 text-primary focus:ring-primary border-shadow dark:border-graphite">
                 <div>
-                  <span class="block text-sm font-semibold text-blackish dark:text-whiteish group-hover:text-primary transition-colors">Full Program</span>
-                  <span class="block text-xs text-graphite dark:text-muted mt-0.5">Generates a complete multi-phase macrocycle (Program → Phases → Routines → Workouts)</span>
+                  <span class="block text-sm font-semibold text-blackish dark:text-whiteish group-hover:text-primary transition-colors">Programa completo</span>
+                  <span class="block text-xs text-graphite dark:text-muted mt-0.5">Macrociclo completo con fases, rutinas y workouts</span>
                 </div>
               </label>
 
@@ -61,8 +122,8 @@
                 <input type="radio" name="mode" value="routine"
                   class="mt-1 w-4 h-4 text-primary focus:ring-primary border-shadow dark:border-graphite">
                 <div>
-                  <span class="block text-sm font-semibold text-blackish dark:text-whiteish group-hover:text-primary transition-colors">Single Routine</span>
-                  <span class="block text-xs text-graphite dark:text-muted mt-0.5">Generates a standalone training block (Routine → Workouts) without phases</span>
+                  <span class="block text-sm font-semibold text-blackish dark:text-whiteish group-hover:text-primary transition-colors">Rutina individual</span>
+                  <span class="block text-xs text-graphite dark:text-muted mt-0.5">Bloque standalone sin fases (Rutina → Workouts)</span>
                 </div>
               </label>
             </div>
