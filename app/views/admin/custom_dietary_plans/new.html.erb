@@ -1,0 +1,73 @@
+<%= turbo_frame_tag "modal_frame" do %>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-blackish/60 backdrop-blur-sm">
+    <div class="relative w-full max-w-lg mx-4 max-h-[85vh] flex flex-col bg-whiteish dark:bg-shadow rounded-xl border border-shadow dark:border-graphite shadow-xl">
+
+      <div class="flex items-center justify-between px-6 py-4 border-b border-shadow dark:border-graphite">
+        <h3 class="text-lg font-bold text-blackish dark:text-whiteish">Crear Plan Personalizado</h3>
+        <%= link_to admin_user_path(@user), class: "p-1 text-graphite hover:text-blackish dark:text-muted dark:hover:text-whiteish transition-colors", data: { turbo_frame: "modal_frame" } do %>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+        <% end %>
+      </div>
+
+      <div class="overflow-y-auto flex-1 px-6 py-4">
+        <%= form_with url: admin_user_custom_dietary_plan_path(@user), method: :post, scope: :user_dietary_plan,
+                      data: { controller: "macro-calculator", macro_calculator_bmr_value: @bmr, turbo_frame: "_top" },
+                      html: { class: "space-y-4" } do |f| %>
+
+          <div class="p-3 bg-background-light dark:bg-graphite rounded-lg">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-graphite dark:text-muted uppercase tracking-wider">BMR (Harris-Benedict)</span>
+              <span class="text-sm font-bold text-blackish dark:text-whiteish">
+                <%= @bmr ? "#{@bmr} kcal" : "Datos insuficientes" %>
+              </span>
+            </div>
+            <% if @bmr %>
+              <div class="mt-3">
+                <%= label_tag :activity_factor, "Nivel de actividad", class: "block mb-1 text-sm font-medium text-blackish dark:text-whiteish" %>
+                <%= select_tag :activity_factor,
+                      options_for_select([["Seleccionar...", ""]] + HarrisBenedict::ACTIVITY_FACTORS.map { |label, factor| ["#{label} (×#{factor})", factor] }),
+                      data: { macro_calculator_target: "activity", action: "change->macro-calculator#applyActivity" },
+                      class: "bg-whiteish border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+              <%= f.label :calories_target, "Calorías", class: "block mb-1 text-sm font-medium text-blackish dark:text-whiteish" %>
+              <%= f.number_field :calories_target, required: true,
+                    data: { macro_calculator_target: "calories", action: "input->macro-calculator#caloriesChanged" },
+                    class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+            </div>
+            <div>
+              <%= f.label :protein_target, "Proteína (g)", class: "block mb-1 text-sm font-medium text-blackish dark:text-whiteish" %>
+              <%= f.number_field :protein_target, required: true,
+                    data: { macro_calculator_target: "protein", action: "input->macro-calculator#macroChanged" },
+                    class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+            </div>
+            <div>
+              <%= f.label :fats_target, "Grasas (g)", class: "block mb-1 text-sm font-medium text-blackish dark:text-whiteish" %>
+              <%= f.number_field :fats_target,
+                    data: { macro_calculator_target: "fats", action: "input->macro-calculator#macroChanged" },
+                    class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+            </div>
+            <div class="col-span-2">
+              <%= f.label :carbs_target, "Carbohidratos (g)", class: "block mb-1 text-sm font-medium text-blackish dark:text-whiteish" %>
+              <%= f.number_field :carbs_target,
+                    data: { macro_calculator_target: "carbs", action: "input->macro-calculator#macroChanged" },
+                    class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+            </div>
+            <div class="col-span-2">
+              <%= f.label :notes, "Notas", class: "block mb-1 text-sm font-medium text-blackish dark:text-whiteish" %>
+              <%= f.text_area :notes, rows: 3,
+                    class: "bg-background-light border border-shadow text-blackish text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-shadow dark:border-graphite dark:text-whiteish" %>
+            </div>
+          </div>
+
+          <%= f.submit "Crear Plan", class: "w-full text-blackish bg-primary hover:bg-primary/90 focus:ring-4 focus:outline-none focus:ring-primary/20 font-bold rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer" %>
+        <% end %>
+      </div>
+
+    </div>
+  </div>
+<% end %>
