@@ -125,7 +125,6 @@ class TrainingProgressionService
     user = completed_or_skipped_session.user
     program = completed_or_skipped_session.program
     phase = completed_or_skipped_session.phase
-    current_workout = completed_or_skipped_session.workout
     current_cycle = completed_or_skipped_session.cycle_number
 
     # Re-resolve the primary routine from the phase rather than trusting the
@@ -134,13 +133,18 @@ class TrainingProgressionService
     routine = primary_routine_for_phase(phase)
 
     ordered_workouts = routine.workouts.order(order_index: :asc).to_a
-    current_index = ordered_workouts.index { |w| w.id == current_workout.id }
-
     next_session_number = next_session_number_for(user)
 
-    # Case 1: Next workout exists in the same routine cycle
-    if current_index && current_index + 1 < ordered_workouts.length
-      next_workout = ordered_workouts[current_index + 1]
+    # Find the first workout in the routine with no session yet in this cycle.
+    # Querying by existence rather than index makes this resilient to workouts
+    # being added or reordered mid-cycle — they get picked up naturally.
+    existing_workout_ids = TrainingSession
+      .where(user: user, phase: phase, cycle_number: current_cycle)
+      .pluck(:workout_id)
+
+    next_workout = ordered_workouts.find { |w| !existing_workout_ids.include?(w.id) }
+
+    if next_workout
       return TrainingSession.create!(
         user: user,
         program: program,
@@ -153,9 +157,7 @@ class TrainingProgressionService
       )
     end
 
-    # Case 2: End of routine — check phase completion before cycling
-    next_cycle = current_cycle + 1
-
+    # All workouts in this cycle have sessions — check phase completion before cycling
     completed_count = TrainingSession
       .where(user: user, phase: phase, status: :completed)
       .count
@@ -167,15 +169,13 @@ class TrainingProgressionService
       return advance_to_next_phase(user, program, phase)
     end
 
-    # Cycle back to the first workout of the same routine
-    first_workout = ordered_workouts.first
     TrainingSession.create!(
       user: user,
       program: program,
       phase: phase,
       routine: routine,
-      workout: first_workout,
-      cycle_number: next_cycle,
+      workout: ordered_workouts.first,
+      cycle_number: current_cycle + 1,
       session_number: next_session_number,
       status: :pending
     )

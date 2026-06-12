@@ -196,19 +196,75 @@ RSpec.describe TrainingProgressionService do
       expect(next_session.cycle_number).to eq(1)
     end
 
-    it "cycles back to the first workout after the last one in the routine" do
+    it "cycles back to the first workout with an incremented cycle after all workouts are done" do
+      create(:training_session,
+        user: user, program: program, phase: phase,
+        routine: routine, workout: workout_a,
+        status: :completed, started_at: 1.hour.ago, completed_at: 50.minutes.ago,
+        cycle_number: 1, session_number: 1)
+
       last_session = create(:training_session,
         user: user, program: program, phase: phase,
         routine: routine, workout: workout_b,
         status: :in_progress, started_at: 30.minutes.ago,
         cycle_number: 1, session_number: 2)
 
-      # Simulate incomplete phase: 2 workouts * 4 weeks = 8 total, only 1 completed so far
       result = described_class.complete_session(last_session)
 
       next_session = result[:next_session]
       expect(next_session.workout).to eq(workout_a)
       expect(next_session.cycle_number).to eq(2)
+    end
+
+    it "picks up a workout added to the routine mid-cycle instead of skipping it" do
+      # workout_a completed — at that moment workout_c did not exist in the routine
+      create(:training_session,
+        user: user, program: program, phase: phase,
+        routine: routine, workout: workout_a,
+        status: :completed, started_at: 1.hour.ago, completed_at: 50.minutes.ago,
+        cycle_number: 1, session_number: 1)
+
+      # Coach inserts workout_c between workout_a and workout_b
+      workout_c = create(:workout, routine: routine, name: "Day C", order_index: 2)
+      workout_b.update!(order_index: 3)
+
+      # Now completing workout_b should find workout_c (unattempted, order_index 2) next
+      last_session = create(:training_session,
+        user: user, program: program, phase: phase,
+        routine: routine, workout: workout_b,
+        status: :in_progress, started_at: 30.minutes.ago,
+        cycle_number: 1, session_number: 2)
+
+      result = described_class.complete_session(last_session)
+
+      next_session = result[:next_session]
+      expect(next_session.workout).to eq(workout_c)
+      expect(next_session.cycle_number).to eq(1)
+    end
+
+    it "does not create a duplicate session when a pending session already exists for a workout" do
+      # Both workouts have sessions in cycle 1 — workout_b is pending, not yet done
+      create(:training_session,
+        user: user, program: program, phase: phase,
+        routine: routine, workout: workout_a,
+        status: :completed, started_at: 1.hour.ago, completed_at: 50.minutes.ago,
+        cycle_number: 1, session_number: 1)
+      create(:training_session,
+        user: user, program: program, phase: phase,
+        routine: routine, workout: workout_b,
+        status: :pending,
+        cycle_number: 1, session_number: 2)
+
+      # Completing workout_a again (e.g. a retry scenario) should not duplicate workout_b
+      retry_session = create(:training_session,
+        user: user, program: program, phase: phase,
+        routine: routine, workout: workout_a,
+        status: :in_progress, started_at: 30.minutes.ago,
+        cycle_number: 1, session_number: 3)
+
+      expect {
+        described_class.complete_session(retry_session)
+      }.not_to change { TrainingSession.where(workout: workout_b, cycle_number: 1).count }
     end
   end
 end
