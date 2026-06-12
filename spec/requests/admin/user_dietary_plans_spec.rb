@@ -9,6 +9,16 @@ RSpec.describe "Admin::UserDietaryPlans", type: :request do
     allow_any_instance_of(Admin::ApplicationController).to receive(:current_user).and_return(user)
   end
 
+  describe "GET /admin/users/:id" do
+    it "renders the dietary card with the inline edit form" do
+      plan
+      get admin_user_path(user)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("macro-calculator")
+      expect(response.body).to include("playlist_add")
+    end
+  end
+
   describe "PATCH /admin/user_dietary_plans/:id with return_to_user" do
     it "updates targets and redirects to the user page" do
       patch admin_user_dietary_plan_path(plan), params: {
