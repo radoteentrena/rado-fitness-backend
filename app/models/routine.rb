@@ -20,6 +20,7 @@ class Routine < ApplicationRecord
       new_routine.is_template = false
       new_routine.user = target_user
       new_routine.name = "#{name} (Copy)"
+      new_routine.workouts_count = 0 # counter_cache increments as workouts are copied below
       new_routine.save!
 
       workouts.each do |workout|

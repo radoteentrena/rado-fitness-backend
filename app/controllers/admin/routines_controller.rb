@@ -57,7 +57,7 @@ module Admin
     end
 
     def apply_collection_includes(collection)
-      collection.includes(:workouts)
+      collection
     end
 
     def scoped_resource
