@@ -7,8 +7,23 @@ class HarrisBenedict
     "Muy intenso" => 1.9
   }.freeze
 
+  # Maps the activity_level values captured by the onboarding form
+  # ("Tipo de trabajo diario") to TDEE activity multipliers.
+  ONBOARDING_ACTIVITY_FACTORS = {
+    "Sentado"          => 1.2,
+    "Levemente activo" => 1.375,
+    "Activo"           => 1.55,
+    "Muy activo"       => 1.725
+  }.freeze
+
+  DEFAULT_ACTIVITY_FACTOR = 1.375
+
   def self.bmr(user)
     new(user).bmr
+  end
+
+  def self.tdee(user)
+    new(user).tdee
   end
 
   def initialize(user)
@@ -28,7 +43,19 @@ class HarrisBenedict
     base.round
   end
 
+  # Total Daily Energy Expenditure: maintenance calories.
+  def tdee
+    base = bmr
+    return nil unless base
+
+    (base * activity_factor).round
+  end
+
   private
+
+  def activity_factor
+    ONBOARDING_ACTIVITY_FACTORS[@profile&.activity_level] || DEFAULT_ACTIVITY_FACTOR
+  end
 
   def sex
     case @profile.gender.to_s

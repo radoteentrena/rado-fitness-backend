@@ -53,6 +53,45 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       }.to have_enqueued_mail(SubscriptionMailer, :confirmed)
     end
 
+    it "auto-assigns a program for a basic_tier user" do
+      matcher = instance_double(ProgramMatcherService, call: nil)
+      expect(ProgramMatcherService).to receive(:new).with(user).and_return(matcher)
+
+      described_class.perform_now(
+        processor: "mercadopago",
+        event_type: "preapproval",
+        payload: payload
+      )
+    end
+
+    it "auto-assigns the closest dietary plan for a basic_tier user" do
+      plan = instance_double(DietaryPlan, id: 42)
+      allow(HarrisBenedict).to receive(:tdee).with(user).and_return(2200)
+      expect(DietaryPlan).to receive(:closest_to_calories).with(2200).and_return(plan)
+      expect(plan).to receive(:assign_to_user).with(user)
+
+      described_class.perform_now(
+        processor: "mercadopago",
+        event_type: "preapproval",
+        payload: payload
+      )
+    end
+
+    context "when the user is not basic_tier" do
+      let(:user) { create(:user, status: :lead, plan_tier: :medium) }
+
+      it "does not auto-assign a program or dietary plan (coach assigns manually)" do
+        expect(ProgramMatcherService).not_to receive(:new)
+        expect(HarrisBenedict).not_to receive(:tdee)
+
+        described_class.perform_now(
+          processor: "mercadopago",
+          event_type: "preapproval",
+          payload: payload
+        )
+      end
+    end
+
     context "when a subscription already exists for this user" do
       before { create(:subscription, user: user, billing_type: :recurring, status: :active, external_id: mp_sub_id) }
 

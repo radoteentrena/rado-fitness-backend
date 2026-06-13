@@ -7,49 +7,43 @@ module Admin
       @users = User.order(:first_name)
     end
 
-    # Step 2: Generate a program from objectives
+    # Step 2: Generate a program from objectives.
+    # The AI call is offloaded to a background job so the request returns
+    # immediately; the result is streamed in via Turbo when the job finishes.
     def generate
-      service = AiCoachService.new
       user = params[:user_id].present? ? User.find(params[:user_id]) : nil
 
-      result = service.generate_program(
-        objectives: params[:objectives],
+      @conversation = AiConversation.create!(
         user:       user,
-        mode:       params[:mode] || "program",
-        gender:     params[:gender].presence,
-        focus:      params[:focus].presence,
-        level:      params[:level].presence
+        objectives: params[:objectives],
+        title:      "Generando…",
+        status:     "generating"
       )
 
-      @conversation = result[:conversation]
-      @structured_data = result[:structured_data]
-
-      if @structured_data.empty?
-        flash.now[:alert] = "The AI failed to generate a valid program format. Please adjust your prompt and try again."
-      end
+      AiCoachGenerationJob.perform_later(
+        @conversation.id,
+        mode:   params[:mode].presence || "program",
+        gender: params[:gender].presence,
+        focus:  params[:focus].presence,
+        level:  params[:level].presence
+      )
 
       respond_to do |format|
         format.turbo_stream
-        format.html { render :preview }
+        format.html { redirect_to admin_new_ai_coach_path }
       end
     rescue => e
       Rails.logger.error("AI Coach Error: #{e.message}")
       redirect_to admin_new_ai_coach_path, alert: "Error generating program: #{e.message}"
     end
 
-    # Chat refinement: modify the generated program
+    # Chat refinement: modify the generated program (also offloaded to a job).
     def refine
-      service = AiCoachService.new
-      result = service.refine(
-        conversation: @conversation,
-        message: params[:message]
-      )
-
-      @structured_data = result[:structured_data]
+      AiCoachRefinementJob.perform_later(@conversation.id, params[:message])
 
       respond_to do |format|
         format.turbo_stream
-        format.html { render :preview }
+        format.html { redirect_to admin_new_ai_coach_path }
       end
     rescue => e
       Rails.logger.error("AI Coach Refine Error: #{e.message}")

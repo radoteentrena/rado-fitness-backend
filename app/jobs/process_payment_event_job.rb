@@ -67,6 +67,7 @@ class ProcessPaymentEventJob < ApplicationJob
 
       user.active!
       user.access_active!
+      auto_assign_onboarding_defaults(user)
 
       Turbo::StreamsChannel.broadcast_append_to(
         "admin_payment_events",
@@ -171,6 +172,7 @@ class ProcessPaymentEventJob < ApplicationJob
       user.update!(plan_tier: subscription.plan_tier)
       user.active!
       user.access_active!
+      auto_assign_onboarding_defaults(user)
       SubscriptionMailer.confirmed(user, subscription).deliver_later
     when "rejected", "cancelled"
       create_payment_alert(
@@ -206,6 +208,54 @@ class ProcessPaymentEventJob < ApplicationJob
     end
   rescue ActiveRecord::RecordNotUnique
     Rails.logger.warn "[ProcessPaymentEventJob] Duplicate promo conversion for user #{subscription.user_id} — skipped"
+  end
+
+  # After payment, basic_tier clients get a default program + dietary plan auto-attached
+  # from existing templates. Medium/high-ticket clients are assigned by the coach
+  # manually or via the AI Coach.
+  def auto_assign_onboarding_defaults(user)
+    return unless user.basic?
+
+    assign_default_program(user)
+    assign_default_dietary_plan(user)
+  end
+
+  # Each assignment is wrapped in its own rescue so a failure never aborts (and retries)
+  # payment processing, and a program failure doesn't block the dietary plan or vice versa.
+  def assign_default_program(user)
+    return if user.programs.exists?
+
+    program = ProgramMatcherService.new(user).call
+    Rails.logger.info(
+      "[ProcessPaymentEventJob] Auto-assigned program #{program&.id || 'none'} to basic user #{user.id}"
+    )
+  rescue StandardError => e
+    Rails.logger.error(
+      "[ProcessPaymentEventJob] Auto-assign program failed for user #{user.id}: #{e.message}"
+    )
+    Sentry.capture_exception(e)
+  end
+
+  # Picks the existing dietary plan whose calorie target is closest to the client's
+  # maintenance calories (Harris-Benedict BMR x onboarding activity factor).
+  def assign_default_dietary_plan(user)
+    return if user.user_dietary_plans.active.exists?
+
+    target = HarrisBenedict.tdee(user)
+    return unless target
+
+    plan = DietaryPlan.closest_to_calories(target)
+    return unless plan
+
+    plan.assign_to_user(user)
+    Rails.logger.info(
+      "[ProcessPaymentEventJob] Auto-assigned dietary plan #{plan.id} (~#{target} kcal) to basic user #{user.id}"
+    )
+  rescue StandardError => e
+    Rails.logger.error(
+      "[ProcessPaymentEventJob] Auto-assign dietary plan failed for user #{user.id}: #{e.message}"
+    )
+    Sentry.capture_exception(e)
   end
 
   def create_payment_alert(user, message)

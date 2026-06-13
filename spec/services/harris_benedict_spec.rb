@@ -1,9 +1,10 @@
 require "rails_helper"
 
 RSpec.describe HarrisBenedict do
-  def build_user(gender: "Masculino", age: 25, weight: "80kg", height: "175cm")
+  def build_user(gender: "Masculino", age: 25, weight: "80kg", height: "175cm", activity_level: "Activo")
     user = create(:user)
-    profile = build(:onboarding_profile, user: user, gender: gender, age: age, weight: weight, height: height)
+    profile = build(:onboarding_profile, user: user, gender: gender, age: age, weight: weight, height: height,
+                    activity_level: activity_level)
     profile.save!(validate: false)
     user
   end
@@ -51,6 +52,28 @@ RSpec.describe HarrisBenedict do
 
     it "returns nil when age is missing" do
       expect(described_class.bmr(build_user(age: nil))).to be_nil
+    end
+  end
+
+  describe ".tdee" do
+    # Base male BMR for 80kg / 175cm / 25y = 1858
+    it "multiplies BMR by the 'Activo' activity factor (1.55)" do
+      user = build_user(activity_level: "Activo")
+      expect(described_class.tdee(user)).to eq((1858 * 1.55).round) # 2880
+    end
+
+    it "multiplies BMR by the 'Sentado' activity factor (1.2)" do
+      user = build_user(activity_level: "Sentado")
+      expect(described_class.tdee(user)).to eq((1858 * 1.2).round) # 2230
+    end
+
+    it "uses the default factor (1.375) for an unrecognized activity_level" do
+      user = build_user(activity_level: "Astronauta")
+      expect(described_class.tdee(user)).to eq((1858 * 1.375).round) # 2555
+    end
+
+    it "returns nil when BMR cannot be computed" do
+      expect(described_class.tdee(create(:user))).to be_nil
     end
   end
 end

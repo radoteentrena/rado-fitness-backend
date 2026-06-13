@@ -1,9 +1,0 @@
-<% content_for(:title) { "AI Coach — Preview" } %>
-
-<%= turbo_frame_tag "admin_main_content" do %>
-  <div class="max-w-4xl mx-auto">
-    <%= turbo_frame_tag "ai_coach_result" do %>
-      <%= render partial: "admin/ai_coach/program_preview" %>
-    <% end %>
-  </div>
-<% end %>
