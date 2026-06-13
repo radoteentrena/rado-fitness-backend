@@ -12,6 +12,10 @@ RSpec.describe TrainingProgressionService do
 
   # ─── create_initial_session ─────────────────────────────────────────────────
   describe ".create_initial_session" do
+    # The let! workout creation bootstraps a session via Workout's
+    # after_create callback; clear it so each example exercises creation.
+    before { TrainingSession.where(user: user).delete_all }
+
     it "creates a pending session on the first workout of the primary routine" do
       session = described_class.create_initial_session(user, program)
 
@@ -22,9 +26,11 @@ RSpec.describe TrainingProgressionService do
       expect(session.phase).to eq(phase)
     end
 
-    it "closes any existing pending sessions before creating the new one" do
+    it "closes pending sessions from a previous program before creating the new one" do
+      old_program = create(:program, user: user)
+      old_phase   = create(:phase, program: old_program, order_index: 1, duration_weeks: 4)
       stale = create(:training_session,
-        user: user, program: program, phase: phase,
+        user: user, program: old_program, phase: old_phase,
         routine: routine, workout: workout_a,
         status: :pending, cycle_number: 1, session_number: 1)
 
@@ -34,9 +40,11 @@ RSpec.describe TrainingProgressionService do
       expect(stale.reload.skip_reason).to match(/Superseded/)
     end
 
-    it "closes any existing in_progress sessions before creating the new one" do
+    it "closes in_progress sessions from a previous program before creating the new one" do
+      old_program = create(:program, user: user)
+      old_phase   = create(:phase, program: old_program, order_index: 1, duration_weeks: 4)
       stale = create(:training_session,
-        user: user, program: program, phase: phase,
+        user: user, program: old_program, phase: old_phase,
         routine: routine, workout: workout_a,
         status: :in_progress, started_at: 1.hour.ago,
         cycle_number: 1, session_number: 1)
@@ -44,6 +52,16 @@ RSpec.describe TrainingProgressionService do
       described_class.create_initial_session(user, program)
 
       expect(stale.reload.status).to eq("skipped")
+    end
+
+    it "is idempotent: a second call for the same program returns the existing pending session" do
+      first = described_class.create_initial_session(user, program)
+
+      second = described_class.create_initial_session(user, program)
+
+      expect(second).to eq(first)
+      expect(first.reload.status).to eq("pending")
+      expect(TrainingSession.where(user: user, program: program).count).to eq(1)
     end
 
     it "uses next_session_number rather than hardcoding 1" do
@@ -59,8 +77,10 @@ RSpec.describe TrainingProgressionService do
     end
 
     it "rolls back if session creation fails, leaving stale session intact" do
+      old_program = create(:program, user: user)
+      old_phase   = create(:phase, program: old_program, order_index: 1, duration_weeks: 4)
       stale = create(:training_session,
-        user: user, program: program, phase: phase,
+        user: user, program: old_program, phase: old_phase,
         routine: routine, workout: workout_a,
         status: :pending, cycle_number: 1, session_number: 1)
 
