@@ -16,6 +16,10 @@ module Admin
     #   Foo.find_by!(slug: param)
     # end
 
+    def find_resource(param)
+      resource_class.find(param)
+    end
+
     def show
       @routine = requested_resource
       @selected_workout = @routine.workouts.find_by(id: params[:workout_id]) || @routine.workouts.order(:day_number, :order_index).first

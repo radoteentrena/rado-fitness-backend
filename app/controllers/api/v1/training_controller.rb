@@ -208,6 +208,7 @@ class Api::V1::TrainingController < Api::V1::BaseController
     {
       id: session.id,
       session_number: session.session_number,
+      cycle_number: session.cycle_number,
       status: session.status,
       phase_name: session.phase.name,
       workout_name: session.workout.name,

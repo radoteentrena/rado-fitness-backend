@@ -1,5 +1,9 @@
 module Admin
   class ProgramsController < Admin::ApplicationController
+    def find_resource(param)
+      resource_class.find(param)
+    end
+
     def scoped_resource
       super.where(user_id: nil)
     end
