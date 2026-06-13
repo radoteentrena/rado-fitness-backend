@@ -1,5 +1,5 @@
 class Workout < ApplicationRecord
-  belongs_to :routine
+  belongs_to :routine, counter_cache: true
   has_many :workout_exercises, dependent: :destroy
 
   validates :name, presence: true

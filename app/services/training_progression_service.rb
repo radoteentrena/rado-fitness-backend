@@ -10,14 +10,26 @@ class TrainingProgressionService
     primary_routine = primary_routine_for_phase(first_phase)
     first_workout = primary_routine.workouts.order(order_index: :asc).first
 
+    open_statuses = [ TrainingSession.statuses[:pending], TrainingSession.statuses[:in_progress] ]
+
     ActiveRecord::Base.transaction do
       user.training_sessions
-          .where(status: [ TrainingSession.statuses[:pending], TrainingSession.statuses[:in_progress] ])
+          .where(status: open_statuses)
+          .where.not(program_id: program.id)
           .update_all(
             status: TrainingSession.statuses[:skipped],
             skipped_at: Time.current,
             skip_reason: "Superseded by new program assignment"
           )
+
+      # Idempotent: assign_to_user reaches here twice (PhaseRoutine's
+      # after_create bootstrap + its own explicit call); without this guard the
+      # second call would skip the session the first one just created.
+      existing = user.training_sessions
+                     .where(program: program, status: open_statuses)
+                     .order(created_at: :asc)
+                     .first
+      next existing if existing
 
       TrainingSession.create!(
         user: user,

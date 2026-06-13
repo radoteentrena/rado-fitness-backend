@@ -1,0 +1,6 @@
+<%# locals: (conversation:, structured_data:) %>
+<%= turbo_frame_tag "ai_coach_result", data: { controller: "scroll-into-view" } do %>
+  <%= turbo_stream_from conversation %>
+  <%= render partial: "admin/ai_coach/program_preview",
+             locals: { conversation: conversation, structured_data: structured_data } %>
+<% end %>

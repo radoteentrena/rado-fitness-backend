@@ -1,0 +1,9 @@
+<%# locals: (conversation:, message:) %>
+<%= turbo_frame_tag "ai_coach_result", data: { controller: "scroll-into-view" } do %>
+  <%= turbo_stream_from conversation %>
+  <div class="mt-8 bg-whiteish dark:bg-shadow rounded-2xl border border-shadow dark:border-graphite p-10 flex flex-col items-center justify-center text-center">
+    <span class="material-symbols-outlined text-primary text-5xl" style="animation: spin 1s linear infinite;">progress_activity</span>
+    <p class="mt-4 text-lg font-semibold text-blackish dark:text-whiteish"><%= message %></p>
+    <p class="mt-1 text-sm text-graphite dark:text-muted">No cierres esta página. El resultado aparecerá automáticamente.</p>
+  </div>
+<% end %>

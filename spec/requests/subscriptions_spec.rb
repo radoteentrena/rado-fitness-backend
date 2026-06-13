@@ -93,9 +93,14 @@ RSpec.describe "Subscriptions", type: :request do
   end
 
   describe "GET /subscription/processing" do
-    it "returns 200" do
+    it "redirects to root with an unknown status" do
       get subscriptions_processing_path
-      expect(response).to have_http_status(:ok)
+      expect(response).to redirect_to(root_path)
+    end
+
+    it "redirects to new_subscription when payment is rejected" do
+      get subscriptions_processing_path, params: { status: "rejected" }
+      expect(response).to redirect_to(new_subscription_path)
     end
   end
 end

@@ -332,9 +332,20 @@
             Assigned Programs
           </h3>
 
-          <%= link_to "Asignar Programa", new_admin_user_program_assignment_path(user),
-                  data: { turbo_frame: "modal_frame" },
-                  class: "text-sm font-medium text-primary hover:underline" %>
+          <div class="flex items-center gap-3">
+            <%= link_to new_admin_user_program_assignment_path(user),
+                    data: { turbo_frame: "modal_frame" },
+                    title: "Asignar programa",
+                    class: "p-1 text-primary hover:bg-primary/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary" do %>
+              <span class="material-symbols-outlined text-xl">playlist_add</span>
+            <% end %>
+
+            <%= button_to admin_user_custom_program_path(user),
+                    title: "Crear programa personalizado",
+                    class: "p-1 text-primary hover:bg-primary/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary" do %>
+              <span class="material-symbols-outlined text-xl">add</span>
+            <% end %>
+          </div>
         </div>
 
         <% if user.programs.any? %>

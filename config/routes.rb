@@ -62,6 +62,7 @@ Rails.application.routes.draw do
       end
       resources :users do
         resource :program_assignment, only: [ :new, :create ]
+        resource :custom_program, only: [ :create ]
         resource :dietary_plan_assignment, only: [ :new, :create ]
         resource :custom_dietary_plan, only: [ :new, :create ]
         resource :payment_link, only: [ :create ]

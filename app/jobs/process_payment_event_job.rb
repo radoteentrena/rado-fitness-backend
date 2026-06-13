@@ -22,12 +22,15 @@ class ProcessPaymentEventJob < ApplicationJob
     mp_id   = payload.dig("data", "id")
     mp_data = fetch_mp_preapproval(mp_id)
     status  = mp_data["status"]
-    user    = User.find_by(id: mp_data["external_reference"])
+    # preapproval_plan checkouts may not propagate external_reference, so fall back
+    # to the payer email we attach to every recurring checkout redirect.
+    user    = User.find_by(id: mp_data["external_reference"]) ||
+              User.find_by(email: mp_data["payer_email"])
 
     unless user
-      Rails.logger.error("[ProcessPaymentEventJob] No user for external_reference=#{mp_data["external_reference"]} mp_id=#{mp_id}")
+      Rails.logger.error("[ProcessPaymentEventJob] No user for external_reference=#{mp_data["external_reference"]} payer_email=#{mp_data["payer_email"]} mp_id=#{mp_id}")
       Sentry.capture_message(
-        "ProcessPaymentEventJob: no user for external_reference=#{mp_data["external_reference"]} mp_id=#{mp_id}",
+        "ProcessPaymentEventJob: no user for external_reference=#{mp_data["external_reference"]} payer_email=#{mp_data["payer_email"]} mp_id=#{mp_id}",
         level: :error
       )
       return
@@ -36,15 +39,21 @@ class ProcessPaymentEventJob < ApplicationJob
     case status
     when "authorized"
       sub = Subscription.where(user: user, billing_type: :recurring, status: [:active, :pending])
-                        .first_or_initialize
+                        .order(:created_at).first_or_initialize
       amount = mp_data.dig("auto_recurring", "transaction_amount")
       amount_cents = amount ? (amount.to_f * 100).to_i : nil
 
       is_new_subscription = sub.new_record?
 
+      # plan_tier comes from the pending subscription created at checkout; fall back to
+      # reverse-mapping the MercadoPago preapproval_plan id. The recurring flow never
+      # set user.plan_tier before, so do it here.
+      tier = sub.plan_tier.presence || plan_tier_for_preapproval_plan(mp_data["preapproval_plan_id"])
+      user.update!(plan_tier: tier) if tier.present? && user.plan_tier != tier
+
       sub.assign_attributes(
         processor:            :mercadopago,
-        plan_tier:            user.plan_tier,
+        plan_tier:            user.plan_tier || tier,
         billing_type:         :recurring,
         status:               :active,
         external_id:          mp_id,
@@ -67,6 +76,7 @@ class ProcessPaymentEventJob < ApplicationJob
 
       user.active!
       user.access_active!
+      auto_assign_onboarding_defaults(user)
 
       Turbo::StreamsChannel.broadcast_append_to(
         "admin_payment_events",
@@ -171,6 +181,7 @@ class ProcessPaymentEventJob < ApplicationJob
       user.update!(plan_tier: subscription.plan_tier)
       user.active!
       user.access_active!
+      auto_assign_onboarding_defaults(user)
       SubscriptionMailer.confirmed(user, subscription).deliver_later
     when "rejected", "cancelled"
       create_payment_alert(
@@ -178,6 +189,18 @@ class ProcessPaymentEventJob < ApplicationJob
         "Pago #{payment["status"]} en MercadoPago (preference: #{preference_id}, payment: #{payment["id"]})."
       )
     end
+  end
+
+  # Reverse-maps a MercadoPago preapproval_plan id back to our plan_tier using the
+  # credentials map keyed like :basic_monthly / :high_ticket_yearly.
+  def plan_tier_for_preapproval_plan(plan_id)
+    return nil if plan_id.blank?
+
+    plans = Rails.application.credentials.dig(:mercadopago, :plans) || {}
+    key = plans.key(plan_id)
+    return nil unless key
+
+    key.to_s.sub(/_(monthly|quarterly|yearly)\z/, "").presence
   end
 
   def fetch_mp_preapproval(id)
@@ -206,6 +229,54 @@ class ProcessPaymentEventJob < ApplicationJob
     end
   rescue ActiveRecord::RecordNotUnique
     Rails.logger.warn "[ProcessPaymentEventJob] Duplicate promo conversion for user #{subscription.user_id} — skipped"
+  end
+
+  # After payment, basic_tier clients get a default program + dietary plan auto-attached
+  # from existing templates. Medium/high-ticket clients are assigned by the coach
+  # manually or via the AI Coach.
+  def auto_assign_onboarding_defaults(user)
+    return unless user.basic?
+
+    assign_default_program(user)
+    assign_default_dietary_plan(user)
+  end
+
+  # Each assignment is wrapped in its own rescue so a failure never aborts (and retries)
+  # payment processing, and a program failure doesn't block the dietary plan or vice versa.
+  def assign_default_program(user)
+    return if user.programs.exists?
+
+    program = ProgramMatcherService.new(user).call
+    Rails.logger.info(
+      "[ProcessPaymentEventJob] Auto-assigned program #{program&.id || 'none'} to basic user #{user.id}"
+    )
+  rescue StandardError => e
+    Rails.logger.error(
+      "[ProcessPaymentEventJob] Auto-assign program failed for user #{user.id}: #{e.message}"
+    )
+    Sentry.capture_exception(e)
+  end
+
+  # Picks the existing dietary plan whose calorie target is closest to the client's
+  # maintenance calories (Harris-Benedict BMR x onboarding activity factor).
+  def assign_default_dietary_plan(user)
+    return if user.user_dietary_plans.active.exists?
+
+    target = HarrisBenedict.tdee(user)
+    return unless target
+
+    plan = DietaryPlan.closest_to_calories(target)
+    return unless plan
+
+    plan.assign_to_user(user)
+    Rails.logger.info(
+      "[ProcessPaymentEventJob] Auto-assigned dietary plan #{plan.id} (~#{target} kcal) to basic user #{user.id}"
+    )
+  rescue StandardError => e
+    Rails.logger.error(
+      "[ProcessPaymentEventJob] Auto-assign dietary plan failed for user #{user.id}: #{e.message}"
+    )
+    Sentry.capture_exception(e)
   end
 
   def create_payment_alert(user, message)

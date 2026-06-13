@@ -4,7 +4,7 @@ class AiCoachService
     @embedder = EmbeddingService.new
   end
 
-  def generate_program(objectives:, user: nil, mode: "program", gender: nil, focus: nil, level: nil)
+  def generate_program(objectives:, user: nil, mode: "program", gender: nil, focus: nil, level: nil, conversation: nil)
     book_context    = retrieve_context(objectives)
     client_profile  = build_client_profile(user)
     exercises_list  = Rails.cache.fetch("exercises_list", expires_in: 1.hour) do
@@ -26,12 +26,18 @@ class AiCoachService
     response_text   = @gemini.call(system_prompt, user_prompt)
     structured_data = @gemini.parse_json(response_text)
 
-    conversation = AiConversation.create!(
-      user:           user,
-      title:          structured_data.dig("program", "name") || "AI Generated #{mode.capitalize}",
-      objectives:     objectives,
-      generated_data: structured_data
-    )
+    title = structured_data.dig("program", "name") || "AI Generated #{mode.capitalize}"
+
+    if conversation
+      conversation.update!(title: title, generated_data: structured_data)
+    else
+      conversation = AiConversation.create!(
+        user:           user,
+        title:          title,
+        objectives:     objectives,
+        generated_data: structured_data
+      )
+    end
 
     conversation.add_message!(role: "user", content: objectives)
     conversation.add_message!(role: "assistant", content: response_text, structured_data: structured_data)
@@ -179,8 +185,8 @@ class AiCoachService
       Always include practical instructions for each exercise to guide execution.
 
       IMPORTANT: All program names, descriptions, and instructions MUST be written in Spanish.
-      This includes the program name, routine names, workout descriptions, exercise instructions,
-      and dietary plan information. The audience is Argentine/Spanish-speaking clients.
+      This includes the program name, routine names, workout descriptions, and exercise instructions.
+      The audience is Argentine/Spanish-speaking clients.
 
       ROUTINE NAMING CONVENTION — MANDATORY:
       Every routine "name" field MUST begin with the classification tags in this exact format:
@@ -301,15 +307,7 @@ class AiCoachService
           }
         ]
       }
-    ],
-    "dietary_plan": {
-      "name": "string",
-      "description": "string",
-      "calories_target": integer,
-      "protein_target": integer,
-      "fats_target": integer,
-      "carbs_target": integer
-    }
+    ]
   }
     JSON
   end

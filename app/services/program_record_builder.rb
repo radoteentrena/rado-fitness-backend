@@ -44,8 +44,6 @@ class ProgramRecordBuilder
         end
       end
 
-      build_dietary_plan(phase, program)
-
       program || Routine.where(user: @user).last
     end
   end
@@ -80,35 +78,6 @@ class ProgramRecordBuilder
       duration_weeks: routine_data["duration_weeks"],
       is_template:    @user.nil?,
       user:           @user
-    )
-  end
-
-  def build_dietary_plan(phase, program)
-    return unless @data["dietary_plan"]
-
-    dietary_plan = DietaryPlan.create!(
-      name:           @data["dietary_plan"]["name"],
-      description:    @data["dietary_plan"]["description"],
-      calories_target: @data["dietary_plan"]["calories_target"],
-      protein_target:  @data["dietary_plan"]["protein_target"],
-      fats_target:     @data["dietary_plan"]["fats_target"],
-      carbs_target:    @data["dietary_plan"]["carbs_target"]
-    )
-
-    return unless @user
-
-    @user.user_dietary_plans.active.update_all(active: false)
-    UserDietaryPlan.create!(
-      user:            @user,
-      dietary_plan:    dietary_plan,
-      phase:           phase,
-      calories_target: dietary_plan.calories_target,
-      protein_target:  dietary_plan.protein_target,
-      fats_target:     dietary_plan.fats_target,
-      carbs_target:    dietary_plan.carbs_target,
-      start_date:      Date.current,
-      end_date:        Date.current + (program&.duration_weeks || 8).weeks,
-      active:          true
     )
   end
 
