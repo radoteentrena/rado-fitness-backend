@@ -9,6 +9,7 @@ FactoryBot.define do
     experience_level   { 5 }
     commitment_level   { "Alto" }
     training_frequency { "4" }
+    training_years     { "2-5" }
     injuries           { "Ninguna" }
     diet_quality       { "Bueno" }
     activity_level     { "Activo" }

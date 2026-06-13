@@ -107,6 +107,46 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
     end
   end
 
+  describe "mercadopago: recurring subscription activation (preapproval_plan)" do
+    let(:user) { create(:user, status: :lead, plan_tier: nil) }
+    let(:mp_sub_id) { "mp_pa_999" }
+    let(:payload) { { "type" => "preapproval", "data" => { "id" => mp_sub_id } } }
+
+    # The pending subscription created at checkout carries the chosen plan_tier.
+    let!(:pending) do
+      create(:subscription, user: user, billing_type: :recurring, status: :pending,
+             plan_tier: :basic, external_id: nil, external_customer_id: nil)
+    end
+
+    before do
+      sdk = instance_double(Mercadopago::SDK)
+      preapproval = double
+      allow(Mercadopago::SDK).to receive(:new).and_return(sdk)
+      allow(sdk).to receive(:preapproval).and_return(preapproval)
+      allow(preapproval).to receive(:get).with(mp_sub_id).and_return({
+        "response" => {
+          "id" => mp_sub_id,
+          "status" => "authorized",
+          "external_reference" => nil,      # preapproval_plan checkouts may omit this
+          "payer_email" => user.email,      # so we resolve by payer email instead
+          "preapproval_plan_id" => "mp_plan_basic",
+          "payer_id" => "payer_1",
+          "next_payment_date" => 30.days.from_now.iso8601
+        }
+      })
+    end
+
+    it "resolves the user by payer_email, sets plan_tier, activates, and promotes the pending sub" do
+      described_class.perform_now(processor: "mercadopago", event_type: "preapproval", payload: payload)
+
+      user.reload
+      expect(user).to be_active
+      expect(user.plan_tier).to eq("basic")
+      expect(pending.reload).to be_active
+      expect(pending.external_id).to eq(mp_sub_id)
+    end
+  end
+
   describe "mercadopago: payment rejected (recurring charge failure)" do
     let!(:subscription) { create(:subscription, user: user, status: :active, external_id: "mp_sub_123") }
     let(:payload) { { "type" => "payment", "data" => { "id" => "mp_payment_456" } } }
