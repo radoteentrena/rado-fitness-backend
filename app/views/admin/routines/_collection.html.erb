@@ -15,7 +15,7 @@
           gender = Routine::GENDERS.find { |g| resource.name.to_s.include?(g) }
           focus  = Routine::FOCUSES.find { |f| resource.name.to_s.include?(f) }
           level  = Routine::LEVELS.find  { |l| resource.name.to_s.include?(l) }
-          workouts_count = resource.workouts.size
+          workouts_count = resource.workouts_count
         %>
         <tr class="bg-whiteish border-b border-shadow dark:bg-shadow dark:border-graphite hover:bg-background-light dark:hover:bg-shadow/50">
           <%# Name + classification tags %>
