@@ -117,7 +117,8 @@ class ProcessPaymentEventJob < ApplicationJob
     return unless payment_id
 
     sdk     = Mercadopago::SDK.new(Rails.application.credentials.dig(:mercadopago, :access_token))
-    payment = sdk.payment.get(payment_id)["response"]
+    payment = sdk.payment.get(payment_id)[:response]
+    return unless payment.is_a?(Hash)
 
     if payment.dig("metadata", "preapproval_id").present?
       # Preapproval-related payment — only act on rejection
@@ -205,7 +206,7 @@ class ProcessPaymentEventJob < ApplicationJob
 
   def fetch_mp_preapproval(id)
     sdk = Mercadopago::SDK.new(Rails.application.credentials.dig(:mercadopago, :access_token))
-    sdk.preapproval.get(id)["response"]
+    sdk.preapproval.get(id)[:response]
   rescue StandardError => e
     Rails.logger.error("[ProcessPaymentEventJob] MP API error fetching preapproval #{id}: #{e.message}")
     Sentry.capture_exception(e)
