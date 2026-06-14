@@ -11,15 +11,14 @@
         </div>
       </div>
 
-      <%= form_with(model: @user, url: onboarding_path, local: true, html: { novalidate: true }, class: "space-y-10", data: { action: "input->multi-step-form#updateButtons change->multi-step-form#updateButtons" }) do |f| %>
+      <%= form_with(model: @user, url: onboarding_path, local: true, html: { novalidate: true }, class: "space-y-10", data: { action: "input->multi-step-form#updateButtons change->multi-step-form#updateButtons submit->multi-step-form#validateForm" }) do |f| %>
         <% if @user.errors.any? %>
           <div class="border-2 border-red-500 bg-black p-6 mb-10 shadow-[6px_6px_0px_0px_#ef4444]">
-            <h2 class="text-xl font-bold text-red-500 uppercase tracking-widest mb-4"><%= pluralize(@user.errors.count, "error") %> impidieron enviar tu solicitud:</h2>
-            <ul class="list-none space-y-2 text-red-400 font-medium">
-              <% @user.errors.full_messages.each do |message| %>
-                <li>→ <%= message %></li>
-              <% end %>
-            </ul>
+            <p class="text-xl font-bold text-red-500 uppercase tracking-widest mb-2">Hay campos sin completar</p>
+            <p class="text-red-400 font-medium">Revisá el formulario desde el principio y completá todos los campos requeridos.</p>
+            <% if @user.errors[:email].any? %>
+              <p class="text-red-400 font-medium mt-3">→ Correo electrónico: <%= @user.errors[:email].first %></p>
+            <% end %>
           </div>
         <% end %>
 
@@ -30,7 +29,7 @@
           </div>
           <div>
             <%= f.label :email, "Correo electrónico", class: "block text-xl font-bold text-whiteish mb-3" %>
-            <%= f.email_field :email, required: true, data: { "email-check": true }, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-white-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
+            <%= f.email_field :email, required: true, pattern: '[^@\s]+@[^@\s]+\.[^@\s]+', data: { "email-check": true }, class: "bg-graphite block w-full appearance-none rounded-none border-2 border-primary/50 bg-black px-6 py-5 text-xl text-white placeholder-white-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all" %>
             <p class="mt-3 text-sm text-gray-500">Si ya tenés cuenta, te enviamos el link de pago directo a tu correo.</p>
           </div>
         </div>
@@ -129,6 +128,8 @@
                        data-multi-step-form-target="phoneNumberInput"
                        data-action="input->multi-step-form#syncPhone"
                        required
+                       inputmode="numeric"
+                       pattern="[0-9\s]{6,20}"
                        placeholder="412 123 4567"
                        maxlength="20"
                        class="w-3/4 min-w-0 appearance-none rounded-none border-2 border-primary/50 bg-graphite px-6 py-5 text-xl text-white placeholder-gray-600 focus:border-saffron focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#F5C34A] focus:-translate-y-1 focus:-translate-x-1 transition-all">

@@ -212,7 +212,31 @@ export default class extends Controller {
   }
 
   validateCurrentStep() {
-    const currentStepElement = this.stepTargets[this.currentStep]
+    const { valid, firstInvalidInput } = this.validateStep(this.stepTargets[this.currentStep])
+    if (firstInvalidInput) firstInvalidInput.focus()
+    return valid
+  }
+
+  // Validate every step before allowing the final submit. If anything required
+  // is missing, block submission and jump to the first incomplete step.
+  validateForm(event) {
+    let firstInvalidStep = null
+
+    this.stepTargets.forEach((step, index) => {
+      const { valid } = this.validateStep(step)
+      if (!valid && firstInvalidStep === null) firstInvalidStep = index
+    })
+
+    if (firstInvalidStep !== null) {
+      event.preventDefault()
+      this.currentStep = firstInvalidStep
+      this.saveStep()
+      this.showCurrentStep()
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }
+
+  validateStep(currentStepElement) {
     const inputs = currentStepElement.querySelectorAll("input[required], select[required], textarea[required]")
     let isValid = true
     let firstInvalidInput = null
@@ -238,6 +262,41 @@ export default class extends Controller {
       })
     }
 
+    // Spanish reason derived from the field's validity state
+    const messageFor = (input) => {
+      const v = input.validity
+      if (v.valueMissing) {
+        return (input.type === 'radio' || input.type === 'checkbox') ? 'Seleccioná una opción' : 'Este campo es obligatorio'
+      }
+      if (input.type === 'email' && (v.typeMismatch || v.patternMismatch)) return 'Ingresá un correo electrónico válido'
+      if (v.rangeUnderflow || v.rangeOverflow || v.badInput || v.stepMismatch) return 'Ingresá un valor válido'
+      if (v.tooLong) return 'El texto es demasiado largo'
+      if (v.patternMismatch && input.type === 'tel') return 'Ingresá solo números'
+      if (v.patternMismatch) return 'El formato no es válido'
+      return 'Revisá este campo'
+    }
+
+    // Insert (or update) the red message right after the field block.
+    // Inline styles so it never depends on Tailwind scanning this JS file.
+    const showFieldError = (anchorEl, message, triggers) => {
+      const existing = anchorEl.nextElementSibling
+      if (existing && existing.classList.contains('field-error')) {
+        existing.textContent = message
+        return
+      }
+      const p = document.createElement('p')
+      p.className = 'field-error'
+      p.textContent = message
+      p.style.cssText = 'margin-top:0.75rem;font-size:0.875rem;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:0.05em;'
+      anchorEl.insertAdjacentElement('afterend', p)
+
+      const removeMessage = () => p.remove()
+      triggers.forEach(trigger => {
+        trigger.addEventListener('input', removeMessage, { once: true })
+        trigger.addEventListener('change', removeMessage, { once: true })
+      })
+    }
+
     inputs.forEach(input => {
       // Skip inputs inside hidden conditional containers
       if (input.closest('.conditional-field.hidden')) return
@@ -259,6 +318,18 @@ export default class extends Controller {
         }
 
         addErrorStyling(errorTarget, triggers)
+
+        // One message per field (radio groups: anchor after the options container)
+        if (input.type === 'radio') {
+          const groupAnchor = input.closest('.space-y-4') || errorTarget
+          showFieldError(groupAnchor, messageFor(input), triggers)
+        } else {
+          // Anchor after the input, or after its immediate flex wrapper (e.g. phone)
+          const parent = input.parentElement
+          const anchor = parent && parent.classList.contains('flex') ? parent : input
+          showFieldError(anchor, messageFor(input), triggers)
+        }
+
         isValid = false
       }
     })
@@ -280,6 +351,7 @@ export default class extends Controller {
               }
               addErrorStyling(errorTarget, checkboxes)
            })
+           showFieldError(group, 'Seleccioná al menos una opción', checkboxes)
        }
     })
 
@@ -288,19 +360,18 @@ export default class extends Controller {
     searchableSelects.forEach(hidden => {
       if (!hidden.value) {
         isValid = false
-        const textInput = hidden.closest('[data-controller="searchable-select"]')?.querySelector('[data-searchable-select-target="input"]')
+        const container = hidden.closest('[data-controller="searchable-select"]')
+        const textInput = container?.querySelector('[data-searchable-select-target="input"]')
         if (textInput) {
           if (!firstInvalidInput) firstInvalidInput = textInput
           addErrorStyling(textInput, [textInput])
+          const options = Array.from(container.querySelectorAll('[data-searchable-select-target="option"]'))
+          showFieldError(container, 'Seleccioná una opción', [textInput, ...options])
         }
       }
     })
 
-    if (firstInvalidInput) {
-      firstInvalidInput.focus()
-    }
-
-    return isValid
+    return { valid: isValid, firstInvalidInput }
   }
 
   saveStep() {

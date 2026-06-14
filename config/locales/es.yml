@@ -1,4 +1,64 @@
 es:
+  activerecord:
+    models:
+      user: "Usuario"
+      onboarding_profile: "Perfil"
+    attributes:
+      user:
+        email: "Correo electrónico"
+        first_name: "Nombre"
+        last_name: "Apellidos"
+        phone: "Celular"
+        password: "Contraseña"
+        password_confirmation: "Confirmación de contraseña"
+      onboarding_profile:
+        gender: "Sexo"
+        age: "Edad"
+        weight: "Peso"
+        height: "Estatura"
+        experience_level: "Nivel de experiencia"
+        commitment_level: "Nivel de compromiso"
+        training_frequency: "Frecuencia de entrenamiento"
+        training_years: "Años entrenando"
+        diet_quality: "Calidad de alimentación"
+        activity_level: "Nivel de actividad"
+        sleep_hours: "Horas de sueño"
+        social_media_consent: "Consentimiento de redes sociales"
+        referral_source: "Cómo nos conociste"
+        referral_source_other: "Especificación de referido"
+        country: "País"
+        instagram: "Instagram"
+        plays_sports: "Práctica deportiva"
+        goals: "Objetivos"
+    errors:
+      messages:
+        blank: "no puede estar en blanco"
+        empty: "no puede estar vacío"
+        taken: "ya está en uso"
+        invalid: "no es válido"
+        too_long:
+          one: "es demasiado largo (máximo 1 caracter)"
+          other: "es demasiado largo (máximo %{count} caracteres)"
+        too_short:
+          one: "es demasiado corto (mínimo 1 caracter)"
+          other: "es demasiado corto (mínimo %{count} caracteres)"
+        wrong_length:
+          one: "no tiene la longitud correcta (debe tener 1 caracter)"
+          other: "no tiene la longitud correcta (debe tener %{count} caracteres)"
+        not_a_number: "no es un número"
+        not_an_integer: "debe ser un número entero"
+        greater_than: "debe ser mayor que %{count}"
+        greater_than_or_equal_to: "debe ser mayor o igual a %{count}"
+        less_than: "debe ser menor que %{count}"
+        less_than_or_equal_to: "debe ser menor o igual a %{count}"
+        inclusion: "no está incluido en la lista de opciones válidas"
+        exclusion: "está reservado"
+        confirmation: "no coincide con %{attribute}"
+  errors:
+    messages:
+      blank: "no puede estar en blanco"
+      taken: "ya está en uso"
+      invalid: "no es válido"
   date:
     formats:
       default: "%d/%m/%Y"
