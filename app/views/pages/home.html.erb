@@ -1,3 +1,121 @@
+<style>
+  :root {
+    --bl: 8px;
+    --lh: 24px;
+    --cols: 12;
+    --gutter: 1.5rem;
+    --margin: 2rem;
+    --maxw: 80rem;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  /* Non-featured pricing cards: subdue check icons to white/50, preserving graphite remove icons */
+  .pricing-secondary .material-symbols-outlined.fill-current {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Hero anchor navigation */
+  .hero-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.42);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .hero-nav-link:hover {
+    color: #F5C228;
+    border-color: rgba(245,194,40,0.3);
+  }
+
+  /* Newsletter popup */
+  .nl-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4,3,7,0.84);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.32s ease;
+    pointer-events: none;
+  }
+  .nl-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nl-card {
+    background: #080808;
+    border: 2px solid rgba(245,194,40,0.22);
+    box-shadow: 8px 8px 0 0 #F5C228;
+    max-width: 460px;
+    width: calc(100% - 40px);
+    padding: 44px 38px 36px;
+    position: relative;
+    transform: translateY(22px);
+    transition: transform 0.32s ease;
+  }
+  .nl-overlay.is-open .nl-card { transform: translateY(0); }
+  .nl-x {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: none;
+    color: rgba(255,255,255,0.35);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    transition: color 0.18s, border-color 0.18s;
+  }
+  .nl-x:hover { color: #fff; border-color: rgba(255,255,255,0.25); }
+  .nl-email-input {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff !important;
+    font-size: 14px;
+    padding: 12px 16px;
+    outline: none;
+    border-radius: 0 !important;
+    transition: border-color 0.18s;
+    box-shadow: none !important;
+  }
+  .nl-email-input:focus { border-color: #F5C228 !important; }
+  .nl-email-input::placeholder { color: rgba(255,255,255,0.22) !important; }
+  .nl-submit {
+    width: 100%;
+    background: #F5C228;
+    color: #040307;
+    border: none;
+    font-weight: 900;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    padding: 14px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.18s;
+    border-radius: 0 !important;
+  }
+  .nl-submit:hover {
+    background: #f7cb3a;
+    transform: translateY(-2px) translateX(-2px);
+    box-shadow: 4px 4px 0 0 rgba(255,255,255,0.8);
+  }
+  .nl-submit:active { transform: none; box-shadow: none; }
+</style>
+
 <% content_for :seo_tags do %>
   <meta
     name="description"
@@ -45,8 +163,8 @@
     <div class="flex-1 text-center lg:text-left">
       <h1
         class="
-          text-5xl sm:text-7xl lg:text-[5rem] font-display font-bold
-          uppercase leading-[1.1] tracking-tight mb-6 mt-4
+          optical-align text-5xl sm:text-7xl lg:text-[5rem] font-display font-bold
+          uppercase leading-14 sm:leading-20 lg:leading-22 tracking-tight mb-6 mt-4
         "
       >
         <span class="text-white block">
@@ -60,7 +178,7 @@
 
       <p
         class="
-          pl-3 text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto
+          text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto
           lg:mx-0 font-light font-body
         "
       >
@@ -74,10 +192,24 @@
 
     <%= image_tag("entrenando.jpg", alt: "Coach Rado", class: "relative z-10 w-[50%] shadow-2xl") %>
   </div>
+
+  <%# Section quick-nav %>
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pb-2">
+    <nav
+      class="flex flex-wrap gap-2 justify-center lg:justify-start"
+      aria-label="Ir a sección"
+    >
+      <a href="#testimonios" class="hero-nav-link">↓ Testimonios</a>
+      <a href="#metodo" class="hero-nav-link">↓ El Método</a>
+      <a href="#precios" class="hero-nav-link">↓ Precios</a>
+      <a href="#sobre" class="hero-nav-link">↓ Sobre Mí</a>
+      <a href="#faq" class="hero-nav-link">↓ FAQ</a>
+    </nav>
+  </div>
 </section>
 
 <%# Stats Bar %>
-<div class="bg-saffron border-b border-white">
+<div class="bg-saffron">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
       <div class="flex flex-col items-center text-center py-4 md:py-0 md:px-6">
@@ -87,7 +219,7 @@
 
         <span
           class="
-            text-[10px] font-display font-semibold uppercase tracking-widest
+            text-xs font-display font-semibold uppercase tracking-widest
             text-whiteish mt-1
           "
         >
@@ -102,7 +234,7 @@
 
         <span
           class="
-            text-[10px] font-display font-semibold uppercase tracking-widest
+            text-xs font-display font-semibold uppercase tracking-widest
             text-whiteish mt-1
           "
         >
@@ -117,7 +249,7 @@
 
         <span
           class="
-            text-[10px] font-display font-semibold uppercase tracking-widest
+            text-xs font-display font-semibold uppercase tracking-widest
             text-whiteish mt-1
           "
         >
@@ -132,7 +264,7 @@
 
         <span
           class="
-            text-[10px] font-display font-semibold uppercase tracking-widest
+            text-xs font-display font-semibold uppercase tracking-widest
             text-whiteish mt-1
           "
         >
@@ -178,9 +310,9 @@
       >
         <span
           class="
-            font-display font-black text-[5rem] leading-none text-saffron
-            opacity-60 block mb-6 select-none hover:opacity-100
-            transition-opacity duration-300
+            font-display font-black text-[5rem] leading-none text-white/20
+            block mb-6 select-none hover:text-white/50
+            transition-colors duration-300
           "
         >
           01
@@ -211,9 +343,9 @@
       >
         <span
           class="
-            font-display font-black text-[5rem] leading-none text-saffron
-            opacity-60 block mb-6 select-none hover:opacity-100
-            transition-opacity duration-300
+            font-display font-black text-[5rem] leading-none text-white/20
+            block mb-6 select-none hover:text-white/50
+            transition-colors duration-300
           "
         >
           02
@@ -244,9 +376,9 @@
       >
         <span
           class="
-            font-display font-black text-[5rem] leading-none text-saffron
-            opacity-60 block mb-6 select-none hover:opacity-100
-            transition-opacity duration-300
+            font-display font-black text-[5rem] leading-none text-white/20
+            block mb-6 select-none hover:text-white/50
+            transition-colors duration-300
           "
         >
           03
@@ -282,7 +414,7 @@
     <div class="absolute inset-0 bg-linear-to-r from-black via-black/60 to-black"></div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-4 py-24 relative z-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
     <div class="flex flex-col lg:flex-row gap-16 items-center">
       <div class="lg:w-1/2 relative">
         <div class="absolute -inset-10 bg-saffron/5 blur-3xl transform rotate-3"></div>
@@ -301,7 +433,7 @@
           MIS INICIOS
         </h3>
 
-        <div class="prose prose-lg text-gray-300 font-body text-[15px] leading-relaxed">
+        <div class="prose prose-lg text-gray-300 font-body text-sm leading-relaxed">
           <p class="mb-5">
             Mi historia con el entrenamiento empezó a los 15 años. Mi hermano
             mayor me llevo al gimnasio y desde entonces nunca paré de ir, no
@@ -372,7 +504,7 @@
       <div class="flex items-start gap-4 shrink-0">
         <span
           class="
-            font-display font-black leading-[0.8] tracking-tighter
+            optical-align font-display font-black leading-[0.8] tracking-tighter
             text-black text-7xl sm:text-8xl lg:text-[7rem]
           "
         >
@@ -412,7 +544,7 @@
         <div>
           <h2
             class="
-              text-4xl sm:text-5xl lg:text-[2.75rem] leading-tight
+              text-4xl sm:text-5xl leading-tight
               font-display font-bold uppercase text-white mb-2
             "
           >
@@ -429,7 +561,7 @@
         <div>
           <%= render "shared/section_label", content: "Programas de fuerza y/o estética" %>
 
-          <p class="text-gray-400 text-[15px] font-body leading-relaxed mb-8">
+          <p class="text-gray-400 text-sm font-body leading-relaxed mb-8">
             Pasé los últimos 10 años aplicando los sistemas de entrenamiento de
             los referentes científicos del culturismo y nutrición mundial:
             <br>
@@ -439,7 +571,7 @@
             y perfeccionado junto a cientos de clientes.
           </p>
 
-          <ul class="space-y-4 font-body text-[15px] text-gray-300 mb-10">
+          <ul class="space-y-4 font-body text-sm text-gray-300 mb-10">
             <li class="flex items-center gap-3">
               <span class="
                 material-symbols-outlined text-saffron text-[20px]
@@ -559,8 +691,8 @@
       <%# Plan Base %>
       <div
         class="
-          bg-black border-2 border-graphite flex flex-col p-8
-          hover:border-saffron transition-colors duration-300
+          pricing-secondary bg-black border-2 border-graphite flex flex-col p-8
+          hover:border-white/50 transition-colors duration-300
         "
       >
         <h3
@@ -638,7 +770,7 @@
           </li>
         </ul>
 
-        <%= link_to "CONSULTAR", new_onboarding_path, class: "w-full text-center border-2 border-saffron text-saffron py-4 text-xs font-display font-black uppercase tracking-widest hover:bg-saffron hover:text-black transition-all duration-200 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
+        <%= link_to "CONSULTAR", new_onboarding_path, class: "w-full text-center border-2 border-white/60 text-white py-4 text-xs font-display font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-200 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#F5C228] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
       </div>
 
       <%# Plan Coaching — highlighted %>
@@ -651,7 +783,7 @@
         <span
           class="
             absolute -top-3.5 left-1/2 -translate-x-1/2 bg-saffron
-            text-black px-4 py-1 text-[10px] font-display font-black
+            text-black px-4 py-1 text-xs font-display font-black
             uppercase tracking-widest whitespace-nowrap
           "
         >
@@ -739,8 +871,8 @@
       <%# Plan Elite %>
       <div
         class="
-          bg-black border-2 border-graphite flex flex-col p-8
-          hover:border-saffron transition-colors duration-300
+          pricing-secondary bg-black border-2 border-graphite flex flex-col p-8
+          hover:border-white/50 transition-colors duration-300
         "
       >
         <h3
@@ -816,7 +948,7 @@
           </li>
         </ul>
 
-        <%= link_to "CONSULTAR", new_onboarding_path, class: "w-full text-center border-2 border-saffron text-saffron py-4 text-xs font-display font-black uppercase tracking-widest hover:bg-saffron hover:text-black transition-all duration-200 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#ffffff] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
+        <%= link_to "CONSULTAR", new_onboarding_path, class: "w-full text-center border-2 border-white/60 text-white py-4 text-xs font-display font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-200 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#F5C228] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
       </div>
     </div>
 
@@ -872,13 +1004,18 @@
 
         <p
           class="
-            text-gray-400 mt-4 text-[15px] leading-relaxed
+            text-gray-400 mt-4 text-sm leading-relaxed
             group-open:animate-fadeIn
           "
         >
-          Para todos los niveles. El programa adapta el volumen e intensidad a
-          tu nivel actual. Sin embargo, requiere compromiso y constancia desde
-          el primer día.
+          El coaching online de Rado está diseñado para funcionar en cualquier
+          nivel de experiencia, desde quienes dan sus primeros pasos en el
+          entrenamiento con pesas hasta atletas con años de práctica. El
+          programa de entrenamiento personalizado ajusta el volumen, la
+          intensidad y la selección de ejercicios a tu punto de partida actual.
+          Lo que no negociamos es el compromiso: los resultados llegan para
+          quienes se presentan, siguen el plan y son constantes desde el día
+          uno.
         </p>
       </details>
 
@@ -909,14 +1046,17 @@
 
         <p
           class="
-            text-gray-400 mt-4 text-[15px] leading-relaxed
+            text-gray-400 mt-4 text-sm leading-relaxed
             group-open:animate-fadeIn
           "
         >
-          Adapto las rutinas al tiempo que dispongas, lo ideal sería entre 60 y
-          75 minutos. Nos centramos en calidad, no cantidad. Series efectivas,
-          descansos adecuados y máxima intensidad en sesiones de 3 a 5 días por
-          semana según el plan.
+          Las rutinas se diseñan según el tiempo real que tenés disponible. El
+          rango ideal para maximizar la hipertrofia y la fuerza ronda los 60 a
+          75 minutos por sesión, pero la estructura se adapta si tu agenda es
+          más ajustada. Trabajamos con 3 a 5 días de entrenamiento por semana
+          según el plan, con foco en calidad de ejecución, gestión de la fatiga
+          y progresión de cargas — no en cuánto tiempo pasás en el gimnasio,
+          sino en qué hacés mientras estás ahí.
         </p>
       </details>
 
@@ -947,13 +1087,17 @@
 
         <p
           class="
-            text-gray-400 mt-4 text-[15px] leading-relaxed
+            text-gray-400 mt-4 text-sm leading-relaxed
             group-open:animate-fadeIn
           "
         >
-          No. Los suplementos son opcionales y solo para cubrir posibles
-          deficiencias. La base del éxito físico radica en un entrenamiento
-          brutal, buena recuperación y nutrición adecuada basada en comida real.
+          No. Ningún suplemento es obligatorio ni forma parte de los requisitos
+          del programa. La evidencia científica es clara: los resultados en
+          composición corporal dependen del entrenamiento progresivo, la
+          nutrición calibrada y la recuperación — no de suplementos. Si
+          corresponde y lo querés incorporar, evaluamos opciones como proteína
+          en polvo o creatina para cubrir necesidades puntuales. La base siempre
+          es comida real, estructura y consistencia.
         </p>
       </details>
 
@@ -984,13 +1128,17 @@
 
         <p
           class="
-            text-gray-400 mt-4 text-[15px] leading-relaxed
+            text-gray-400 mt-4 text-sm leading-relaxed
             group-open:animate-fadeIn
           "
         >
-          Sí. Vas a recibir pautas nutricionales adaptadas a tus objetivos y
-          estilo de vida: calorías, macros y estrategias para ajustar según tu
-          progreso. Sin planes de dieta rígidos que nadie sostiene.
+          Sí. Todos los planes incluyen un componente nutricional adaptado a tu
+          objetivo, ya sea bajar de peso, ganar músculo o mejorar tu composición
+          corporal. Recibís un cálculo de calorías y macronutrientes
+          personalizado, pautas de distribución de comidas y estrategias
+          prácticas para ajustar según tu progreso real. No se trata de dietas
+          rígidas imposibles de sostener — se trata de construir hábitos
+          nutricionales que encajen en tu vida y generen resultados duraderos.
         </p>
       </details>
 
@@ -1021,14 +1169,17 @@
 
         <p
           class="
-            text-gray-400 mt-4 text-[15px] leading-relaxed
+            text-gray-400 mt-4 text-sm leading-relaxed
             group-open:animate-fadeIn
           "
         >
-          La mayoría nota diferencias en fuerza y composición a las 4–6 semanas.
-          Los cambios visuales significativos llegan entre los 2 y 4 meses. No
-          prometemos milagros — prometemos un método que funciona si vos lo
-          hacés funcionar.
+          Los primeros cambios en rendimiento y fuerza son notables entre las 3
+          y 6 semanas de trabajo consistente. Los cambios visuales
+          significativos en composición corporal — reducción de grasa, ganancia
+          de masa muscular visible — se consolidan entre los 2 y 4 meses con
+          entrenamiento y nutrición alineados. La velocidad depende de tu punto
+          de partida, la adherencia al plan y factores individuales. No existen
+          atajos: el método funciona cuando lo aplicás con constancia.
         </p>
       </details>
 
@@ -1059,14 +1210,17 @@
 
         <p
           class="
-            text-gray-400 mt-4 text-[15px] leading-relaxed
+            text-gray-400 mt-4 text-sm leading-relaxed
             group-open:animate-fadeIn
           "
         >
-          El programa está diseñado para gimnasio con acceso a barras,
-          mancuernas y máquinas. Si entrenás en casa con equipamiento básico, lo
-          adaptamos — pero los resultados óptimos requieren herramientas
-          adecuadas.
+          El programa está optimizado para entrenamiento en gimnasio con acceso
+          a barras, mancuernas y máquinas — ese entorno permite la progresión de
+          carga necesaria para maximizar la ganancia muscular y la fuerza. Si
+          entrenás en casa con equipamiento básico, podemos adaptar el programa,
+          pero hay que ser transparentes: los resultados óptimos en hipertrofia
+          requieren sobrecarga progresiva, y para eso el gimnasio sigue siendo
+          el mejor escenario.
         </p>
       </details>
 
@@ -1097,13 +1251,17 @@
 
         <p
           class="
-            text-gray-400 mt-4 text-[15px] leading-relaxed
+            text-gray-400 mt-4 text-sm leading-relaxed
             group-open:animate-fadeIn
           "
         >
-          Lo evaluamos en el onboarding. Las lesiones no son excusa para no
-          progresar — son una variable más a gestionar. Modificamos ejercicios y
-          cargas para que sigas avanzando sin agravar nada.
+          Las lesiones o limitaciones físicas se evalúan durante el onboarding
+          para entender el contexto completo antes de diseñar tu programa. No
+          son un impedimento para empezar ni para progresar — son una variable
+          más que se gestiona con criterio. Se modifican ejercicios, rangos de
+          movimiento y cargas para que puedas entrenar con seguridad, seguir
+          progresando y, en muchos casos, mejorar la capacidad funcional de la
+          zona afectada bajo un protocolo de carga inteligente.
         </p>
       </details>
     </div>
@@ -1135,6 +1293,63 @@
     <%= link_to "COMIENZA", new_onboarding_path, class: "inline-flex justify-center border-2 border-black bg-black py-4 px-12 text-lg font-black uppercase tracking-widest text-white transition-all hover:bg-gray-900 focus:outline-none focus:ring-0 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_#000000] active:translate-y-1 active:translate-x-1 active:shadow-none" %>
   </div>
 </section>
+
+<%# Newsletter / Lead Capture Popup %>
+<div
+  id="nl-overlay"
+  class="nl-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="nl-title"
+>
+  <div class="nl-card">
+    <button id="nl-close" class="nl-x" aria-label="Cerrar">✕</button>
+
+    <p
+      class="font-display font-bold uppercase text-saffron mb-3"
+      style="font-size:11px; letter-spacing:0.22em;"
+    >
+      Contenido de élite
+    </p>
+
+    <h3
+      id="nl-title"
+      class="font-display font-black uppercase text-white leading-tight mb-3"
+      style="font-size:clamp(22px,4vw,30px);"
+    >
+      Estrategias reales,
+      <br>
+      sin filtros.
+    </h3>
+
+    <p
+      class="font-body text-gray-400 leading-relaxed mb-8"
+      style="font-size:14px;"
+    >
+      Recibí lo mismo que aplico con mis clientes de alto rendimiento:
+      nutrición, entrenamiento y mentalidad — directo a tu mail, sin spam.
+    </p>
+
+    <form id="nl-form" class="flex flex-col gap-3">
+      <input
+        id="nl-email-input"
+        type="email"
+        placeholder="tu@email.com"
+        required
+        class="nl-email-input"
+        autocomplete="email"
+      >
+
+      <button type="submit" class="nl-submit">
+        QUIERO EL CONTENIDO
+      </button>
+    </form>
+
+    <p class="font-body text-center text-gray-700 mt-4" style="font-size:11px;">
+      Sin spam. Cancelás cuando querés.
+    </p>
+  </div>
+</div>
 
 <%# Footer %>
 <footer class="bg-black border-t border-shadow-grey pt-20 pb-8">
@@ -1334,3 +1549,73 @@
     </div>
   </div>
 </footer>
+
+<script nonce="<%= request.content_security_policy_nonce %>">
+  (function () {
+    function applyOpticalAlignment() {
+      var cvs = document.createElement('canvas');
+      var ctx = cvs.getContext('2d');
+      document.querySelectorAll('.optical-align').forEach(function (el) {
+        el.style.marginLeft = '0px';
+        var cs = getComputedStyle(el);
+        var ch = (el.textContent || '').trim()[0];
+        if (!ch) return;
+        if (cs.textTransform === 'uppercase') ch = ch.toUpperCase();
+        ctx.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+        ctx.textAlign = 'left';
+        var abl = ctx.measureText(ch).actualBoundingBoxLeft;
+        if (isFinite(abl) && abl > 0) el.style.marginLeft = abl.toFixed(2) + 'px';
+      });
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(applyOpticalAlignment);
+    } else {
+      document.addEventListener('DOMContentLoaded', applyOpticalAlignment);
+    }
+
+    window.addEventListener('resize', applyOpticalAlignment);
+  })();
+
+  // Newsletter popup
+  (function () {
+    var SK = 'rte_nl_v1';
+    var overlay = document.getElementById('nl-overlay');
+    var closeBtn = document.getElementById('nl-close');
+    var form = document.getElementById('nl-form');
+    var emailEl = document.getElementById('nl-email-input');
+
+    if (!overlay) return;
+
+    function openPopup() {
+      if (sessionStorage.getItem(SK)) return;
+      overlay.classList.add('is-open');
+      setTimeout(function () { emailEl && emailEl.focus(); }, 340);
+    }
+
+    function closePopup() {
+      overlay.classList.remove('is-open');
+      sessionStorage.setItem(SK, '1');
+    }
+
+    closeBtn && closeBtn.addEventListener('click', closePopup);
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closePopup();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('is-open')) closePopup();
+    });
+
+    form && form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = emailEl ? emailEl.value : '';
+      closePopup();
+      var dest = <%= new_onboarding_path.to_json %> + (email ? '?email=' + encodeURIComponent(email) : '');
+      window.location.href = dest;
+    });
+
+    setTimeout(openPopup, 3500);
+  })();
+</script>

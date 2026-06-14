@@ -114,37 +114,43 @@
     display: grid;
     grid-template-columns: 0.92fr 1.08fr;
     gap: 72px;
-    align-items: center;
+    align-items: stretch;
+  }
+
+  .ba-grid > div:last-child {
+    justify-content: flex-end;
   }
 
   .ba-arrow {
     width: 46px; height: 46px; flex: none;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.2);
     background: #141414;
     color: #fff;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease;
+    transition: transform .15s ease, background .2s ease, border-color .2s ease, color .2s ease, box-shadow .15s ease;
   }
   .ba-arrow:hover {
     background: #F5C228;
     border-color: #F5C228;
     color: #040307;
-    transform: translateY(-1px);
+    transform: translateY(-2px) translateX(-2px);
+    box-shadow: 4px 4px 0 0 #fff;
   }
-  .ba-arrow:active { transform: scale(0.94); }
+  .ba-arrow:active {
+    transform: translateY(0) translateX(0);
+    box-shadow: none;
+  }
 
   .ba-pair {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 22px;
+    padding-top: 20px;
   }
 
   .ba-shot {
     position: relative;
-    border-radius: 20px;
-    overflow: hidden;
     aspect-ratio: 3 / 4;
     background: #000;
   }
@@ -158,13 +164,12 @@
 
   .ba-tag {
     position: absolute;
-    top: 16px; left: 50%;
-    transform: translateX(-50%);
+    top: 0; left: 50%;
+    transform: translateX(-50%) translateY(-50%);
     font-weight: 800; font-size: 13px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     padding: 8px 16px;
-    border-radius: 9px;
     z-index: 2;
     white-space: nowrap;
   }
@@ -218,7 +223,6 @@
   .ba-story-card {
     background: linear-gradient(180deg, #161616, #101010);
     border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 22px;
     padding: 34px 36px 30px;
   }
 
@@ -253,7 +257,7 @@
     align-items: center;
     justify-content: center;
     gap: 26px;
-    margin-bottom: 26px;
+    margin-bottom: 36px;
   }
 
   .ba-client-id {
