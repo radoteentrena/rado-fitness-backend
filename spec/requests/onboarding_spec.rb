@@ -38,4 +38,36 @@ RSpec.describe "Onboarding", type: :request do
       end
     end
   end
+
+  describe "POST /onboarding/check_email" do
+    it "reports existence without sending any email" do
+      create(:user, email: "known@example.com")
+
+      expect {
+        post onboarding_check_email_path, params: { email: "known@example.com" }
+      }.not_to have_enqueued_mail(ClientMailer, :payment_link)
+
+      expect(JSON.parse(response.body)["exists"]).to be(true)
+    end
+  end
+
+  describe "GET /onboarding/email_exists" do
+    let!(:user) { create(:user, email: "known@example.com") }
+
+    it "mints a token and emails the payment link when none is valid" do
+      expect {
+        get onboarding_email_exists_path, params: { email: "known@example.com" }
+      }.to have_enqueued_mail(ClientMailer, :payment_link)
+
+      expect(user.reload.payment_token_valid?).to be(true)
+    end
+
+    it "does not re-send the email when a valid token already exists" do
+      user.generate_payment_token!
+
+      expect {
+        get onboarding_email_exists_path, params: { email: "known@example.com" }
+      }.not_to have_enqueued_mail(ClientMailer, :payment_link)
+    end
+  end
 end

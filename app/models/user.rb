@@ -47,6 +47,11 @@ class User < ApplicationRecord
   # Associations
   has_one_attached :avatar
 
+  validates :avatar,
+            file_size: { less_than: 10.megabytes },
+            file_content_type: { in: %w[image/png image/jpeg image/webp image/heic image/heif] },
+            allow_nil: true
+
   has_one :onboarding_profile, dependent: :destroy
   has_one :booking, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
@@ -164,6 +169,12 @@ class User < ApplicationRecord
 
   def payment_token_valid?
     payment_link_token.present? && payment_link_expires_at&.future?
+  end
+
+  # Invalidate the payment link after it has been used to sign in, so the link
+  # behaves as single-use and a leaked URL can't grant repeated logins.
+  def consume_payment_token!
+    update_columns(payment_link_token: nil, payment_link_expires_at: nil)
   end
 
   def days_trained
