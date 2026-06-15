@@ -163,7 +163,7 @@ class AiCoachService
 
   # Existing exercises the AI is allowed to choose from. Format: "[id] Name (muscle)".
   def available_exercises_list
-    Rails.cache.fetch("exercises_list_v2", expires_in: 1.hour) do
+    Rails.cache.fetch(Exercise::AI_LIST_CACHE_KEY, expires_in: 1.hour) do
       Exercise.all.pluck(:id, :name, :muscle_group).map { |id, n, mg| "[#{id}] #{n} (#{mg})" }.join(", ")
     end
   end
