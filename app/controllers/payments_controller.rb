@@ -10,6 +10,7 @@ class PaymentsController < ApplicationController
     end
 
     sign_in(user)
+    user.consume_payment_token!
     redirect_to new_subscription_path
   end
 end

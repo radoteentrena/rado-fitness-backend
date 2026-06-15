@@ -38,23 +38,26 @@ class OnboardingController < ApplicationController
 
   def check_email
     email = params[:email].to_s.strip.downcase
-    user = User.find_by(email: email)
-
-    if user
-      ClientMailer.payment_link(user).deliver_later
-      render json: { exists: true }
-    else
-      render json: { exists: false }
-    end
+    render json: { exists: User.exists?(email: email) }
   end
 
   def email_exists
     @email = params[:email].to_s.strip.downcase
     user = User.find_by(email: @email)
-    if user
-      token = user.payment_token_valid? ? user.payment_link_token : user.generate_payment_token!
-      @payment_url = pay_url(token: token)
+    return unless user
+
+    # Reuse a still-valid token; only mint a new one (and email it) otherwise.
+    # Gating the send on fresh-token generation bounds payment-link emails to
+    # roughly one per token window per user, preventing email-bombing via
+    # repeated requests to this endpoint.
+    if user.payment_token_valid?
+      token = user.payment_link_token
+    else
+      token = user.generate_payment_token!
+      ClientMailer.payment_link(user).deliver_later
     end
+
+    @payment_url = pay_url(token: token)
   end
 
   def success

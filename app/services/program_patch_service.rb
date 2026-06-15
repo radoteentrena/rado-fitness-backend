@@ -1,7 +1,14 @@
 class ProgramPatchService
   def initialize(program, updated_json)
-    @program = program
-    @json    = updated_json
+    @program  = program
+    @json     = updated_json
+    @resolver = ExerciseResolver.new
+  end
+
+  # Names of AI-suggested exercises that didn't match the existing library and
+  # were skipped (no new exercises are ever created).
+  def skipped_exercises
+    @resolver.skipped
   end
 
   def call_modifications
@@ -12,10 +19,12 @@ class ProgramPatchService
           fields = mod.slice("sets", "reps", "rest_seconds", "intensity_technique", "load").compact
           we.update!(fields.transform_keys(&:to_sym))
         else
+          # Resolve before destroying the old exercise: an unmatched suggestion
+          # must leave the existing exercise intact rather than drop it.
+          exercise = @resolver.resolve(mod)
+          next unless exercise
+
           WorkoutExercise.find(mod["replace_workout_exercise_id"]).destroy! if mod["replace_workout_exercise_id"].present?
-          exercise = Exercise.find_or_create_by!(name: mod["name"]) do |e|
-            e.muscle_group = mod["muscle_group"]
-          end
           parent_workout = scoped_workout(mod["workout_id"])
           WorkoutExercise.create!(
             workout:             parent_workout,
@@ -58,9 +67,9 @@ class ProgramPatchService
                 load:                ex_data["load"]
               )
             else
-              exercise = Exercise.find_or_create_by!(name: ex_data["name"]) do |e|
-                e.muscle_group = ex_data["muscle_group"]
-              end
+              exercise = @resolver.resolve(ex_data)
+              next unless exercise
+
               parent_workout = Workout.find(ex_data["workout_id"])
               WorkoutExercise.create!(
                 workout:             parent_workout,

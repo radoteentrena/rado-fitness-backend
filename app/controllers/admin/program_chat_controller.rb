@@ -40,12 +40,15 @@ module Admin
     def apply
       @conversation = find_or_create_conversation
       modifications = @conversation.generated_data["pending_modifications"] || []
-      ProgramPatchService.new(@program, modifications).call_modifications
+      patcher = ProgramPatchService.new(@program, modifications)
+      patcher.call_modifications
       @conversation.update!(generated_data: { "pending_modifications" => [], "pending_summary" => "" })
 
+      skipped = patcher.skipped_exercises.uniq
       streams = [
         turbo_stream.replace("chat-apply-button", ""),
-        turbo_stream.update("chat-error", "")
+        turbo_stream.update("chat-error",
+          skipped.any? ? "Ejercicios omitidos (sin coincidencia en la biblioteca): #{skipped.join(', ')}" : "")
       ]
 
       if params[:routine_id].present?

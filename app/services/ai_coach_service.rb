@@ -7,9 +7,7 @@ class AiCoachService
   def generate_program(objectives:, user: nil, mode: "program", gender: nil, focus: nil, level: nil, conversation: nil)
     book_context    = retrieve_context(objectives)
     client_profile  = build_client_profile(user)
-    exercises_list  = Rails.cache.fetch("exercises_list", expires_in: 1.hour) do
-      Exercise.all.pluck(:name, :muscle_group).map { |n, mg| "#{n} (#{mg})" }.join(", ")
-    end
+    exercises_list  = available_exercises_list
 
     system_prompt = build_system_prompt(mode)
     user_prompt   = build_generation_prompt(
@@ -55,6 +53,9 @@ class AiCoachService
         Programa actual (solo para contexto):
         #{latest_data.to_json}
 
+        EJERCICIOS DISPONIBLES (usá solo estos, con su nombre exacto):
+        #{available_exercises_list}
+
         Solicitud del coach: "#{message}"
 
         Devolvé ÚNICAMENTE el JSON de modificaciones según las instrucciones del sistema.
@@ -65,6 +66,9 @@ class AiCoachService
 
         Previous program (JSON):
         #{latest_data.to_json}
+
+        AVAILABLE EXERCISES IN DATABASE (use only these, by exact name + id):
+        #{available_exercises_list}
 
         #{book_context ? "Additional book knowledge for this refinement:\n        #{book_context}\n" : ""}Coach's request: "#{message}"
 
@@ -104,11 +108,14 @@ class AiCoachService
     shortlist.find { |t| t.name.strip.downcase == matched }
   end
 
+  CreateResult = Struct.new(:record, :skipped_exercises)
+
   def create_records!(conversation)
-    result = ProgramRecordBuilder.new(conversation.generated_data, conversation.user).build!
-    program = result.is_a?(Program) ? result : nil
+    builder = ProgramRecordBuilder.new(conversation.generated_data, conversation.user)
+    record  = builder.build!
+    program = record.is_a?(Program) ? record : nil
     conversation.update!(status: "completed", program: program)
-    result
+    CreateResult.new(record, builder.skipped_exercises)
   end
 
   def build_client_profile(user)
@@ -154,6 +161,13 @@ class AiCoachService
 
   private
 
+  # Existing exercises the AI is allowed to choose from. Format: "[id] Name (muscle)".
+  def available_exercises_list
+    Rails.cache.fetch(Exercise::AI_LIST_CACHE_KEY, expires_in: 1.hour) do
+      Exercise.all.pluck(:id, :name, :muscle_group).map { |id, n, mg| "[#{id}] #{n} (#{mg})" }.join(", ")
+    end
+  end
+
   def retrieve_context(query)
     query_embedding = @embedder.embed(query)
     return "No book knowledge available." unless query_embedding
@@ -176,8 +190,11 @@ class AiCoachService
       Do not include any conversational text, headers, or footers.
       Start your response with '{' and end with '}'.
 
-      When suggesting exercises, prefer using existing exercises from the coach's database
-      when they match. For new exercises, provide a clear name and muscle group.
+      EXERCISES — STRICT RULE: You may ONLY use exercises from the provided
+      "AVAILABLE EXERCISES IN DATABASE" list. Never invent or suggest a new
+      exercise. For each exercise, return the exact name from the list and its
+      "existing_exercise_id" (the number in brackets). Any exercise not on the
+      list will be discarded.
 
       Structure your programs with progressive overload principles, appropriate volume,
       and clear periodization. Consider the client's current fitness level and goals.
@@ -217,7 +234,10 @@ class AiCoachService
       Reglas:
       - Para modificar atributos: workout_exercise_id con el id + solo los campos que cambian.
       - Para reemplazar un ejercicio: workout_exercise_id null + replace_workout_exercise_id con el id del ejercicio a eliminar + workout_id del workout padre.
-      - Para agregar un ejercicio nuevo sin reemplazar: workout_exercise_id null + replace_workout_exercise_id null + workout_id.
+      - Para agregar un ejercicio sin reemplazar: workout_exercise_id null + replace_workout_exercise_id null + workout_id.
+      - REGLA ESTRICTA DE EJERCICIOS: al reemplazar o agregar, usá ÚNICAMENTE
+        ejercicios de la lista "EJERCICIOS DISPONIBLES". Usá el nombre exacto.
+        Nunca inventes ejercicios nuevos; cualquier ejercicio fuera de la lista será descartado.
       - No agregues workouts ni rutinas nuevas.
       - NO devuelvas el programa completo. Solo el array de modificaciones y el summary.
     CHAT
@@ -252,9 +272,9 @@ class AiCoachService
       IMPORTANT FORMATTING CONSTRAINT:
       If the user asks for a long-term program (e.g. 6 months), DO NOT generate individual workouts for every single day of those 6 months. Instead, generate a typical microcycle (e.g., 1 week of unique workout days mapped into a routine) and simply assign the appropriately large number to the `duration_weeks` fields. For example, a 5-day-per-week program should output exactly 5 workouts inside the routine representing the recurring weekly split.
 
-      For exercises, if an exercise already exists in the database, use its exact name.
-      If you need to suggest a new exercise, provide a descriptive name and muscle_group.
-      Set "existing_exercise_id" to null for new exercises.
+      For exercises, you MUST pick only from the AVAILABLE EXERCISES list above.
+      Use the exact name and set "existing_exercise_id" to its bracketed id.
+      Do NOT invent new exercises — any exercise not in the list will be discarded.
 
       REQUIRED JSON STRUCTURE:
       #{json_schema}
@@ -288,9 +308,9 @@ class AiCoachService
                 "day_number": integer,
                 "exercises": [
                   {
-                    "name": "string (exact name if existing, descriptive if new)",
+                    "name": "string (EXACT name from the AVAILABLE EXERCISES list)",
                     "muscle_group": "string — MUST be one of: #{Exercise::MUSCLE_GROUPS.join(', ')}",
-                    "existing_exercise_id": integer_or_null,
+                    "existing_exercise_id": "integer — the bracketed id from the AVAILABLE EXERCISES list",
                     "sets": integer,
                 "warmup_sets": "string (e.g. '1-2' or '0')",
                 "reps": "string (e.g. '8-10' or '12')",

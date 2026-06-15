@@ -1,7 +1,14 @@
 class ProgramRecordBuilder
   def initialize(data, user)
-    @data = data
-    @user = user
+    @data     = data
+    @user     = user
+    @resolver = ExerciseResolver.new
+  end
+
+  # Names of AI-suggested exercises that didn't match the existing library and
+  # were skipped (no new exercises are ever created).
+  def skipped_exercises
+    @resolver.skipped
   end
 
   # Creates all DB records from AI-generated data. Returns the Program or last Routine.
@@ -23,7 +30,9 @@ class ProgramRecordBuilder
           )
 
           workout_data["exercises"]&.each_with_index do |ex_data, index|
-            exercise = find_or_create_exercise(ex_data)
+            exercise = @resolver.resolve(ex_data)
+            next unless exercise
+
             WorkoutExercise.create!(
               workout:             workout,
               exercise:            exercise,
@@ -79,14 +88,5 @@ class ProgramRecordBuilder
       is_template:    @user.nil?,
       user:           @user
     )
-  end
-
-  def find_or_create_exercise(ex_data)
-    if ex_data["existing_exercise_id"]
-      Exercise.find_by(id: ex_data["existing_exercise_id"]) ||
-        Exercise.find_or_create_by!(name: ex_data["name"]) { |e| e.muscle_group = ex_data["muscle_group"] }
-    else
-      Exercise.find_or_create_by!(name: ex_data["name"]) { |e| e.muscle_group = ex_data["muscle_group"] }
-    end
   end
 end
