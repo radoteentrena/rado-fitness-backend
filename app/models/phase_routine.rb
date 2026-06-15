@@ -25,6 +25,10 @@ class PhaseRoutine < ApplicationRecord
 
     TrainingProgressionService.create_initial_session(user, program)
   rescue ArgumentError => e
+    # A misconfigured program (e.g. a phase with no duration_weeks) leaves the
+    # client with an active program but zero sessions. Don't fail the
+    # assignment, but surface it instead of swallowing it silently.
     Rails.logger.warn("[PhaseRoutine#bootstrap_initial_session] #{e.message}")
+    Sentry.capture_exception(e) if defined?(Sentry)
   end
 end

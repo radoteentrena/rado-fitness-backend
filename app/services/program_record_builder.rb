@@ -59,13 +59,20 @@ class ProgramRecordBuilder
 
   private
 
+  # Fallback when the AI omits a program-level duration. A phase without a
+  # positive-integer duration_weeks makes TrainingProgressionService raise and
+  # the initial session never gets created, so this must never end up nil.
+  DEFAULT_DURATION_WEEKS = 8
+
   def build_program_and_phase
     return [nil, nil] unless @data["program"]
+
+    duration_weeks = positive_int(@data["program"]["duration_weeks"]) || DEFAULT_DURATION_WEEKS
 
     program = Program.create!(
       name:           @data["program"]["name"],
       description:    @data["program"]["description"],
-      duration_weeks: @data["program"]["duration_weeks"],
+      duration_weeks: duration_weeks,
       user:           @user
     )
 
@@ -78,6 +85,11 @@ class ProgramRecordBuilder
     )
 
     [program, phase]
+  end
+
+  def positive_int(value)
+    int = value.to_i
+    int.positive? ? int : nil
   end
 
   def build_routine(routine_data)

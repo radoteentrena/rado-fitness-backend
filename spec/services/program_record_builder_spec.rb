@@ -41,4 +41,27 @@ RSpec.describe ProgramRecordBuilder do
 
     expect(builder.skipped_exercises).to eq(["Ejercicio Inventado"])
   end
+
+  describe "phase duration_weeks" do
+    it "falls back to a positive default when the AI omits the program duration" do
+      data["program"]["duration_weeks"] = nil
+
+      described_class.new(data, user).build!
+
+      phase = Program.last.phases.first
+      expect(phase.duration_weeks).to eq(ProgramRecordBuilder::DEFAULT_DURATION_WEEKS)
+      expect(phase.duration_weeks).to be_a(Integer).and be_positive
+    end
+
+    it "creates the initial training session instead of silently failing" do
+      data["program"]["duration_weeks"] = nil
+
+      expect { described_class.new(data, user).build! }
+        .to change { user.training_sessions.count }.by(1)
+
+      session = user.training_sessions.last
+      expect(session.program).to eq(Program.last)
+      expect(session.status).to eq("pending")
+    end
+  end
 end
