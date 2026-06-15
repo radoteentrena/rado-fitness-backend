@@ -19,7 +19,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
       allow(sdk_double).to receive(:preapproval).and_return(preapproval_double)
       allow(preapproval_double).to receive(:get).with(mp_sub_id).and_return({
-        "response" => {
+        :response => {
           "id" => mp_sub_id,
           "status" => "authorized",
           "external_reference" => user.id.to_s,
@@ -124,7 +124,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       allow(Mercadopago::SDK).to receive(:new).and_return(sdk)
       allow(sdk).to receive(:preapproval).and_return(preapproval)
       allow(preapproval).to receive(:get).with(mp_sub_id).and_return({
-        "response" => {
+        :response => {
           "id" => mp_sub_id,
           "status" => "authorized",
           "external_reference" => nil,      # preapproval_plan checkouts may omit this
@@ -157,7 +157,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
       allow(sdk_double).to receive(:payment).and_return(payment_double)
       allow(payment_double).to receive(:get).with("mp_payment_456").and_return({
-        "response" => {
+        :response => {
           "id" => "mp_payment_456",
           "status" => "rejected",
           "metadata" => { "preapproval_id" => "mp_sub_123" }
@@ -192,7 +192,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
       allow(sdk_double).to receive(:preapproval).and_return(preapproval_double)
       allow(preapproval_double).to receive(:get).and_return({
-        "response" => {
+        :response => {
           "id" => "mp_sub_123",
           "status" => "cancelled",
           "external_reference" => user.id.to_s
@@ -256,7 +256,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
       allow(sdk_double).to receive(:payment).and_return(payment_double)
       allow(payment_double).to receive(:get).with("mp_payment_789").and_return({
-        "response" => {
+        :response => {
           "id"            => "mp_payment_789",
           "status"        => "approved",
           "preference_id" => "pref_123",
@@ -286,7 +286,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
       allow(sdk_double).to receive(:preapproval).and_return(preapproval_double)
       allow(preapproval_double).to receive(:get).with("mp_sub_999").and_return({
-        "response" => {
+        :response => {
           "id" => "mp_sub_999",
           "status" => "authorized",
           "external_reference" => "99999999",
@@ -333,7 +333,7 @@ RSpec.describe ProcessPaymentEventJob, type: :job do
       allow(Mercadopago::SDK).to receive(:new).and_return(sdk_double)
       allow(sdk_double).to receive(:preapproval).and_return(preapproval_double)
       allow(preapproval_double).to receive(:get).with(mp_sub_id).and_return({
-        "response" => {
+        :response => {
           "id" => mp_sub_id,
           "status" => status,
           "external_reference" => user.id.to_s,
