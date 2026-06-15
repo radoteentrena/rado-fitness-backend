@@ -58,12 +58,18 @@ module Admin
       end
 
       service = AiCoachService.new
-      record = service.create_records!(@conversation)
+      result  = service.create_records!(@conversation)
+      record  = result.record
+
+      notice = record.is_a?(Program) ? "Program created successfully!" : "Routine created successfully!"
+      if result.skipped_exercises.any?
+        notice += " Ejercicios omitidos (sin coincidencia en la biblioteca): #{result.skipped_exercises.uniq.join(', ')}"
+      end
 
       if record.is_a?(Program)
-        redirect_to admin_program_path(record), notice: "Program created successfully!"
+        redirect_to admin_program_path(record), notice: notice
       else
-        redirect_to admin_routine_path(record), notice: "Routine created successfully!"
+        redirect_to admin_routine_path(record), notice: notice
       end
     rescue => e
       Rails.logger.error("AI Coach Approve Error: #{e.message}")
